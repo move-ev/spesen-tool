@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
 import { createReportSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
@@ -24,7 +25,16 @@ export function CreateReportForm({
 	businessUnits: { label: string; value: string }[];
 	accountingUnits: { label: string; value: string }[];
 }) {
-	const createReport = api.report.create.useMutation();
+	const createReport = api.report.create.useMutation({
+		onSuccess() {
+			toast.success("Report erfolgreich erstellt");
+		},
+		onError(error) {
+			toast.error("Fehler beim Erstellen des Reports", {
+				description: error.message ?? "Ein unerwarteter Fehler ist aufgetreten",
+			});
+		},
+	});
 
 	const form = useForm({
 		defaultValues: {
