@@ -13,4 +13,11 @@ export const reportRouter = createTRPCRouter({
 				},
 			});
 		}),
+	listOwn: protectedProcedure.query(async ({ ctx }) => {
+		return await ctx.db.report.findMany({
+			where: {
+				ownerId: ctx.session.user.id,
+			},
+		});
+	}),
 });
