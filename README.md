@@ -2,6 +2,46 @@
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
+## Getting Started
+
+### Database Setup
+
+This project uses PostgreSQL. The easiest way to get started is using Docker Compose:
+
+1. Start the database:
+   ```bash
+   docker-compose up -d
+   ```
+
+2. Create a `.env` file in the root directory with the following variables:
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/spesen_tool"
+   BETTER_AUTH_SECRET="your-secret-key-here"
+   BETTER_AUTH_GITHUB_CLIENT_ID="your-github-client-id"
+   BETTER_AUTH_GITHUB_CLIENT_SECRET="your-github-client-secret"
+   NODE_ENV="development"
+   ```
+
+3. Run database migrations:
+   ```bash
+   pnpm db:generate
+   ```
+
+4. (Optional) Open Prisma Studio to view your database:
+   ```bash
+   pnpm db:studio
+   ```
+
+To stop the database:
+```bash
+docker-compose down
+```
+
+To stop and remove all data:
+```bash
+docker-compose down -v
+```
+
 ## What's next? How do I make an app with this?
 
 We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
