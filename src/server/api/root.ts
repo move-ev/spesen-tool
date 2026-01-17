@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { expenseRouter } from "./routers/expense";
 import { reportRouter } from "./routers/report";
 
 /**
@@ -8,6 +9,7 @@ import { reportRouter } from "./routers/report";
  */
 export const appRouter = createTRPCRouter({
 	report: reportRouter,
+	expense: expenseRouter,
 });
 
 // export type definition of API

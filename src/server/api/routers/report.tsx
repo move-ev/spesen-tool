@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createReportSchema } from "@/lib/validators";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
@@ -20,4 +21,26 @@ export const reportRouter = createTRPCRouter({
 			},
 		});
 	}),
+	get: protectedProcedure
+		.input(z.object({ id: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const report = await ctx.db.report.findUnique({
+				where: {
+					id: input.id,
+				},
+			});
+
+			if (!report) {
+				return null;
+			}
+
+			if (
+				report.ownerId !== ctx.session.user.id &&
+				ctx.session.user.role !== "admin"
+			) {
+				throw new TRPCError({ code: "UNAUTHORIZED" });
+			}
+
+			return report;
+		}),
 });
