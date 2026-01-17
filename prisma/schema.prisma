@@ -14,16 +14,48 @@ datasource db {
   provider = "postgresql"
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Report {
+  id             String       @id @default(cuid())
+  title          String
+  description    String?
+  status         ReportStatus @default(DRAFT)
+  businessUnit   String
+  accountingUnit String
 
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
 
-  @@index([name])
+  createdAt     DateTime @default(now())
+  lastUpdatedAt DateTime @updatedAt
+
+  expenses Expense[]
+}
+
+enum ReportStatus {
+  DRAFT
+  PENDING_APPROVAL
+  NEEDS_REVISION
+  ACCEPTED
+  REJECTED
+}
+
+model Expense {
+  id          String      @id @default(cuid())
+  description String?
+  amount      Decimal
+  startDate   DateTime
+  endDate     DateTime
+  type        ExpenseType
+  meta        Json
+
+  reportId String
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+enum ExpenseType {
+  RECEIPT
+  TRAVEL
+  FOOD
 }
 
 model User {
@@ -36,7 +68,8 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
-  posts         Post[]
+
+  ownReports Report[]
 
   role       String?
   banned     Boolean?  @default(false)
@@ -61,8 +94,8 @@ model Session {
   impersonatedBy String?
 
   @@unique([token])
-  @@map("session")
   @@index([userId])
+  @@map("session")
 }
 
 model Account {
@@ -81,8 +114,8 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
-  @@map("account")
   @@index([userId])
+  @@map("account")
 }
 
 model Verification {
@@ -93,6 +126,6 @@ model Verification {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 
-  @@map("verification")
   @@index([identifier])
+  @@map("verification")
 }
