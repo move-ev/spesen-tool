@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/forms/login";
+import { LoginForm } from "@/components/forms/login-form";
 
 export default async function ServerPage() {
 	return (
