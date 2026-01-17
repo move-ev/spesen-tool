@@ -51,8 +51,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 			...shape,
 			data: {
 				...shape.data,
-				zodError:
-					error.cause instanceof ZodError ? error.cause.flatten() : null,
+				zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
 			},
 		};
 	},
@@ -132,3 +131,17 @@ export const protectedProcedure = t.procedure
 			},
 		});
 	});
+
+/**
+ * Admin procedure
+ *
+ * Procedures with this middleware are only accessible to users with the "admin" role.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+	if (ctx.session.user.role !== "admin") {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
+	return next({ ctx });
+});

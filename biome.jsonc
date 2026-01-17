@@ -1,6 +1,9 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"root": true,
+	"files": {
+		"includes": ["**", "!generated"]
+	},
 	"vcs": {
 		"enabled": true,
 		"useIgnoreFile": true,
@@ -26,6 +29,9 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"correctness": {
+				"noChildrenProp": "off"
+			},
 			"nursery": {
 				"useSortedClasses": {
 					"level": "warn",
