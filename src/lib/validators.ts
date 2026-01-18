@@ -146,7 +146,7 @@ export const baseCreateExpenseSchema = z.object({
 
 export const createReceiptExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		receiptFileUrl: z.string().min(1),
+		objectKeys: z.string().array(),
 	}),
 );
 
@@ -169,9 +169,7 @@ export const createFoodExpenseSchema = baseCreateExpenseSchema.and(
 
 // ================================ META FIELDS ================================
 
-export const receiptExpenseMetaSchema = z.object({
-	receiptFileUrl: z.string().min(1),
-});
+export const receiptExpenseMetaSchema = z.object({});
 
 export const travelExpenseMetaSchema = z.object({
 	from: z.string().min(1),

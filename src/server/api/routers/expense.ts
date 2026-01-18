@@ -71,11 +71,9 @@ export const expenseRouter = createTRPCRouter({
 			}
 
 			// Create the meta data
-			const meta = JSON.stringify({
-				receiptFileUrl: input.receiptFileUrl,
-			});
+			const meta = JSON.stringify({});
 
-			return await ctx.db.expense.create({
+			const expense = await ctx.db.expense.create({
 				data: {
 					report: { connect: { id: input.reportId } },
 					type: ExpenseType.RECEIPT,
@@ -84,8 +82,20 @@ export const expenseRouter = createTRPCRouter({
 					endDate: input.endDate,
 					description: input.description,
 					meta: meta,
+					attachments: {
+						createMany: { data: input.objectKeys.map((key) => ({ key })) },
+					},
 				},
 			});
+
+			if (!expense) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to create expense",
+				});
+			}
+
+			return expense;
 		}),
 
 	createTravel: protectedProcedure

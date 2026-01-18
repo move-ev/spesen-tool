@@ -1,9 +1,12 @@
 "use client";
 
-import { NumberField } from "@base-ui/react";
+import { useUploadFiles } from "@better-upload/client";
 import { useForm } from "@tanstack/react-form";
 import { formatDate } from "date-fns";
+import { XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import z from "zod";
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,14 +16,9 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-} from "@/components/ui/input-group";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { UploadDropzone } from "@/components/ui/upload-dropzone";
+import { formatBytes, renameFileWithHash } from "@/lib/utils";
 import { createReceiptExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
@@ -32,6 +30,7 @@ export function CreateReceiptExpenseForm({
 	reportId: string;
 	onSuccess?: () => void;
 }) {
+	const router = useRouter();
 	const utils = api.useUtils();
 	const createReceipt = api.expense.createReceipt.useMutation({
 		onSuccess: () => {
@@ -54,12 +53,23 @@ export function CreateReceiptExpenseForm({
 			endDate: formatDate(new Date(), "dd.MM.yyyy"),
 			type: "RECEIPT",
 			reportId,
-			receiptFileUrl: "",
+			objectKeys: [] as string[],
+			files: [] as File[],
 		},
 		validators: {
-			onSubmit: createReceiptExpenseSchema,
+			onSubmit: createReceiptExpenseSchema.and(
+				z.object({ files: z.file().array() }),
+			),
 		},
-		onSubmit: ({ value }) => {
+		onSubmit: async ({ value }) => {
+			// Rename files with unique hash before upload
+			const timestamp = Date.now();
+			const renamedFiles = await Promise.all(
+				value.files.map((file) => renameFileWithHash(file, reportId, timestamp)),
+			);
+
+			const { files } = await uploader.upload(renamedFiles);
+
 			createReceipt.mutate({
 				amount: value.amount,
 				description: value.description,
@@ -67,9 +77,17 @@ export function CreateReceiptExpenseForm({
 				endDate: value.endDate,
 				type: "RECEIPT",
 				reportId,
-				receiptFileUrl: value.receiptFileUrl,
+				objectKeys: files.map((file) => file.objectInfo.key),
 			});
+
+			// TODO: Invalidate expense list for report
+			// utils.expense.listForReport.invalidate();
+			router.push(`/reports/${reportId}`);
 		},
+	});
+
+	const uploader = useUploadFiles({
+		route: "attachments",
 	});
 
 	return (
@@ -151,9 +169,70 @@ export function CreateReceiptExpenseForm({
 					}}
 					name="endDate"
 				/>
+				<form.Field
+					children={(field) => {
+						const isInvalid =
+							(field.state.meta.isTouched && !field.state.meta.isValid) ||
+							uploader.isError;
+
+						const MAX_FILE_AMOUNT = 5;
+
+						return (
+							<Field className="md:col-span-2" data-invalid={isInvalid}>
+								<FieldLabel htmlFor={field.name}>Anhänge</FieldLabel>
+								<UploadDropzone
+									control={uploader.control}
+									description={{
+										maxFiles: MAX_FILE_AMOUNT,
+										maxFileSize: "5MB",
+									}}
+									id={field.name}
+									uploadOverride={(files) => {
+										field.handleChange(Array.from([...field.state.value, ...files]));
+									}}
+								/>
+								{field.state.value.length > 0 && (
+									<div className="mt-4 grid gap-4">
+										{field.state.value.map((file) => (
+											<div className="flex items-center justify-between" key={file.name}>
+												<div>
+													<p>{file.name}</p>
+													<p className="text-muted-foreground text-xs">
+														{formatBytes(file.size)}
+													</p>
+												</div>
+												<Button
+													onClick={() => {
+														field.handleChange(
+															field.state.value.filter((f) => f.name !== file.name),
+														);
+													}}
+													size="icon-sm"
+													variant="destructive"
+												>
+													<XIcon className="size-4" />
+												</Button>
+											</div>
+										))}
+									</div>
+								)}
+								{isInvalid && (
+									<FieldError
+										errors={
+											uploader.error
+												? [{ message: uploader.error.message }]
+												: field.state.meta.errors
+										}
+									/>
+								)}
+							</Field>
+						);
+					}}
+					name="files"
+				/>
 				<Button
 					className={"md:col-span-2"}
-					disabled={createReceipt.isPending}
+					disabled={createReceipt.isPending || uploader.isPending}
 					form="form-create-receipt-expense"
 					type="submit"
 				>
