@@ -1,6 +1,6 @@
-import { ReportStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { ReportStatus } from "@/lib/enums";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { sendReportSubmittedEmail } from "@/server/email";
 
@@ -28,7 +28,7 @@ export const reportRouter = createTRPCRouter({
 	}),
 
 	// Get a single report by ID
-	getById: protectedProcedure
+	getByIdDepr: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const report = await ctx.db.report.findUnique({
@@ -54,8 +54,10 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 
+			const isAdmin = ctx.session.user.role === "admin";
+
 			// Check if user owns the report
-			if (report.ownerId !== ctx.session.user.id) {
+			if (report.ownerId !== ctx.session.user.id && !isAdmin) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You don't have access to this report",
