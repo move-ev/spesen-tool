@@ -28,6 +28,11 @@ export type Report = Prisma.ReportModel
  */
 export type Expense = Prisma.ExpenseModel
 /**
+ * Model Attachment
+ * 
+ */
+export type Attachment = Prisma.AttachmentModel
+/**
  * Model User
  * 
  */

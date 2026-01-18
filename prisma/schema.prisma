@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 // NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
@@ -48,24 +48,27 @@ model Expense {
   type        ExpenseType
   meta        Json
 
-  // Receipt specific fields
-  receiptFileUrl String? // URL to uploaded receipt file
-  reason         String? // Reason why expense was necessary for the association
-
-  // Travel specific fields
-  kilometers   Decimal? // Kilometers traveled
-  departure    String?  // Departure location
-  destination  String?  // Destination location
-  travelReason String?  // Reason for travel
-
-  reportId String
-  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId    String
+  report      Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
 }
 
 enum ExpenseType {
   RECEIPT
   TRAVEL
   FOOD
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expenseId String
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@map("attachment")
 }
 
 model User {
@@ -82,9 +85,9 @@ model User {
   ownReports Report[]
 
   // Role required by better-auth admin plugin
-  role       String   @default("user")
-  admin      Boolean?  @default(false)
-  
+  role  String   @default("user")
+  admin Boolean? @default(false)
+
   // Banning fields required by better-auth admin plugin
   banned     Boolean?  @default(false)
   banReason  String?
@@ -145,12 +148,12 @@ model Verification {
 }
 
 model Settings {
-  id                String   @id @default("singleton")
-  kilometerRate     Decimal  @default(0.30) // Rate per kilometer in EUR
-  reviewerEmail     String?  // Email of the global reviewer
+  id                   String   @id @default("singleton")
+  kilometerRate        Decimal  @default(0.30) // Rate per kilometer in EUR
+  reviewerEmail        String? // Email of the global reviewer
   accountingUnitPdfUrl String? // PDF URL for Buchungskreis info
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@map("settings")
 }

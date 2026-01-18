@@ -1,6 +1,6 @@
-import { ReportStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { ReportStatus } from "@/generated/prisma/enums";
 import {
 	adminProcedure,
 	createTRPCRouter,

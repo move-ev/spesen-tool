@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Report: 'Report',
   Expense: 'Expense',
+  Attachment: 'Attachment',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
@@ -99,16 +100,21 @@ export const ExpenseScalarFieldEnum = {
   endDate: 'endDate',
   type: 'type',
   meta: 'meta',
-  receiptFileUrl: 'receiptFileUrl',
-  reason: 'reason',
-  kilometers: 'kilometers',
-  departure: 'departure',
-  destination: 'destination',
-  travelReason: 'travelReason',
   reportId: 'reportId'
 } as const
 
 export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const AttachmentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  expenseId: 'expenseId'
+} as const
+
+export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
