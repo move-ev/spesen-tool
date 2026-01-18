@@ -1,52 +1,49 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Moon, MoonIcon, Sun, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { Kbd, KbdGroup } from "./ui/kbd";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-export function ThemeToggle() {
+export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
 	const { theme, setTheme } = useTheme();
-	const [mounted, setMounted] = useState(false);
+
+	const handleThemeToggle = () => {
+		setTheme(theme === "dark" ? "light" : "dark");
+	};
 
 	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted) {
-		return null;
-	}
-
-	const isDark = theme === "dark";
+		const handleKeyDown = (event: KeyboardEvent) => {
+			// On Mac: event.metaKey (⌘), on Windows: event.ctrlKey, but spec says meta for ⌘
+			if (event.metaKey && (event.key === "d" || event.key === "D")) {
+				event.preventDefault();
+				setTheme(theme === "dark" ? "light" : "dark");
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [theme, setTheme]);
 
 	return (
-		<div
-			className={cn(
-				"inline-flex h-8 items-center justify-center gap-2 rounded-md px-3 text-xs",
-				"border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-				"transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-			)}
-		>
-			<button
-				aria-label="Hellmodus aktivieren"
-				className={`flex items-center justify-center p-1 transition-opacity ${
-					!isDark ? "opacity-100" : "opacity-40 hover:opacity-60"
-				}`}
-				onClick={() => setTheme("light")}
-				type="button"
-			>
-				<Sun className="h-4 w-4" />
-			</button>
-			<button
-				aria-label="Dunkelmodus aktivieren"
-				className={`flex items-center justify-center p-1 transition-opacity ${
-					isDark ? "opacity-100" : "opacity-40 hover:opacity-60"
-				}`}
-				onClick={() => setTheme("dark")}
-				type="button"
-			>
-				<Moon className="h-4 w-4" />
-			</button>
-		</div>
+		<Tooltip>
+			<TooltipTrigger
+				render={
+					<Button onClick={handleThemeToggle} size="icon" variant="ghost" {...props}>
+						{theme === "dark" ? <SunIcon /> : <MoonIcon />}
+					</Button>
+				}
+			/>
+			<TooltipContent sideOffset={8}>
+				<span className="me-2">Toggle theme</span>
+				<KbdGroup>
+					<Kbd>⌘</Kbd> + <Kbd>D</Kbd>
+				</KbdGroup>
+			</TooltipContent>
+		</Tooltip>
 	);
 }

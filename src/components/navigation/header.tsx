@@ -56,7 +56,7 @@ export function Header() {
 						</a>
 					</div>
 					<div className="flex items-center gap-4">
-						<ThemeToggle />
+						<ThemeToggle variant={"outline"} />
 						<SignOut />
 					</div>
 				</div>
