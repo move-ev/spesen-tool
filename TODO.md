@@ -15,22 +15,32 @@
 
 (Admins only)
 
-- [ ] Overview over all entries
-- [ ] Details to an expense report
-  - [ ] Accept, Decline, Edit Report
-  - [ ] List of all entries in the report
+- [x] Overview over all entries
+- [x] Details to an expense report
+  - [x] Accept, Decline, Edit Report
+  - [x] List of all entries in the report
 
 (All users)
 
-- [ ] Overview page with own report
-- [ ] Create a new expense report
-- [ ] Details to an expense report
-- [ ] Edit own expense report
+- [x] Overview page with own report
+- [x] Create a new expense report
+- [x] Details to an expense report
+- [x] Edit own expense report
 
 (Others)
 
-- [ ] Login
+- [x] Login
 
 ## Functionalities
 
 - [ ] RBAC for pages and api routes
+
+
+## Futher TODOs (Refactoring)
+
+- [ ] Migrate all components from radix-ui to base-ui
+  - [ ] Reinstall the shadcn/ui components
+- [ ] Move all forms to their own components
+- [ ] Fix authentication issues
+  - [ ] Update better-auth config
+  - [ ] Update app registration in Azure
