@@ -13,6 +13,7 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "../ui/field";
+import { Input } from "../ui/input";
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -21,6 +22,7 @@ import {
 
 const formSchema = z.object({
 	kilometerRate: z.number().min(0.01, "Kilometerrate muss größer als 0 sein"),
+	reviewerEmail: z.email("Ungültige E-Mail-Adresse"),
 });
 
 export function AdminSettingsForm({ ...props }: React.ComponentProps<"form">) {
@@ -41,6 +43,7 @@ export function AdminSettingsForm({ ...props }: React.ComponentProps<"form">) {
 	const form = useForm({
 		defaultValues: {
 			kilometerRate: data.kilometerRate,
+			reviewerEmail: data.reviewerEmail ?? "",
 		},
 		validators: {
 			onSubmit: formSchema,
@@ -48,6 +51,7 @@ export function AdminSettingsForm({ ...props }: React.ComponentProps<"form">) {
 		onSubmit: (value) => {
 			updateSettings.mutate({
 				kilometerRate: value.value.kilometerRate,
+				reviewerEmail: value.value.reviewerEmail ?? null,
 			});
 		},
 	});
@@ -113,6 +117,32 @@ export function AdminSettingsForm({ ...props }: React.ComponentProps<"form">) {
 						);
 					}}
 				</form.Field>
+				<form.Field name="reviewerEmail">
+					{(field) => {
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+						return (
+							<Field data-invalid={isInvalid}>
+								<FieldLabel htmlFor={field.name}>Reviewer-E-Mail</FieldLabel>
+								<Input
+									aria-invalid={isInvalid}
+									autoComplete="off"
+									id={field.name}
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="bearbeiter@move-ev.de"
+									value={field.state.value}
+								/>
+								<FieldDescription>
+									Diese E-Mail-Adresse erhält eine Benachrichtigung, wenn ein
+									Spesenantrag eingereicht wird.
+								</FieldDescription>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</Field>
+						);
+					}}
+				</form.Field>
+
 				<Button
 					disabled={updateSettings.isPending}
 					form="form-admin-settings"
