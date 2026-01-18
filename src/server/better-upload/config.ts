@@ -1,4 +1,4 @@
-import { type Router, route } from "@better-upload/server";
+import type { Router } from "@better-upload/server";
 import { custom } from "@better-upload/server/clients";
 import { env } from "@/env";
 

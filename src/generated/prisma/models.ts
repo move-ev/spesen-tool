@@ -10,6 +10,7 @@
  */
 export type * from './models/Report'
 export type * from './models/Expense'
+export type * from './models/Attachment'
 export type * from './models/User'
 export type * from './models/Session'
 export type * from './models/Account'
