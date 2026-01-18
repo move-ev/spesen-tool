@@ -1,6 +1,6 @@
 import { isValid, parse } from "date-fns";
 import z from "zod";
-import { ExpenseType } from "./enums";
+import { ExpenseType } from "@/generated/prisma/enums";
 
 export const createReportSchema = z.object({
 	title: z.string().min(1),

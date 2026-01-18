@@ -12,6 +12,13 @@ import {
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 export const expenseRouter = createTRPCRouter({
+	listForReport: protectedProcedure
+		.input(z.object({ reportId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			return ctx.db.expense.findMany({
+				where: { reportId: input.reportId },
+			});
+		}),
 	// Get all expenses for a report
 	getByReportId: protectedProcedure
 		.input(z.object({ reportId: z.string() }))

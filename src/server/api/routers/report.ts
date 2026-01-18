@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ReportStatus } from "@/lib/enums";
+import { ReportStatus } from "@/generated/prisma/enums";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { sendReportSubmittedEmail } from "@/server/email";
 

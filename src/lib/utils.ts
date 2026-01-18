@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { ReportStatus } from "@/generated/prisma/enums";
+import type { ExpenseType, ReportStatus } from "@/generated/prisma/enums";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -69,4 +69,15 @@ export async function renameFileWithHash(
 	);
 	const newFileName = extension ? `${hash}.${extension}` : hash;
 	return new File([file], newFileName, { type: file.type });
+}
+
+export function translateExpenseType(type: ExpenseType) {
+	switch (type) {
+		case "RECEIPT":
+			return "Beleg";
+		case "TRAVEL":
+			return "Reise";
+		case "FOOD":
+			return "Verpflegung";
+	}
 }
