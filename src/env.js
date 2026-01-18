@@ -18,6 +18,10 @@ export const env = createEnv({
 		MICROSOFT_CLIENT_ID: z.string(),
 		MICROSOFT_CLIENT_SECRET: z.string(),
 		MICROSOFT_TENANT_ID: z.string(),
+
+		STORAGE_HOST: z.string(),
+		STORAGE_ACCESS_KEY_ID: z.string(),
+		STORAGE_ACCESS_KEY: z.string(),
 	},
 
 	/**
@@ -41,6 +45,9 @@ export const env = createEnv({
 		MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
 		MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
 		MICROSOFT_TENANT_ID: process.env.MICROSOFT_TENANT_ID,
+		STORAGE_HOST: process.env.STORAGE_HOST,
+		STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
+		STORAGE_ACCESS_KEY: process.env.STORAGE_ACCESS_KEY,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
