@@ -151,10 +151,8 @@ export function CreateReceiptExpenseForm({
 					}}
 					name="endDate"
 				/>
-			</FieldGroup>
-			<Separator />
-			<FieldGroup>
 				<Button
+					className={"md:col-span-2"}
 					disabled={createReceipt.isPending}
 					form="form-create-receipt-expense"
 					type="submit"

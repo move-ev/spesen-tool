@@ -2,6 +2,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AdminSettingsForm } from "@/components/forms/admin-settings-form";
+import { CreateFoodExpenseForm } from "@/components/forms/expense/food";
 import { CreateReceiptExpenseForm } from "@/components/forms/expense/receipt";
 import { CreateTravelExpenseForm } from "@/components/forms/expense/travel";
 import { PageDescription, PageTitle } from "@/components/page-title";
@@ -35,19 +36,22 @@ export default async function ServerPage({
 					Füge deinem Report eine neue Ausgabe hinzu
 				</PageDescription>
 			</section>
-			<section className="container mt-10 max-w-4xl">
-				<Tabs>
+			<section className="container mt-10 max-w-4xl pb-32">
+				<Tabs defaultValue="receipt">
 					<TabsList className={"w-full"}>
 						<TabsTrigger value="receipt">Beleg</TabsTrigger>
 						<TabsTrigger value="travel">Reise</TabsTrigger>
 						<TabsTrigger value="food">Verpflegung</TabsTrigger>
 					</TabsList>
-					<div>
+					<div className="mt-6">
 						<TabsContent value="receipt">
 							<CreateReceiptExpenseForm reportId={reportId} />
 						</TabsContent>
 						<TabsContent value="travel">
 							<CreateTravelExpenseForm reportId={reportId} />
+						</TabsContent>
+						<TabsContent value="food">
+							<CreateFoodExpenseForm reportId={reportId} />
 						</TabsContent>
 					</div>
 				</Tabs>

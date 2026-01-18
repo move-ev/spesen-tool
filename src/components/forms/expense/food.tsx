@@ -1,8 +1,9 @@
 "use client";
 
 import { NumberField } from "@base-ui/react";
-import { useForm } from "@tanstack/react-form";
-import { formatDate } from "date-fns";
+import { useForm, useStore } from "@tanstack/react-form";
+import { differenceInDays, formatDate, isValid, parse } from "date-fns";
+import React from "react";
 import { toast } from "sonner";
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
@@ -18,13 +19,18 @@ import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
+	InputGroupText,
 } from "@/components/ui/input-group";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { createTravelExpenseSchema } from "@/lib/validators";
+import { createFoodExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
-export function CreateTravelExpenseForm({
+const DAILY_FOOD_ALLOWANCE = 12;
+const BREAKFAST_DEDUCTION = 5.8;
+const LUNCH_DEDUCTION = 11.1;
+const DINNER_DEDUCTION = 11.1;
+
+export function CreateFoodExpenseForm({
 	reportId,
 	onSuccess,
 	...props
@@ -33,7 +39,7 @@ export function CreateTravelExpenseForm({
 	onSuccess?: () => void;
 }) {
 	const utils = api.useUtils();
-	const createTravel = api.expense.createTravel.useMutation({
+	const createTravel = api.expense.createFood.useMutation({
 		onSuccess: () => {
 			utils.expense.invalidate();
 			toast.success("Ausgabe erfolgreich erstellt");
@@ -54,27 +60,60 @@ export function CreateTravelExpenseForm({
 			endDate: formatDate(new Date(), "dd.MM.yyyy"),
 			type: "TRAVEL",
 			reportId,
-			from: "",
-			to: "",
-			distance: 0,
+			days: 0,
+			breakfastDeduction: 0,
+			lunchDeduction: 0,
+			dinnerDeduction: 0,
 		},
 		validators: {
-			onSubmit: createTravelExpenseSchema,
+			onSubmit: createFoodExpenseSchema,
 		},
 		onSubmit: ({ value }) => {
 			createTravel.mutate({
-				amount: value.amount,
-				description: value.description,
-				startDate: value.startDate,
-				endDate: value.endDate,
-				type: "TRAVEL",
-				reportId,
-				from: value.from,
-				to: value.to,
-				distance: value.distance,
+				...value,
+				type: "FOOD",
 			});
 		},
 	});
+
+	const {
+		startDate,
+		endDate,
+		days,
+		breakfastDeduction,
+		lunchDeduction,
+		dinnerDeduction,
+	} = useStore(form.store, (state) => ({
+		startDate: state.values.startDate,
+		endDate: state.values.endDate,
+		days: state.values.days,
+		breakfastDeduction: state.values.breakfastDeduction,
+		lunchDeduction: state.values.lunchDeduction,
+		dinnerDeduction: state.values.dinnerDeduction,
+	}));
+
+	React.useEffect(() => {
+		const start = parse(startDate, "dd.MM.yyyy", new Date());
+		const end = parse(endDate, "dd.MM.yyyy", new Date());
+
+		if (!isValid(start) || !isValid(end)) return;
+
+		const days = differenceInDays(end, start) + 1;
+
+		if (days < 1) return;
+
+		form.setFieldValue("days", days);
+	}, [startDate, endDate, form]);
+
+	React.useEffect(() => {
+		const amount =
+			DAILY_FOOD_ALLOWANCE * days -
+			(breakfastDeduction * BREAKFAST_DEDUCTION +
+				lunchDeduction * LUNCH_DEDUCTION +
+				dinnerDeduction * DINNER_DEDUCTION);
+
+		form.setFieldValue("amount", amount);
+	}, [days, breakfastDeduction, lunchDeduction, dinnerDeduction, form]);
 
 	return (
 		<form
@@ -86,12 +125,12 @@ export function CreateTravelExpenseForm({
 			}}
 			{...props}
 		>
-			<FieldGroup className="grid gap-4 md:grid-cols-2">
+			<FieldGroup className="grid gap-4 md:grid-cols-3">
 				<form.Field
 					children={(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
-							<Field className="md:col-span-2" data-invalid={isInvalid}>
+							<Field className="md:col-span-3" data-invalid={isInvalid}>
 								<FieldLabel htmlFor={field.name}>Beschreibung</FieldLabel>
 								<Textarea
 									aria-invalid={isInvalid}
@@ -161,98 +200,170 @@ export function CreateTravelExpenseForm({
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
 							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Startpunkt</FieldLabel>
-								<Input
-									aria-invalid={isInvalid}
-									autoComplete="off"
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Münster"
+								<FieldLabel htmlFor={field.name}>Dauer</FieldLabel>
+								<NumberField.Root
+									disabled
+									format={{
+										minimumFractionDigits: 0,
+										maximumFractionDigits: 0,
+									}}
+									locale={"de-DE"}
 									value={field.state.value}
-								/>
+								>
+									<NumberField.Group>
+										<InputGroup className="overflow-hidden opacity-100!">
+											<NumberField.Input
+												render={
+													<InputGroupInput
+														aria-invalid={isInvalid}
+														autoComplete="off"
+														className="aria-disabled:opacity-100"
+														disabled
+														id={field.name}
+														inputMode="decimal"
+														name={field.name}
+														placeholder="0"
+														readOnly
+													/>
+												}
+											/>
+											<InputGroupAddon align={"inline-end"}>
+												<InputGroupText>Tage</InputGroupText>
+											</InputGroupAddon>
+										</InputGroup>
+									</NumberField.Group>
+								</NumberField.Root>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
 					}}
-					name="from"
+					name="days"
 				/>
 				<form.Field
 					children={(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
 							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Endpunkt</FieldLabel>
-								<Input
-									aria-invalid={isInvalid}
-									autoComplete="off"
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Berlin"
-									value={field.state.value}
-								/>
-								{isInvalid && <FieldError errors={field.state.meta.errors} />}
-							</Field>
-						);
-					}}
-					name="to"
-				/>
-				<form.Field
-					children={(field) => {
-						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-						return (
-							<Field className="md:col-span-2" data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Strecke</FieldLabel>
+								<FieldLabel htmlFor={field.name}>Frühstücksabzug</FieldLabel>
 								<NumberField.Root
 									format={{
-										style: "decimal",
 										minimumFractionDigits: 0,
-										maximumFractionDigits: 2,
+										maximumFractionDigits: 0,
 									}}
 									locale={"de-DE"}
+									onBlur={field.handleBlur}
 									onValueChange={(value) => {
-										const distance = value ?? 0;
-										field.handleChange(distance);
-										// Automatically calculate amount: 30 cents per kilometer
-										const amount = distance * 0.3;
-										form.setFieldValue("amount", amount);
+										field.handleChange(value ?? 0);
 									}}
 									value={field.state.value}
 								>
 									<NumberField.Group>
-										<InputGroup className="overflow-hidden">
-											<NumberField.Input
-												render={
-													<InputGroupInput
-														aria-invalid={isInvalid}
-														autoComplete="off"
-														id={field.name}
-														inputMode="decimal"
-														name={field.name}
-														onBlur={field.handleBlur}
-														placeholder="123,00"
-													/>
-												}
-											/>
-											<InputGroupAddon align={"inline-end"}>km</InputGroupAddon>
-										</InputGroup>
+										<NumberField.Input
+											render={
+												<Input
+													aria-invalid={isInvalid}
+													autoComplete="off"
+													className="aria-disabled:opacity-100"
+													id={field.name}
+													inputMode="numeric"
+													name={field.name}
+													placeholder="0"
+												/>
+											}
+										/>
 									</NumberField.Group>
 								</NumberField.Root>
-								<FieldDescription>Abgelegte Strecke in km</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
 					}}
-					name="distance"
+					name="breakfastDeduction"
 				/>
 				<form.Field
 					children={(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
-							<Field className="md:col-span-2" data-invalid={isInvalid}>
+							<Field data-invalid={isInvalid}>
+								<FieldLabel htmlFor={field.name}>Mittagessenabzug</FieldLabel>
+								<NumberField.Root
+									format={{
+										minimumFractionDigits: 0,
+										maximumFractionDigits: 0,
+									}}
+									locale={"de-DE"}
+									onBlur={field.handleBlur}
+									onValueChange={(value) => {
+										field.handleChange(value ?? 0);
+									}}
+									value={field.state.value}
+								>
+									<NumberField.Group>
+										<NumberField.Input
+											render={
+												<Input
+													aria-invalid={isInvalid}
+													autoComplete="off"
+													className="aria-disabled:opacity-100"
+													id={field.name}
+													inputMode="numeric"
+													name={field.name}
+													placeholder="0"
+												/>
+											}
+										/>
+									</NumberField.Group>
+								</NumberField.Root>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</Field>
+						);
+					}}
+					name="lunchDeduction"
+				/>
+				<form.Field
+					children={(field) => {
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+						return (
+							<Field data-invalid={isInvalid}>
+								<FieldLabel htmlFor={field.name}>Abendessenabzug</FieldLabel>
+								<NumberField.Root
+									format={{
+										minimumFractionDigits: 0,
+										maximumFractionDigits: 0,
+									}}
+									locale={"de-DE"}
+									onBlur={field.handleBlur}
+									onValueChange={(value) => {
+										field.handleChange(value ?? 0);
+									}}
+									value={field.state.value}
+								>
+									<NumberField.Group>
+										<NumberField.Input
+											render={
+												<Input
+													aria-invalid={isInvalid}
+													autoComplete="off"
+													className="aria-disabled:opacity-100"
+													id={field.name}
+													inputMode="numeric"
+													name={field.name}
+													placeholder="0"
+												/>
+											}
+										/>
+									</NumberField.Group>
+								</NumberField.Root>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</Field>
+						);
+					}}
+					name="dinnerDeduction"
+				/>
+				<form.Field
+					children={(field) => {
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+						return (
+							<Field className="md:col-span-3" data-invalid={isInvalid}>
 								<FieldLabel htmlFor={field.name}>Betrag</FieldLabel>
 								<NumberField.Root
 									disabled
