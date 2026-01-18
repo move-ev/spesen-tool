@@ -9,13 +9,9 @@ import {
 export const settingsRouter = createTRPCRouter({
 	// Get settings (only admins)
 	get: protectedProcedure.query(async ({ ctx }) => {
-		// Check if user is admin
-		const user = await ctx.db.user.findUnique({
-			where: { id: ctx.session.user.id },
-			select: { admin: true },
-		});
+		const isAdmin = ctx.session.user.role === "admin";
 
-		if (user?.admin !== true) {
+		if (!isAdmin) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
 				message: "Only admins can access settings",
@@ -36,7 +32,10 @@ export const settingsRouter = createTRPCRouter({
 			});
 		}
 
-		return settings;
+		return {
+			...settings,
+			kilometerRate: Number(settings.kilometerRate),
+		};
 	}),
 
 	// Public settings for non-admin usage
@@ -58,18 +57,14 @@ export const settingsRouter = createTRPCRouter({
 		.input(
 			z.object({
 				kilometerRate: z.number().positive().optional(),
-				reviewerEmail: z.string().email().optional().nullable(),
+				reviewerEmail: z.email().optional().nullable(),
 				accountingUnitPdfUrl: z.string().optional().nullable(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Check if user is admin
-			const user = await ctx.db.user.findUnique({
-				where: { id: ctx.session.user.id },
-				select: { admin: true },
-			});
-
-			if (user?.admin !== true) {
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Only admins can update settings",
