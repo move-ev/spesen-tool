@@ -28,12 +28,10 @@ export type AggregateExpense = {
 
 export type ExpenseAvgAggregateOutputType = {
   amount: runtime.Decimal | null
-  kilometers: runtime.Decimal | null
 }
 
 export type ExpenseSumAggregateOutputType = {
   amount: runtime.Decimal | null
-  kilometers: runtime.Decimal | null
 }
 
 export type ExpenseMinAggregateOutputType = {
@@ -43,12 +41,6 @@ export type ExpenseMinAggregateOutputType = {
   startDate: Date | null
   endDate: Date | null
   type: $Enums.ExpenseType | null
-  receiptFileUrl: string | null
-  reason: string | null
-  kilometers: runtime.Decimal | null
-  departure: string | null
-  destination: string | null
-  travelReason: string | null
   reportId: string | null
 }
 
@@ -59,12 +51,6 @@ export type ExpenseMaxAggregateOutputType = {
   startDate: Date | null
   endDate: Date | null
   type: $Enums.ExpenseType | null
-  receiptFileUrl: string | null
-  reason: string | null
-  kilometers: runtime.Decimal | null
-  departure: string | null
-  destination: string | null
-  travelReason: string | null
   reportId: string | null
 }
 
@@ -76,12 +62,6 @@ export type ExpenseCountAggregateOutputType = {
   endDate: number
   type: number
   meta: number
-  receiptFileUrl: number
-  reason: number
-  kilometers: number
-  departure: number
-  destination: number
-  travelReason: number
   reportId: number
   _all: number
 }
@@ -89,12 +69,10 @@ export type ExpenseCountAggregateOutputType = {
 
 export type ExpenseAvgAggregateInputType = {
   amount?: true
-  kilometers?: true
 }
 
 export type ExpenseSumAggregateInputType = {
   amount?: true
-  kilometers?: true
 }
 
 export type ExpenseMinAggregateInputType = {
@@ -104,12 +82,6 @@ export type ExpenseMinAggregateInputType = {
   startDate?: true
   endDate?: true
   type?: true
-  receiptFileUrl?: true
-  reason?: true
-  kilometers?: true
-  departure?: true
-  destination?: true
-  travelReason?: true
   reportId?: true
 }
 
@@ -120,12 +92,6 @@ export type ExpenseMaxAggregateInputType = {
   startDate?: true
   endDate?: true
   type?: true
-  receiptFileUrl?: true
-  reason?: true
-  kilometers?: true
-  departure?: true
-  destination?: true
-  travelReason?: true
   reportId?: true
 }
 
@@ -137,12 +103,6 @@ export type ExpenseCountAggregateInputType = {
   endDate?: true
   type?: true
   meta?: true
-  receiptFileUrl?: true
-  reason?: true
-  kilometers?: true
-  departure?: true
-  destination?: true
-  travelReason?: true
   reportId?: true
   _all?: true
 }
@@ -241,12 +201,6 @@ export type ExpenseGroupByOutputType = {
   endDate: Date
   type: $Enums.ExpenseType
   meta: runtime.JsonValue
-  receiptFileUrl: string | null
-  reason: string | null
-  kilometers: runtime.Decimal | null
-  departure: string | null
-  destination: string | null
-  travelReason: string | null
   reportId: string
   _count: ExpenseCountAggregateOutputType | null
   _avg: ExpenseAvgAggregateOutputType | null
@@ -281,12 +235,6 @@ export type ExpenseWhereInput = {
   endDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeFilter<"Expense"> | $Enums.ExpenseType
   meta?: Prisma.JsonFilter<"Expense">
-  receiptFileUrl?: Prisma.StringNullableFilter<"Expense"> | string | null
-  reason?: Prisma.StringNullableFilter<"Expense"> | string | null
-  kilometers?: Prisma.DecimalNullableFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.StringNullableFilter<"Expense"> | string | null
-  destination?: Prisma.StringNullableFilter<"Expense"> | string | null
-  travelReason?: Prisma.StringNullableFilter<"Expense"> | string | null
   reportId?: Prisma.StringFilter<"Expense"> | string
   report?: Prisma.XOR<Prisma.ReportScalarRelationFilter, Prisma.ReportWhereInput>
 }
@@ -299,12 +247,6 @@ export type ExpenseOrderByWithRelationInput = {
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
   meta?: Prisma.SortOrder
-  receiptFileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  kilometers?: Prisma.SortOrderInput | Prisma.SortOrder
-  departure?: Prisma.SortOrderInput | Prisma.SortOrder
-  destination?: Prisma.SortOrderInput | Prisma.SortOrder
-  travelReason?: Prisma.SortOrderInput | Prisma.SortOrder
   reportId?: Prisma.SortOrder
   report?: Prisma.ReportOrderByWithRelationInput
 }
@@ -320,12 +262,6 @@ export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
   endDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeFilter<"Expense"> | $Enums.ExpenseType
   meta?: Prisma.JsonFilter<"Expense">
-  receiptFileUrl?: Prisma.StringNullableFilter<"Expense"> | string | null
-  reason?: Prisma.StringNullableFilter<"Expense"> | string | null
-  kilometers?: Prisma.DecimalNullableFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.StringNullableFilter<"Expense"> | string | null
-  destination?: Prisma.StringNullableFilter<"Expense"> | string | null
-  travelReason?: Prisma.StringNullableFilter<"Expense"> | string | null
   reportId?: Prisma.StringFilter<"Expense"> | string
   report?: Prisma.XOR<Prisma.ReportScalarRelationFilter, Prisma.ReportWhereInput>
 }, "id">
@@ -338,12 +274,6 @@ export type ExpenseOrderByWithAggregationInput = {
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
   meta?: Prisma.SortOrder
-  receiptFileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  kilometers?: Prisma.SortOrderInput | Prisma.SortOrder
-  departure?: Prisma.SortOrderInput | Prisma.SortOrder
-  destination?: Prisma.SortOrderInput | Prisma.SortOrder
-  travelReason?: Prisma.SortOrderInput | Prisma.SortOrder
   reportId?: Prisma.SortOrder
   _count?: Prisma.ExpenseCountOrderByAggregateInput
   _avg?: Prisma.ExpenseAvgOrderByAggregateInput
@@ -363,12 +293,6 @@ export type ExpenseScalarWhereWithAggregatesInput = {
   endDate?: Prisma.DateTimeWithAggregatesFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeWithAggregatesFilter<"Expense"> | $Enums.ExpenseType
   meta?: Prisma.JsonWithAggregatesFilter<"Expense">
-  receiptFileUrl?: Prisma.StringNullableWithAggregatesFilter<"Expense"> | string | null
-  reason?: Prisma.StringNullableWithAggregatesFilter<"Expense"> | string | null
-  kilometers?: Prisma.DecimalNullableWithAggregatesFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.StringNullableWithAggregatesFilter<"Expense"> | string | null
-  destination?: Prisma.StringNullableWithAggregatesFilter<"Expense"> | string | null
-  travelReason?: Prisma.StringNullableWithAggregatesFilter<"Expense"> | string | null
   reportId?: Prisma.StringWithAggregatesFilter<"Expense"> | string
 }
 
@@ -380,12 +304,6 @@ export type ExpenseCreateInput = {
   endDate: Date | string
   type: $Enums.ExpenseType
   meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: string | null
-  reason?: string | null
-  kilometers?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: string | null
-  destination?: string | null
-  travelReason?: string | null
   report: Prisma.ReportCreateNestedOneWithoutExpensesInput
 }
 
@@ -397,12 +315,6 @@ export type ExpenseUncheckedCreateInput = {
   endDate: Date | string
   type: $Enums.ExpenseType
   meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: string | null
-  reason?: string | null
-  kilometers?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: string | null
-  destination?: string | null
-  travelReason?: string | null
   reportId: string
 }
 
@@ -414,12 +326,6 @@ export type ExpenseUpdateInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   report?: Prisma.ReportUpdateOneRequiredWithoutExpensesNestedInput
 }
 
@@ -431,12 +337,6 @@ export type ExpenseUncheckedUpdateInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -448,12 +348,6 @@ export type ExpenseCreateManyInput = {
   endDate: Date | string
   type: $Enums.ExpenseType
   meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: string | null
-  reason?: string | null
-  kilometers?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: string | null
-  destination?: string | null
-  travelReason?: string | null
   reportId: string
 }
 
@@ -465,12 +359,6 @@ export type ExpenseUpdateManyMutationInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ExpenseUncheckedUpdateManyInput = {
@@ -481,12 +369,6 @@ export type ExpenseUncheckedUpdateManyInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -508,18 +390,11 @@ export type ExpenseCountOrderByAggregateInput = {
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
   meta?: Prisma.SortOrder
-  receiptFileUrl?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  kilometers?: Prisma.SortOrder
-  departure?: Prisma.SortOrder
-  destination?: Prisma.SortOrder
-  travelReason?: Prisma.SortOrder
   reportId?: Prisma.SortOrder
 }
 
 export type ExpenseAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder
-  kilometers?: Prisma.SortOrder
 }
 
 export type ExpenseMaxOrderByAggregateInput = {
@@ -529,12 +404,6 @@ export type ExpenseMaxOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  receiptFileUrl?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  kilometers?: Prisma.SortOrder
-  departure?: Prisma.SortOrder
-  destination?: Prisma.SortOrder
-  travelReason?: Prisma.SortOrder
   reportId?: Prisma.SortOrder
 }
 
@@ -545,18 +414,11 @@ export type ExpenseMinOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  receiptFileUrl?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  kilometers?: Prisma.SortOrder
-  departure?: Prisma.SortOrder
-  destination?: Prisma.SortOrder
-  travelReason?: Prisma.SortOrder
   reportId?: Prisma.SortOrder
 }
 
 export type ExpenseSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
-  kilometers?: Prisma.SortOrder
 }
 
 export type ExpenseCreateNestedManyWithoutReportInput = {
@@ -613,14 +475,6 @@ export type EnumExpenseTypeFieldUpdateOperationsInput = {
   set?: $Enums.ExpenseType
 }
 
-export type NullableDecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
 export type ExpenseCreateWithoutReportInput = {
   id?: string
   description?: string | null
@@ -629,12 +483,6 @@ export type ExpenseCreateWithoutReportInput = {
   endDate: Date | string
   type: $Enums.ExpenseType
   meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: string | null
-  reason?: string | null
-  kilometers?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: string | null
-  destination?: string | null
-  travelReason?: string | null
 }
 
 export type ExpenseUncheckedCreateWithoutReportInput = {
@@ -645,12 +493,6 @@ export type ExpenseUncheckedCreateWithoutReportInput = {
   endDate: Date | string
   type: $Enums.ExpenseType
   meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: string | null
-  reason?: string | null
-  kilometers?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: string | null
-  destination?: string | null
-  travelReason?: string | null
 }
 
 export type ExpenseCreateOrConnectWithoutReportInput = {
@@ -690,12 +532,6 @@ export type ExpenseScalarWhereInput = {
   endDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeFilter<"Expense"> | $Enums.ExpenseType
   meta?: Prisma.JsonFilter<"Expense">
-  receiptFileUrl?: Prisma.StringNullableFilter<"Expense"> | string | null
-  reason?: Prisma.StringNullableFilter<"Expense"> | string | null
-  kilometers?: Prisma.DecimalNullableFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.StringNullableFilter<"Expense"> | string | null
-  destination?: Prisma.StringNullableFilter<"Expense"> | string | null
-  travelReason?: Prisma.StringNullableFilter<"Expense"> | string | null
   reportId?: Prisma.StringFilter<"Expense"> | string
 }
 
@@ -707,12 +543,6 @@ export type ExpenseCreateManyReportInput = {
   endDate: Date | string
   type: $Enums.ExpenseType
   meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: string | null
-  reason?: string | null
-  kilometers?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: string | null
-  destination?: string | null
-  travelReason?: string | null
 }
 
 export type ExpenseUpdateWithoutReportInput = {
@@ -723,12 +553,6 @@ export type ExpenseUpdateWithoutReportInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ExpenseUncheckedUpdateWithoutReportInput = {
@@ -739,12 +563,6 @@ export type ExpenseUncheckedUpdateWithoutReportInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ExpenseUncheckedUpdateManyWithoutReportInput = {
@@ -755,12 +573,6 @@ export type ExpenseUncheckedUpdateManyWithoutReportInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
   meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  receiptFileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kilometers?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  departure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  destination?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  travelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -773,12 +585,6 @@ export type ExpenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   endDate?: boolean
   type?: boolean
   meta?: boolean
-  receiptFileUrl?: boolean
-  reason?: boolean
-  kilometers?: boolean
-  departure?: boolean
-  destination?: boolean
-  travelReason?: boolean
   reportId?: boolean
   report?: boolean | Prisma.ReportDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["expense"]>
@@ -791,12 +597,6 @@ export type ExpenseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   endDate?: boolean
   type?: boolean
   meta?: boolean
-  receiptFileUrl?: boolean
-  reason?: boolean
-  kilometers?: boolean
-  departure?: boolean
-  destination?: boolean
-  travelReason?: boolean
   reportId?: boolean
   report?: boolean | Prisma.ReportDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["expense"]>
@@ -809,12 +609,6 @@ export type ExpenseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   endDate?: boolean
   type?: boolean
   meta?: boolean
-  receiptFileUrl?: boolean
-  reason?: boolean
-  kilometers?: boolean
-  departure?: boolean
-  destination?: boolean
-  travelReason?: boolean
   reportId?: boolean
   report?: boolean | Prisma.ReportDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["expense"]>
@@ -827,16 +621,10 @@ export type ExpenseSelectScalar = {
   endDate?: boolean
   type?: boolean
   meta?: boolean
-  receiptFileUrl?: boolean
-  reason?: boolean
-  kilometers?: boolean
-  departure?: boolean
-  destination?: boolean
-  travelReason?: boolean
   reportId?: boolean
 }
 
-export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "description" | "amount" | "startDate" | "endDate" | "type" | "meta" | "receiptFileUrl" | "reason" | "kilometers" | "departure" | "destination" | "travelReason" | "reportId", ExtArgs["result"]["expense"]>
+export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "description" | "amount" | "startDate" | "endDate" | "type" | "meta" | "reportId", ExtArgs["result"]["expense"]>
 export type ExpenseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   report?: boolean | Prisma.ReportDefaultArgs<ExtArgs>
 }
@@ -860,12 +648,6 @@ export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     endDate: Date
     type: $Enums.ExpenseType
     meta: runtime.JsonValue
-    receiptFileUrl: string | null
-    reason: string | null
-    kilometers: runtime.Decimal | null
-    departure: string | null
-    destination: string | null
-    travelReason: string | null
     reportId: string
   }, ExtArgs["result"]["expense"]>
   composites: {}
@@ -1298,12 +1080,6 @@ export interface ExpenseFieldRefs {
   readonly endDate: Prisma.FieldRef<"Expense", 'DateTime'>
   readonly type: Prisma.FieldRef<"Expense", 'ExpenseType'>
   readonly meta: Prisma.FieldRef<"Expense", 'Json'>
-  readonly receiptFileUrl: Prisma.FieldRef<"Expense", 'String'>
-  readonly reason: Prisma.FieldRef<"Expense", 'String'>
-  readonly kilometers: Prisma.FieldRef<"Expense", 'Decimal'>
-  readonly departure: Prisma.FieldRef<"Expense", 'String'>
-  readonly destination: Prisma.FieldRef<"Expense", 'String'>
-  readonly travelReason: Prisma.FieldRef<"Expense", 'String'>
   readonly reportId: Prisma.FieldRef<"Expense", 'String'>
 }
     

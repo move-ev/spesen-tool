@@ -99,12 +99,6 @@ export const ExpenseScalarFieldEnum = {
   endDate: 'endDate',
   type: 'type',
   meta: 'meta',
-  receiptFileUrl: 'receiptFileUrl',
-  reason: 'reason',
-  kilometers: 'kilometers',
-  departure: 'departure',
-  destination: 'destination',
-  travelReason: 'travelReason',
   reportId: 'reportId'
 } as const
 

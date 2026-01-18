@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 // NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
@@ -47,16 +47,6 @@ model Expense {
   endDate     DateTime
   type        ExpenseType
   meta        Json
-
-  // Receipt specific fields
-  receiptFileUrl String? // URL to uploaded receipt file
-  reason         String? // Reason why expense was necessary for the association
-
-  // Travel specific fields
-  kilometers   Decimal? // Kilometers traveled
-  departure    String?  // Departure location
-  destination  String?  // Destination location
-  travelReason String?  // Reason for travel
 
   reportId String
   report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
