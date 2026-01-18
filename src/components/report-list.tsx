@@ -3,8 +3,8 @@ import type { Expense, Report } from "generated/prisma/client";
 import Link from "next/link";
 import type React from "react";
 import { cn } from "@/lib/utils";
+import { ReportCard, ReportCardField } from "./report-card";
 import { ReportStatusBadge } from "./report-status-badge";
-import { Badge } from "./ui/badge";
 import {
 	Card,
 	CardContent,
@@ -63,54 +63,17 @@ export function ReportList({
 						className="group/list-item relative isolate rounded-lg"
 						key={report.id}
 					>
-						<Card className="flex h-full flex-col transition-colors group-hover/list-item:bg-muted">
-							<CardHeader>
-								<div className="flex flex-col flex-wrap items-start justify-between gap-2 sm:flex-row sm:flex-wrap-reverse">
-									<CardTitle className="order-2 sm:order-1">
-										<Link
-											className="group/list-item focus:outline-0"
-											href={reportRoute.replace(":reportId", report.id)}
-										>
-											<span
-												className={cn(
-													"absolute inset-0 z-50 h-full w-full rounded-lg transition-colors",
-													"group-focus/list-item:ring-2 group-focus/list-item:ring-ring group-focus/list-item:ring-offset-4 group-focus/list-item:ring-offset-background",
-												)}
-											/>
-											{report.title}
-										</Link>
-									</CardTitle>
-									<ReportStatusBadge className="sm:order-2" status={report.status} />
-								</div>
-								<CardDescription className="line-clamp-2">
-									{report.description}
-								</CardDescription>
-							</CardHeader>
-							<CardContent className="flex-1 border-t pt-4">
-								<dl className="grid gap-4">
-									<div className="grid grid-cols-2">
-										<dt className="text-muted-foreground text-sm">Gesamtbetrag</dt>
-										<dd className="font-medium text-foreground text-sm">
-											{reportTotal.toFixed(2)} €
-										</dd>
-									</div>
-									<div className="grid grid-cols-2">
-										<dt className="text-muted-foreground text-sm">Anzahl Ausgaben</dt>
-										<dd className="font-medium text-foreground text-sm">
-											{report.expenses.length === 0
-												? "Keine Ausgaben"
-												: report.expenses.length}
-										</dd>
-									</div>
-								</dl>
-							</CardContent>
-							<CardFooter className="py-2">
-								<span className="text-xs">
-									Erstellt am {format(report.createdAt, "dd.MM.yyyy")} um{" "}
-									{format(report.createdAt, "HH:mm")} Uhr
-								</span>
-							</CardFooter>
-						</Card>
+						<ReportCard report={report} reportRoute={reportRoute}>
+							<ReportCardField label="Gesamtbetrag" value={reportTotal.toFixed(2)} />
+							<ReportCardField
+								label="Anzahl Ausgaben"
+								value={
+									report.expenses.length === 0
+										? "Keine Ausgaben"
+										: report.expenses.length.toString()
+								}
+							/>
+						</ReportCard>
 					</li>
 				);
 			})}

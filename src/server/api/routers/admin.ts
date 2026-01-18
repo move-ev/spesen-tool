@@ -1,24 +1,95 @@
 import { ReportStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+	adminProcedure,
+	createTRPCRouter,
+	protectedProcedure,
+} from "@/server/api/trpc";
 
 export const adminRouter = createTRPCRouter({
-	// Get all reports (admin only)
-	getAllReports: protectedProcedure.query(async ({ ctx }) => {
-		// Check if user is admin
-		const user = await ctx.db.user.findUnique({
-			where: { id: ctx.session.user.id },
-			select: { admin: true },
+	stats: adminProcedure.query(async ({ ctx }) => {
+		const { db } = ctx;
+
+		const [totalReports, openReports, totalAmount] = await db.$transaction([
+			db.report.count(),
+			db.report.count({
+				where: {
+					status: {
+						in: [ReportStatus.PENDING_APPROVAL],
+					},
+				},
+			}),
+			db.expense.aggregate({
+				_sum: {
+					amount: true,
+				},
+			}),
+		]);
+
+		return {
+			totalCount: totalReports,
+			openCount: openReports,
+			totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
+		};
+	}),
+	listOpen: adminProcedure.query(async ({ ctx }) => {
+		return ctx.db.report.findMany({
+			where: {
+				status: {
+					in: [ReportStatus.PENDING_APPROVAL],
+				},
+			},
+			include: {
+				owner: {
+					select: {
+						name: true,
+					},
+				},
+				expenses: {
+					select: {
+						amount: true,
+					},
+				},
+			},
+			orderBy: {
+				lastUpdatedAt: "desc",
+			},
 		});
+	}),
+	/**
+	 * Lists all reports, which are NOT open and not a draft which have been updated in the last 30 days
+	 */
+	listRelevant: adminProcedure.query(async ({ ctx }) => {
+		const pastDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-		if (user?.admin !== true) {
-			throw new TRPCError({
-				code: "FORBIDDEN",
-				message: "Only admins can access all reports",
-			});
-		}
-
+		return await ctx.db.report.findMany({
+			where: {
+				status: {
+					notIn: [ReportStatus.PENDING_APPROVAL, ReportStatus.DRAFT],
+				},
+				lastUpdatedAt: {
+					gte: pastDate,
+				},
+			},
+			include: {
+				expenses: {
+					select: {
+						amount: true,
+					},
+				},
+				owner: {
+					select: {
+						name: true,
+					},
+				},
+			},
+			orderBy: {
+				lastUpdatedAt: "desc",
+			},
+		});
+	}),
+	getAllReports: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.report.findMany({
 			include: {
 				expenses: true,
