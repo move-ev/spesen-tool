@@ -19,6 +19,10 @@ export const env = createEnv({
 
     MICROSOFT_CLIENT_ID: z.string(),
     MICROSOFT_CLIENT_SECRET: z.string(),
+
+    // Email configuration (optional - uses Resend)
+    EMAIL_API_KEY: z.string().optional(),
+    EMAIL_FROM: z.string().email().optional(),
   },
 
 	/**
@@ -40,7 +44,9 @@ export const env = createEnv({
 		DATABASE_URL: process.env.DATABASE_URL,
 		NODE_ENV: process.env.NODE_ENV,
 		MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
-		MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET
+		MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
+		EMAIL_API_KEY: process.env.EMAIL_API_KEY,
+		EMAIL_FROM: process.env.EMAIL_FROM,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
