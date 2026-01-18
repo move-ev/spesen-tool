@@ -24,9 +24,8 @@ export function SignOut({ ...props }: React.ComponentProps<typeof Button>) {
 			error: "Fehler beim Abmelden",
 		});
 
-		res.finally(() => {
+		res.then(() => {
 			setPending(false);
-			router.push(ROUTES.AUTH);
 		});
 	};
 
