@@ -42,7 +42,7 @@ export default async function ServerPage({
 					<ReportStats reportId={reportId} />
 				</Suspense>
 			</section>
-			<section className="container my-12">
+			<section className="container my-12 pb-24">
 				<div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row">
 					<h2 className="font-semibold">Ausgaben</h2>
 					<Button
