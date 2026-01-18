@@ -4,13 +4,6 @@ import { Suspense } from "react";
 import { AdminSettingsForm } from "@/components/forms/admin-settings-form";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/consts";
 import { api, HydrateClient } from "@/trpc/server";

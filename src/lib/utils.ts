@@ -1,6 +1,6 @@
-import type { ReportStatus } from "@prisma/client";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { ReportStatus } from "@/generated/prisma/enums";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));

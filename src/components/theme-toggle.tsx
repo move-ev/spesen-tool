@@ -1,9 +1,8 @@
 "use client";
 
-import { Moon, MoonIcon, Sun, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Kbd, KbdGroup } from "./ui/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";

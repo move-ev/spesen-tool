@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { ReportListSkeleton } from "@/components/report-list";
 import { Button } from "@/components/ui/button";

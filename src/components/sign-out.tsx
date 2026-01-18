@@ -1,5 +1,6 @@
 "use client";
 
+import { router } from "better-auth/api";
 import { LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -25,6 +26,7 @@ export function SignOut({ ...props }: React.ComponentProps<typeof Button>) {
 		});
 
 		res.then(() => {
+			router.push(ROUTES.AUTH);
 			setPending(false);
 		});
 	};
