@@ -1,13 +1,13 @@
 import type { UploadHookControl } from "@better-upload/client";
 import { Loader2, Upload } from "lucide-react";
 import { useId } from "react";
-import { useDropzone } from "react-dropzone";
+import { type Accept, useDropzone } from "react-dropzone";
 import { cn } from "@/lib/utils";
 
 type UploadDropzoneProps = {
 	control: UploadHookControl<true>;
 	id?: string;
-	accept?: string;
+	accept?: Accept;
 	metadata?: Record<string, unknown>;
 	description?:
 		| {
@@ -34,6 +34,7 @@ export function UploadDropzone({
 	const id = useId();
 
 	const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
+		accept,
 		onDrop: (files) => {
 			if (files.length > 0 && !isPending) {
 				if (uploadOverride) {
@@ -96,7 +97,7 @@ export function UploadDropzone({
 
 				<input
 					{...getInputProps()}
-					accept={accept}
+					accept={accept ? Object.keys(accept).join(",") : undefined}
 					disabled={isPending}
 					id={_id || id}
 					multiple

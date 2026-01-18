@@ -3,10 +3,10 @@ import { custom } from "@better-upload/server/clients";
 import { env } from "@/env";
 
 const s3 = custom({
-	host: "nbg1.your-objectstorage.com",
-	accessKeyId: "2TVDE6NHOV7TEQ6TSFA2",
-	secretAccessKey: "OnvifX9CgpXvZJdKNrHbMqjSQgFUyVj6kPLMCVCi",
-	region: "nbg1",
+	host: env.STORAGE_HOST,
+	accessKeyId: env.STORAGE_ACCESS_KEY_ID,
+	secretAccessKey: env.STORAGE_ACCESS_KEY,
+	region: env.STORAGE_REGION,
 	secure: true,
 	forcePathStyle: false,
 });
