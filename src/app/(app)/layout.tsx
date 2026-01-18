@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { Header } from "@/components/navigation/header";
+import { SiteHeader } from "@/components/site-header";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
 
@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 
 	return (
 		<>
-			<Header />
+			<SiteHeader />
 			{children}
 		</>
 	);
