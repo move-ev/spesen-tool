@@ -42,6 +42,8 @@ export function CreateExpenseForm({ reportId }: CreateExpenseFormProps) {
 		ExpenseType.RECEIPT,
 	);
 	const [uploadingFile, setUploadingFile] = useState(false);
+	const parseLocalDate = (date?: string) =>
+		date ? new Date(`${date}T00:00:00`) : new Date();
 
 	const { data: report } = api.report.getById.useQuery(
 		{ id: reportId },
@@ -140,8 +142,8 @@ export function CreateExpenseForm({ reportId }: CreateExpenseFormProps) {
 					reportId,
 					description: value.description || undefined,
 					amount: Number(value.amount),
-					startDate: new Date(value.startDate ?? Date.now()),
-					endDate: new Date(value.endDate ?? Date.now()),
+					startDate: parseLocalDate(value.startDate),
+					endDate: parseLocalDate(value.endDate),
 					reason: value.reason,
 					receiptFileUrl,
 				});
@@ -156,8 +158,8 @@ export function CreateExpenseForm({ reportId }: CreateExpenseFormProps) {
 					departure: value.departure,
 					destination: value.destination,
 					travelReason: value.travelReason,
-					startDate: new Date(value.startDate ?? Date.now()),
-					endDate: new Date(value.endDate ?? Date.now()),
+					startDate: parseLocalDate(value.startDate),
+					endDate: parseLocalDate(value.endDate),
 				});
 				return;
 			}
@@ -166,8 +168,8 @@ export function CreateExpenseForm({ reportId }: CreateExpenseFormProps) {
 				reportId,
 				description: value.description || undefined,
 				amount: Number(value.amount),
-				startDate: new Date(value.startDate ?? Date.now()),
-				endDate: new Date(value.endDate ?? Date.now()),
+				startDate: parseLocalDate(value.startDate),
+				endDate: parseLocalDate(value.endDate),
 			});
 		},
 	});
@@ -180,12 +182,12 @@ export function CreateExpenseForm({ reportId }: CreateExpenseFormProps) {
 
 	return (
 		<div className="container mx-auto max-w-2xl px-4 py-8">
-			<Link href={`/reports/${reportId}`}>
-				<Button className="mb-6" variant="ghost">
+			<Button asChild className="mb-6" variant="ghost">
+				<Link href={`/reports/${reportId}`}>
 					<ArrowLeft className="mr-2 h-4 w-4" />
 					Zurück zum Report
-				</Button>
-			</Link>
+				</Link>
+			</Button>
 
 			<Card>
 				<CardHeader>
