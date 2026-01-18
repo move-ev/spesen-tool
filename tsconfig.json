@@ -27,7 +27,8 @@
 		/* Path Aliases */
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"@prisma/client": ["./generated/prisma/client"]
 		}
 	},
 	"include": [
@@ -38,5 +39,5 @@
 		"**/*.js",
 		".next/types/**/*.ts"
 	],
-	"exclude": ["node_modules", "generated"]
+	"exclude": ["node_modules"]
 }

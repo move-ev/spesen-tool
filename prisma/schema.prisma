@@ -48,6 +48,16 @@ model Expense {
   type        ExpenseType
   meta        Json
 
+  // Receipt specific fields
+  receiptFileUrl String? // URL to uploaded receipt file
+  reason         String? // Reason why expense was necessary for the association
+
+  // Travel specific fields
+  kilometers   Decimal? // Kilometers traveled
+  departure    String?  // Departure location
+  destination  String?  // Destination location
+  travelReason String?  // Reason for travel
+
   reportId String
   report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }
@@ -60,9 +70,9 @@ enum ExpenseType {
 
 model User {
   id            String    @id
-  name          String //@db.Text
+  name          String //@db.Text - Required by better-auth, we provide fallback in mapProfileToUser
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean   @default(false) // Required by better-auth as boolean, not DateTime
   image         String? //@db.Text
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
@@ -71,7 +81,11 @@ model User {
 
   ownReports Report[]
 
-  role       String?
+  // Role required by better-auth admin plugin
+  role       String   @default("user")
+  admin      Boolean?  @default(false)
+  
+  // Banning fields required by better-auth admin plugin
   banned     Boolean?  @default(false)
   banReason  String?
   banExpires DateTime?
@@ -128,4 +142,15 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Settings {
+  id                String   @id @default("singleton")
+  kilometerRate     Decimal  @default(0.30) // Rate per kilometer in EUR
+  reviewerEmail     String?  // Email of the global reviewer
+  accountingUnitPdfUrl String? // PDF URL for Buchungskreis info
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("settings")
 }

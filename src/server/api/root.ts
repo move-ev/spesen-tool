@@ -1,5 +1,9 @@
+import { adminRouter } from "@/server/api/routers/admin";
+import { expenseRouter } from "@/server/api/routers/expense";
+import { reportRouter } from "@/server/api/routers/report";
+import { settingsRouter } from "@/server/api/routers/settings";
+import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import { reportRouter } from "./routers/report";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +12,10 @@ import { reportRouter } from "./routers/report";
  */
 export const appRouter = createTRPCRouter({
 	report: reportRouter,
+	expense: expenseRouter,
+	settings: settingsRouter,
+	user: userRouter,
+	admin: adminRouter,
 });
 
 // export type definition of API

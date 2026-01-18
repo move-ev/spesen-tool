@@ -56,7 +56,8 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Settings: 'Settings'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -98,6 +99,12 @@ export const ExpenseScalarFieldEnum = {
   endDate: 'endDate',
   type: 'type',
   meta: 'meta',
+  receiptFileUrl: 'receiptFileUrl',
+  reason: 'reason',
+  kilometers: 'kilometers',
+  departure: 'departure',
+  destination: 'destination',
+  travelReason: 'travelReason',
   reportId: 'reportId'
 } as const
 
@@ -113,6 +120,7 @@ export const UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   role: 'role',
+  admin: 'admin',
   banned: 'banned',
   banReason: 'banReason',
   banExpires: 'banExpires'
@@ -165,6 +173,18 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const SettingsScalarFieldEnum = {
+  id: 'id',
+  kilometerRate: 'kilometerRate',
+  reviewerEmail: 'reviewerEmail',
+  accountingUnitPdfUrl: 'accountingUnitPdfUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
 
 
 export const SortOrder = {
