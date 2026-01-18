@@ -2,6 +2,7 @@ import { DockIcon, PlusIcon } from "lucide-react";
 import { CreateReport } from "@/components/create-report";
 import { ReportList } from "@/components/report-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ROUTES } from "@/lib/consts";
 import { api } from "@/trpc/server";
 
 export default async function ServerPage() {
@@ -36,7 +37,7 @@ export default async function ServerPage() {
 					</div>
 					<div className="container mt-6 sm:px-2 lg:px-4">
 						<TabsContent value="all">
-							<ReportList reportRoute={"/reports/:reportId"} reports={reports} />
+							<ReportList reportRoute={ROUTES.USER_REPORT} reports={reports} />
 						</TabsContent>
 					</div>
 				</Tabs>
