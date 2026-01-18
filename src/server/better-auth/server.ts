@@ -29,8 +29,18 @@ export const auth = betterAuth({
 			// Force Microsoft to show the account picker every time
 			prompt: "select_account",
 			mapProfileToUser: (profile) => {
-
 				const email = profile.email ?? profile.userPrincipalName;
+				const providerId = profile.id ?? profile.sub ?? profile.oid ?? email;
+				// Ensure provider id is stable for account linking
+				profile.id = providerId;
+				console.log("🔎 Microsoft profile:", {
+					email,
+					userPrincipalName: profile?.userPrincipalName,
+					tenantId: profile?.tid ?? profile?.tenantId,
+					issuer: profile?.iss,
+					sub: profile?.sub,
+					oid: profile?.oid,
+				});
 				if (!email) {
 					console.error("❌ No email found in Microsoft profile");
 					throw new Error("Microsoft profile does not contain an email address");
@@ -49,7 +59,7 @@ export const auth = betterAuth({
 				const name = profile.name ?? profile.displayName ?? profile.givenName ?? email.split("@")[0] ?? "User";
 				
 				const mappedUser = {
-					id: profile.id,
+					id: providerId,
 					email: email,
 					name: name,
 					image: profile.picture ?? profile.photo ?? undefined,
