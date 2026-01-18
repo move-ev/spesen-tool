@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
 
 const formSchema = z.object({
@@ -21,6 +21,7 @@ const formSchema = z.object({
 
 export default function NewReportPage() {
 	const router = useRouter();
+	const { data: publicSettings } = api.settings.getPublic.useQuery();
 	const getFieldError = (errors?: unknown[]) => {
 		if (!errors?.length) return null;
 		const firstError = errors[0];
@@ -143,7 +144,7 @@ export default function NewReportPage() {
 										value={field.state.value}
 										onChange={(e) => field.handleChange(e.target.value)}
 										onBlur={field.handleBlur}
-										placeholder="z.B. Marketing"
+										placeholder="DE89 3704 0044 0532 0130 00"
 									/>
 									{field.state.meta.errors && (
 										<p className="text-sm text-destructive mt-1">
@@ -162,9 +163,30 @@ export default function NewReportPage() {
 						>
 							{(field) => (
 								<div>
-									<Label htmlFor={field.name}>Buchungskreis *</Label>
+									<div className="flex items-center gap-2">
+										<Label htmlFor={field.name}>Buchungskreis *</Label>
+										{publicSettings?.accountingUnitPdfUrl ? (
+											<a
+												href={publicSettings.accountingUnitPdfUrl}
+												target="_blank"
+												rel="noreferrer"
+												className="text-muted-foreground hover:text-foreground"
+												aria-label="Info zum Buchungskreis (PDF)"
+											>
+												<Info className="h-4 w-4" />
+											</a>
+										) : (
+											<span
+												className="text-muted-foreground/50 cursor-not-allowed"
+												aria-label="Kein PDF hinterlegt"
+											>
+												<Info className="h-4 w-4" />
+											</span>
+										)}
+									</div>
 									<Input
 										id={field.name}
+										className="mt-1"
 										value={field.state.value}
 										onChange={(e) => field.handleChange(e.target.value)}
 										onBlur={field.handleBlur}

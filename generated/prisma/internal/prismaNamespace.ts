@@ -1070,6 +1070,7 @@ export const SettingsScalarFieldEnum = {
   id: 'id',
   kilometerRate: 'kilometerRate',
   reviewerEmail: 'reviewerEmail',
+  accountingUnitPdfUrl: 'accountingUnitPdfUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import {
 	createTRPCRouter,
 	protectedProcedure,
+	publicProcedure,
 } from "@/server/api/trpc";
 
 export const settingsRouter = createTRPCRouter({
@@ -38,12 +39,27 @@ export const settingsRouter = createTRPCRouter({
 		return settings;
 	}),
 
+	// Public settings for non-admin usage
+	getPublic: publicProcedure.query(async ({ ctx }) => {
+		const settings = await ctx.db.settings.findUnique({
+			where: { id: "singleton" },
+			select: {
+				accountingUnitPdfUrl: true,
+			},
+		});
+
+		return {
+			accountingUnitPdfUrl: settings?.accountingUnitPdfUrl ?? null,
+		};
+	}),
+
 	// Update settings (only admins)
 	update: protectedProcedure
 		.input(
 			z.object({
 				kilometerRate: z.number().positive().optional(),
 				reviewerEmail: z.string().email().optional().nullable(),
+				accountingUnitPdfUrl: z.string().optional().nullable(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { api } from "@/trpc/react";
@@ -18,15 +19,18 @@ const formSchema = z.object({
 		{ message: "Kilometerpauschale muss eine positive Zahl sein" },
 	),
 	reviewerEmail: z.string().email().optional().or(z.literal("")),
+	accountingUnitPdfUrl: z.string().optional().or(z.literal("")),
 });
 
 export default function AdminSettingsPage() {
 	const router = useRouter();
+	const [isUploading, setIsUploading] = useState(false);
 	const { data: settings, isLoading } = api.settings.get.useQuery();
 
 	const updateSettingsMutation = api.settings.update.useMutation({
 		onSuccess: () => {
 			toast.success("Einstellungen gespeichert");
+			router.push("/");
 		},
 		onError: (error) => {
 			toast.error(error.message || "Fehler beim Speichern der Einstellungen");
@@ -37,6 +41,7 @@ export default function AdminSettingsPage() {
 		defaultValues: {
 			kilometerRate: settings?.kilometerRate.toString() ?? "0.30",
 			reviewerEmail: settings?.reviewerEmail ?? "",
+			accountingUnitPdfUrl: settings?.accountingUnitPdfUrl ?? "",
 		},
 		validators: {
 			onSubmit: formSchema,
@@ -45,6 +50,7 @@ export default function AdminSettingsPage() {
 			updateSettingsMutation.mutate({
 				kilometerRate: Number(value.kilometerRate),
 				reviewerEmail: value.reviewerEmail || null,
+				accountingUnitPdfUrl: value.accountingUnitPdfUrl || null,
 			});
 		},
 	});
@@ -53,7 +59,42 @@ export default function AdminSettingsPage() {
 	if (settings && form.state.values.kilometerRate === "0.30") {
 		form.setFieldValue("kilometerRate", settings.kilometerRate.toString());
 		form.setFieldValue("reviewerEmail", settings.reviewerEmail ?? "");
+		form.setFieldValue(
+			"accountingUnitPdfUrl",
+			settings.accountingUnitPdfUrl ?? "",
+		);
 	}
+
+	const handlePdfUpload = async (file: File) => {
+		setIsUploading(true);
+		try {
+			const formData = new FormData();
+			formData.append("file", file);
+
+			const response = await fetch("/api/upload/settings-pdf", {
+				method: "POST",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error?.error ?? "Upload fehlgeschlagen");
+			}
+
+			const data = (await response.json()) as { url?: string };
+			if (!data.url) {
+				throw new Error("Keine URL vom Upload erhalten");
+			}
+
+			form.setFieldValue("accountingUnitPdfUrl", data.url);
+			toast.success("PDF hochgeladen");
+		} catch (error) {
+			console.error("PDF upload error:", error);
+			toast.error("PDF Upload fehlgeschlagen");
+		} finally {
+			setIsUploading(false);
+		}
+	};
 
 	if (isLoading) {
 		return (
@@ -160,6 +201,51 @@ export default function AdminSettingsPage() {
 											{field.state.meta.errors[0]}
 										</p>
 									)}
+								</div>
+							)}
+						</form.Field>
+
+						<form.Field name="accountingUnitPdfUrl">
+							{(field) => (
+								<div>
+									<Label htmlFor={field.name}>
+										Buchungskreis PDF
+									</Label>
+									{field.state.value && (
+										<p className="text-sm text-muted-foreground mt-1">
+											Gespeichert:{" "}
+											<span className="font-medium">
+												{field.state.value.split("/").pop()}
+											</span>
+										</p>
+									)}
+									<div className="flex items-center gap-3">
+										<Input
+											id={field.name}
+											type="file"
+											accept="application/pdf"
+											disabled={isUploading}
+											onChange={(e) => {
+												const file = e.target.files?.[0];
+												if (file) {
+													handlePdfUpload(file);
+												}
+											}}
+										/>
+										{field.state.value && (
+											<a
+												href={field.state.value}
+												target="_blank"
+												rel="noreferrer"
+												className="text-sm text-primary underline"
+											>
+												PDF öffnen
+											</a>
+										)}
+									</div>
+									<p className="text-sm text-muted-foreground mt-1">
+										Diese PDF wird beim Buchungskreis als Info verlinkt.
+									</p>
 								</div>
 							)}
 						</form.Field>
