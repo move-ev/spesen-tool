@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
-import { db } from "@/server/db";
 
 export default async function AdminLayout({
 	children,
@@ -19,14 +18,10 @@ export default async function AdminLayout({
 		redirect(ROUTES.AUTH);
 	}
 
-	// Check if user is admin
-	const user = await db.user.findUnique({
-		where: { id: session.user.id },
-		select: { admin: true },
-	});
+	const { user } = session;
 
 	// If user is not admin, redirect to dashboard
-	if (user?.admin !== true) {
+	if (user.role !== "admin") {
 		redirect(ROUTES.USER_DASHBOARD);
 	}
 
