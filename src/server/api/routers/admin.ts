@@ -33,6 +33,62 @@ export const adminRouter = createTRPCRouter({
 			totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
 		};
 	}),
+	listOpen: adminProcedure.query(async ({ ctx }) => {
+		return ctx.db.report.findMany({
+			where: {
+				status: {
+					in: [ReportStatus.PENDING_APPROVAL],
+				},
+			},
+			include: {
+				owner: {
+					select: {
+						name: true,
+					},
+				},
+				expenses: {
+					select: {
+						amount: true,
+					},
+				},
+			},
+			orderBy: {
+				lastUpdatedAt: "desc",
+			},
+		});
+	}),
+	/**
+	 * Lists all reports, which are NOT open and not a draft which have been updated in the last 30 days
+	 */
+	listRelevant: adminProcedure.query(async ({ ctx }) => {
+		const pastDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+		return await ctx.db.report.findMany({
+			where: {
+				status: {
+					notIn: [ReportStatus.PENDING_APPROVAL, ReportStatus.DRAFT],
+				},
+				lastUpdatedAt: {
+					gte: pastDate,
+				},
+			},
+			include: {
+				expenses: {
+					select: {
+						amount: true,
+					},
+				},
+				owner: {
+					select: {
+						name: true,
+					},
+				},
+			},
+			orderBy: {
+				lastUpdatedAt: "desc",
+			},
+		});
+	}),
 	getAllReports: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.report.findMany({
 			include: {
