@@ -74,7 +74,7 @@ export function ReportList({
 											<span
 												className={cn(
 													"absolute inset-0 z-50 h-full w-full rounded-lg transition-colors",
-													"group-focus/list-item:ring-2 group-focus/list-item:ring-ring group-focus/list-item:ring-offset-4",
+													"group-focus/list-item:ring-2 group-focus/list-item:ring-ring group-focus/list-item:ring-offset-4 group-focus/list-item:ring-offset-background",
 												)}
 											/>
 											{report.title}

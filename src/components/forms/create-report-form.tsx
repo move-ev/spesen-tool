@@ -1,7 +1,9 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ROUTES } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
@@ -25,9 +27,12 @@ export function CreateReportForm({
 	businessUnits: { label: string; value: string }[];
 	accountingUnits: { label: string; value: string }[];
 }) {
+	const router = useRouter();
+
 	const createReport = api.report.create.useMutation({
-		onSuccess() {
+		onSuccess(data) {
 			toast.success("Report erfolgreich erstellt");
+			router.push(ROUTES.REPORT_DETAIL(data.id));
 		},
 		onError(error) {
 			toast.error("Fehler beim Erstellen des Reports", {
@@ -183,7 +188,13 @@ export function CreateReportForm({
 					}}
 					name="accountingUnit"
 				/>
-				<Button type="submit">Erstellen</Button>
+				<Button
+					disabled={createReport.isPending}
+					form="form-create-report"
+					type="submit"
+				>
+					Erstellen
+				</Button>
 			</FieldGroup>
 		</form>
 	);
