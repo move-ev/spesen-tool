@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/forms/login-form";
+import { AuthForm } from "@/components/forms/auth-form";
 
 export default async function ServerPage() {
 	return (
@@ -8,7 +8,7 @@ export default async function ServerPage() {
 				<p className="mt-2 text-muted-foreground text-sm">
 					Bitte logge dich mit deinem Microsoft Account ein, um fortzufahren.
 				</p>
-				<LoginForm className="mt-8" />
+				<AuthForm className="mt-8" />
 			</div>
 		</main>
 	);
