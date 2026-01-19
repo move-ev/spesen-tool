@@ -6,7 +6,6 @@ import {
 	createTRPCRouter,
 	protectedProcedure,
 } from "@/server/api/trpc";
-import { sendReportSubmittedEmail } from "@/server/email";
 
 export const reportRouter = createTRPCRouter({
 	// Get all reports for the current user
