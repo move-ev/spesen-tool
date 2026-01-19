@@ -1,5 +1,6 @@
 import type React from "react";
-import type { Expense, Report } from "@/generated/prisma/client";
+import type { Report } from "@/generated/prisma/client";
+import type { ClientExpense } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ReportCard, ReportCardField } from "./report-card";
 import { Skeleton } from "./ui/skeleton";
@@ -10,7 +11,7 @@ export function ReportList({
 	className,
 	...props
 }: React.ComponentProps<"ul"> & {
-	reports: (Report & { expenses: Expense[] })[];
+	reports: (Report & { expenses: ClientExpense[] })[];
 
 	/**
 	 * The route to the report details page. `:reportId` will be replaced
@@ -43,7 +44,7 @@ export function ReportList({
 		>
 			{reports.map((report) => {
 				const reportTotal = report.expenses.reduce(
-					(sum, expense) => sum + Number(expense.amount),
+					(sum, expense) => sum + expense.amount,
 					0,
 				);
 
@@ -53,7 +54,10 @@ export function ReportList({
 						key={report.id}
 					>
 						<ReportCard report={report} reportRoute={reportRoute}>
-							<ReportCardField label="Gesamtbetrag" value={reportTotal.toFixed(2)} />
+							<ReportCardField
+								label="Gesamtbetrag"
+								value={`${reportTotal.toFixed(2)} €`}
+							/>
 							<ReportCardField
 								label="Anzahl Ausgaben"
 								value={
