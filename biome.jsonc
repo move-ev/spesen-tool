@@ -32,9 +32,6 @@
 			"correctness": {
 				"noChildrenProp": "off"
 			},
-			"performance": {
-				"noImgElement": "warn"
-			},
 			"nursery": {
 				"useSortedClasses": {
 					"level": "warn",
@@ -46,18 +43,6 @@
 			}
 		}
 	},
-	"overrides": [
-		{
-			"includes": ["src/components/emails/**"],
-			"linter": {
-				"rules": {
-					"performance": {
-						"noImgElement": "off"
-					}
-				}
-			}
-		}
-	],
 	"html": {
 		"formatter": {
 			"enabled": true
