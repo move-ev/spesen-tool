@@ -1,7 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ReportStatus } from "@/generated/prisma/enums";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+	adminProcedure,
+	createTRPCRouter,
+	protectedProcedure,
+} from "@/server/api/trpc";
 import { sendReportSubmittedEmail } from "@/server/email";
 
 export const reportRouter = createTRPCRouter({
@@ -211,61 +215,6 @@ export const reportRouter = createTRPCRouter({
 			});
 		}),
 
-	// Update report status (for accepting/declining)
-	updateStatus: protectedProcedure
-		.input(
-			z.object({
-				id: z.string(),
-				status: z.nativeEnum(ReportStatus),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			const report = await ctx.db.report.findUnique({
-				where: { id: input.id },
-			});
-
-			if (!report) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Report not found",
-				});
-			}
-
-			// Only owner can change status to DRAFT or PENDING_APPROVAL
-			// Admins can ACCEPT/REJECT or set NEEDS_REVISION
-			if (
-				(input.status === ReportStatus.DRAFT ||
-					input.status === ReportStatus.PENDING_APPROVAL) &&
-				report.ownerId !== ctx.session.user.id
-			) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "Only the owner can set this status",
-				});
-			}
-
-			const updatedReport = await ctx.db.report.update({
-				where: { id: input.id },
-				data: { status: input.status },
-				include: {
-					expenses: true,
-				},
-			});
-
-			// Send email notification when report is submitted for approval
-			if (
-				input.status === ReportStatus.PENDING_APPROVAL &&
-				report.status !== ReportStatus.PENDING_APPROVAL
-			) {
-				// Don't await to avoid blocking the response
-				sendReportSubmittedEmail(input.id).catch((error) => {
-					console.error("Failed to send email notification:", error);
-				});
-			}
-
-			return updatedReport;
-		}),
-
 	// Delete a report
 	delete: protectedProcedure
 		.input(z.object({ id: z.string() }))
@@ -290,6 +239,71 @@ export const reportRouter = createTRPCRouter({
 
 			return ctx.db.report.delete({
 				where: { id: input.id },
+			});
+		}),
+	/**
+	 * This procedure is only intended for admin use. To set the status of a report from
+	 * draft to pending approval, use the submit procedure
+	 */
+	updateStatus: adminProcedure
+		.input(z.object({ id: z.string(), status: z.enum(ReportStatus) }))
+		.mutation(async ({ ctx, input }) => {
+			return ctx.db.report.update({
+				where: { id: input.id },
+				data: { status: input.status },
+			});
+		}),
+
+	/**
+	 * This procedure is only intended for the owner of the report to submit it when ready. Only allowed
+	 * when status is draft or needs revision. When submitted, the status is set to pending approval.
+	 *
+	 * For force setting the status to pending approval, use the updateStatus procedure.
+	 */
+	submit: protectedProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const report = await ctx.db.report.findUnique({
+				where: {
+					id: input.id,
+				},
+				select: {
+					ownerId: true,
+					status: true,
+				},
+			});
+
+			if (!report) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			// Only the owner of the report can submit it
+			if (report.ownerId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to submit this report",
+				});
+			}
+
+			// Only allowed when status is draft or needs revision
+			const { status } = report;
+			if (
+				status !== ReportStatus.DRAFT &&
+				status !== ReportStatus.NEEDS_REVISION
+			) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: `Report is not available for submission.`,
+				});
+			}
+
+			// Update the status to pending approval
+			return ctx.db.report.update({
+				where: { id: input.id },
+				data: { status: ReportStatus.PENDING_APPROVAL },
 			});
 		}),
 });
