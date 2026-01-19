@@ -86,7 +86,7 @@ export function CreateTravelExpenseForm({
 	React.useEffect(() => {
 		const amount = distance * settings.kilometerRate;
 		form.setFieldValue("amount", amount);
-	});
+	}, [distance, settings.kilometerRate, form]);
 
 	return (
 		<form
