@@ -27,7 +27,7 @@ export function SiteHeader({
 						className="me-auto fill-[#0B263F] dark:fill-white"
 						href={ROUTES.USER_DASHBOARD}
 					>
-						<AppLogo className="h-6 w-fit" />
+						<AppLogo className="h-6 w-fit max-w-32" />
 					</Link>
 					<ThemeToggle variant={"outline"} />
 					<SignOut />
