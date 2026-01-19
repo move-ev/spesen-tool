@@ -1,18 +1,21 @@
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { CreateFoodExpenseForm } from "@/components/forms/expense/food";
 import { CreateReceiptExpenseForm } from "@/components/forms/expense/receipt";
 import { CreateTravelExpenseForm } from "@/components/forms/expense/travel";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ROUTES } from "@/lib/consts";
-import { HydrateClient } from "@/trpc/server";
+import { api, HydrateClient } from "@/trpc/server";
 
 export default async function ServerPage({
 	params,
 }: PageProps<"/reports/[id]/expenses/new">) {
 	const { id: reportId } = await params;
+	void api.settings.get.prefetch();
 
 	return (
 		<HydrateClient>
@@ -45,7 +48,9 @@ export default async function ServerPage({
 							<CreateReceiptExpenseForm reportId={reportId} />
 						</TabsContent>
 						<TabsContent value="travel">
-							<CreateTravelExpenseForm reportId={reportId} />
+							<Suspense fallback={<Skeleton className="h-32 w-full" />}>
+								<CreateTravelExpenseForm reportId={reportId} />
+							</Suspense>
 						</TabsContent>
 						<TabsContent value="food">
 							<CreateFoodExpenseForm reportId={reportId} />

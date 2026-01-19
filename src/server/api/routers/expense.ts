@@ -153,11 +153,11 @@ export const expenseRouter = createTRPCRouter({
 			}
 
 			// Create the meta data
-			const meta = JSON.stringify({
+			const meta = {
 				from: input.from,
 				to: input.to,
 				distance: input.distance,
-			});
+			};
 
 			return await ctx.db.expense.create({
 				data: {
@@ -167,7 +167,7 @@ export const expenseRouter = createTRPCRouter({
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: meta,
+					meta,
 				},
 			});
 		}),
@@ -198,12 +198,12 @@ export const expenseRouter = createTRPCRouter({
 			}
 
 			// Create the meta data
-			const meta = JSON.stringify({
+			const meta = {
 				days: input.days,
 				breakfastDeduction: input.breakfastDeduction,
 				lunchDeduction: input.lunchDeduction,
 				dinnerDeduction: input.dinnerDeduction,
-			});
+			};
 
 			return await ctx.db.expense.create({
 				data: {
@@ -213,7 +213,7 @@ export const expenseRouter = createTRPCRouter({
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: meta,
+					meta,
 				},
 			});
 		}),

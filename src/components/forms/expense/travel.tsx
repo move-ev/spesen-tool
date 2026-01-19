@@ -1,8 +1,10 @@
 "use client";
 
 import { NumberField } from "@base-ui/react";
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { formatDate } from "date-fns";
+import { useRouter } from "next/navigation";
+import React from "react";
 import { toast } from "sonner";
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
@@ -20,23 +22,25 @@ import {
 	InputGroupInput,
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
+import { ROUTES } from "@/lib/consts";
 import { createTravelExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
 export function CreateTravelExpenseForm({
 	reportId,
-	onSuccess,
 	...props
 }: React.ComponentProps<"form"> & {
 	reportId: string;
-	onSuccess?: () => void;
 }) {
+	const [settings] = api.settings.get.useSuspenseQuery();
+
 	const utils = api.useUtils();
+	const router = useRouter();
 	const createTravel = api.expense.createTravel.useMutation({
 		onSuccess: () => {
-			utils.expense.invalidate();
 			toast.success("Ausgabe erfolgreich erstellt");
-			onSuccess?.();
+			utils.expense.invalidate();
+			router.push(ROUTES.REPORT_DETAIL(reportId));
 		},
 		onError: (error) => {
 			toast.error("Fehler beim Erstellen der Ausgabe", {
@@ -74,6 +78,15 @@ export function CreateTravelExpenseForm({
 			});
 		},
 	});
+
+	const { distance } = useStore(form.store, (state) => ({
+		distance: state.values.distance,
+	}));
+
+	React.useEffect(() => {
+		const amount = distance * settings.kilometerRate;
+		form.setFieldValue("amount", amount);
+	}, [distance, settings.kilometerRate, form]);
 
 	return (
 		<form
@@ -212,13 +225,7 @@ export function CreateTravelExpenseForm({
 										maximumFractionDigits: 2,
 									}}
 									locale={"de-DE"}
-									onValueChange={(value) => {
-										const distance = value ?? 0;
-										field.handleChange(distance);
-										// Automatically calculate amount: 30 cents per kilometer
-										const amount = distance * 0.3;
-										form.setFieldValue("amount", amount);
-									}}
+									onValueChange={(value) => field.handleChange(value ?? 0)}
 									value={field.state.value}
 								>
 									<NumberField.Group>
@@ -290,7 +297,8 @@ export function CreateTravelExpenseForm({
 									</NumberField.Group>
 								</NumberField.Root>
 								<FieldDescription>
-									Automatisch berechnet: 0,30 € pro Kilometer
+									Automatisch berechnet: {settings.kilometerRate.toFixed(2)} € pro
+									Kilometer
 								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
