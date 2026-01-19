@@ -1,14 +1,13 @@
 "use client";
 
 import { format } from "date-fns";
-import { CheckIcon, ClockIcon, ShieldUserIcon } from "lucide-react";
+import { CheckIcon, ShieldUserIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { ReportStatusBadge } from "@/components/report-status-badge";
 import { Button } from "@/components/ui/button";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
-import { ReportStatus } from "@/generated/prisma/enums";
 import { ADMINS_UPDATE_OWN_REPORT } from "@/lib/flags";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/server/better-auth/client";

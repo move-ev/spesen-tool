@@ -10,7 +10,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import type { Expense } from "@/generated/prisma/client";
 import type { ClientExpense } from "@/lib/types";
 import { cn, parseMeta, translateExpenseType } from "@/lib/utils";
 import {
