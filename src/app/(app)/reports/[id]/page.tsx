@@ -1,7 +1,6 @@
 import { ArrowLeftIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { PageTitle } from "@/components/page-title";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/consts";

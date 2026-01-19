@@ -19,7 +19,6 @@ import {
 	InputGroupAddon,
 	InputGroupInput,
 } from "@/components/ui/input-group";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { createTravelExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
