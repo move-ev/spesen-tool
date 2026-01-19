@@ -10,7 +10,7 @@ import {
 export const reportRouter = createTRPCRouter({
 	// Get all reports for the current user
 	getAll: protectedProcedure.query(async ({ ctx }) => {
-		return ctx.db.report.findMany({
+		const reports = await ctx.db.report.findMany({
 			where: {
 				ownerId: ctx.session.user.id,
 			},
@@ -28,6 +28,14 @@ export const reportRouter = createTRPCRouter({
 				createdAt: "desc",
 			},
 		});
+
+		return reports.map((report) => ({
+			...report,
+			expenses: report.expenses.map((expense) => ({
+				...expense,
+				amount: Number(expense.amount),
+			})),
+		}));
 	}),
 
 	getById: protectedProcedure
