@@ -1,6 +1,5 @@
 import { adminRouter } from "@/server/api/routers/admin";
 import { expenseRouter } from "@/server/api/routers/expense";
-import { pdfTestRouter } from "@/server/api/routers/pdfTest";
 import { reportRouter } from "@/server/api/routers/report";
 import { settingsRouter } from "@/server/api/routers/settings";
 import { userRouter } from "@/server/api/routers/user";
@@ -17,7 +16,6 @@ export const appRouter = createTRPCRouter({
 	settings: settingsRouter,
 	user: userRouter,
 	admin: adminRouter,
-	pdfTest: pdfTestRouter,
 });
 
 // export type definition of API
