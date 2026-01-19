@@ -12,10 +12,11 @@ type Attachment = {
 	key: string;
 };
 
-interface StatusChangedEmailProps {
+interface ReportNotificationEmailProps {
 	name: string;
 	title: string;
-	status: ReportStatus;
+	isCreated: boolean;
+	status?: ReportStatus;
 	reportId: string;
 	description: string;
 	businessUnit: string;
@@ -24,16 +25,17 @@ interface StatusChangedEmailProps {
 	totalAmount: number;
 }
 
-export default function StatusChangedEmail({
+export default function ReportNotificationEmail({
 	name,
 	title,
+	isCreated,
 	status,
 	reportId,
 	description,
 	accountingUnit,
 	attachments,
 	totalAmount,
-}: StatusChangedEmailProps) {
+}: ReportNotificationEmailProps) {
 	return (
 		<Html lang="de">
 			<Head />
@@ -87,7 +89,7 @@ export default function StatusChangedEmail({
 										marginBottom: "5px",
 									}}
 								>
-									Spesenantrag <strong>geändert</strong>
+									Spesenantrag <strong>{isCreated ? "erstellt" : "geändert"}</strong>
 								</span>
 							</td>
 						</tr>
@@ -97,14 +99,27 @@ export default function StatusChangedEmail({
 									Hallo <span style={{ fontSize: "18px" }}>👋</span>,
 								</p>
 								<p
-									style={{ fontSize: "15px", margin: "12px 0 0 0", lineHeight: "1.55" }}
+									style={{
+										fontSize: "15px",
+										margin: "12px 0 0 0",
+										lineHeight: "1.55",
+									}}
 								>
-									<strong>{name}</strong> hat den Status des Spesenantrags{" "}
-									<strong>{title}</strong> zu{" "}
-									<span style={{ color: "#0070f3" }}>
-										{translateReportStatus(status)}
-									</span>{" "}
-									geändert.
+									{isCreated ? (
+										<>
+											<strong>{name}</strong> hat einen neuen Spesenantrag{" "}
+											<strong>{title}</strong> erstellt.
+										</>
+									) : (
+										<>
+											<strong>{name}</strong> hat den Status des Spesenantrags{" "}
+											<strong>{title}</strong> zu{" "}
+											<span style={{ color: "#0070f3" }}>
+												{status && translateReportStatus(status)}
+											</span>{" "}
+											geändert.
+										</>
+									)}
 								</p>
 								<p style={{ margin: "20px 0 12px 0", fontSize: "15px" }}>
 									Du kannst den Antrag&nbsp;
@@ -124,7 +139,11 @@ export default function StatusChangedEmail({
 									<tbody>
 										<tr>
 											<td
-												style={{ color: "#777", padding: "5px 8px 5px 0", fontWeight: 500 }}
+												style={{
+													color: "#777",
+													padding: "5px 8px 5px 0",
+													fontWeight: 500,
+												}}
 											>
 												Beschreibung:
 											</td>
@@ -132,7 +151,11 @@ export default function StatusChangedEmail({
 										</tr>
 										<tr>
 											<td
-												style={{ color: "#777", padding: "5px 8px 5px 0", fontWeight: 500 }}
+												style={{
+													color: "#777",
+													padding: "5px 8px 5px 0",
+													fontWeight: 500,
+												}}
 											>
 												Rechnungseinheit:
 											</td>
@@ -140,7 +163,11 @@ export default function StatusChangedEmail({
 										</tr>
 										<tr>
 											<td
-												style={{ color: "#777", padding: "5px 8px 5px 0", fontWeight: 500 }}
+												style={{
+													color: "#777",
+													padding: "5px 8px 5px 0",
+													fontWeight: 500,
+												}}
 											>
 												Gesamtausgaben:
 											</td>
@@ -220,9 +247,10 @@ export default function StatusChangedEmail({
 	);
 }
 
-StatusChangedEmail.PreviewProps = {
+ReportNotificationEmail.PreviewProps = {
 	name: "Lennard Lohmann",
 	title: "Baguette Weihnachtsfeier",
+	isCreated: false,
 	status: "PENDING_APPROVAL",
 	reportId: "123",
 	description: "Baguette für die Weihnachtsfeier",
