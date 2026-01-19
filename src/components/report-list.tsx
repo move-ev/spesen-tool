@@ -1,5 +1,5 @@
-import type { Expense, Report } from "generated/prisma/client";
 import type React from "react";
+import type { Expense, Report } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { ReportCard, ReportCardField } from "./report-card";
 import { Skeleton } from "./ui/skeleton";
