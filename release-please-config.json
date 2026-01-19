@@ -1,0 +1,13 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"packages": {
+		".": {
+			"release-type": "node",
+			"package-name": "spesen-tool",
+			"version-file": "package.json",
+			"changelog-path": "CHANGELOG.md",
+			"extra-files": []
+		}
+	},
+	"$versioning-strategy": "always-bump-patch"
+}
