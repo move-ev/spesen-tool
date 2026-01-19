@@ -34,7 +34,7 @@ export const adminRouter = createTRPCRouter({
 		};
 	}),
 	listOpen: adminProcedure.query(async ({ ctx }) => {
-		return ctx.db.report.findMany({
+		const reports = await ctx.db.report.findMany({
 			where: {
 				status: {
 					in: [ReportStatus.PENDING_APPROVAL],
@@ -56,6 +56,14 @@ export const adminRouter = createTRPCRouter({
 				lastUpdatedAt: "desc",
 			},
 		});
+
+		return reports.map((report) => ({
+			...report,
+			expenses: report.expenses.map((expense) => ({
+				...expense,
+				amount: Number(expense.amount),
+			})),
+		}));
 	}),
 	/**
 	 * Lists all reports, which are NOT open and not a draft which have been updated in the last 30 days
@@ -63,7 +71,7 @@ export const adminRouter = createTRPCRouter({
 	listRelevant: adminProcedure.query(async ({ ctx }) => {
 		const pastDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-		return await ctx.db.report.findMany({
+		const reports = await ctx.db.report.findMany({
 			where: {
 				status: {
 					notIn: [ReportStatus.PENDING_APPROVAL, ReportStatus.DRAFT],
@@ -88,6 +96,14 @@ export const adminRouter = createTRPCRouter({
 				lastUpdatedAt: "desc",
 			},
 		});
+
+		return reports.map((report) => ({
+			...report,
+			expenses: report.expenses.map((expense) => ({
+				...expense,
+				amount: Number(expense.amount),
+			})),
+		}));
 	}),
 	getAllReports: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.report.findMany({

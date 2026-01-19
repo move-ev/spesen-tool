@@ -22,14 +22,17 @@ export function RelevantReportList({
 		>
 			{reports.map((report) => {
 				const reportTotal = report.expenses.reduce(
-					(sum, expense) => sum + Number(expense.amount),
+					(sum, expense) => sum + expense.amount,
 					0,
 				);
 
 				return (
 					<li key={report.id}>
 						<ReportCard report={report} reportRoute={"/reports/:reportId"}>
-							<ReportCardField label="Gesamtbetrag" value={reportTotal.toFixed(2)} />
+							<ReportCardField
+								label="Gesamtbetrag"
+								value={`${reportTotal.toFixed(2)} €`}
+							/>
 							<ReportCardField
 								label="Anzahl Ausgaben"
 								value={
