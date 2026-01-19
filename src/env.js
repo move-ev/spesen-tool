@@ -23,6 +23,8 @@ export const env = createEnv({
 		STORAGE_ACCESS_KEY_ID: z.string(),
 		STORAGE_ACCESS_KEY: z.string(),
 		STORAGE_REGION: z.string(),
+
+		RESEND_API_KEY: z.string(),
 	},
 
 	/**
@@ -50,6 +52,7 @@ export const env = createEnv({
 		STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
 		STORAGE_ACCESS_KEY: process.env.STORAGE_ACCESS_KEY,
 		STORAGE_REGION: process.env.STORAGE_REGION,
+		RESEND_API_KEY: process.env.RESEND_API_KEY,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

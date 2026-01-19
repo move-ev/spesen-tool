@@ -6,3 +6,6 @@ export const ROUTES = {
 	ADMIN_DASHBOARD: "/admin",
 	ADMIN_SETTINGS: "/admin/settings",
 };
+
+export const DEFAULT_EMAIL_FROM =
+	"move e.V. <noreply@transactional.consultingcontact.de>";

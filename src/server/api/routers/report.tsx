@@ -1,11 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { StatusChangedEmail } from "@/components/emails/status-changed";
 import { ReportStatus } from "@/generated/prisma/enums";
+import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import {
 	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
 } from "@/server/api/trpc";
+import { resend } from "@/server/resend";
 
 export const reportRouter = createTRPCRouter({
 	// Get all reports for the current user
@@ -253,12 +256,62 @@ export const reportRouter = createTRPCRouter({
 	 * draft to pending approval, use the submit procedure
 	 */
 	updateStatus: adminProcedure
-		.input(z.object({ id: z.string(), status: z.enum(ReportStatus) }))
+		.input(
+			z.object({
+				id: z.string(),
+				status: z.enum(ReportStatus),
+				notify: z.boolean().optional(),
+			}),
+		)
 		.mutation(async ({ ctx, input }) => {
-			return ctx.db.report.update({
+			const result = await ctx.db.report.update({
 				where: { id: input.id },
 				data: { status: input.status },
+				select: {
+					id: true,
+					title: true,
+					owner: {
+						select: {
+							email: true,
+							name: true,
+						},
+					},
+				},
 			});
+
+			if (!result) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to update report status",
+				});
+			}
+
+			if (!input.notify) {
+				return result;
+			}
+
+			const { error } = await resend.emails.send({
+				from: DEFAULT_EMAIL_FROM,
+				to: [result.owner.email],
+				subject: "Report status changed",
+				react: (
+					<StatusChangedEmail
+						name={result.owner.name}
+						reportId={result.id}
+						status={input.status}
+						title={result.title}
+					/>
+				),
+			});
+
+			if (error) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send email",
+				});
+			}
+
+			return result;
 		}),
 
 	/**

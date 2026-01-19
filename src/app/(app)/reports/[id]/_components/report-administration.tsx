@@ -49,7 +49,9 @@ export function ReportAdministration({
 			toast.info("Status wird aktualisiert...");
 		},
 		onSuccess: () => {
-			toast.success("Status aktualisiert");
+			toast.success("Status aktualisiert", {
+				description: "Antragsteller wurde per E-Mail informiert",
+			});
 			utils.report.getById.invalidate({ id: report.id });
 		},
 		onError: ({ message }) => {
@@ -70,13 +72,17 @@ export function ReportAdministration({
 					<DropdownMenuLabel>Status ändern</DropdownMenuLabel>
 					<DropdownMenuItem
 						disabled={report.status === "ACCEPTED"}
-						onClick={() => updateStatus.mutate({ id: report.id, status: "ACCEPTED" })}
+						onClick={() =>
+							updateStatus.mutate({ id: report.id, status: "ACCEPTED", notify: true })
+						}
 					>
 						<CheckIcon /> Akzeptieren
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						disabled={report.status === "REJECTED"}
-						onClick={() => updateStatus.mutate({ id: report.id, status: "REJECTED" })}
+						onClick={() =>
+							updateStatus.mutate({ id: report.id, status: "REJECTED", notify: true })
+						}
 						variant="destructive"
 					>
 						<XIcon /> Ablehnen
@@ -84,7 +90,11 @@ export function ReportAdministration({
 					<DropdownMenuItem
 						disabled={report.status === "NEEDS_REVISION"}
 						onClick={() =>
-							updateStatus.mutate({ id: report.id, status: "NEEDS_REVISION" })
+							updateStatus.mutate({
+								id: report.id,
+								status: "NEEDS_REVISION",
+								notify: true,
+							})
 						}
 					>
 						<RefreshCcwIcon /> Benötigt Überarbeitung
@@ -92,7 +102,11 @@ export function ReportAdministration({
 					<DropdownMenuItem
 						disabled={report.status === "PENDING_APPROVAL"}
 						onClick={() =>
-							updateStatus.mutate({ id: report.id, status: "PENDING_APPROVAL" })
+							updateStatus.mutate({
+								id: report.id,
+								status: "PENDING_APPROVAL",
+								notify: true,
+							})
 						}
 					>
 						<SearchIcon /> In Bearbeitung
