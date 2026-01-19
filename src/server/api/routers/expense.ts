@@ -153,11 +153,11 @@ export const expenseRouter = createTRPCRouter({
 			}
 
 			// Create the meta data
-			const meta = JSON.stringify({
+			const meta = {
 				from: input.from,
 				to: input.to,
 				distance: input.distance,
-			});
+			};
 
 			return await ctx.db.expense.create({
 				data: {

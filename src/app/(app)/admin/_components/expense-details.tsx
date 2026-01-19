@@ -84,10 +84,14 @@ function MetaItems({ expense }: { expense: ClientExpense }) {
 	}
 
 	if (expense.type === "TRAVEL") {
-		const meta = parseMeta(expense.meta, travelExpenseMetaSchema);
+		const meta = travelExpenseMetaSchema.safeParse(expense.meta);
 
 		if (!meta.success) {
-			return <div className="col-span-2 text-red-500">Ungültige Metadaten</div>;
+			return (
+				<div className="col-span-2 text-red-500">
+					Ungültige Metadaten: {meta.error.message}
+				</div>
+			);
 		}
 
 		return (

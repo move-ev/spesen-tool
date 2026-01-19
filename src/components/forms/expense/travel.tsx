@@ -3,6 +3,7 @@
 import { NumberField } from "@base-ui/react";
 import { useForm, useStore } from "@tanstack/react-form";
 import { formatDate } from "date-fns";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 import { DatePicker } from "@/components/date-picker";
@@ -21,25 +22,25 @@ import {
 	InputGroupInput,
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
+import { ROUTES } from "@/lib/consts";
 import { createTravelExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
 export function CreateTravelExpenseForm({
 	reportId,
-	onSuccess,
 	...props
 }: React.ComponentProps<"form"> & {
 	reportId: string;
-	onSuccess?: () => void;
 }) {
 	const [settings] = api.settings.get.useSuspenseQuery();
 
 	const utils = api.useUtils();
+	const router = useRouter();
 	const createTravel = api.expense.createTravel.useMutation({
 		onSuccess: () => {
-			utils.expense.invalidate();
 			toast.success("Ausgabe erfolgreich erstellt");
-			onSuccess?.();
+			utils.expense.invalidate();
+			router.push(ROUTES.REPORT_DETAIL(reportId));
 		},
 		onError: (error) => {
 			toast.error("Fehler beim Erstellen der Ausgabe", {
