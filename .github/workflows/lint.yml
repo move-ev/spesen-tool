@@ -36,3 +36,6 @@ jobs:
 
       - name: Run lint and format check
         run: pnpm check
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/db
+          SKIP_ENV_VALIDATION: true
