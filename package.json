@@ -64,6 +64,7 @@
 		"@react-email/preview-server": "5.2.5",
 		"@tailwindcss/postcss": "^4.0.15",
 		"@types/node": "^20.14.10",
+		"@types/pdfkit": "^0.17.4",
 		"@types/pg": "^8.16.0",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
