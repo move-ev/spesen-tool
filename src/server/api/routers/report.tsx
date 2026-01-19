@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { StatusChangedEmail } from "@/components/emails/status-changed";
+import StatusChangedEmail from "@/components/emails/status-changed-email";
 import { ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import {
