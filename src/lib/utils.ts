@@ -1,5 +1,7 @@
+import type { JsonValue } from "@prisma/client/runtime/client";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { ZodSchema, z } from "zod";
 import type { ExpenseType, ReportStatus } from "@/generated/prisma/enums";
 
 export function cn(...inputs: ClassValue[]) {
@@ -80,4 +82,31 @@ export function translateExpenseType(type: ExpenseType) {
 		case "FOOD":
 			return "Verpflegung";
 	}
+}
+
+export function parseMeta<T extends ZodSchema>(
+	meta: JsonValue,
+	schema: T,
+):
+	| {
+			success: true;
+			data: z.infer<T>;
+	  }
+	| {
+			success: false;
+			data: null;
+	  } {
+	const parsed = schema.safeParse(meta?.toString() ?? {});
+
+	if (!parsed.success) {
+		return {
+			success: false,
+			data: null,
+		};
+	}
+
+	return {
+		success: true,
+		data: parsed.data,
+	};
 }

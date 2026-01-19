@@ -175,7 +175,6 @@ export const travelExpenseMetaSchema = z.object({
 	from: z.string().min(1),
 	to: z.string().min(1),
 	distance: z.number().min(1),
-	calculatedAmount: z.number().min(0),
 });
 
 export const foodExpenseMetaSchema = z.object({
@@ -183,5 +182,4 @@ export const foodExpenseMetaSchema = z.object({
 	breakfastDeduction: z.number().min(0),
 	lunchDeduction: z.number().min(0),
 	dinnerDeduction: z.number().min(0),
-	calculatedAmount: z.number().min(0),
 });
