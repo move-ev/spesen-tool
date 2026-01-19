@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import type { ClientExpense } from "@/lib/types";
-import { cn, parseMeta, translateExpenseType } from "@/lib/utils";
+import { cn, translateExpenseType } from "@/lib/utils";
 import {
 	foodExpenseMetaSchema,
 	receiptExpenseMetaSchema,
@@ -74,7 +74,7 @@ function DetailItem({
 
 function MetaItems({ expense }: { expense: ClientExpense }) {
 	if (expense.type === "RECEIPT") {
-		const meta = parseMeta(expense.meta, receiptExpenseMetaSchema);
+		const meta = receiptExpenseMetaSchema.safeParse(expense.meta);
 
 		if (!meta.success) {
 			return null;
@@ -87,11 +87,7 @@ function MetaItems({ expense }: { expense: ClientExpense }) {
 		const meta = travelExpenseMetaSchema.safeParse(expense.meta);
 
 		if (!meta.success) {
-			return (
-				<div className="col-span-2 text-red-500">
-					Ungültige Metadaten: {meta.error.message}
-				</div>
-			);
+			return null;
 		}
 
 		return (
@@ -107,7 +103,7 @@ function MetaItems({ expense }: { expense: ClientExpense }) {
 		);
 	}
 	if (expense.type === "FOOD") {
-		const meta = parseMeta(expense.meta, foodExpenseMetaSchema);
+		const meta = foodExpenseMetaSchema.safeParse(expense.meta);
 
 		if (!meta.success) {
 			return null;
