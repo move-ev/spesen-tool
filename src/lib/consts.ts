@@ -9,3 +9,7 @@ export const ROUTES = {
 
 export const DEFAULT_EMAIL_FROM =
 	"move e.V. <noreply@transactional.consultingcontact.de>";
+
+export const ADMIN_SETTINGS_MENU = {
+	GENERAL: "/admin/settings",
+};
