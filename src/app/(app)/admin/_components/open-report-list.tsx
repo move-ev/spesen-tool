@@ -1,7 +1,15 @@
 "use client";
 
+import { FileSearchCornerIcon } from "lucide-react";
 import type React from "react";
 import { ReportCard, ReportCardField } from "@/components/report-card";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
@@ -10,6 +18,22 @@ export function OpenReportList({
 	...props
 }: Omit<React.ComponentProps<"ul">, "children">) {
 	const [reports] = api.admin.listOpen.useSuspenseQuery();
+
+	if (reports.length === 0) {
+		return (
+			<Empty className="border">
+				<EmptyHeader>
+					<EmptyMedia variant="icon">
+						<FileSearchCornerIcon />
+					</EmptyMedia>
+					<EmptyTitle>Keine Anträge gefunden</EmptyTitle>
+					<EmptyDescription>
+						Wenn es neue Anträge gibt, werden sie hier angezeigt.
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
+		);
+	}
 
 	return (
 		<ul
