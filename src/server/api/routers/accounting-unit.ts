@@ -1,9 +1,9 @@
 import z from "zod";
 import { createAccountingUnitSchema } from "@/lib/validators";
-import { adminProcedure, createTRPCRouter } from "../trpc";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const accountingUnitRouter = createTRPCRouter({
-	listAll: adminProcedure.query(async ({ ctx }) => {
+	listAll: protectedProcedure.query(async ({ ctx }) => {
 		return await ctx.db.accountingUnit.findMany();
 	}),
 	create: adminProcedure
