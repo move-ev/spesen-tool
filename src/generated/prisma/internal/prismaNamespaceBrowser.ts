@@ -58,6 +58,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Preferences: 'Preferences',
   Settings: 'Settings'
 } as const
 
@@ -179,6 +180,15 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const PreferencesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  notificationPreference: 'notificationPreference'
+} as const
+
+export type PreferencesScalarFieldEnum = (typeof PreferencesScalarFieldEnum)[keyof typeof PreferencesScalarFieldEnum]
 
 
 export const SettingsScalarFieldEnum = {

@@ -391,6 +391,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Preferences: 'Preferences',
   Settings: 'Settings'
 } as const
 
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "report" | "expense" | "attachment" | "user" | "session" | "account" | "verification" | "settings"
+    modelProps: "report" | "expense" | "attachment" | "user" | "session" | "account" | "verification" | "preferences" | "settings"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -929,6 +930,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Preferences: {
+      payload: Prisma.$PreferencesPayload<ExtArgs>
+      fields: Prisma.PreferencesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PreferencesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PreferencesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>
+        }
+        findFirst: {
+          args: Prisma.PreferencesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PreferencesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>
+        }
+        findMany: {
+          args: Prisma.PreferencesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>[]
+        }
+        create: {
+          args: Prisma.PreferencesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>
+        }
+        createMany: {
+          args: Prisma.PreferencesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PreferencesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>[]
+        }
+        delete: {
+          args: Prisma.PreferencesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>
+        }
+        update: {
+          args: Prisma.PreferencesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>
+        }
+        deleteMany: {
+          args: Prisma.PreferencesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PreferencesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PreferencesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>[]
+        }
+        upsert: {
+          args: Prisma.PreferencesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PreferencesPayload>
+        }
+        aggregate: {
+          args: Prisma.PreferencesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePreferences>
+        }
+        groupBy: {
+          args: Prisma.PreferencesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PreferencesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PreferencesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PreferencesCountAggregateOutputType> | number
+        }
+      }
+    }
     Settings: {
       payload: Prisma.$SettingsPayload<ExtArgs>
       fields: Prisma.SettingsFieldRefs
@@ -1146,6 +1221,15 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const PreferencesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  notificationPreference: 'notificationPreference'
+} as const
+
+export type PreferencesScalarFieldEnum = (typeof PreferencesScalarFieldEnum)[keyof typeof PreferencesScalarFieldEnum]
+
+
 export const SettingsScalarFieldEnum = {
   id: 'id',
   kilometerRate: 'kilometerRate',
@@ -1296,6 +1380,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'NotificationPreference'
+ */
+export type EnumNotificationPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationPreference'>
+    
+
+
+/**
+ * Reference to a field of type 'NotificationPreference[]'
+ */
+export type ListEnumNotificationPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationPreference[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -1410,6 +1508,7 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
+  preferences?: Prisma.PreferencesOmit
   settings?: Prisma.SettingsOmit
 }
 

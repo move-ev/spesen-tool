@@ -93,6 +93,8 @@ model User {
   banReason  String?
   banExpires DateTime?
 
+  preferences Preferences?
+
   @@unique([email])
   @@map("user")
 }
@@ -145,6 +147,21 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Preferences {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  notificationPreference NotificationPreference @default(ALL)
+
+  @@map("preferences")
+}
+
+enum NotificationPreference {
+  ALL
+  STATUS_CHANGES
 }
 
 model Settings {
