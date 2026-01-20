@@ -186,7 +186,7 @@ export const reportRouter = createTRPCRouter({
 				id: z.string(),
 				title: z.string().min(1).optional(),
 				description: z.string().optional(),
-				businessUnit: z.string().min(1).optional(),
+				businessUnitId: z.string().min(1).optional(),
 				accountingUnitId: z.string().min(1).optional(),
 				status: z.enum(ReportStatus).optional(),
 			}),
