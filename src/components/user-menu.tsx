@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	ArrowUpRightIcon,
 	BookOpenIcon,
 	CheckIcon,
 	ChevronsUpDownIcon,
