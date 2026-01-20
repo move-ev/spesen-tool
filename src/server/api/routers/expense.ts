@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ExpenseType } from "@/generated/prisma/enums";
+import { ExpenseType, ReportStatus } from "@/generated/prisma/enums";
 import {
 	createFoodExpenseSchema,
 	createReceiptExpenseSchema,
@@ -68,6 +68,7 @@ export const expenseRouter = createTRPCRouter({
 				where: { id: input.reportId },
 				select: {
 					ownerId: true,
+					status: true,
 				},
 			});
 
@@ -75,6 +76,16 @@ export const expenseRouter = createTRPCRouter({
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Report not found",
+				});
+			}
+
+			if (
+				report.status !== ReportStatus.DRAFT &&
+				report.status !== ReportStatus.NEEDS_REVISION
+			) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "You can only add expenses to draft or needs revision reports",
 				});
 			}
 
@@ -121,6 +132,7 @@ export const expenseRouter = createTRPCRouter({
 				where: { id: input.reportId },
 				select: {
 					ownerId: true,
+					status: true,
 				},
 			});
 
@@ -128,6 +140,16 @@ export const expenseRouter = createTRPCRouter({
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Report not found",
+				});
+			}
+
+			if (
+				report.status !== ReportStatus.DRAFT &&
+				report.status !== ReportStatus.NEEDS_REVISION
+			) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "You can only add expenses to draft or needs revision reports",
 				});
 			}
 
@@ -180,6 +202,7 @@ export const expenseRouter = createTRPCRouter({
 				where: { id: input.reportId },
 				select: {
 					ownerId: true,
+					status: true,
 				},
 			});
 
@@ -187,6 +210,16 @@ export const expenseRouter = createTRPCRouter({
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Report not found",
+				});
+			}
+
+			if (
+				report.status !== ReportStatus.DRAFT &&
+				report.status !== ReportStatus.NEEDS_REVISION
+			) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "You can only add expenses to draft or needs revision reports",
 				});
 			}
 

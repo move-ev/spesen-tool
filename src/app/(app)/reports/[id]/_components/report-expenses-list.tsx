@@ -12,6 +12,7 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/components/ui/empty";
+import { ReportStatus } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { ReportExpenseCard } from "./report-expense-card";
@@ -19,8 +20,16 @@ import { ReportExpenseCard } from "./report-expense-card";
 export function ReportExpensesList({
 	className,
 	reportId,
+	reportStatus,
 	...props
-}: React.ComponentProps<"ul"> & { reportId: string }) {
+}: React.ComponentProps<"ul"> & {
+	reportId: string;
+	reportStatus: ReportStatus;
+}) {
+	const canAddExpense =
+		reportStatus === ReportStatus.DRAFT ||
+		reportStatus === ReportStatus.NEEDS_REVISION;
+
 	const [expenses] = api.expense.listForReport.useSuspenseQuery({
 		reportId: reportId,
 	});
@@ -39,6 +48,10 @@ export function ReportExpensesList({
 				</EmptyHeader>
 				<EmptyContent className="flex-row justify-center gap-2">
 					<Button
+						className={
+							"data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 sm:w-fit"
+						}
+						data-disabled={!canAddExpense}
 						nativeButton={false}
 						render={
 							<Link href={`/reports/${reportId}/expenses/new`}>
@@ -47,6 +60,7 @@ export function ReportExpensesList({
 							</Link>
 						}
 						size="sm"
+						tabIndex={!canAddExpense ? 0 : -1}
 					/>
 				</EmptyContent>
 			</Empty>
