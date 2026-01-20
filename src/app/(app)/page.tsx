@@ -1,4 +1,4 @@
-import { PlusIcon, SettingsIcon, ShieldUserIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
