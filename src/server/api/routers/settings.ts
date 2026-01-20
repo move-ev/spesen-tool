@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
+	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
 	publicProcedure,
@@ -93,4 +94,7 @@ export const settingsRouter = createTRPCRouter({
 
 			return settings;
 		}),
+	listUsers: adminProcedure.query(async ({ ctx }) => {
+		return await ctx.db.user.findMany({});
+	}),
 });
