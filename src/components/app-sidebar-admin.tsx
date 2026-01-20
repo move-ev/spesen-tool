@@ -32,10 +32,14 @@ export function AppSidebarAdmin() {
 					/>
 				</SidebarMenuItem>
 				<SidebarMenuItem>
-					<SidebarMenuButton>
-						<Settings2 />
-						App Einstellungen
-					</SidebarMenuButton>
+					<SidebarMenuButton
+						render={
+							<Link href={ROUTES.ADMIN_SETTINGS}>
+								<Settings2 />
+								App Einstellungen
+							</Link>
+						}
+					/>
 				</SidebarMenuItem>
 			</SidebarMenu>
 		</SidebarGroup>

@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
 import { api, HydrateClient } from "@/trpc/server";
-import { OpenReportList } from "../_components/open-report-list";
-import { RelevantReportList } from "../_components/relevant-report-list";
-import { AdminStats, AdminStatsSkeleton } from "../_components/stats";
+import { OpenReportList } from "./_components/open-report-list";
+import { RelevantReportList } from "./_components/relevant-report-list";
+import { AdminStats, AdminStatsSkeleton } from "./_components/stats";
 
 export default async function ServerPage() {
 	void api.admin.stats.prefetch();
