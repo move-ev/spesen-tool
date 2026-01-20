@@ -1,26 +1,15 @@
-import { PlusIcon, SettingsIcon, ShieldUserIcon } from "lucide-react";
-import { headers } from "next/headers";
+import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { ReportListSkeleton } from "@/components/report-list";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
-import { auth } from "@/server/better-auth";
 import { api, HydrateClient } from "@/trpc/server";
 import { OwnReportList } from "./_components/own-report-list";
 
 export default async function ServerPage() {
-	const res = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!res?.user) {
-		redirect(ROUTES.AUTH);
-	}
-
 	void api.report.getAll.prefetch();
 
 	return (
@@ -38,32 +27,6 @@ export default async function ServerPage() {
 						</PageDescription>
 					</div>
 					<div className="flex w-full flex-col flex-wrap gap-4 sm:mt-1 sm:w-fit sm:flex-row">
-						{res.user.role === "admin" && (
-							<React.Fragment>
-								<Button
-									className={"w-full sm:w-fit"}
-									nativeButton={false}
-									render={
-										<Link href={ROUTES.ADMIN_SETTINGS}>
-											<SettingsIcon />
-											Einstellungen
-										</Link>
-									}
-									variant={"outline"}
-								/>
-								<Button
-									className={"w-full sm:w-fit"}
-									nativeButton={false}
-									render={
-										<Link href={ROUTES.ADMIN_DASHBOARD}>
-											<ShieldUserIcon />
-											Admin Dashboard
-										</Link>
-									}
-									variant={"outline"}
-								/>
-							</React.Fragment>
-						)}
 						<Button
 							className={"w-full sm:w-fit"}
 							nativeButton={false}
