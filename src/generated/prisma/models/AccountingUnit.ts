@@ -27,16 +27,22 @@ export type AggregateAccountingUnit = {
 export type AccountingUnitMinAggregateOutputType = {
   id: string | null
   name: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type AccountingUnitMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type AccountingUnitCountAggregateOutputType = {
   id: number
   name: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -44,16 +50,22 @@ export type AccountingUnitCountAggregateOutputType = {
 export type AccountingUnitMinAggregateInputType = {
   id?: true
   name?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type AccountingUnitMaxAggregateInputType = {
   id?: true
   name?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type AccountingUnitCountAggregateInputType = {
   id?: true
   name?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -132,6 +144,8 @@ export type AccountingUnitGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 export type AccountingUnitGroupByOutputType = {
   id: string
   name: string
+  createdAt: Date
+  updatedAt: Date
   _count: AccountingUnitCountAggregateOutputType | null
   _min: AccountingUnitMinAggregateOutputType | null
   _max: AccountingUnitMaxAggregateOutputType | null
@@ -158,27 +172,35 @@ export type AccountingUnitWhereInput = {
   NOT?: Prisma.AccountingUnitWhereInput | Prisma.AccountingUnitWhereInput[]
   id?: Prisma.StringFilter<"AccountingUnit"> | string
   name?: Prisma.StringFilter<"AccountingUnit"> | string
+  createdAt?: Prisma.DateTimeFilter<"AccountingUnit"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AccountingUnit"> | Date | string
   reports?: Prisma.ReportListRelationFilter
 }
 
 export type AccountingUnitOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   reports?: Prisma.ReportOrderByRelationAggregateInput
 }
 
 export type AccountingUnitWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  name?: string
   AND?: Prisma.AccountingUnitWhereInput | Prisma.AccountingUnitWhereInput[]
   OR?: Prisma.AccountingUnitWhereInput[]
   NOT?: Prisma.AccountingUnitWhereInput | Prisma.AccountingUnitWhereInput[]
-  name?: Prisma.StringFilter<"AccountingUnit"> | string
+  createdAt?: Prisma.DateTimeFilter<"AccountingUnit"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AccountingUnit"> | Date | string
   reports?: Prisma.ReportListRelationFilter
-}, "id">
+}, "id" | "name">
 
 export type AccountingUnitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.AccountingUnitCountOrderByAggregateInput
   _max?: Prisma.AccountingUnitMaxOrderByAggregateInput
   _min?: Prisma.AccountingUnitMinOrderByAggregateInput
@@ -190,45 +212,61 @@ export type AccountingUnitScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AccountingUnitScalarWhereWithAggregatesInput | Prisma.AccountingUnitScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"AccountingUnit"> | string
   name?: Prisma.StringWithAggregatesFilter<"AccountingUnit"> | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"AccountingUnit"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AccountingUnit"> | Date | string
 }
 
 export type AccountingUnitCreateInput = {
   id?: string
   name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   reports?: Prisma.ReportCreateNestedManyWithoutAccountingUnitInput
 }
 
 export type AccountingUnitUncheckedCreateInput = {
   id?: string
   name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAccountingUnitInput
 }
 
 export type AccountingUnitUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reports?: Prisma.ReportUpdateManyWithoutAccountingUnitNestedInput
 }
 
 export type AccountingUnitUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reports?: Prisma.ReportUncheckedUpdateManyWithoutAccountingUnitNestedInput
 }
 
 export type AccountingUnitCreateManyInput = {
   id?: string
   name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type AccountingUnitUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AccountingUnitUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AccountingUnitScalarRelationFilter = {
@@ -239,16 +277,22 @@ export type AccountingUnitScalarRelationFilter = {
 export type AccountingUnitCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type AccountingUnitMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type AccountingUnitMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type AccountingUnitCreateNestedOneWithoutReportsInput = {
@@ -268,11 +312,15 @@ export type AccountingUnitUpdateOneRequiredWithoutReportsNestedInput = {
 export type AccountingUnitCreateWithoutReportsInput = {
   id?: string
   name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type AccountingUnitUncheckedCreateWithoutReportsInput = {
   id?: string
   name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type AccountingUnitCreateOrConnectWithoutReportsInput = {
@@ -294,11 +342,15 @@ export type AccountingUnitUpdateToOneWithWhereWithoutReportsInput = {
 export type AccountingUnitUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AccountingUnitUncheckedUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -335,6 +387,8 @@ export type AccountingUnitCountOutputTypeCountReportsArgs<ExtArgs extends runtim
 export type AccountingUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   reports?: boolean | Prisma.AccountingUnit$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountingUnitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["accountingUnit"]>
@@ -342,19 +396,25 @@ export type AccountingUnitSelect<ExtArgs extends runtime.Types.Extensions.Intern
 export type AccountingUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["accountingUnit"]>
 
 export type AccountingUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["accountingUnit"]>
 
 export type AccountingUnitSelectScalar = {
   id?: boolean
   name?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type AccountingUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["accountingUnit"]>
+export type AccountingUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["accountingUnit"]>
 export type AccountingUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reports?: boolean | Prisma.AccountingUnit$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.AccountingUnitCountOutputTypeDefaultArgs<ExtArgs>
@@ -370,6 +430,8 @@ export type $AccountingUnitPayload<ExtArgs extends runtime.Types.Extensions.Inte
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["accountingUnit"]>
   composites: {}
 }
@@ -796,6 +858,8 @@ export interface Prisma__AccountingUnitClient<T, Null = never, ExtArgs extends r
 export interface AccountingUnitFieldRefs {
   readonly id: Prisma.FieldRef<"AccountingUnit", 'String'>
   readonly name: Prisma.FieldRef<"AccountingUnit", 'String'>
+  readonly createdAt: Prisma.FieldRef<"AccountingUnit", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"AccountingUnit", 'DateTime'>
 }
     
 

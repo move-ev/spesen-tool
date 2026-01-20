@@ -187,3 +187,7 @@ export const foodExpenseMetaSchema = z.object({
 export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
 });
+
+export const createAccountingUnitSchema = z.object({
+	name: z.string().min(1),
+});

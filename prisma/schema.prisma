@@ -183,5 +183,9 @@ model AccountingUnit {
   name    String
   reports Report[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+  @@unique([name])
   @@map("accounting_unit")
 }
