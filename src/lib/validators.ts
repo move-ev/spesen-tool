@@ -1,6 +1,6 @@
 import { isValid, parse } from "date-fns";
 import z from "zod";
-import { ExpenseType } from "@/generated/prisma/enums";
+import { ExpenseType, NotificationPreference } from "@/generated/prisma/enums";
 
 export const createReportSchema = z.object({
 	title: z.string().min(1),
@@ -182,4 +182,8 @@ export const foodExpenseMetaSchema = z.object({
 	breakfastDeduction: z.number().min(0),
 	lunchDeduction: z.number().min(0),
 	dinnerDeduction: z.number().min(0),
+});
+
+export const updatePreferencesSchema = z.object({
+	notificationPreference: z.enum(NotificationPreference),
 });

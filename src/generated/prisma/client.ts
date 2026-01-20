@@ -75,6 +75,11 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model Preferences
+ * 
+ */
+export type Preferences = Prisma.PreferencesModel
+/**
  * Model Settings
  * 
  */

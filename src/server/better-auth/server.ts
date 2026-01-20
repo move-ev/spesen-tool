@@ -27,6 +27,25 @@ export const auth = betterAuth({
 			prompt: "select_account",
 		},
 	},
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					// Automatically create preferences entry when a new user signs up
+					try {
+						await db.preferences.create({
+							data: {
+								userId: user.id,
+								notifications: "ALL",
+							},
+						});
+					} catch (error) {
+						console.error("Failed to create user preferences:", error);
+					}
+				},
+			},
+		},
+	},
 	plugins: [adminPlugin(), nextCookies()],
 });
 

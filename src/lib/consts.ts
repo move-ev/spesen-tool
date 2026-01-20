@@ -5,6 +5,7 @@ export const ROUTES = {
 	REPORT_NEW: "/reports/new",
 	ADMIN_DASHBOARD: "/admin",
 	ADMIN_SETTINGS: "/admin/settings",
+	USER_SETTINGS: "/preferences",
 };
 
 export const DEFAULT_EMAIL_FROM =

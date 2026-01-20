@@ -1,15 +1,11 @@
-import { ArrowLeftIcon, SettingsIcon } from "lucide-react";
-import Link from "next/link";
 import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { ReportListSkeleton } from "@/components/report-list";
-import { Button } from "@/components/ui/button";
-import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
 import { api, HydrateClient } from "@/trpc/server";
-import { OpenReportList } from "../_components/open-report-list";
-import { RelevantReportList } from "../_components/relevant-report-list";
-import { AdminStats, AdminStatsSkeleton } from "../_components/stats";
+import { OpenReportList } from "./_components/open-report-list";
+import { RelevantReportList } from "./_components/relevant-report-list";
+import { AdminStats, AdminStatsSkeleton } from "./_components/stats";
 
 export default async function ServerPage() {
 	void api.admin.stats.prefetch();
@@ -23,35 +19,11 @@ export default async function ServerPage() {
 					"container mt-12 flex flex-col flex-wrap items-start justify-start gap-4 sm:flex-row",
 				)}
 			>
-				<div className="me-auto">
+				<div>
 					<PageTitle>Admin Dashboard</PageTitle>
 					<PageDescription className="mt-2">
 						Verwalte deine Spesenanträge
 					</PageDescription>
-				</div>
-				<div className="flex w-full flex-col flex-wrap gap-4 sm:mt-1 sm:w-fit sm:flex-row">
-					<Button
-						className={"w-full sm:w-fit"}
-						nativeButton={false}
-						render={
-							<Link href={ROUTES.USER_DASHBOARD}>
-								<ArrowLeftIcon />
-								Zurück
-							</Link>
-						}
-						variant={"outline"}
-					/>
-					<Button
-						className={"w-full sm:w-fit"}
-						nativeButton={false}
-						render={
-							<Link href={ROUTES.ADMIN_SETTINGS}>
-								<SettingsIcon />
-								Einstellungen
-							</Link>
-						}
-						variant={"outline"}
-					/>
 				</div>
 			</section>
 			<section className="container mt-8">

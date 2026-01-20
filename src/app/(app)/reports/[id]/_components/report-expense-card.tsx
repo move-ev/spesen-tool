@@ -9,7 +9,7 @@ import {
 	UtensilsIcon,
 } from "lucide-react";
 import React from "react";
-import { ExpenseDetails } from "@/app/admin/_components/expense-details";
+import { ExpenseDetails } from "@/app/(app)/admin/_components/expense-details";
 import { ReportCardField } from "@/components/report-card";
 import { Button } from "@/components/ui/button";
 import {

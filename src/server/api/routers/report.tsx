@@ -1,8 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import ReportReceivedEmail from "@/components/emails/report-received-email";
+import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
 import StatusChangedEmail from "@/components/emails/status-changed-email";
-import { ReportStatus } from "@/generated/prisma/enums";
+import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import {
 	adminProcedure,
@@ -276,6 +277,11 @@ export const reportRouter = createTRPCRouter({
 						select: {
 							email: true,
 							name: true,
+							preferences: {
+								select: {
+									notifications: true,
+								},
+							},
 						},
 					},
 				},
@@ -288,7 +294,10 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 
-			if (!input.notify) {
+			if (
+				!input.notify ||
+				result.owner.preferences?.notifications === NotificationPreference.NONE
+			) {
 				return result;
 			}
 
@@ -330,7 +339,18 @@ export const reportRouter = createTRPCRouter({
 					id: input.id,
 				},
 				select: {
-					ownerId: true,
+					owner: {
+						select: {
+							id: true,
+							email: true,
+							name: true,
+							preferences: {
+								select: {
+									notifications: true,
+								},
+							},
+						},
+					},
 					status: true,
 				},
 			});
@@ -343,7 +363,7 @@ export const reportRouter = createTRPCRouter({
 			}
 
 			// Only the owner of the report can submit it
-			if (report.ownerId !== ctx.session.user.id) {
+			if (report.owner.id !== ctx.session.user.id) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You don't have permission to submit this report",
@@ -407,7 +427,23 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 
-			return res;
+			if (report.owner.preferences?.notifications !== NotificationPreference.ALL) {
+				return res;
+			}
+
+			const { error: confirmError } = await resend.emails.send({
+				from: DEFAULT_EMAIL_FROM,
+				to: [report.owner.email],
+				subject: "Report submitted",
+				react: <ReportSubmittedEmail name={report.owner.name} title={res.title} />,
+			});
+
+			if (confirmError) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send confirmation email",
+				});
+			}
 		}),
 	createSummaryPdf: protectedProcedure
 		.input(z.object({ id: z.string() }))

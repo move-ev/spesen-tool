@@ -1,11 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
-import { AppLogo } from "./app-logo";
 import { SignOut } from "./sign-out";
+import { SidebarTrigger } from "./ui/sidebar";
 
 export function SiteHeader({
 	className,
@@ -20,15 +18,9 @@ export function SiteHeader({
 			data-slot="site-header"
 			{...props}
 		>
-			<div className="container py-4">
+			<div className="container py-2">
 				<div className="flex items-center justify-start gap-4">
-					<Link
-						aria-label="Zur Startseite"
-						className="me-auto fill-[#0B263F] dark:fill-white"
-						href={ROUTES.USER_DASHBOARD}
-					>
-						<AppLogo className="h-6 w-fit max-w-32" />
-					</Link>
+					<SidebarTrigger className={"me-auto"} />
 					<ThemeToggle variant={"outline"} />
 					<SignOut />
 				</div>

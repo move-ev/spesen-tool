@@ -17,12 +17,6 @@ export const userRouter = createTRPCRouter({
 	getCurrent: protectedProcedure.query(async ({ ctx }) => {
 		return ctx.db.user.findUnique({
 			where: { id: ctx.session.user.id },
-			select: {
-				id: true,
-				name: true,
-				email: true,
-				admin: true,
-			},
 		});
 	}),
 	promoteToAdmin: adminProcedure
