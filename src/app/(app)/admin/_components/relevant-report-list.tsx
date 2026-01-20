@@ -1,7 +1,17 @@
 "use client";
 
+import { FileSearchCornerIcon } from "lucide-react";
 import type React from "react";
 import { ReportCard, ReportCardField } from "@/components/report-card";
+import { ReportListEmpty } from "@/components/report-list";
+import {
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
@@ -10,6 +20,23 @@ export function RelevantReportList({
 	...props
 }: Omit<React.ComponentProps<"ul">, "children">) {
 	const [reports] = api.admin.listRelevant.useSuspenseQuery();
+
+	if (reports.length === 0) {
+		return (
+			<Empty className="border">
+				<EmptyHeader>
+					<EmptyMedia variant="icon">
+						<FileSearchCornerIcon />
+					</EmptyMedia>
+					<EmptyTitle>Keine Anträge gefunden</EmptyTitle>
+					<EmptyDescription>
+						Hier werden Anträge angezeigt, die das letzte Mal in den letzten 30 Tagen
+						bearbeitet wurden.
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
+		);
+	}
 
 	return (
 		<ul

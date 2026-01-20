@@ -18,7 +18,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
 function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
-			className={cn("flex max-w-sm flex-col items-center gap-2", className)}
+			className={cn("flex max-w-md flex-col items-center gap-2", className)}
 			data-slot="empty-header"
 			{...props}
 		/>
@@ -70,7 +70,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
 	return (
 		<div
 			className={cn(
-				"text-muted-foreground text-sm/relaxed [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
+				"text-muted-foreground text-sm [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
 				className,
 			)}
 			data-slot="empty-description"
@@ -83,7 +83,7 @@ function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			className={cn(
-				"flex w-full min-w-0 max-w-sm flex-col items-center gap-2.5 text-balance text-sm",
+				"flex w-full min-w-0 max-w-lg flex-col items-center gap-2.5 text-balance text-sm",
 				className,
 			)}
 			data-slot="empty-content"

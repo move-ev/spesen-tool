@@ -1,4 +1,4 @@
-import { FileIcon, FileSearchCornerIcon, PlusIcon } from "lucide-react";
+import { FileSearchCornerIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import type React from "react";
 import type { Report } from "@/generated/prisma/client";
@@ -100,9 +100,12 @@ export function ReportListSkeleton({
 	);
 }
 
-export function ReportListEmpty() {
+export function ReportListEmpty({
+	className,
+	...props
+}: React.ComponentProps<typeof Empty>) {
 	return (
-		<Empty className="border">
+		<Empty className={cn("border", className)} {...props}>
 			<EmptyHeader>
 				<EmptyMedia variant="icon">
 					<FileSearchCornerIcon />
