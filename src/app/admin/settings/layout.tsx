@@ -30,7 +30,7 @@ export default async function ServerLayout({
 	return (
 		<SidebarProvider>
 			<AdminSettingsSidebar />
-			<div className="container max-w-3xl py-8">
+			<div className="container max-w-4xl py-8">
 				<div className="mb-8 flex items-center justify-start gap-4">
 					<SidebarTrigger>
 						<MenuIcon />

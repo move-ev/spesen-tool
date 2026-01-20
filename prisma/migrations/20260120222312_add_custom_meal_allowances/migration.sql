@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "settings" ADD COLUMN     "breakfastDeduction" DECIMAL(65,30) NOT NULL DEFAULT 0.00,
+ADD COLUMN     "dailyFoodAllowance" DECIMAL(65,30) NOT NULL DEFAULT 0.00,
+ADD COLUMN     "dinnerDeduction" DECIMAL(65,30) NOT NULL DEFAULT 0.00,
+ADD COLUMN     "lunchDeduction" DECIMAL(65,30) NOT NULL DEFAULT 0.00;

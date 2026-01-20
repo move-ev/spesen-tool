@@ -33,7 +33,6 @@ model Report {
   lastUpdatedAt DateTime @updatedAt
 
   expenses Expense[]
-
 }
 
 enum ReportStatus {
@@ -177,6 +176,11 @@ model Settings {
   accountingUnitPdfUrl String? // PDF URL for Buchungskreis info
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+
+  dailyFoodAllowance Decimal @default(0.00)
+  breakfastDeduction Decimal @default(0.00)
+  lunchDeduction     Decimal @default(0.00)
+  dinnerDeduction    Decimal @default(0.00)
 
   @@map("settings")
 }

@@ -1,6 +1,7 @@
 import {
 	ArrowLeftIcon,
 	Building2Icon,
+	EuroIcon,
 	FolderTreeIcon,
 	SettingsIcon,
 	UsersIcon,
@@ -39,6 +40,11 @@ const settingsMenu = [
 		label: "Geschäftseinheiten",
 		href: ADMIN_SETTINGS_MENU.BUSINESS_UNITS,
 		icon: FolderTreeIcon,
+	},
+	{
+		label: "Zulagen",
+		href: ADMIN_SETTINGS_MENU.ALLOWANCES,
+		icon: EuroIcon,
 	},
 ];
 
