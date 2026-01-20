@@ -15,4 +15,5 @@ export const ADMIN_SETTINGS_MENU = {
 	GENERAL: "/admin/settings",
 	USERS: "/admin/settings/users",
 	ACCOUNTING_UNITS: "/admin/settings/accounting-units",
+	BUSINESS_UNITS: "/admin/settings/business-units",
 };
