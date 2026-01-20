@@ -1,4 +1,4 @@
-import { HomeIcon } from "lucide-react";
+import { HomeIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ROUTES } from "@/lib/consts";
@@ -22,6 +22,11 @@ const sidebarItems = [
 		label: "Dashboard",
 		href: ROUTES.USER_DASHBOARD,
 		icon: HomeIcon,
+	},
+	{
+		label: "Einstellungen",
+		href: ROUTES.USER_SETTINGS,
+		icon: SettingsIcon,
 	},
 ];
 

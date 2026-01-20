@@ -162,6 +162,7 @@ model Preferences {
 enum NotificationPreference {
   ALL
   STATUS_CHANGES
+  NONE
 }
 
 model Settings {

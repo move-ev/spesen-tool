@@ -96,6 +96,15 @@ export function PreferencesForm() {
 											</FieldDescription>
 										</div>
 									</div>
+									<div className="flex items-start gap-3">
+										<RadioGroupItem id="none" value={NotificationPreference.NONE} />
+										<div className="flex flex-col gap-1">
+											<Label htmlFor="none">Keine Benachrichtigungen</Label>
+											<FieldDescription className="max-w-prose">
+												Du erhälst keine Benachrichtigungen.
+											</FieldDescription>
+										</div>
+									</div>
 								</RadioGroup>
 							</Field>
 						);
