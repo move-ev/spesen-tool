@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ReportStatus } from "@/generated/prisma/enums";
 import { ROUTES } from "@/lib/consts";
 import { api, HydrateClient } from "@/trpc/server";
 import { ReportExpensesList } from "./_components/report-expenses-list";
@@ -14,9 +15,15 @@ export default async function ServerPage({
 }: PageProps<"/reports/[id]">) {
 	const { id: reportId } = await params;
 
+	const report = await api.report.getById({ id: reportId });
+
 	void api.report.getById.prefetch({ id: reportId });
 	void api.report.getStats.prefetch({ id: reportId });
 	void api.expense.listForReport.prefetch({ reportId });
+
+	const canAddExpense =
+		report.status === ReportStatus.DRAFT ||
+		report.status === ReportStatus.NEEDS_REVISION;
 
 	return (
 		<HydrateClient>
@@ -45,7 +52,10 @@ export default async function ServerPage({
 				<div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-4 sm:flex-row">
 					<h2 className="font-semibold">Ausgaben</h2>
 					<Button
-						className={"w-full sm:w-fit"}
+						className={
+							"w-full data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 sm:w-fit"
+						}
+						data-disabled={!canAddExpense}
 						nativeButton={false}
 						render={
 							<Link href={`/reports/${reportId}/expenses/new`}>
@@ -53,13 +63,13 @@ export default async function ServerPage({
 								Ausgabe hinzufügen
 							</Link>
 						}
+						tabIndex={!canAddExpense ? 0 : -1}
 						variant={"outline"}
 					/>
 				</div>
 
 				<Suspense fallback={<Skeleton className="h-12 w-full" />}>
-					{" "}
-					<ReportExpensesList reportId={reportId} />
+					<ReportExpensesList reportId={reportId} reportStatus={report.status} />
 				</Suspense>
 			</section>
 		</HydrateClient>
