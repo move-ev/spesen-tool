@@ -8,6 +8,7 @@ import {
 	createTRPCRouter,
 	protectedProcedure,
 } from "@/server/api/trpc";
+import { generatePdfSummary } from "@/server/pdf/summary";
 import { resend } from "@/server/resend";
 
 export const reportRouter = createTRPCRouter({
@@ -365,5 +366,50 @@ export const reportRouter = createTRPCRouter({
 				where: { id: input.id },
 				data: { status: ReportStatus.PENDING_APPROVAL },
 			});
+		}),
+	createSummaryPdf: protectedProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const report = await ctx.db.report.findUnique({
+				where: { id: input.id },
+				include: {
+					owner: true,
+					expenses: true,
+				},
+			});
+
+			if (!report) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			// TODO: Get reviewer from database
+			const summaryPdf = await generatePdfSummary({
+				report,
+				reviewer: {
+					id: ctx.session.user.id,
+					name: ctx.session.user.name,
+					email: ctx.session.user.email,
+					admin: false,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					emailVerified: false,
+					image: null,
+					role: "user",
+					banReason: null,
+					banned: false,
+					banExpires: null,
+				},
+			});
+
+			// Convert buffer to base64 string for transmission
+			const base64Pdf = summaryPdf.toString("base64");
+
+			return {
+				pdf: base64Pdf,
+				filename: `${report.title.replace(/[^a-z0-9]/gi, "_")}_Zusammenfassung.pdf`,
+			};
 		}),
 });
