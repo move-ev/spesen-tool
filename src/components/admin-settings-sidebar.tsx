@@ -1,4 +1,9 @@
-import { ArrowLeftIcon, SettingsIcon, UsersIcon } from "lucide-react";
+import {
+	ArrowLeftIcon,
+	Building2Icon,
+	SettingsIcon,
+	UsersIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +29,11 @@ const settingsMenu = [
 		href: ADMIN_SETTINGS_MENU.USERS,
 		icon: UsersIcon,
 	},
+	{
+		label: "Buchungskreise",
+		href: ADMIN_SETTINGS_MENU.ACCOUNTING_UNITS,
+		icon: Building2Icon,
+	},
 ];
 
 export function AdminSettingsSidebar({
@@ -34,6 +44,7 @@ export function AdminSettingsSidebar({
 			<SidebarHeader>
 				<Button
 					className={"w-fit justify-start"}
+					nativeButton={false}
 					render={
 						<Link href={ROUTES.ADMIN_DASHBOARD}>
 							<ArrowLeftIcon /> Zurück

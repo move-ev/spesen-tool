@@ -6,7 +6,7 @@ export const createReportSchema = z.object({
 	title: z.string().min(1),
 	description: z.string(),
 	businessUnit: z.string().min(1),
-	accountingUnit: z.string().min(1),
+	accountingUnitId: z.string().min(1),
 });
 
 const baseDateSchema = z.string().min(1);
@@ -186,4 +186,8 @@ export const foodExpenseMetaSchema = z.object({
 
 export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
+});
+
+export const createAccountingUnitSchema = z.object({
+	name: z.string().min(1),
 });

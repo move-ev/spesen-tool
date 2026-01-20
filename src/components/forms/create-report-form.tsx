@@ -21,12 +21,11 @@ import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({
 	businessUnits,
-	accountingUnits,
 	...props
 }: React.ComponentProps<"form"> & {
 	businessUnits: { label: string; value: string }[];
-	accountingUnits: { label: string; value: string }[];
 }) {
+	const [accountingUnits] = api.accountingUnit.listAll.useSuspenseQuery();
 	const router = useRouter();
 
 	const createReport = api.report.create.useMutation({
@@ -46,13 +45,15 @@ export function CreateReportForm({
 			title: "",
 			description: "",
 			businessUnit: "",
-			accountingUnit: "",
+			accountingUnitId: "",
 		},
 		validators: {
 			onSubmit: createReportSchema,
 		},
 		onSubmit: (value) => {
-			createReport.mutate(value.value);
+			createReport.mutate({
+				...value.value,
+			});
 		},
 	});
 
@@ -157,12 +158,12 @@ export function CreateReportForm({
 								<FieldLabel htmlFor={field.name}>Rechnungseinheit</FieldLabel>
 								<Combobox
 									items={accountingUnits}
+									itemToStringLabel={(item) => item.name}
+									itemToStringValue={(item) => item.id}
 									onValueChange={(v) => {
-										field.handleChange(v ? v.value : "");
+										field.handleChange(v ? v.id : "");
 									}}
-									value={
-										accountingUnits.find((u) => u.value === field.state.value) ?? null
-									}
+									value={accountingUnits.find((u) => u.id === field.state.value) ?? null}
 								>
 									<ComboboxInput
 										aria-invalid={isInvalid}
@@ -175,8 +176,8 @@ export function CreateReportForm({
 										<ComboboxEmpty>Keine Rechnungseinheiten gefunden.</ComboboxEmpty>
 										<ComboboxList>
 											{(item) => (
-												<ComboboxItem key={item.value} value={item}>
-													{item.label}
+												<ComboboxItem key={item.id} value={item}>
+													{item.name}
 												</ComboboxItem>
 											)}
 										</ComboboxList>
@@ -186,7 +187,7 @@ export function CreateReportForm({
 							</Field>
 						);
 					}}
-					name="accountingUnit"
+					name="accountingUnitId"
 				/>
 				<Button
 					disabled={createReport.isPending}

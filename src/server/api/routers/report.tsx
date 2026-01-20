@@ -169,7 +169,7 @@ export const reportRouter = createTRPCRouter({
 				title: z.string().min(1),
 				description: z.string().optional(),
 				businessUnit: z.string().min(1),
-				accountingUnit: z.string().min(1),
+				accountingUnitId: z.string().min(1),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -193,8 +193,8 @@ export const reportRouter = createTRPCRouter({
 				title: z.string().min(1).optional(),
 				description: z.string().optional(),
 				businessUnit: z.string().min(1).optional(),
-				accountingUnit: z.string().min(1).optional(),
-				status: z.nativeEnum(ReportStatus).optional(),
+				accountingUnitId: z.string().min(1).optional(),
+				status: z.enum(ReportStatus).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

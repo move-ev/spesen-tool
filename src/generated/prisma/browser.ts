@@ -62,3 +62,8 @@ export type Preferences = Prisma.PreferencesModel
  * 
  */
 export type Settings = Prisma.SettingsModel
+/**
+ * Model AccountingUnit
+ * 
+ */
+export type AccountingUnit = Prisma.AccountingUnitModel

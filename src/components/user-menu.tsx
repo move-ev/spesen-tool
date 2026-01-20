@@ -69,7 +69,7 @@ export function UserMenu() {
 				}
 			/>
 			<DropdownMenuContent
-				className={"w-full min-w-(--anchor-width) max-w-72"}
+				className={"w-full min-w-(--anchor-width) max-w-64"}
 				side="right"
 			>
 				<DropdownMenuGroup>
