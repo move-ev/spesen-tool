@@ -34,7 +34,7 @@ export function PreferencesForm() {
 
 	const form = useForm({
 		defaultValues: {
-			notificationPreference: preferences.notificationPreference,
+			notificationPreference: preferences.notifications,
 		},
 		validators: {
 			onSubmit: updatePreferencesSchema,
@@ -101,7 +101,7 @@ export function PreferencesForm() {
 										<div className="flex flex-col gap-1">
 											<Label htmlFor="none">Keine Benachrichtigungen</Label>
 											<FieldDescription className="max-w-prose">
-												Du erhälst keine Benachrichtigungen.
+												Du erhältst keine Benachrichtigungen.
 											</FieldDescription>
 										</div>
 									</div>

@@ -11,7 +11,7 @@ export const preferencesRouter = createTRPCRouter({
 			preferences = await ctx.db.preferences.create({
 				data: {
 					userId: ctx.session.user.id,
-					notificationPreference: "ALL",
+					notifications: "ALL",
 				},
 			});
 		}
@@ -24,7 +24,7 @@ export const preferencesRouter = createTRPCRouter({
 			return await ctx.db.preferences.update({
 				where: { userId: ctx.session.user.id },
 				data: {
-					notificationPreference: input.notificationPreference,
+					notifications: input.notificationPreference,
 				},
 			});
 		}),

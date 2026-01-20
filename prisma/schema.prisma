@@ -154,7 +154,7 @@ model Preferences {
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  notificationPreference NotificationPreference @default(ALL)
+  notifications NotificationPreference @default(ALL)
 
   @@map("preferences")
 }

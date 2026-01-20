@@ -279,7 +279,7 @@ export const reportRouter = createTRPCRouter({
 							name: true,
 							preferences: {
 								select: {
-									notificationPreference: true,
+									notifications: true,
 								},
 							},
 						},
@@ -296,8 +296,7 @@ export const reportRouter = createTRPCRouter({
 
 			if (
 				!input.notify ||
-				result.owner.preferences?.notificationPreference ===
-					NotificationPreference.NONE
+				result.owner.preferences?.notifications === NotificationPreference.NONE
 			) {
 				return result;
 			}
@@ -347,7 +346,7 @@ export const reportRouter = createTRPCRouter({
 							name: true,
 							preferences: {
 								select: {
-									notificationPreference: true,
+									notifications: true,
 								},
 							},
 						},
@@ -428,10 +427,7 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 
-			if (
-				report.owner.preferences?.notificationPreference !==
-				NotificationPreference.ALL
-			) {
+			if (report.owner.preferences?.notifications !== NotificationPreference.ALL) {
 				return res;
 			}
 

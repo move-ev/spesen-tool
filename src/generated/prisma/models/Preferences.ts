@@ -27,19 +27,19 @@ export type AggregatePreferences = {
 export type PreferencesMinAggregateOutputType = {
   id: string | null
   userId: string | null
-  notificationPreference: $Enums.NotificationPreference | null
+  notifications: $Enums.NotificationPreference | null
 }
 
 export type PreferencesMaxAggregateOutputType = {
   id: string | null
   userId: string | null
-  notificationPreference: $Enums.NotificationPreference | null
+  notifications: $Enums.NotificationPreference | null
 }
 
 export type PreferencesCountAggregateOutputType = {
   id: number
   userId: number
-  notificationPreference: number
+  notifications: number
   _all: number
 }
 
@@ -47,19 +47,19 @@ export type PreferencesCountAggregateOutputType = {
 export type PreferencesMinAggregateInputType = {
   id?: true
   userId?: true
-  notificationPreference?: true
+  notifications?: true
 }
 
 export type PreferencesMaxAggregateInputType = {
   id?: true
   userId?: true
-  notificationPreference?: true
+  notifications?: true
 }
 
 export type PreferencesCountAggregateInputType = {
   id?: true
   userId?: true
-  notificationPreference?: true
+  notifications?: true
   _all?: true
 }
 
@@ -138,7 +138,7 @@ export type PreferencesGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type PreferencesGroupByOutputType = {
   id: string
   userId: string
-  notificationPreference: $Enums.NotificationPreference
+  notifications: $Enums.NotificationPreference
   _count: PreferencesCountAggregateOutputType | null
   _min: PreferencesMinAggregateOutputType | null
   _max: PreferencesMaxAggregateOutputType | null
@@ -165,14 +165,14 @@ export type PreferencesWhereInput = {
   NOT?: Prisma.PreferencesWhereInput | Prisma.PreferencesWhereInput[]
   id?: Prisma.StringFilter<"Preferences"> | string
   userId?: Prisma.StringFilter<"Preferences"> | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFilter<"Preferences"> | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFilter<"Preferences"> | $Enums.NotificationPreference
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type PreferencesOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  notificationPreference?: Prisma.SortOrder
+  notifications?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -182,14 +182,14 @@ export type PreferencesWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PreferencesWhereInput | Prisma.PreferencesWhereInput[]
   OR?: Prisma.PreferencesWhereInput[]
   NOT?: Prisma.PreferencesWhereInput | Prisma.PreferencesWhereInput[]
-  notificationPreference?: Prisma.EnumNotificationPreferenceFilter<"Preferences"> | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFilter<"Preferences"> | $Enums.NotificationPreference
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "userId">
 
 export type PreferencesOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  notificationPreference?: Prisma.SortOrder
+  notifications?: Prisma.SortOrder
   _count?: Prisma.PreferencesCountOrderByAggregateInput
   _max?: Prisma.PreferencesMaxOrderByAggregateInput
   _min?: Prisma.PreferencesMinOrderByAggregateInput
@@ -201,48 +201,48 @@ export type PreferencesScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PreferencesScalarWhereWithAggregatesInput | Prisma.PreferencesScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Preferences"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Preferences"> | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceWithAggregatesFilter<"Preferences"> | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceWithAggregatesFilter<"Preferences"> | $Enums.NotificationPreference
 }
 
 export type PreferencesCreateInput = {
   id?: string
-  notificationPreference?: $Enums.NotificationPreference
+  notifications?: $Enums.NotificationPreference
   user: Prisma.UserCreateNestedOneWithoutPreferencesInput
 }
 
 export type PreferencesUncheckedCreateInput = {
   id?: string
   userId: string
-  notificationPreference?: $Enums.NotificationPreference
+  notifications?: $Enums.NotificationPreference
 }
 
 export type PreferencesUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
   user?: Prisma.UserUpdateOneRequiredWithoutPreferencesNestedInput
 }
 
 export type PreferencesUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
 }
 
 export type PreferencesCreateManyInput = {
   id?: string
   userId: string
-  notificationPreference?: $Enums.NotificationPreference
+  notifications?: $Enums.NotificationPreference
 }
 
 export type PreferencesUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
 }
 
 export type PreferencesUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
 }
 
 export type PreferencesNullableScalarRelationFilter = {
@@ -253,19 +253,19 @@ export type PreferencesNullableScalarRelationFilter = {
 export type PreferencesCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  notificationPreference?: Prisma.SortOrder
+  notifications?: Prisma.SortOrder
 }
 
 export type PreferencesMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  notificationPreference?: Prisma.SortOrder
+  notifications?: Prisma.SortOrder
 }
 
 export type PreferencesMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  notificationPreference?: Prisma.SortOrder
+  notifications?: Prisma.SortOrder
 }
 
 export type PreferencesCreateNestedOneWithoutUserInput = {
@@ -306,12 +306,12 @@ export type EnumNotificationPreferenceFieldUpdateOperationsInput = {
 
 export type PreferencesCreateWithoutUserInput = {
   id?: string
-  notificationPreference?: $Enums.NotificationPreference
+  notifications?: $Enums.NotificationPreference
 }
 
 export type PreferencesUncheckedCreateWithoutUserInput = {
   id?: string
-  notificationPreference?: $Enums.NotificationPreference
+  notifications?: $Enums.NotificationPreference
 }
 
 export type PreferencesCreateOrConnectWithoutUserInput = {
@@ -332,12 +332,12 @@ export type PreferencesUpdateToOneWithWhereWithoutUserInput = {
 
 export type PreferencesUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
 }
 
 export type PreferencesUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  notificationPreference?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
+  notifications?: Prisma.EnumNotificationPreferenceFieldUpdateOperationsInput | $Enums.NotificationPreference
 }
 
 
@@ -345,31 +345,31 @@ export type PreferencesUncheckedUpdateWithoutUserInput = {
 export type PreferencesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  notificationPreference?: boolean
+  notifications?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["preferences"]>
 
 export type PreferencesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  notificationPreference?: boolean
+  notifications?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["preferences"]>
 
 export type PreferencesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  notificationPreference?: boolean
+  notifications?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["preferences"]>
 
 export type PreferencesSelectScalar = {
   id?: boolean
   userId?: boolean
-  notificationPreference?: boolean
+  notifications?: boolean
 }
 
-export type PreferencesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "notificationPreference", ExtArgs["result"]["preferences"]>
+export type PreferencesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "notifications", ExtArgs["result"]["preferences"]>
 export type PreferencesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -388,7 +388,7 @@ export type $PreferencesPayload<ExtArgs extends runtime.Types.Extensions.Interna
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
-    notificationPreference: $Enums.NotificationPreference
+    notifications: $Enums.NotificationPreference
   }, ExtArgs["result"]["preferences"]>
   composites: {}
 }
@@ -815,7 +815,7 @@ export interface Prisma__PreferencesClient<T, Null = never, ExtArgs extends runt
 export interface PreferencesFieldRefs {
   readonly id: Prisma.FieldRef<"Preferences", 'String'>
   readonly userId: Prisma.FieldRef<"Preferences", 'String'>
-  readonly notificationPreference: Prisma.FieldRef<"Preferences", 'NotificationPreference'>
+  readonly notifications: Prisma.FieldRef<"Preferences", 'NotificationPreference'>
 }
     
 

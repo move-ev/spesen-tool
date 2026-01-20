@@ -1224,7 +1224,7 @@ export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[k
 export const PreferencesScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  notificationPreference: 'notificationPreference'
+  notifications: 'notifications'
 } as const
 
 export type PreferencesScalarFieldEnum = (typeof PreferencesScalarFieldEnum)[keyof typeof PreferencesScalarFieldEnum]
