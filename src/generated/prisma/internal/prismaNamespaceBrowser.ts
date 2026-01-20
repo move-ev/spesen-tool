@@ -59,7 +59,8 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Preferences: 'Preferences',
-  Settings: 'Settings'
+  Settings: 'Settings',
+  AccountingUnit: 'AccountingUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -84,7 +85,7 @@ export const ReportScalarFieldEnum = {
   description: 'description',
   status: 'status',
   businessUnit: 'businessUnit',
-  accountingUnit: 'accountingUnit',
+  accountingUnitId: 'accountingUnitId',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'
@@ -201,6 +202,14 @@ export const SettingsScalarFieldEnum = {
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
+
+
+export const AccountingUnitScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+} as const
+
+export type AccountingUnitScalarFieldEnum = (typeof AccountingUnitScalarFieldEnum)[keyof typeof AccountingUnitScalarFieldEnum]
 
 
 export const SortOrder = {

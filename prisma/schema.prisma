@@ -15,12 +15,14 @@ datasource db {
 }
 
 model Report {
-  id             String       @id @default(cuid())
-  title          String
-  description    String?
-  status         ReportStatus @default(DRAFT)
-  businessUnit   String
-  accountingUnit String
+  id           String       @id @default(cuid())
+  title        String
+  description  String?
+  status       ReportStatus @default(DRAFT)
+  businessUnit String
+
+  accountingUnit   AccountingUnit @relation(fields: [accountingUnitId], references: [id], onDelete: Cascade)
+  accountingUnitId String
 
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
@@ -150,9 +152,9 @@ model Verification {
 }
 
 model Preferences {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   notifications NotificationPreference @default(ALL)
 
@@ -174,4 +176,12 @@ model Settings {
   updatedAt            DateTime @updatedAt
 
   @@map("settings")
+}
+
+model AccountingUnit {
+  id      String   @id @default(cuid())
+  name    String
+  reports Report[]
+
+  @@map("accounting_unit")
 }
