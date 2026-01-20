@@ -35,6 +35,14 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
+			const target = await ctx.db.user.findUnique({
+				where: { id: input.tagetUserId },
+				select: {
+					id: true,
+					role: true,
+				},
+			});
+
 			if (
 				!ADMINS_PROMOTE_OTHER_ADMIN &&
 				ctx.session.user.id !== env.SUPERUSER_ID
@@ -42,6 +50,13 @@ export const userRouter = createTRPCRouter({
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Only the superuser can promote other admins",
+				});
+			}
+
+			if (target?.role === "admin") {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "User is already an admin",
 				});
 			}
 
