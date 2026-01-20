@@ -9,6 +9,7 @@ import { api } from "@/trpc/server";
 
 export default async function ServerPage() {
 	void api.accountingUnit.listAll.prefetch();
+	void api.businessUnit.listAll.prefetch();
 
 	return (
 		<React.Fragment>
@@ -30,18 +31,7 @@ export default async function ServerPage() {
 				</PageDescription>
 			</section>
 			<section className="container mt-10 max-w-4xl">
-				<CreateReportForm
-					businessUnits={[
-						{
-							label: "Test123",
-							value: "test123",
-						},
-						{
-							label: "TestABC",
-							value: "testabc",
-						},
-					]}
-				/>
+				<CreateReportForm />
 			</section>
 		</React.Fragment>
 	);

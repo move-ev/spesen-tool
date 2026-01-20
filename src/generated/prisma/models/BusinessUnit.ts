@@ -221,7 +221,7 @@ export type BusinessUnitCreateInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  reports?: Prisma.ReportCreateNestedManyWithoutBusinessUnitsInput
+  reports?: Prisma.ReportCreateNestedManyWithoutBusinessUnitInput
 }
 
 export type BusinessUnitUncheckedCreateInput = {
@@ -229,7 +229,7 @@ export type BusinessUnitUncheckedCreateInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutBusinessUnitsInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutBusinessUnitInput
 }
 
 export type BusinessUnitUpdateInput = {
@@ -237,7 +237,7 @@ export type BusinessUnitUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reports?: Prisma.ReportUpdateManyWithoutBusinessUnitsNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutBusinessUnitNestedInput
 }
 
 export type BusinessUnitUncheckedUpdateInput = {
@@ -245,7 +245,7 @@ export type BusinessUnitUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutBusinessUnitsNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutBusinessUnitNestedInput
 }
 
 export type BusinessUnitCreateManyInput = {
@@ -269,14 +269,9 @@ export type BusinessUnitUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type BusinessUnitListRelationFilter = {
-  every?: Prisma.BusinessUnitWhereInput
-  some?: Prisma.BusinessUnitWhereInput
-  none?: Prisma.BusinessUnitWhereInput
-}
-
-export type BusinessUnitOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
+export type BusinessUnitScalarRelationFilter = {
+  is?: Prisma.BusinessUnitWhereInput
+  isNot?: Prisma.BusinessUnitWhereInput
 }
 
 export type BusinessUnitCountOrderByAggregateInput = {
@@ -300,42 +295,18 @@ export type BusinessUnitMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type BusinessUnitCreateNestedManyWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput> | Prisma.BusinessUnitCreateWithoutReportsInput[] | Prisma.BusinessUnitUncheckedCreateWithoutReportsInput[]
-  connectOrCreate?: Prisma.BusinessUnitCreateOrConnectWithoutReportsInput | Prisma.BusinessUnitCreateOrConnectWithoutReportsInput[]
-  connect?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
+export type BusinessUnitCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.BusinessUnitCreateOrConnectWithoutReportsInput
+  connect?: Prisma.BusinessUnitWhereUniqueInput
 }
 
-export type BusinessUnitUncheckedCreateNestedManyWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput> | Prisma.BusinessUnitCreateWithoutReportsInput[] | Prisma.BusinessUnitUncheckedCreateWithoutReportsInput[]
-  connectOrCreate?: Prisma.BusinessUnitCreateOrConnectWithoutReportsInput | Prisma.BusinessUnitCreateOrConnectWithoutReportsInput[]
-  connect?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-}
-
-export type BusinessUnitUpdateManyWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput> | Prisma.BusinessUnitCreateWithoutReportsInput[] | Prisma.BusinessUnitUncheckedCreateWithoutReportsInput[]
-  connectOrCreate?: Prisma.BusinessUnitCreateOrConnectWithoutReportsInput | Prisma.BusinessUnitCreateOrConnectWithoutReportsInput[]
-  upsert?: Prisma.BusinessUnitUpsertWithWhereUniqueWithoutReportsInput | Prisma.BusinessUnitUpsertWithWhereUniqueWithoutReportsInput[]
-  set?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  disconnect?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  delete?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  connect?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  update?: Prisma.BusinessUnitUpdateWithWhereUniqueWithoutReportsInput | Prisma.BusinessUnitUpdateWithWhereUniqueWithoutReportsInput[]
-  updateMany?: Prisma.BusinessUnitUpdateManyWithWhereWithoutReportsInput | Prisma.BusinessUnitUpdateManyWithWhereWithoutReportsInput[]
-  deleteMany?: Prisma.BusinessUnitScalarWhereInput | Prisma.BusinessUnitScalarWhereInput[]
-}
-
-export type BusinessUnitUncheckedUpdateManyWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput> | Prisma.BusinessUnitCreateWithoutReportsInput[] | Prisma.BusinessUnitUncheckedCreateWithoutReportsInput[]
-  connectOrCreate?: Prisma.BusinessUnitCreateOrConnectWithoutReportsInput | Prisma.BusinessUnitCreateOrConnectWithoutReportsInput[]
-  upsert?: Prisma.BusinessUnitUpsertWithWhereUniqueWithoutReportsInput | Prisma.BusinessUnitUpsertWithWhereUniqueWithoutReportsInput[]
-  set?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  disconnect?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  delete?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  connect?: Prisma.BusinessUnitWhereUniqueInput | Prisma.BusinessUnitWhereUniqueInput[]
-  update?: Prisma.BusinessUnitUpdateWithWhereUniqueWithoutReportsInput | Prisma.BusinessUnitUpdateWithWhereUniqueWithoutReportsInput[]
-  updateMany?: Prisma.BusinessUnitUpdateManyWithWhereWithoutReportsInput | Prisma.BusinessUnitUpdateManyWithWhereWithoutReportsInput[]
-  deleteMany?: Prisma.BusinessUnitScalarWhereInput | Prisma.BusinessUnitScalarWhereInput[]
+export type BusinessUnitUpdateOneRequiredWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.BusinessUnitCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.BusinessUnitUpsertWithoutReportsInput
+  connect?: Prisma.BusinessUnitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BusinessUnitUpdateToOneWithWhereWithoutReportsInput, Prisma.BusinessUnitUpdateWithoutReportsInput>, Prisma.BusinessUnitUncheckedUpdateWithoutReportsInput>
 }
 
 export type BusinessUnitCreateWithoutReportsInput = {
@@ -357,30 +328,15 @@ export type BusinessUnitCreateOrConnectWithoutReportsInput = {
   create: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput>
 }
 
-export type BusinessUnitUpsertWithWhereUniqueWithoutReportsInput = {
-  where: Prisma.BusinessUnitWhereUniqueInput
+export type BusinessUnitUpsertWithoutReportsInput = {
   update: Prisma.XOR<Prisma.BusinessUnitUpdateWithoutReportsInput, Prisma.BusinessUnitUncheckedUpdateWithoutReportsInput>
   create: Prisma.XOR<Prisma.BusinessUnitCreateWithoutReportsInput, Prisma.BusinessUnitUncheckedCreateWithoutReportsInput>
+  where?: Prisma.BusinessUnitWhereInput
 }
 
-export type BusinessUnitUpdateWithWhereUniqueWithoutReportsInput = {
-  where: Prisma.BusinessUnitWhereUniqueInput
+export type BusinessUnitUpdateToOneWithWhereWithoutReportsInput = {
+  where?: Prisma.BusinessUnitWhereInput
   data: Prisma.XOR<Prisma.BusinessUnitUpdateWithoutReportsInput, Prisma.BusinessUnitUncheckedUpdateWithoutReportsInput>
-}
-
-export type BusinessUnitUpdateManyWithWhereWithoutReportsInput = {
-  where: Prisma.BusinessUnitScalarWhereInput
-  data: Prisma.XOR<Prisma.BusinessUnitUpdateManyMutationInput, Prisma.BusinessUnitUncheckedUpdateManyWithoutReportsInput>
-}
-
-export type BusinessUnitScalarWhereInput = {
-  AND?: Prisma.BusinessUnitScalarWhereInput | Prisma.BusinessUnitScalarWhereInput[]
-  OR?: Prisma.BusinessUnitScalarWhereInput[]
-  NOT?: Prisma.BusinessUnitScalarWhereInput | Prisma.BusinessUnitScalarWhereInput[]
-  id?: Prisma.StringFilter<"BusinessUnit"> | string
-  name?: Prisma.StringFilter<"BusinessUnit"> | string
-  createdAt?: Prisma.DateTimeFilter<"BusinessUnit"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"BusinessUnit"> | Date | string
 }
 
 export type BusinessUnitUpdateWithoutReportsInput = {
@@ -391,13 +347,6 @@ export type BusinessUnitUpdateWithoutReportsInput = {
 }
 
 export type BusinessUnitUncheckedUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type BusinessUnitUncheckedUpdateManyWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string

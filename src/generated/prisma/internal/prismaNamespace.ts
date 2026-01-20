@@ -1273,6 +1273,7 @@ export const ReportScalarFieldEnum = {
   description: 'description',
   status: 'status',
   accountingUnitId: 'accountingUnitId',
+  businessUnitId: 'businessUnitId',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'

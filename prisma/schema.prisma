@@ -23,6 +23,9 @@ model Report {
   accountingUnit   AccountingUnit @relation(fields: [accountingUnitId], references: [id], onDelete: Cascade)
   accountingUnitId String
 
+  businessUnit   BusinessUnit @relation(fields: [businessUnitId], references: [id], onDelete: Cascade)
+  businessUnitId String
+
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
 
@@ -31,7 +34,6 @@ model Report {
 
   expenses Expense[]
 
-  businessUnits BusinessUnit[]
 }
 
 enum ReportStatus {

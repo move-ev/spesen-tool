@@ -5,7 +5,7 @@ import { ExpenseType, NotificationPreference } from "@/generated/prisma/enums";
 export const createReportSchema = z.object({
 	title: z.string().min(1),
 	description: z.string(),
-	businessUnit: z.string().min(1),
+	businessUnitId: z.string().min(1),
 	accountingUnitId: z.string().min(1),
 });
 

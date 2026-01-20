@@ -30,6 +30,7 @@ export type ReportMinAggregateOutputType = {
   description: string | null
   status: $Enums.ReportStatus | null
   accountingUnitId: string | null
+  businessUnitId: string | null
   ownerId: string | null
   createdAt: Date | null
   lastUpdatedAt: Date | null
@@ -41,6 +42,7 @@ export type ReportMaxAggregateOutputType = {
   description: string | null
   status: $Enums.ReportStatus | null
   accountingUnitId: string | null
+  businessUnitId: string | null
   ownerId: string | null
   createdAt: Date | null
   lastUpdatedAt: Date | null
@@ -52,6 +54,7 @@ export type ReportCountAggregateOutputType = {
   description: number
   status: number
   accountingUnitId: number
+  businessUnitId: number
   ownerId: number
   createdAt: number
   lastUpdatedAt: number
@@ -65,6 +68,7 @@ export type ReportMinAggregateInputType = {
   description?: true
   status?: true
   accountingUnitId?: true
+  businessUnitId?: true
   ownerId?: true
   createdAt?: true
   lastUpdatedAt?: true
@@ -76,6 +80,7 @@ export type ReportMaxAggregateInputType = {
   description?: true
   status?: true
   accountingUnitId?: true
+  businessUnitId?: true
   ownerId?: true
   createdAt?: true
   lastUpdatedAt?: true
@@ -87,6 +92,7 @@ export type ReportCountAggregateInputType = {
   description?: true
   status?: true
   accountingUnitId?: true
+  businessUnitId?: true
   ownerId?: true
   createdAt?: true
   lastUpdatedAt?: true
@@ -171,6 +177,7 @@ export type ReportGroupByOutputType = {
   description: string | null
   status: $Enums.ReportStatus
   accountingUnitId: string
+  businessUnitId: string
   ownerId: string
   createdAt: Date
   lastUpdatedAt: Date
@@ -203,13 +210,14 @@ export type ReportWhereInput = {
   description?: Prisma.StringNullableFilter<"Report"> | string | null
   status?: Prisma.EnumReportStatusFilter<"Report"> | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFilter<"Report"> | string
+  businessUnitId?: Prisma.StringFilter<"Report"> | string
   ownerId?: Prisma.StringFilter<"Report"> | string
   createdAt?: Prisma.DateTimeFilter<"Report"> | Date | string
   lastUpdatedAt?: Prisma.DateTimeFilter<"Report"> | Date | string
   accountingUnit?: Prisma.XOR<Prisma.AccountingUnitScalarRelationFilter, Prisma.AccountingUnitWhereInput>
+  businessUnit?: Prisma.XOR<Prisma.BusinessUnitScalarRelationFilter, Prisma.BusinessUnitWhereInput>
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   expenses?: Prisma.ExpenseListRelationFilter
-  businessUnits?: Prisma.BusinessUnitListRelationFilter
 }
 
 export type ReportOrderByWithRelationInput = {
@@ -218,13 +226,14 @@ export type ReportOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   accountingUnitId?: Prisma.SortOrder
+  businessUnitId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastUpdatedAt?: Prisma.SortOrder
   accountingUnit?: Prisma.AccountingUnitOrderByWithRelationInput
+  businessUnit?: Prisma.BusinessUnitOrderByWithRelationInput
   owner?: Prisma.UserOrderByWithRelationInput
   expenses?: Prisma.ExpenseOrderByRelationAggregateInput
-  businessUnits?: Prisma.BusinessUnitOrderByRelationAggregateInput
 }
 
 export type ReportWhereUniqueInput = Prisma.AtLeast<{
@@ -236,13 +245,14 @@ export type ReportWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Report"> | string | null
   status?: Prisma.EnumReportStatusFilter<"Report"> | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFilter<"Report"> | string
+  businessUnitId?: Prisma.StringFilter<"Report"> | string
   ownerId?: Prisma.StringFilter<"Report"> | string
   createdAt?: Prisma.DateTimeFilter<"Report"> | Date | string
   lastUpdatedAt?: Prisma.DateTimeFilter<"Report"> | Date | string
   accountingUnit?: Prisma.XOR<Prisma.AccountingUnitScalarRelationFilter, Prisma.AccountingUnitWhereInput>
+  businessUnit?: Prisma.XOR<Prisma.BusinessUnitScalarRelationFilter, Prisma.BusinessUnitWhereInput>
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   expenses?: Prisma.ExpenseListRelationFilter
-  businessUnits?: Prisma.BusinessUnitListRelationFilter
 }, "id">
 
 export type ReportOrderByWithAggregationInput = {
@@ -251,6 +261,7 @@ export type ReportOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   accountingUnitId?: Prisma.SortOrder
+  businessUnitId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastUpdatedAt?: Prisma.SortOrder
@@ -268,6 +279,7 @@ export type ReportScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Report"> | string | null
   status?: Prisma.EnumReportStatusWithAggregatesFilter<"Report"> | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringWithAggregatesFilter<"Report"> | string
+  businessUnitId?: Prisma.StringWithAggregatesFilter<"Report"> | string
   ownerId?: Prisma.StringWithAggregatesFilter<"Report"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Report"> | Date | string
   lastUpdatedAt?: Prisma.DateTimeWithAggregatesFilter<"Report"> | Date | string
@@ -281,9 +293,9 @@ export type ReportCreateInput = {
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
   accountingUnit: Prisma.AccountingUnitCreateNestedOneWithoutReportsInput
+  businessUnit: Prisma.BusinessUnitCreateNestedOneWithoutReportsInput
   owner: Prisma.UserCreateNestedOneWithoutOwnReportsInput
   expenses?: Prisma.ExpenseCreateNestedManyWithoutReportInput
-  businessUnits?: Prisma.BusinessUnitCreateNestedManyWithoutReportsInput
 }
 
 export type ReportUncheckedCreateInput = {
@@ -292,11 +304,11 @@ export type ReportUncheckedCreateInput = {
   description?: string | null
   status?: $Enums.ReportStatus
   accountingUnitId: string
+  businessUnitId: string
   ownerId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutReportInput
-  businessUnits?: Prisma.BusinessUnitUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportUpdateInput = {
@@ -307,9 +319,9 @@ export type ReportUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountingUnit?: Prisma.AccountingUnitUpdateOneRequiredWithoutReportsNestedInput
+  businessUnit?: Prisma.BusinessUnitUpdateOneRequiredWithoutReportsNestedInput
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnReportsNestedInput
   expenses?: Prisma.ExpenseUpdateManyWithoutReportNestedInput
-  businessUnits?: Prisma.BusinessUnitUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportUncheckedUpdateInput = {
@@ -318,11 +330,11 @@ export type ReportUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutReportNestedInput
-  businessUnits?: Prisma.BusinessUnitUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportCreateManyInput = {
@@ -331,6 +343,7 @@ export type ReportCreateManyInput = {
   description?: string | null
   status?: $Enums.ReportStatus
   accountingUnitId: string
+  businessUnitId: string
   ownerId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
@@ -351,6 +364,7 @@ export type ReportUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -362,6 +376,7 @@ export type ReportCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   accountingUnitId?: Prisma.SortOrder
+  businessUnitId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastUpdatedAt?: Prisma.SortOrder
@@ -373,6 +388,7 @@ export type ReportMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   accountingUnitId?: Prisma.SortOrder
+  businessUnitId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastUpdatedAt?: Prisma.SortOrder
@@ -384,6 +400,7 @@ export type ReportMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   accountingUnitId?: Prisma.SortOrder
+  businessUnitId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   lastUpdatedAt?: Prisma.SortOrder
@@ -518,41 +535,45 @@ export type ReportUncheckedUpdateManyWithoutAccountingUnitNestedInput = {
   deleteMany?: Prisma.ReportScalarWhereInput | Prisma.ReportScalarWhereInput[]
 }
 
-export type ReportCreateNestedManyWithoutBusinessUnitsInput = {
-  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitsInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput> | Prisma.ReportCreateWithoutBusinessUnitsInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput[]
-  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput[]
+export type ReportCreateNestedManyWithoutBusinessUnitInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitInput> | Prisma.ReportCreateWithoutBusinessUnitInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitInput[]
+  createMany?: Prisma.ReportCreateManyBusinessUnitInputEnvelope
   connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
 }
 
-export type ReportUncheckedCreateNestedManyWithoutBusinessUnitsInput = {
-  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitsInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput> | Prisma.ReportCreateWithoutBusinessUnitsInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput[]
-  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput[]
+export type ReportUncheckedCreateNestedManyWithoutBusinessUnitInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitInput> | Prisma.ReportCreateWithoutBusinessUnitInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitInput[]
+  createMany?: Prisma.ReportCreateManyBusinessUnitInputEnvelope
   connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
 }
 
-export type ReportUpdateManyWithoutBusinessUnitsNestedInput = {
-  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitsInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput> | Prisma.ReportCreateWithoutBusinessUnitsInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput[]
-  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput[]
-  upsert?: Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitsInput | Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitsInput[]
+export type ReportUpdateManyWithoutBusinessUnitNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitInput> | Prisma.ReportCreateWithoutBusinessUnitInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitInput[]
+  upsert?: Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitInput | Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitInput[]
+  createMany?: Prisma.ReportCreateManyBusinessUnitInputEnvelope
   set?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
   disconnect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
   delete?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
   connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
-  update?: Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitsInput | Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitsInput[]
-  updateMany?: Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitsInput | Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitsInput[]
+  update?: Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitInput | Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitInput[]
+  updateMany?: Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitInput | Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitInput[]
   deleteMany?: Prisma.ReportScalarWhereInput | Prisma.ReportScalarWhereInput[]
 }
 
-export type ReportUncheckedUpdateManyWithoutBusinessUnitsNestedInput = {
-  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitsInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput> | Prisma.ReportCreateWithoutBusinessUnitsInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput[]
-  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitsInput[]
-  upsert?: Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitsInput | Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitsInput[]
+export type ReportUncheckedUpdateManyWithoutBusinessUnitNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitInput> | Prisma.ReportCreateWithoutBusinessUnitInput[] | Prisma.ReportUncheckedCreateWithoutBusinessUnitInput[]
+  connectOrCreate?: Prisma.ReportCreateOrConnectWithoutBusinessUnitInput | Prisma.ReportCreateOrConnectWithoutBusinessUnitInput[]
+  upsert?: Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitInput | Prisma.ReportUpsertWithWhereUniqueWithoutBusinessUnitInput[]
+  createMany?: Prisma.ReportCreateManyBusinessUnitInputEnvelope
   set?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
   disconnect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
   delete?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
   connect?: Prisma.ReportWhereUniqueInput | Prisma.ReportWhereUniqueInput[]
-  update?: Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitsInput | Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitsInput[]
-  updateMany?: Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitsInput | Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitsInput[]
+  update?: Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitInput | Prisma.ReportUpdateWithWhereUniqueWithoutBusinessUnitInput[]
+  updateMany?: Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitInput | Prisma.ReportUpdateManyWithWhereWithoutBusinessUnitInput[]
   deleteMany?: Prisma.ReportScalarWhereInput | Prisma.ReportScalarWhereInput[]
 }
 
@@ -564,8 +585,8 @@ export type ReportCreateWithoutExpensesInput = {
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
   accountingUnit: Prisma.AccountingUnitCreateNestedOneWithoutReportsInput
+  businessUnit: Prisma.BusinessUnitCreateNestedOneWithoutReportsInput
   owner: Prisma.UserCreateNestedOneWithoutOwnReportsInput
-  businessUnits?: Prisma.BusinessUnitCreateNestedManyWithoutReportsInput
 }
 
 export type ReportUncheckedCreateWithoutExpensesInput = {
@@ -574,10 +595,10 @@ export type ReportUncheckedCreateWithoutExpensesInput = {
   description?: string | null
   status?: $Enums.ReportStatus
   accountingUnitId: string
+  businessUnitId: string
   ownerId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
-  businessUnits?: Prisma.BusinessUnitUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportCreateOrConnectWithoutExpensesInput = {
@@ -604,8 +625,8 @@ export type ReportUpdateWithoutExpensesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountingUnit?: Prisma.AccountingUnitUpdateOneRequiredWithoutReportsNestedInput
+  businessUnit?: Prisma.BusinessUnitUpdateOneRequiredWithoutReportsNestedInput
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnReportsNestedInput
-  businessUnits?: Prisma.BusinessUnitUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportUncheckedUpdateWithoutExpensesInput = {
@@ -614,10 +635,10 @@ export type ReportUncheckedUpdateWithoutExpensesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  businessUnits?: Prisma.BusinessUnitUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportCreateWithoutOwnerInput = {
@@ -628,8 +649,8 @@ export type ReportCreateWithoutOwnerInput = {
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
   accountingUnit: Prisma.AccountingUnitCreateNestedOneWithoutReportsInput
+  businessUnit: Prisma.BusinessUnitCreateNestedOneWithoutReportsInput
   expenses?: Prisma.ExpenseCreateNestedManyWithoutReportInput
-  businessUnits?: Prisma.BusinessUnitCreateNestedManyWithoutReportsInput
 }
 
 export type ReportUncheckedCreateWithoutOwnerInput = {
@@ -638,10 +659,10 @@ export type ReportUncheckedCreateWithoutOwnerInput = {
   description?: string | null
   status?: $Enums.ReportStatus
   accountingUnitId: string
+  businessUnitId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutReportInput
-  businessUnits?: Prisma.BusinessUnitUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportCreateOrConnectWithoutOwnerInput = {
@@ -679,6 +700,7 @@ export type ReportScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Report"> | string | null
   status?: Prisma.EnumReportStatusFilter<"Report"> | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFilter<"Report"> | string
+  businessUnitId?: Prisma.StringFilter<"Report"> | string
   ownerId?: Prisma.StringFilter<"Report"> | string
   createdAt?: Prisma.DateTimeFilter<"Report"> | Date | string
   lastUpdatedAt?: Prisma.DateTimeFilter<"Report"> | Date | string
@@ -691,9 +713,9 @@ export type ReportCreateWithoutAccountingUnitInput = {
   status?: $Enums.ReportStatus
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
+  businessUnit: Prisma.BusinessUnitCreateNestedOneWithoutReportsInput
   owner: Prisma.UserCreateNestedOneWithoutOwnReportsInput
   expenses?: Prisma.ExpenseCreateNestedManyWithoutReportInput
-  businessUnits?: Prisma.BusinessUnitCreateNestedManyWithoutReportsInput
 }
 
 export type ReportUncheckedCreateWithoutAccountingUnitInput = {
@@ -701,11 +723,11 @@ export type ReportUncheckedCreateWithoutAccountingUnitInput = {
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
+  businessUnitId: string
   ownerId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutReportInput
-  businessUnits?: Prisma.BusinessUnitUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportCreateOrConnectWithoutAccountingUnitInput = {
@@ -734,7 +756,7 @@ export type ReportUpdateManyWithWhereWithoutAccountingUnitInput = {
   data: Prisma.XOR<Prisma.ReportUpdateManyMutationInput, Prisma.ReportUncheckedUpdateManyWithoutAccountingUnitInput>
 }
 
-export type ReportCreateWithoutBusinessUnitsInput = {
+export type ReportCreateWithoutBusinessUnitInput = {
   id?: string
   title: string
   description?: string | null
@@ -746,7 +768,7 @@ export type ReportCreateWithoutBusinessUnitsInput = {
   expenses?: Prisma.ExpenseCreateNestedManyWithoutReportInput
 }
 
-export type ReportUncheckedCreateWithoutBusinessUnitsInput = {
+export type ReportUncheckedCreateWithoutBusinessUnitInput = {
   id?: string
   title: string
   description?: string | null
@@ -758,25 +780,30 @@ export type ReportUncheckedCreateWithoutBusinessUnitsInput = {
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutReportInput
 }
 
-export type ReportCreateOrConnectWithoutBusinessUnitsInput = {
+export type ReportCreateOrConnectWithoutBusinessUnitInput = {
   where: Prisma.ReportWhereUniqueInput
-  create: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitsInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput>
+  create: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitInput>
 }
 
-export type ReportUpsertWithWhereUniqueWithoutBusinessUnitsInput = {
-  where: Prisma.ReportWhereUniqueInput
-  update: Prisma.XOR<Prisma.ReportUpdateWithoutBusinessUnitsInput, Prisma.ReportUncheckedUpdateWithoutBusinessUnitsInput>
-  create: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitsInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitsInput>
+export type ReportCreateManyBusinessUnitInputEnvelope = {
+  data: Prisma.ReportCreateManyBusinessUnitInput | Prisma.ReportCreateManyBusinessUnitInput[]
+  skipDuplicates?: boolean
 }
 
-export type ReportUpdateWithWhereUniqueWithoutBusinessUnitsInput = {
+export type ReportUpsertWithWhereUniqueWithoutBusinessUnitInput = {
   where: Prisma.ReportWhereUniqueInput
-  data: Prisma.XOR<Prisma.ReportUpdateWithoutBusinessUnitsInput, Prisma.ReportUncheckedUpdateWithoutBusinessUnitsInput>
+  update: Prisma.XOR<Prisma.ReportUpdateWithoutBusinessUnitInput, Prisma.ReportUncheckedUpdateWithoutBusinessUnitInput>
+  create: Prisma.XOR<Prisma.ReportCreateWithoutBusinessUnitInput, Prisma.ReportUncheckedCreateWithoutBusinessUnitInput>
 }
 
-export type ReportUpdateManyWithWhereWithoutBusinessUnitsInput = {
+export type ReportUpdateWithWhereUniqueWithoutBusinessUnitInput = {
+  where: Prisma.ReportWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReportUpdateWithoutBusinessUnitInput, Prisma.ReportUncheckedUpdateWithoutBusinessUnitInput>
+}
+
+export type ReportUpdateManyWithWhereWithoutBusinessUnitInput = {
   where: Prisma.ReportScalarWhereInput
-  data: Prisma.XOR<Prisma.ReportUpdateManyMutationInput, Prisma.ReportUncheckedUpdateManyWithoutBusinessUnitsInput>
+  data: Prisma.XOR<Prisma.ReportUpdateManyMutationInput, Prisma.ReportUncheckedUpdateManyWithoutBusinessUnitInput>
 }
 
 export type ReportCreateManyOwnerInput = {
@@ -785,6 +812,7 @@ export type ReportCreateManyOwnerInput = {
   description?: string | null
   status?: $Enums.ReportStatus
   accountingUnitId: string
+  businessUnitId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
 }
@@ -797,8 +825,8 @@ export type ReportUpdateWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountingUnit?: Prisma.AccountingUnitUpdateOneRequiredWithoutReportsNestedInput
+  businessUnit?: Prisma.BusinessUnitUpdateOneRequiredWithoutReportsNestedInput
   expenses?: Prisma.ExpenseUpdateManyWithoutReportNestedInput
-  businessUnits?: Prisma.BusinessUnitUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportUncheckedUpdateWithoutOwnerInput = {
@@ -807,10 +835,10 @@ export type ReportUncheckedUpdateWithoutOwnerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutReportNestedInput
-  businessUnits?: Prisma.BusinessUnitUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportUncheckedUpdateManyWithoutOwnerInput = {
@@ -819,6 +847,7 @@ export type ReportUncheckedUpdateManyWithoutOwnerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   accountingUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -828,6 +857,7 @@ export type ReportCreateManyAccountingUnitInput = {
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
+  businessUnitId: string
   ownerId: string
   createdAt?: Date | string
   lastUpdatedAt?: Date | string
@@ -840,9 +870,9 @@ export type ReportUpdateWithoutAccountingUnitInput = {
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  businessUnit?: Prisma.BusinessUnitUpdateOneRequiredWithoutReportsNestedInput
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnReportsNestedInput
   expenses?: Prisma.ExpenseUpdateManyWithoutReportNestedInput
-  businessUnits?: Prisma.BusinessUnitUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportUncheckedUpdateWithoutAccountingUnitInput = {
@@ -850,11 +880,11 @@ export type ReportUncheckedUpdateWithoutAccountingUnitInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutReportNestedInput
-  businessUnits?: Prisma.BusinessUnitUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportUncheckedUpdateManyWithoutAccountingUnitInput = {
@@ -862,12 +892,24 @@ export type ReportUncheckedUpdateManyWithoutAccountingUnitInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+  businessUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastUpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ReportUpdateWithoutBusinessUnitsInput = {
+export type ReportCreateManyBusinessUnitInput = {
+  id?: string
+  title: string
+  description?: string | null
+  status?: $Enums.ReportStatus
+  accountingUnitId: string
+  ownerId: string
+  createdAt?: Date | string
+  lastUpdatedAt?: Date | string
+}
+
+export type ReportUpdateWithoutBusinessUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -879,7 +921,7 @@ export type ReportUpdateWithoutBusinessUnitsInput = {
   expenses?: Prisma.ExpenseUpdateManyWithoutReportNestedInput
 }
 
-export type ReportUncheckedUpdateWithoutBusinessUnitsInput = {
+export type ReportUncheckedUpdateWithoutBusinessUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -891,7 +933,7 @@ export type ReportUncheckedUpdateWithoutBusinessUnitsInput = {
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutReportNestedInput
 }
 
-export type ReportUncheckedUpdateManyWithoutBusinessUnitsInput = {
+export type ReportUncheckedUpdateManyWithoutBusinessUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -909,12 +951,10 @@ export type ReportUncheckedUpdateManyWithoutBusinessUnitsInput = {
 
 export type ReportCountOutputType = {
   expenses: number
-  businessUnits: number
 }
 
 export type ReportCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   expenses?: boolean | ReportCountOutputTypeCountExpensesArgs
-  businessUnits?: boolean | ReportCountOutputTypeCountBusinessUnitsArgs
 }
 
 /**
@@ -934,13 +974,6 @@ export type ReportCountOutputTypeCountExpensesArgs<ExtArgs extends runtime.Types
   where?: Prisma.ExpenseWhereInput
 }
 
-/**
- * ReportCountOutputType without action
- */
-export type ReportCountOutputTypeCountBusinessUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.BusinessUnitWhereInput
-}
-
 
 export type ReportSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -948,13 +981,14 @@ export type ReportSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   description?: boolean
   status?: boolean
   accountingUnitId?: boolean
+  businessUnitId?: boolean
   ownerId?: boolean
   createdAt?: boolean
   lastUpdatedAt?: boolean
   accountingUnit?: boolean | Prisma.AccountingUnitDefaultArgs<ExtArgs>
+  businessUnit?: boolean | Prisma.BusinessUnitDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   expenses?: boolean | Prisma.Report$expensesArgs<ExtArgs>
-  businessUnits?: boolean | Prisma.Report$businessUnitsArgs<ExtArgs>
   _count?: boolean | Prisma.ReportCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["report"]>
 
@@ -964,10 +998,12 @@ export type ReportSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   status?: boolean
   accountingUnitId?: boolean
+  businessUnitId?: boolean
   ownerId?: boolean
   createdAt?: boolean
   lastUpdatedAt?: boolean
   accountingUnit?: boolean | Prisma.AccountingUnitDefaultArgs<ExtArgs>
+  businessUnit?: boolean | Prisma.BusinessUnitDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["report"]>
 
@@ -977,10 +1013,12 @@ export type ReportSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   status?: boolean
   accountingUnitId?: boolean
+  businessUnitId?: boolean
   ownerId?: boolean
   createdAt?: boolean
   lastUpdatedAt?: boolean
   accountingUnit?: boolean | Prisma.AccountingUnitDefaultArgs<ExtArgs>
+  businessUnit?: boolean | Prisma.BusinessUnitDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["report"]>
 
@@ -990,25 +1028,28 @@ export type ReportSelectScalar = {
   description?: boolean
   status?: boolean
   accountingUnitId?: boolean
+  businessUnitId?: boolean
   ownerId?: boolean
   createdAt?: boolean
   lastUpdatedAt?: boolean
 }
 
-export type ReportOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "accountingUnitId" | "ownerId" | "createdAt" | "lastUpdatedAt", ExtArgs["result"]["report"]>
+export type ReportOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "accountingUnitId" | "businessUnitId" | "ownerId" | "createdAt" | "lastUpdatedAt", ExtArgs["result"]["report"]>
 export type ReportInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accountingUnit?: boolean | Prisma.AccountingUnitDefaultArgs<ExtArgs>
+  businessUnit?: boolean | Prisma.BusinessUnitDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   expenses?: boolean | Prisma.Report$expensesArgs<ExtArgs>
-  businessUnits?: boolean | Prisma.Report$businessUnitsArgs<ExtArgs>
   _count?: boolean | Prisma.ReportCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReportIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accountingUnit?: boolean | Prisma.AccountingUnitDefaultArgs<ExtArgs>
+  businessUnit?: boolean | Prisma.BusinessUnitDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ReportIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accountingUnit?: boolean | Prisma.AccountingUnitDefaultArgs<ExtArgs>
+  businessUnit?: boolean | Prisma.BusinessUnitDefaultArgs<ExtArgs>
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
@@ -1016,9 +1057,9 @@ export type $ReportPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Report"
   objects: {
     accountingUnit: Prisma.$AccountingUnitPayload<ExtArgs>
+    businessUnit: Prisma.$BusinessUnitPayload<ExtArgs>
     owner: Prisma.$UserPayload<ExtArgs>
     expenses: Prisma.$ExpensePayload<ExtArgs>[]
-    businessUnits: Prisma.$BusinessUnitPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1026,6 +1067,7 @@ export type $ReportPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     description: string | null
     status: $Enums.ReportStatus
     accountingUnitId: string
+    businessUnitId: string
     ownerId: string
     createdAt: Date
     lastUpdatedAt: Date
@@ -1424,9 +1466,9 @@ readonly fields: ReportFieldRefs;
 export interface Prisma__ReportClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   accountingUnit<T extends Prisma.AccountingUnitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccountingUnitDefaultArgs<ExtArgs>>): Prisma.Prisma__AccountingUnitClient<runtime.Types.Result.GetResult<Prisma.$AccountingUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  businessUnit<T extends Prisma.BusinessUnitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BusinessUnitDefaultArgs<ExtArgs>>): Prisma.Prisma__BusinessUnitClient<runtime.Types.Result.GetResult<Prisma.$BusinessUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   expenses<T extends Prisma.Report$expensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  businessUnits<T extends Prisma.Report$businessUnitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Report$businessUnitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BusinessUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1461,6 +1503,7 @@ export interface ReportFieldRefs {
   readonly description: Prisma.FieldRef<"Report", 'String'>
   readonly status: Prisma.FieldRef<"Report", 'ReportStatus'>
   readonly accountingUnitId: Prisma.FieldRef<"Report", 'String'>
+  readonly businessUnitId: Prisma.FieldRef<"Report", 'String'>
   readonly ownerId: Prisma.FieldRef<"Report", 'String'>
   readonly createdAt: Prisma.FieldRef<"Report", 'DateTime'>
   readonly lastUpdatedAt: Prisma.FieldRef<"Report", 'DateTime'>
@@ -1881,30 +1924,6 @@ export type Report$expensesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.ExpenseScalarFieldEnum | Prisma.ExpenseScalarFieldEnum[]
-}
-
-/**
- * Report.businessUnits
- */
-export type Report$businessUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the BusinessUnit
-   */
-  select?: Prisma.BusinessUnitSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the BusinessUnit
-   */
-  omit?: Prisma.BusinessUnitOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BusinessUnitInclude<ExtArgs> | null
-  where?: Prisma.BusinessUnitWhereInput
-  orderBy?: Prisma.BusinessUnitOrderByWithRelationInput | Prisma.BusinessUnitOrderByWithRelationInput[]
-  cursor?: Prisma.BusinessUnitWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.BusinessUnitScalarFieldEnum | Prisma.BusinessUnitScalarFieldEnum[]
 }
 
 /**
