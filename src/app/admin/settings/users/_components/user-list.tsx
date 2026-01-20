@@ -97,11 +97,11 @@ function UserActions({
 		<DropdownMenu>
 			<DropdownMenuTrigger render={<Button {...props} />} />
 			<DropdownMenuContent align="end" className="w-full min-w-48 max-w-72">
-				<DropdownMenuItem onClick={() => promoteToAdmin({ tagetUserId: user.id })}>
+				<DropdownMenuItem onClick={() => promoteToAdmin({ targetUserId: user.id })}>
 					<ShieldUserIcon /> Zu admin machen
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={() => demoteFromAdmin({ tagetUserId: user.id })}
+					onClick={() => demoteFromAdmin({ targetUserId: user.id })}
 					variant="destructive"
 				>
 					<ShieldXIcon /> Von admin entfernen

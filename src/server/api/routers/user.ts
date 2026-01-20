@@ -26,9 +26,9 @@ export const userRouter = createTRPCRouter({
 		});
 	}),
 	promoteToAdmin: adminProcedure
-		.input(z.object({ tagetUserId: z.string() }))
+		.input(z.object({ targetUserId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			if (ctx.session.user.id === input.tagetUserId) {
+			if (ctx.session.user.id === input.targetUserId) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "You cannot promote yourself to admin",
@@ -36,7 +36,7 @@ export const userRouter = createTRPCRouter({
 			}
 
 			const target = await ctx.db.user.findUnique({
-				where: { id: input.tagetUserId },
+				where: { id: input.targetUserId },
 				select: {
 					id: true,
 					role: true,
@@ -70,7 +70,7 @@ export const userRouter = createTRPCRouter({
 			return await auth.api.setRole({
 				headers: ctx.headers,
 				body: {
-					userId: input.tagetUserId,
+					userId: input.targetUserId,
 					role: "admin",
 				},
 			});
