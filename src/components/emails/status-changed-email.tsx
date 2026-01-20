@@ -1,4 +1,15 @@
-import { Body, Head, Html } from "@react-email/components";
+import {
+	Body,
+	Button,
+	Container,
+	Head,
+	Hr,
+	Html,
+	Preview,
+	Section,
+	Tailwind,
+	Text,
+} from "@react-email/components";
 import type { ReportStatus } from "@/generated/prisma/enums";
 import { translateReportStatus } from "@/lib/utils";
 
@@ -23,20 +34,44 @@ export default function StatusChangedEmail({
 	return (
 		<Html>
 			<Head />
-			<Body>
-				<h1>Report status changed</h1>
-				<p>Hello {name},</p>
-				<p>
-					The status of the report <strong>{title}</strong> has been changed to{" "}
-					<strong>"{translateReportStatus(status)}"</strong>.
-				</p>
-				<p>
-					You can view the report <a href={`${baseUrl}/reports/${reportId}`}>here</a>
-					.
-				</p>
-				<p>Best regards,</p>
-				<p>The move e.V. team</p>
-			</Body>
+			<Tailwind config={{}}>
+				<Body className="font-sans">
+					<Preview>
+						Der Status deines Spesenberichts wurde zu "{translateReportStatus(status)}
+						" geändert.
+					</Preview>
+					<Container>
+						<Text className="font-medium text-2xl">
+							Status geändert: {translateReportStatus(status)}
+						</Text>
+						<Section>
+							<Text>Hallo {name},</Text>
+							<Text>
+								Der Status deines Spesenberichts{" "}
+								<strong className="font-medium">"{title}"</strong> wurde zu{" "}
+								<strong className="font-medium">{translateReportStatus(status)}</strong>{" "}
+								geändert. Du kannst den Bericht{" "}
+								<Button href={`${baseUrl}/reports/${reportId}`}>hier</Button> ansehen.
+							</Text>
+							<Text>
+								Wende dich bei Fragen bitte an{" "}
+								<Button href="mailto:support@move-ev.de">support@move-ev.de</Button>.
+							</Text>
+							<Text>
+								Beste Grüße,
+								<br />
+								Dein move e.V. Team
+							</Text>
+							<Hr />
+							<Text className="text-xs text-zinc-500">
+								Du erhältst diese E-Mail, da du einen Spesenbericht erstellt hast und
+								der Status des Berichts geändert wurde. Solltest du keinen Spesenbericht
+								erstellt haben, kannst du diese E-Mail ignorieren.
+							</Text>
+						</Section>
+					</Container>
+				</Body>
+			</Tailwind>
 		</Html>
 	);
 }
