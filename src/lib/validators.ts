@@ -191,3 +191,7 @@ export const updatePreferencesSchema = z.object({
 export const createAccountingUnitSchema = z.object({
 	name: z.string().min(1),
 });
+
+export const createBusinessUnitSchema = z.object({
+	name: z.string().min(1),
+});

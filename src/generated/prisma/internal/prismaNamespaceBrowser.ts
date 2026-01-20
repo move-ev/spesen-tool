@@ -60,7 +60,8 @@ export const ModelName = {
   Verification: 'Verification',
   Preferences: 'Preferences',
   Settings: 'Settings',
-  AccountingUnit: 'AccountingUnit'
+  AccountingUnit: 'AccountingUnit',
+  BusinessUnit: 'BusinessUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -84,7 +85,6 @@ export const ReportScalarFieldEnum = {
   title: 'title',
   description: 'description',
   status: 'status',
-  businessUnit: 'businessUnit',
   accountingUnitId: 'accountingUnitId',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
@@ -212,6 +212,16 @@ export const AccountingUnitScalarFieldEnum = {
 } as const
 
 export type AccountingUnitScalarFieldEnum = (typeof AccountingUnitScalarFieldEnum)[keyof typeof AccountingUnitScalarFieldEnum]
+
+
+export const BusinessUnitScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BusinessUnitScalarFieldEnum = (typeof BusinessUnitScalarFieldEnum)[keyof typeof BusinessUnitScalarFieldEnum]
 
 
 export const SortOrder = {
