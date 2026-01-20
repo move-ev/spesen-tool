@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import ReportReceivedEmail from "@/components/emails/report-received-email";
 import StatusChangedEmail from "@/components/emails/status-changed-email";
 import { ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
@@ -362,10 +363,51 @@ export const reportRouter = createTRPCRouter({
 			}
 
 			// Update the status to pending approval
-			return ctx.db.report.update({
+			const res = await ctx.db.report.update({
 				where: { id: input.id },
 				data: { status: ReportStatus.PENDING_APPROVAL },
+				select: {
+					title: true,
+					owner: {
+						select: {
+							name: true,
+						},
+					},
+				},
 			});
+
+			if (!res) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to update report status",
+				});
+			}
+
+			const settings = await ctx.db.settings.findUnique({
+				where: {
+					id: "singleton",
+				},
+			});
+
+			if (!settings?.reviewerEmail) {
+				return res;
+			}
+
+			const { error } = await resend.emails.send({
+				from: DEFAULT_EMAIL_FROM,
+				to: [settings.reviewerEmail],
+				subject: "Report submitted",
+				react: <ReportReceivedEmail from={res.owner.name} title={res.title} />,
+			});
+
+			if (error) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send email",
+				});
+			}
+
+			return res;
 		}),
 	createSummaryPdf: protectedProcedure
 		.input(z.object({ id: z.string() }))
