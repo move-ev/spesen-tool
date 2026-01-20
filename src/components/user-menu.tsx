@@ -51,6 +51,7 @@ export function UserMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				className={"flex items-center justify-start gap-3"}
+				openOnHover={true}
 				render={
 					<Button variant={"ghost"}>
 						<Avatar className={"size-5"}>
