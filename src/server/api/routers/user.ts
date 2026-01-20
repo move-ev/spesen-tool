@@ -43,6 +43,13 @@ export const userRouter = createTRPCRouter({
 				},
 			});
 
+			if (!target) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "User not found",
+				});
+			}
+
 			if (
 				!ADMINS_PROMOTE_OTHER_ADMIN &&
 				ctx.session.user.id !== env.SUPERUSER_ID
@@ -53,7 +60,7 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
-			if (target?.role === "admin") {
+			if (target.role === "admin") {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "User is already an admin",
@@ -70,9 +77,9 @@ export const userRouter = createTRPCRouter({
 		}),
 
 	demoteFromAdmin: adminProcedure
-		.input(z.object({ tagetUserId: z.string() }))
+		.input(z.object({ targetUserId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			if (ctx.session.user.id === input.tagetUserId) {
+			if (ctx.session.user.id === input.targetUserId) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "You cannot demote yourself from admin",
@@ -80,7 +87,7 @@ export const userRouter = createTRPCRouter({
 			}
 
 			const target = await ctx.db.user.findUnique({
-				where: { id: input.tagetUserId },
+				where: { id: input.targetUserId },
 				select: {
 					id: true,
 					role: true,
@@ -118,7 +125,7 @@ export const userRouter = createTRPCRouter({
 			return await auth.api.setRole({
 				headers: ctx.headers,
 				body: {
-					userId: input.tagetUserId,
+					userId: input.targetUserId,
 					role: "user",
 				},
 			});
