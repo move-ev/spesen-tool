@@ -65,6 +65,7 @@ export default function ReportNotificationEmail({
 					<tbody>
 						<tr>
 							<td style={{ textAlign: "center", padding: "32px 0 8px 0" }}>
+								{/* biome-ignore lint/performance/noImgElement: Email template requires standard img tag */}
 								<img
 									alt="move e.V. logo"
 									height={38}
@@ -196,7 +197,7 @@ export default function ReportNotificationEmail({
 												style={{ margin: "0 0 7px 0", fontSize: "14px" }}
 											>
 												<a
-													href={`https://spesen.move-ev.de/api/attachments/${attachment.key}`}
+													href={`${baseUrl}/api/attachments/${attachment.key}`}
 													style={{
 														color: "#1764bb",
 														textDecoration: "underline",

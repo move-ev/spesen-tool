@@ -438,9 +438,12 @@ export const reportRouter = createTRPCRouter({
 			const result = await ctx.db.report.update({
 				where: { id: input.id },
 				data: { status: input.status },
-				select: {
-					id: true,
-					title: true,
+				include: {
+					expenses: {
+						include: {
+							attachments: true,
+						},
+					},
 					owner: {
 						select: {
 							email: true,
@@ -461,16 +464,33 @@ export const reportRouter = createTRPCRouter({
 				return result;
 			}
 
+			const totalAmount = result.expenses.reduce(
+				(sum, expense) => sum + Number(expense.amount),
+				0,
+			);
+			const attachments = result.expenses.flatMap((expense) =>
+				expense.attachments.map((attachment) => ({
+					id: attachment.id,
+					key: attachment.key,
+				})),
+			);
+
 			const { error } = await resend.emails.send({
 				from: DEFAULT_EMAIL_FROM,
 				to: [result.owner.email],
 				subject: "Report status changed",
 				react: (
 					<StatusChangedEmail
-						name={result.owner.name}
+						accountingUnit={result.accountingUnit}
+						attachments={attachments}
+						businessUnit={result.businessUnit}
+						description={result.description ?? ""}
+						isCreated={false}
+						name={result.owner.name ?? "Unbekannt"}
 						reportId={result.id}
 						status={input.status}
 						title={result.title}
+						totalAmount={totalAmount}
 					/>
 				),
 			});
