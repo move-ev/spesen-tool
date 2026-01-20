@@ -3,10 +3,8 @@
 import { FileSearchCornerIcon } from "lucide-react";
 import type React from "react";
 import { ReportCard, ReportCardField } from "@/components/report-card";
-import { ReportListEmpty } from "@/components/report-list";
 import {
 	Empty,
-	EmptyContent,
 	EmptyDescription,
 	EmptyHeader,
 	EmptyMedia,
