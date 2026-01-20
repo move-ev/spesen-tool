@@ -195,3 +195,14 @@ export const createAccountingUnitSchema = z.object({
 export const createBusinessUnitSchema = z.object({
 	name: z.string().min(1),
 });
+
+export const updateMealAllowancesSchema = z.object({
+	dailyFoodAllowance: z.number().min(0),
+	breakfastDeduction: z.number().min(0),
+	lunchDeduction: z.number().min(0),
+	dinnerDeduction: z.number().min(0),
+});
+
+export const updateTravelAllowancesSchema = z.object({
+	kilometerRate: z.number().min(0),
+});

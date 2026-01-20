@@ -1386,7 +1386,11 @@ export const SettingsScalarFieldEnum = {
   reviewerEmail: 'reviewerEmail',
   accountingUnitPdfUrl: 'accountingUnitPdfUrl',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  dailyFoodAllowance: 'dailyFoodAllowance',
+  breakfastDeduction: 'breakfastDeduction',
+  lunchDeduction: 'lunchDeduction',
+  dinnerDeduction: 'dinnerDeduction'
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
