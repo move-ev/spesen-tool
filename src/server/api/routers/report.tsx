@@ -5,6 +5,7 @@ import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
 import StatusChangedEmail from "@/components/emails/status-changed-email";
 import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
+import { createReportSchema } from "@/lib/validators";
 import {
 	adminProcedure,
 	createTRPCRouter,
@@ -164,14 +165,7 @@ export const reportRouter = createTRPCRouter({
 
 	// Create a new report
 	create: protectedProcedure
-		.input(
-			z.object({
-				title: z.string().min(1),
-				description: z.string().optional(),
-				businessUnit: z.string().min(1),
-				accountingUnitId: z.string().min(1),
-			}),
-		)
+		.input(createReportSchema)
 		.mutation(async ({ ctx, input }) => {
 			return ctx.db.report.create({
 				data: {

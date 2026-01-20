@@ -1,6 +1,7 @@
 import {
 	ArrowLeftIcon,
 	Building2Icon,
+	FolderTreeIcon,
 	SettingsIcon,
 	UsersIcon,
 } from "lucide-react";
@@ -33,6 +34,11 @@ const settingsMenu = [
 		label: "Buchungskreise",
 		href: ADMIN_SETTINGS_MENU.ACCOUNTING_UNITS,
 		icon: Building2Icon,
+	},
+	{
+		label: "Geschäftseinheiten",
+		href: ADMIN_SETTINGS_MENU.BUSINESS_UNITS,
+		icon: FolderTreeIcon,
 	},
 ];
 

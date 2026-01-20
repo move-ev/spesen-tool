@@ -15,14 +15,16 @@ datasource db {
 }
 
 model Report {
-  id           String       @id @default(cuid())
-  title        String
-  description  String?
-  status       ReportStatus @default(DRAFT)
-  businessUnit String
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  status      ReportStatus @default(DRAFT)
 
   accountingUnit   AccountingUnit @relation(fields: [accountingUnitId], references: [id], onDelete: Cascade)
   accountingUnitId String
+
+  businessUnit   BusinessUnit @relation(fields: [businessUnitId], references: [id], onDelete: Cascade)
+  businessUnitId String
 
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
@@ -31,6 +33,7 @@ model Report {
   lastUpdatedAt DateTime @updatedAt
 
   expenses Expense[]
+
 }
 
 enum ReportStatus {
@@ -184,8 +187,20 @@ model AccountingUnit {
   reports Report[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([name])
   @@map("accounting_unit")
+}
+
+model BusinessUnit {
+  id      String   @id @default(cuid())
+  name    String
+  reports Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([name])
+  @@map("business_unit")
 }
