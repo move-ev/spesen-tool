@@ -1,11 +1,10 @@
 "use client";
 
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardTitle,
-} from "@/components/ui/card";
+	StatsCard,
+	StatsCardDescription,
+	StatsCardValue,
+} from "@/components/stats-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
@@ -22,28 +21,18 @@ export function AdminStats({
 			data-slot="admin-stats"
 			{...props}
 		>
-			<Card>
-				<CardContent className="space-y-2">
-					<CardDescription>Wartet auf Genehmigung</CardDescription>
-					<CardTitle className="font-semibold text-2xl">{stats.openCount}</CardTitle>
-				</CardContent>
-			</Card>
-			<Card>
-				<CardContent className="space-y-2">
-					<CardDescription>Gesamtbetrag aller Anträge</CardDescription>
-					<CardTitle className="font-semibold text-2xl">
-						{stats.totalAmount.toFixed(2)} €
-					</CardTitle>
-				</CardContent>
-			</Card>
-			<Card>
-				<CardContent className="space-y-2">
-					<CardDescription>Anzahl aller Anträge</CardDescription>
-					<CardTitle className="font-semibold text-2xl">
-						{stats.totalCount}
-					</CardTitle>
-				</CardContent>
-			</Card>
+			<StatsCard>
+				<StatsCardDescription>Wartet auf Genehmigung</StatsCardDescription>
+				<StatsCardValue>{stats.openCount}</StatsCardValue>
+			</StatsCard>
+			<StatsCard>
+				<StatsCardDescription>Gesamtbetrag aller Anträge</StatsCardDescription>
+				<StatsCardValue>{stats.totalAmount.toFixed(2)} €</StatsCardValue>
+			</StatsCard>
+			<StatsCard>
+				<StatsCardDescription>Anzahl aller Anträge</StatsCardDescription>
+				<StatsCardValue>{stats.totalCount}</StatsCardValue>
+			</StatsCard>
 		</div>
 	);
 }
@@ -55,7 +44,7 @@ export function AdminStatsSkeleton({
 	return (
 		<div
 			className={cn("grid gap-8 md:grid-cols-3", className)}
-			data-slot="admin-stats"
+			data-slot="admin-stats skeleton"
 			{...props}
 		>
 			<Skeleton className="h-24 w-full" />
