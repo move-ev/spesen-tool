@@ -32,12 +32,16 @@ export const auth = betterAuth({
 			create: {
 				after: async (user) => {
 					// Automatically create preferences entry when a new user signs up
-					await db.preferences.create({
-						data: {
-							userId: user.id,
-							notificationPreference: "ALL",
-						},
-					});
+					try {
+						await db.preferences.create({
+							data: {
+								userId: user.id,
+								notifications: "ALL",
+							},
+						});
+					} catch (error) {
+						console.error("Failed to create user preferences:", error);
+					}
 				},
 			},
 		},
