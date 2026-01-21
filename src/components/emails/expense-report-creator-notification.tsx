@@ -12,6 +12,7 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
+import type { ReportModel } from "@/generated/prisma/models/Report";
 
 const baseUrl =
 	process.env.NODE_ENV === "production"
@@ -24,28 +25,22 @@ type Attachment = {
 };
 
 interface ExpenseReportCreatorNotificationProps {
-	title: string;
-	isCreated: boolean;
-	reportId: string;
-	description: string;
-	businessUnit: string;
-	accountingUnit: string;
+	report: ReportModel;
 	attachments: Attachment[];
 	totalAmount: number;
 }
 
 export default function ExpenseReportCreatorNotification({
-	title,
-	isCreated,
-	reportId,
-	description,
-	accountingUnit,
+	report,
 	attachments,
 	totalAmount,
 }: ExpenseReportCreatorNotificationProps) {
+	const isCreated =
+		report.createdAt.getTime() === report.lastUpdatedAt.getTime();
+
 	const previewText = isCreated
-		? `Dein Spesenantrag "${title}" wurde erstellt`
-		: `Der Status deines Spesenantrags "${title}" hat sich geändert`;
+		? `Dein Spesenantrag "${report.title}" wurde erstellt`
+		: `Der Status deines Spesenantrags "${report.title}" hat sich geändert`;
 
 	return (
 		<Html lang="de">
@@ -76,7 +71,8 @@ export default function ExpenseReportCreatorNotification({
 						<Text style={messageText}>
 							{isCreated ? (
 								<>
-									Dein Spesenantrag <strong>{title}</strong> wurde erfolgreich erstellt.
+									Dein Spesenantrag <strong>{report.title}</strong> wurde erfolgreich
+									erstellt.
 								</>
 							) : (
 								<>Der Status deines Spesenantrags hat sich geändert.</>
@@ -84,7 +80,7 @@ export default function ExpenseReportCreatorNotification({
 						</Text>
 						<Text style={linkText}>
 							Du kannst deinen Antrag{" "}
-							<Link href={`${baseUrl}/reports/${reportId}`} style={link}>
+							<Link href={`${baseUrl}/reports/${report.id}`} style={link}>
 								hier einsehen
 							</Link>
 							.
@@ -94,11 +90,11 @@ export default function ExpenseReportCreatorNotification({
 					<Section style={detailsSection}>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Beschreibung:</Text>
-							<Text style={detailValue}>{description}</Text>
+							<Text style={detailValue}>{report.description}</Text>
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Rechnungseinheit:</Text>
-							<Text style={detailValue}>{accountingUnit}</Text>
+							<Text style={detailValue}>{report.accountingUnit}</Text>
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Gesamtausgaben:</Text>
@@ -291,12 +287,17 @@ const footerAddress = {
 };
 
 ExpenseReportCreatorNotification.PreviewProps = {
-	title: "Baguette Weihnachtsfeier",
-	isCreated: false,
-	reportId: "123",
-	description: "Baguette für die Weihnachtsfeier",
-	businessUnit: "Ideeller Bereich",
-	accountingUnit: "114: ideele Events",
+	report: {
+		id: "123",
+		title: "Baguette Weihnachtsfeier",
+		description: "Baguette für die Weihnachtsfeier",
+		status: "PENDING_APPROVAL",
+		businessUnit: "Ideeller Bereich",
+		accountingUnit: "114: ideele Events",
+		ownerId: "user-123",
+		createdAt: new Date("2024-01-15T10:00:00Z"),
+		lastUpdatedAt: new Date("2024-01-15T12:00:00Z"),
+	},
 	attachments: [{ key: "invoice-123.pdf" }],
 	totalAmount: 6.5,
 };

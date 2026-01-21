@@ -12,7 +12,7 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import type { ReportStatus } from "@/generated/prisma/enums";
+import type { ReportModel } from "@/generated/prisma/models/Report";
 import { translateReportStatus } from "@/lib/utils";
 
 const baseUrl =
@@ -26,32 +26,24 @@ type Attachment = {
 };
 
 interface ExpenseReportReviewerNotificationProps {
-	name: string;
-	title: string;
-	isCreated: boolean;
-	status?: ReportStatus;
-	reportId: string;
-	description: string;
-	businessUnit: string;
-	accountingUnit: string;
+	report: ReportModel;
+	ownerName: string;
 	attachments: Attachment[];
 	totalAmount: number;
 }
 
 export default function ExpenseReportReviewerNotification({
-	name,
-	title,
-	isCreated,
-	status,
-	reportId,
-	description,
-	accountingUnit,
+	report,
+	ownerName,
 	attachments,
 	totalAmount,
 }: ExpenseReportReviewerNotificationProps) {
+	const isCreated =
+		report.createdAt.getTime() === report.lastUpdatedAt.getTime();
+
 	const previewText = isCreated
-		? `Neuer Spesenantrag von ${name}: ${title}`
-		: `Spesenantrag "${title}" wurde geändert`;
+		? `Neuer Spesenantrag von ${ownerName}: ${report.title}`
+		: `Spesenantrag "${report.title}" wurde geändert`;
 
 	return (
 		<Html lang="de">
@@ -82,15 +74,15 @@ export default function ExpenseReportReviewerNotification({
 						<Text style={messageText}>
 							{isCreated ? (
 								<>
-									<strong>{name}</strong> hat einen neuen Spesenantrag{" "}
-									<strong>{title}</strong> erstellt.
+									<strong>{ownerName}</strong> hat einen neuen Spesenantrag{" "}
+									<strong>{report.title}</strong> erstellt.
 								</>
 							) : (
 								<>
-									<strong>{name}</strong> hat den Status des Spesenantrags{" "}
-									<strong>{title}</strong> zu{" "}
+									<strong>{ownerName}</strong> hat den Status des Spesenantrags{" "}
+									<strong>{report.title}</strong> zu{" "}
 									<span style={{ color: "#0070f3" }}>
-										{status && translateReportStatus(status)}
+										{report.status && translateReportStatus(report.status)}
 									</span>{" "}
 									geändert.
 								</>
@@ -98,7 +90,7 @@ export default function ExpenseReportReviewerNotification({
 						</Text>
 						<Text style={linkText}>
 							Du kannst den Antrag{" "}
-							<Link href={`${baseUrl}/reports/${reportId}`} style={link}>
+							<Link href={`${baseUrl}/reports/${report.id}`} style={link}>
 								hier einsehen
 							</Link>
 							.
@@ -108,11 +100,11 @@ export default function ExpenseReportReviewerNotification({
 					<Section style={detailsSection}>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Beschreibung:</Text>
-							<Text style={detailValue}>{description}</Text>
+							<Text style={detailValue}>{report.description}</Text>
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Rechnungseinheit:</Text>
-							<Text style={detailValue}>{accountingUnit}</Text>
+							<Text style={detailValue}>{report.accountingUnit}</Text>
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Gesamtausgaben:</Text>
@@ -305,14 +297,18 @@ const footerAddress = {
 };
 
 ExpenseReportReviewerNotification.PreviewProps = {
-	name: "Lennard Lohmann",
-	title: "Baguette Weihnachtsfeier",
-	isCreated: false,
-	status: "PENDING_APPROVAL",
-	reportId: "123",
-	description: "Baguette für die Weihnachtsfeier",
-	businessUnit: "Ideeller Bereich",
-	accountingUnit: "114: ideele Events",
+	report: {
+		id: "123",
+		title: "Baguette Weihnachtsfeier",
+		description: "Baguette für die Weihnachtsfeier",
+		status: "PENDING_APPROVAL",
+		businessUnit: "Ideeller Bereich",
+		accountingUnit: "114: ideele Events",
+		ownerId: "user-123",
+		createdAt: new Date("2024-01-15T10:00:00Z"),
+		lastUpdatedAt: new Date("2024-01-15T12:00:00Z"),
+	},
+	ownerName: "Lennard Lohmann",
 	attachments: [{ key: "invoice-123.pdf" }],
 	totalAmount: 6.5,
 };

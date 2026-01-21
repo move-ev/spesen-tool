@@ -223,13 +223,8 @@ export const reportRouter = createTRPCRouter({
 						subject: "Spesenantrag erstellt",
 						react: (
 							<ExpenseReportCreatorNotification
-								accountingUnit={report.accountingUnit}
 								attachments={attachments}
-								businessUnit={report.businessUnit}
-								description={report.description ?? ""}
-								isCreated={true}
-								reportId={report.id}
-								title={report.title}
+								report={report}
 								totalAmount={totalAmount}
 							/>
 						),
@@ -248,14 +243,9 @@ export const reportRouter = createTRPCRouter({
 						subject: "Neuer Spesenantrag erstellt",
 						react: (
 							<ExpenseReportReviewerNotification
-								accountingUnit={report.accountingUnit}
 								attachments={attachments}
-								businessUnit={report.businessUnit}
-								description={report.description ?? ""}
-								isCreated={true}
-								name={report.owner.name ?? "Unbekannt"}
-								reportId={report.id}
-								title={report.title}
+								ownerName={report.owner.name ?? "Unbekannt"}
+								report={report}
 								totalAmount={totalAmount}
 							/>
 						),
@@ -351,13 +341,8 @@ export const reportRouter = createTRPCRouter({
 						subject: "Spesenantrag geändert",
 						react: (
 							<ExpenseReportCreatorNotification
-								accountingUnit={report.accountingUnit}
 								attachments={attachments}
-								businessUnit={report.businessUnit}
-								description={report.description ?? ""}
-								isCreated={false}
-								reportId={report.id}
-								title={report.title}
+								report={report}
 								totalAmount={totalAmount}
 							/>
 						),
@@ -376,14 +361,9 @@ export const reportRouter = createTRPCRouter({
 						subject: "Spesenantrag geändert",
 						react: (
 							<ExpenseReportReviewerNotification
-								accountingUnit={report.accountingUnit}
 								attachments={attachments}
-								businessUnit={report.businessUnit}
-								description={report.description ?? ""}
-								isCreated={false}
-								name={report.owner.name ?? "Unbekannt"}
-								reportId={report.id}
-								title={report.title}
+								ownerName={report.owner.name ?? "Unbekannt"}
+								report={report}
 								totalAmount={totalAmount}
 							/>
 						),
@@ -481,15 +461,9 @@ export const reportRouter = createTRPCRouter({
 				subject: "Report status changed",
 				react: (
 					<ExpenseReportReviewerNotification
-						accountingUnit={result.accountingUnit}
 						attachments={attachments}
-						businessUnit={result.businessUnit}
-						description={result.description ?? ""}
-						isCreated={false}
-						name={result.owner.name ?? "Unbekannt"}
-						reportId={result.id}
-						status={input.status}
-						title={result.title}
+						ownerName={result.owner.name ?? "Unbekannt"}
+						report={result}
 						totalAmount={totalAmount}
 					/>
 				),
