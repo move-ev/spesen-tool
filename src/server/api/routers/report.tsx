@@ -1,8 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import ExpenseReportCreatorNotification from "@/components/emails/expense-report-creator-notification";
+import ExpenseReportReviewerNotification from "@/components/emails/expense-report-reviewer-notification";
 import ReportReceivedEmail from "@/components/emails/report-received-email";
 import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
-import StatusChangedEmail from "@/components/emails/status-changed-email";
 import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
@@ -167,16 +168,95 @@ export const reportRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(createReportSchema)
 		.mutation(async ({ ctx, input }) => {
-			return ctx.db.report.create({
+			// Create the report
+			const report = await ctx.db.report.create({
 				data: {
 					...input,
 					ownerId: ctx.session.user.id,
 					status: ReportStatus.DRAFT,
 				},
 				include: {
-					expenses: true,
+					expenses: {
+						include: {
+							attachments: true,
+						},
+					},
+					owner: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+						},
+					},
+					accountingUnit: {
+						select: {
+							name: true,
+						},
+					},
 				},
 			});
+
+			// Calculate total amount and collect attachments
+			const totalAmount = report.expenses.reduce(
+				(sum, expense) => sum + Number(expense.amount),
+				0,
+			);
+			const attachments = report.expenses.flatMap((expense) =>
+				expense.attachments.map((attachment) => ({
+					id: attachment.id,
+					key: attachment.key,
+				})),
+			);
+
+			// Get settings to find reviewer email
+			const settings = await ctx.db.settings.findUnique({
+				where: { id: "singleton" },
+				select: {
+					reviewerEmail: true,
+				},
+			});
+
+			// Send email to creator (non-blocking)
+			if (report.owner.email) {
+				resend.emails
+					.send({
+						from: DEFAULT_EMAIL_FROM,
+						to: [report.owner.email],
+						subject: "Spesenantrag erstellt",
+						react: (
+							<ExpenseReportCreatorNotification
+								attachments={attachments}
+								report={report}
+								totalAmount={totalAmount}
+							/>
+						),
+					})
+					.catch((error) => {
+						console.error("Failed to send creator email:", error);
+					});
+			}
+
+			// Send email to reviewer if configured (non-blocking)
+			if (settings?.reviewerEmail) {
+				resend.emails
+					.send({
+						from: DEFAULT_EMAIL_FROM,
+						to: [settings.reviewerEmail],
+						subject: "Neuer Spesenantrag erstellt",
+						react: (
+							<ExpenseReportCreatorNotification
+								attachments={attachments}
+								report={report}
+								totalAmount={totalAmount}
+							/>
+						),
+					})
+					.catch((error) => {
+						console.error("Failed to send reviewer email:", error);
+					});
+			}
+
+			return report;
 		}),
 
 	// Update a report
@@ -195,31 +275,111 @@ export const reportRouter = createTRPCRouter({
 			const { id, ...data } = input;
 
 			// Check if user owns the report
-			const report = await ctx.db.report.findUnique({
+			const existingReport = await ctx.db.report.findUnique({
 				where: { id },
 			});
 
-			if (!report) {
+			if (!existingReport) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Report not found",
 				});
 			}
 
-			if (report.ownerId !== ctx.session.user.id) {
+			if (existingReport.ownerId !== ctx.session.user.id) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You don't have permission to update this report",
 				});
 			}
 
-			return ctx.db.report.update({
+			// Update the report
+			const report = await ctx.db.report.update({
 				where: { id },
 				data,
 				include: {
-					expenses: true,
+					expenses: {
+						include: {
+							attachments: true,
+						},
+					},
+					owner: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+						},
+					},
+					accountingUnit: {
+						select: {
+							name: true,
+						},
+					},
 				},
 			});
+
+			// Calculate total amount and collect attachments
+			const totalAmount = report.expenses.reduce(
+				(sum, expense) => sum + Number(expense.amount),
+				0,
+			);
+			const attachments = report.expenses.flatMap((expense) =>
+				expense.attachments.map((attachment) => ({
+					id: attachment.id,
+					key: attachment.key,
+				})),
+			);
+
+			// Get settings to find reviewer email
+			const settings = await ctx.db.settings.findUnique({
+				where: { id: "singleton" },
+				select: {
+					reviewerEmail: true,
+				},
+			});
+
+			// Send email to creator (non-blocking)
+			if (report.owner.email) {
+				resend.emails
+					.send({
+						from: DEFAULT_EMAIL_FROM,
+						to: [report.owner.email],
+						subject: "Spesenantrag geändert",
+						react: (
+							<ExpenseReportCreatorNotification
+								attachments={attachments}
+								report={report}
+								totalAmount={totalAmount}
+							/>
+						),
+					})
+					.catch((error) => {
+						console.error("Failed to send creator email:", error);
+					});
+			}
+
+			// Send email to reviewer if configured (non-blocking)
+			if (settings?.reviewerEmail) {
+				resend.emails
+					.send({
+						from: DEFAULT_EMAIL_FROM,
+						to: [settings.reviewerEmail],
+						subject: "Spesenantrag geändert",
+						react: (
+							<ExpenseReportReviewerNotification
+								attachments={attachments}
+								ownerName={report.owner.name ?? "Unbekannt"}
+								report={report}
+								totalAmount={totalAmount}
+							/>
+						),
+					})
+					.catch((error) => {
+						console.error("Failed to send reviewer email:", error);
+					});
+			}
+
+			return report;
 		}),
 
 	// Delete a report
@@ -264,9 +424,12 @@ export const reportRouter = createTRPCRouter({
 			const result = await ctx.db.report.update({
 				where: { id: input.id },
 				data: { status: input.status },
-				select: {
-					id: true,
-					title: true,
+				include: {
+					expenses: {
+						include: {
+							attachments: true,
+						},
+					},
 					owner: {
 						select: {
 							email: true,
@@ -276,6 +439,11 @@ export const reportRouter = createTRPCRouter({
 									notifications: true,
 								},
 							},
+						},
+					},
+					accountingUnit: {
+						select: {
+							name: true,
 						},
 					},
 				},
@@ -295,16 +463,27 @@ export const reportRouter = createTRPCRouter({
 				return result;
 			}
 
+			const totalAmount = result.expenses.reduce(
+				(sum, expense) => sum + Number(expense.amount),
+				0,
+			);
+			const attachments = result.expenses.flatMap((expense) =>
+				expense.attachments.map((attachment) => ({
+					id: attachment.id,
+					key: attachment.key,
+				})),
+			);
+
 			const { error } = await resend.emails.send({
 				from: DEFAULT_EMAIL_FROM,
 				to: [result.owner.email],
 				subject: "Report status changed",
 				react: (
-					<StatusChangedEmail
-						name={result.owner.name}
-						reportId={result.id}
-						status={input.status}
-						title={result.title}
+					<ExpenseReportReviewerNotification
+						attachments={attachments}
+						ownerName={result.owner.name ?? "Unbekannt"}
+						report={result}
+						totalAmount={totalAmount}
 					/>
 				),
 			});
