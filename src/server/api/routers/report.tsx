@@ -242,12 +242,11 @@ export const reportRouter = createTRPCRouter({
 						to: [settings.reviewerEmail],
 						subject: "Neuer Spesenantrag erstellt",
 						react: (
-							<ExpenseReportReviewerNotification
-								attachments={attachments}
-								ownerName={report.owner.name ?? "Unbekannt"}
-								report={report}
-								totalAmount={totalAmount}
-							/>
+					<ExpenseReportCreatorNotification
+						attachments={attachments}
+						report={result}
+						totalAmount={totalAmount}
+					/>
 						),
 					})
 					.catch((error) => {
