@@ -34,7 +34,7 @@ export const baseCreateExpenseSchema = z.object({
 			{ message: "Ungültiges Enddatum" },
 		)
 		.transform((val) => parse(val, "dd.MM.yyyy", new Date())),
-	type: z.nativeEnum(ExpenseType),
+	type: z.enum(ExpenseType),
 	reportId: z.string().min(1),
 });
 
