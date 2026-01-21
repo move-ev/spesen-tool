@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import CreatorEmail from "@/components/emails/creator-email";
-import StatusChangedEmail from "@/components/emails/reviewer-email";
+import ExpenseReportCreatorNotification from "@/components/emails/expense-report-creator-notification";
+import ExpenseReportReviewerNotification from "@/components/emails/expense-report-reviewer-notification";
 import { ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import {
@@ -222,7 +222,7 @@ export const reportRouter = createTRPCRouter({
 						to: [report.owner.email],
 						subject: "Spesenantrag erstellt",
 						react: (
-							<CreatorEmail
+							<ExpenseReportCreatorNotification
 								accountingUnit={report.accountingUnit}
 								attachments={attachments}
 								businessUnit={report.businessUnit}
@@ -247,7 +247,7 @@ export const reportRouter = createTRPCRouter({
 						to: [settings.reviewerEmail],
 						subject: "Neuer Spesenantrag erstellt",
 						react: (
-							<StatusChangedEmail
+							<ExpenseReportReviewerNotification
 								accountingUnit={report.accountingUnit}
 								attachments={attachments}
 								businessUnit={report.businessUnit}
@@ -350,7 +350,7 @@ export const reportRouter = createTRPCRouter({
 						to: [report.owner.email],
 						subject: "Spesenantrag geändert",
 						react: (
-							<CreatorEmail
+							<ExpenseReportCreatorNotification
 								accountingUnit={report.accountingUnit}
 								attachments={attachments}
 								businessUnit={report.businessUnit}
@@ -375,7 +375,7 @@ export const reportRouter = createTRPCRouter({
 						to: [settings.reviewerEmail],
 						subject: "Spesenantrag geändert",
 						react: (
-							<StatusChangedEmail
+							<ExpenseReportReviewerNotification
 								accountingUnit={report.accountingUnit}
 								attachments={attachments}
 								businessUnit={report.businessUnit}
@@ -480,7 +480,7 @@ export const reportRouter = createTRPCRouter({
 				to: [result.owner.email],
 				subject: "Report status changed",
 				react: (
-					<StatusChangedEmail
+					<ExpenseReportReviewerNotification
 						accountingUnit={result.accountingUnit}
 						attachments={attachments}
 						businessUnit={result.businessUnit}
