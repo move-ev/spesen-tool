@@ -1,5 +1,72 @@
 # Changelog
 
+## [0.2.0-alpha.1](https://github.com/move-ev/spesen-tool/compare/spesen-tool-v0.1.0-alpha.1...spesen-tool-v0.2.0-alpha.1) (2026-01-21)
+
+
+### Features
+
+* **admin:** accounting unit admin settings ([a92b249](https://github.com/move-ev/spesen-tool/commit/a92b2494d2d256cc49cc474952d6055c33108dce))
+* **admin:** admin user settings ([2c53f54](https://github.com/move-ev/spesen-tool/commit/2c53f5466bc3b24549e17bb502aa478abd781441))
+* **admin:** admin user settings ([5e25e14](https://github.com/move-ev/spesen-tool/commit/5e25e14d1f48b814db5a0ac05eb62326a4ed8e1b))
+* **admin:** implement business unit settings ([a6e56bd](https://github.com/move-ev/spesen-tool/commit/a6e56bddc03b6266525f6fd487c40bc5080686dd))
+* **api:** admin promotion/demotion ([aec2aa9](https://github.com/move-ev/spesen-tool/commit/aec2aa989474f3d602090d632586efedba8aad26))
+* **api:** restrict expense creation ([7462d26](https://github.com/move-ev/spesen-tool/commit/7462d265e9e4c5fabf9409a99181faf06c91bede))
+* **api:** restrict expense creation ([49b5869](https://github.com/move-ev/spesen-tool/commit/49b58698d45d3a2ca681e5fec5c67aedcb20d5ca))
+* **db:** custom business unit model ([1fab883](https://github.com/move-ev/spesen-tool/commit/1fab88386fb524f212efa1b14cd15384427170e4))
+* **db:** implement prisma accounting unit model ([c22e8ac](https://github.com/move-ev/spesen-tool/commit/c22e8acf367f32ea958b83fca3b53c3458ccff45))
+* **db:** prisma preferences db migration ([b42bc6f](https://github.com/move-ev/spesen-tool/commit/b42bc6f06d64194755d2e347ae94e722aadb9b07))
+* **email:** improved email templates ([f24fba7](https://github.com/move-ev/spesen-tool/commit/f24fba703bac82c0bd99ab1c4cd93117333587a4))
+* **email:** notify reviewer about new report ([116ff1f](https://github.com/move-ev/spesen-tool/commit/116ff1faa14cafebfb271f3a2eafde45c85d3712))
+* **email:** respect user notification preferences ([fb1f308](https://github.com/move-ev/spesen-tool/commit/fb1f308a61e2c52153de77c8f2bf686720b54fd0))
+* **expense:** custom expense settings ([0028434](https://github.com/move-ev/spesen-tool/commit/00284347b0e81e3f2c2a98c4e75eaa38d61016aa))
+* **expense:** custom expense settings ([baf0099](https://github.com/move-ev/spesen-tool/commit/baf0099963e743ff4780910e708b6cf3182f26d6))
+* implement custom accounting units ([e6291d5](https://github.com/move-ev/spesen-tool/commit/e6291d58782e2e714be5a46100395917751b6c11))
+* **pdf:** report summary pdf ([c7b8512](https://github.com/move-ev/spesen-tool/commit/c7b8512ac45268d7544c6c010ce7f88f2d7f48d2))
+* **pdf:** report summary pdf ([4f1a9aa](https://github.com/move-ev/spesen-tool/commit/4f1a9aaa11f4bf497c1a922a465a202f517c8512))
+* **report:** custom business units ([7914240](https://github.com/move-ev/spesen-tool/commit/7914240dc1d82f311efee885e734f3b3eec41ed3))
+* **report:** implement custom accounting units ([c6899d1](https://github.com/move-ev/spesen-tool/commit/c6899d190e7d037e6084cf0e607796b0607e1c6a))
+* **report:** implement custom business units ([c53e964](https://github.com/move-ev/spesen-tool/commit/c53e964383baf373a0e7c47b7998009bb2932526))
+* **report:** implement report pdf summary ([79fa1fb](https://github.com/move-ev/spesen-tool/commit/79fa1fb2c5375dcd5cafdfd719a398b767c2b188))
+* **report:** implement report pdf summary ([e98fd4b](https://github.com/move-ev/spesen-tool/commit/e98fd4b5918cb52ea5bed2c6809f3a0b18f06982))
+* **ui:** app sidebar on user routes ([c1cc72c](https://github.com/move-ev/spesen-tool/commit/c1cc72cef6aaa7648eb8bcb18451d26d22de6bdb))
+* **ui:** empty states for report lists ([9fda66f](https://github.com/move-ev/spesen-tool/commit/9fda66ff59b7c8ad151b2857eb36f72ebb813d32))
+* **ui:** expenses empty state ([6331c5c](https://github.com/move-ev/spesen-tool/commit/6331c5cd58df5eac05f3057734567752b0044bcf))
+* **ui:** implement app sidebar ([021cf3b](https://github.com/move-ev/spesen-tool/commit/021cf3bc84bcf8a720954272fce7f5744b380cf5))
+* **ui:** implement avatar component ([7cdd839](https://github.com/move-ev/spesen-tool/commit/7cdd8396210128856b5e5ff5863abb24d665944e))
+* **ui:** implement empty component ([415ab14](https://github.com/move-ev/spesen-tool/commit/415ab141b1d4c53dd4ead42de2fd1734ad73f6f4))
+* **ui:** implement empty states ([b5e14f4](https://github.com/move-ev/spesen-tool/commit/b5e14f47a9aa4c323c7df4519d4e28c5a36b443f))
+* **ui:** implement user menu ([9ab4622](https://github.com/move-ev/spesen-tool/commit/9ab4622b9a95b7c57db569da349b182205c243e4))
+* **ui:** implement user meun ([8406d51](https://github.com/move-ev/spesen-tool/commit/8406d517e72c5d0ac2905b11bd84f015a1002d53))
+* **ui:** improved admin settings layout ([45025c9](https://github.com/move-ev/spesen-tool/commit/45025c963e2babc8523dc26041cd36697f081dad))
+* **ui:** install sidebar component ([13e96a0](https://github.com/move-ev/spesen-tool/commit/13e96a0498748a98bc3c98df4008c0ff9e3c7765))
+* **ui:** install table component ([48f3512](https://github.com/move-ev/spesen-tool/commit/48f3512faba7a3b32953d3a4e872826fe4de5520))
+* **ui:** own reports empty state ([2d1de0c](https://github.com/move-ev/spesen-tool/commit/2d1de0c37cd5e60a94b8fd954a779e9e87bfae8f))
+* **ui:** sidebar layout across all pages ([079439f](https://github.com/move-ev/spesen-tool/commit/079439fe2f51a769806e0660fc54753cd8958b6d))
+* **ui:** update admin settings layout ([15f042f](https://github.com/move-ev/spesen-tool/commit/15f042fde23a027418204eacae45202672596f63))
+* **ui:** user menu opens on hover ([8552c56](https://github.com/move-ev/spesen-tool/commit/8552c56f98e0e6471ee7b4c7ac825e2108743a6d))
+* **user:** user preferences ([72dcfb0](https://github.com/move-ev/spesen-tool/commit/72dcfb09b18c264ead43a97a89b656bf52654df5))
+
+
+### Bug Fixes
+
+* **actions:** env variables in action workflow step ([691119a](https://github.com/move-ev/spesen-tool/commit/691119a232ecb419866acac2533a0e97ee0b9011))
+* **actions:** update workflow permissions and variables ([8092fe8](https://github.com/move-ev/spesen-tool/commit/8092fe8706dfea831eed06a3f43d3c7bd7cf4ced))
+* **api:** fix typo ([5b7e5c2](https://github.com/move-ev/spesen-tool/commit/5b7e5c234d39b2f48a5309a2fbda3f00adcb35b3))
+* **api:** remove test router ([8a5a6be](https://github.com/move-ev/spesen-tool/commit/8a5a6bef51e0da117beb1ed50a182372aa8c15be))
+* **api:** update expense meta creation ([3183800](https://github.com/move-ev/spesen-tool/commit/3183800013be5b9335ed40a62ae2aa3989a930aa))
+* **api:** update report update route ([2f66986](https://github.com/move-ev/spesen-tool/commit/2f66986425f7c1dc447afe88e761ea5f855e0c4d))
+* **api:** update report update route ([8b722d8](https://github.com/move-ev/spesen-tool/commit/8b722d87cfa4d5a6b68f06f04f4d9ea00397ac4d))
+* **api:** user existance check when promoting ([6bb7de8](https://github.com/move-ev/spesen-tool/commit/6bb7de8e941e53d8864c1340b0cf8aeb4725c7fb))
+* **auth:** gracefully handle settings creation ([149fa92](https://github.com/move-ev/spesen-tool/commit/149fa920c265d388861f288fe03550050c8d3f0c))
+* **expense:** add useEffect depencies ([38b15f7](https://github.com/move-ev/spesen-tool/commit/38b15f7222afcfd805aa4e46b740e25e5986ac4f))
+* **expense:** amount field for receipt expense ([5bbb827](https://github.com/move-ev/spesen-tool/commit/5bbb8271f38dde2327437a1a27bb0a2249188c02))
+* **expense:** amount field for receipt expense ([eb8cd71](https://github.com/move-ev/spesen-tool/commit/eb8cd716883f5807b077d290e5b3541154f5181f))
+* **expense:** expenses use correct meta and settings ([45759fc](https://github.com/move-ev/spesen-tool/commit/45759fcc7b7c26272e39c9c760051d1143e3c0be))
+* **expense:** fixed expense meta parsing ([210c430](https://github.com/move-ev/spesen-tool/commit/210c4304cc9a30bcc10d3fefc839157c5c759694))
+* **expenses:** travel expense form uses database kilometer rate ([f175d21](https://github.com/move-ev/spesen-tool/commit/f175d213d44bb674164f23736f30ba4c98af010d))
+* fix imports ([3e1f8e4](https://github.com/move-ev/spesen-tool/commit/3e1f8e4a51f9e7d9266caea01cfb59b86620fc9d))
+* **report:** fix imports ([4a59776](https://github.com/move-ev/spesen-tool/commit/4a59776bf6b71c7cba71cf2a7c9b8a188d4dbef9))
+
 ## [0.1.0-alpha.1](https://github.com/move-ev/spesen-tool/compare/spesen-tool-v0.0.1-alpha.1...spesen-tool-v0.1.0-alpha.1) (2026-01-19)
 
 
