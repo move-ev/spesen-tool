@@ -12,7 +12,7 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import type { ReportModel } from "@/generated/prisma/models/Report";
+import type { Report } from "@/generated/prisma/client";
 
 const baseUrl =
 	process.env.NODE_ENV === "production"
@@ -25,7 +25,11 @@ type Attachment = {
 };
 
 interface ExpenseReportCreatorNotificationProps {
-	report: ReportModel;
+	report: Report & {
+		accountingUnit: {
+			name: string;
+		};
+	};
 	attachments: Attachment[];
 	totalAmount: number;
 }
@@ -94,7 +98,7 @@ export default function ExpenseReportCreatorNotification({
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Rechnungseinheit:</Text>
-							<Text style={detailValue}>{report.accountingUnit}</Text>
+							<Text style={detailValue}>{report.accountingUnit.name}</Text>
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Gesamtausgaben:</Text>

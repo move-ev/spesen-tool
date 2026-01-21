@@ -188,6 +188,11 @@ export const reportRouter = createTRPCRouter({
 							email: true,
 						},
 					},
+					accountingUnit: {
+						select: {
+							name: true,
+						},
+					},
 				},
 			});
 
@@ -303,6 +308,11 @@ export const reportRouter = createTRPCRouter({
 							id: true,
 							name: true,
 							email: true,
+						},
+					},
+					accountingUnit: {
+						select: {
+							name: true,
 						},
 					},
 				},
@@ -429,6 +439,11 @@ export const reportRouter = createTRPCRouter({
 									notifications: true,
 								},
 							},
+						},
+					},
+					accountingUnit: {
+						select: {
+							name: true,
 						},
 					},
 				},
