@@ -197,7 +197,7 @@ export default function ReportNotificationEmail({
 												style={{ margin: "0 0 7px 0", fontSize: "14px" }}
 											>
 												<a
-													href={`${baseUrl}/api/attachments/${attachment.key}`}
+													href={`${baseUrl}/api/attachments/${encodeURIComponent(attachment.key)}`}
 													style={{
 														color: "#1764bb",
 														textDecoration: "underline",
