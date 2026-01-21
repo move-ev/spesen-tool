@@ -15,12 +15,16 @@ datasource db {
 }
 
 model Report {
-  id             String       @id @default(cuid())
-  title          String
-  description    String?
-  status         ReportStatus @default(DRAFT)
-  businessUnit   String
-  accountingUnit String
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  status      ReportStatus @default(DRAFT)
+
+  accountingUnit   AccountingUnit @relation(fields: [accountingUnitId], references: [id], onDelete: Cascade)
+  accountingUnitId String
+
+  businessUnit   BusinessUnit @relation(fields: [businessUnitId], references: [id], onDelete: Cascade)
+  businessUnitId String
 
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
@@ -93,6 +97,8 @@ model User {
   banReason  String?
   banExpires DateTime?
 
+  preferences Preferences?
+
   @@unique([email])
   @@map("user")
 }
@@ -147,6 +153,22 @@ model Verification {
   @@map("verification")
 }
 
+model Preferences {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  notifications NotificationPreference @default(ALL)
+
+  @@map("preferences")
+}
+
+enum NotificationPreference {
+  ALL
+  STATUS_CHANGES
+  NONE
+}
+
 model Settings {
   id                   String   @id @default("singleton")
   kilometerRate        Decimal  @default(0.30) // Rate per kilometer in EUR
@@ -155,5 +177,34 @@ model Settings {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
+  dailyFoodAllowance Decimal @default(0.00)
+  breakfastDeduction Decimal @default(0.00)
+  lunchDeduction     Decimal @default(0.00)
+  dinnerDeduction    Decimal @default(0.00)
+
   @@map("settings")
+}
+
+model AccountingUnit {
+  id      String   @id @default(cuid())
+  name    String
+  reports Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([name])
+  @@map("accounting_unit")
+}
+
+model BusinessUnit {
+  id      String   @id @default(cuid())
+  name    String
+  reports Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([name])
+  @@map("business_unit")
 }

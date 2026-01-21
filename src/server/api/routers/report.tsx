@@ -2,13 +2,17 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import ExpenseReportCreatorNotification from "@/components/emails/expense-report-creator-notification";
 import ExpenseReportReviewerNotification from "@/components/emails/expense-report-reviewer-notification";
-import { ReportStatus } from "@/generated/prisma/enums";
+import ReportReceivedEmail from "@/components/emails/report-received-email";
+import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
+import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
+import { createReportSchema } from "@/lib/validators";
 import {
 	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
 } from "@/server/api/trpc";
+import { generatePdfSummary } from "@/server/pdf/summary";
 import { resend } from "@/server/resend";
 
 export const reportRouter = createTRPCRouter({
@@ -162,14 +166,7 @@ export const reportRouter = createTRPCRouter({
 
 	// Create a new report
 	create: protectedProcedure
-		.input(
-			z.object({
-				title: z.string().min(1),
-				description: z.string().optional(),
-				businessUnit: z.string().min(1),
-				accountingUnit: z.string().min(1),
-			}),
-		)
+		.input(createReportSchema)
 		.mutation(async ({ ctx, input }) => {
 			// Create the report
 			const report = await ctx.db.report.create({
@@ -264,9 +261,9 @@ export const reportRouter = createTRPCRouter({
 				id: z.string(),
 				title: z.string().min(1).optional(),
 				description: z.string().optional(),
-				businessUnit: z.string().min(1).optional(),
-				accountingUnit: z.string().min(1).optional(),
-				status: z.nativeEnum(ReportStatus).optional(),
+				businessUnitId: z.string().min(1).optional(),
+				accountingUnitId: z.string().min(1).optional(),
+				status: z.enum(ReportStatus).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -427,6 +424,11 @@ export const reportRouter = createTRPCRouter({
 						select: {
 							email: true,
 							name: true,
+							preferences: {
+								select: {
+									notifications: true,
+								},
+							},
 						},
 					},
 				},
@@ -439,7 +441,10 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 
-			if (!input.notify) {
+			if (
+				!input.notify ||
+				result.owner.preferences?.notifications === NotificationPreference.NONE
+			) {
 				return result;
 			}
 
@@ -492,7 +497,18 @@ export const reportRouter = createTRPCRouter({
 					id: input.id,
 				},
 				select: {
-					ownerId: true,
+					owner: {
+						select: {
+							id: true,
+							email: true,
+							name: true,
+							preferences: {
+								select: {
+									notifications: true,
+								},
+							},
+						},
+					},
 					status: true,
 				},
 			});
@@ -505,7 +521,7 @@ export const reportRouter = createTRPCRouter({
 			}
 
 			// Only the owner of the report can submit it
-			if (report.ownerId !== ctx.session.user.id) {
+			if (report.owner.id !== ctx.session.user.id) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You don't have permission to submit this report",
@@ -525,9 +541,111 @@ export const reportRouter = createTRPCRouter({
 			}
 
 			// Update the status to pending approval
-			return ctx.db.report.update({
+			const res = await ctx.db.report.update({
 				where: { id: input.id },
 				data: { status: ReportStatus.PENDING_APPROVAL },
+				select: {
+					title: true,
+					owner: {
+						select: {
+							name: true,
+						},
+					},
+				},
 			});
+
+			if (!res) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to update report status",
+				});
+			}
+
+			const settings = await ctx.db.settings.findUnique({
+				where: {
+					id: "singleton",
+				},
+			});
+
+			if (!settings?.reviewerEmail) {
+				return res;
+			}
+
+			const { error } = await resend.emails.send({
+				from: DEFAULT_EMAIL_FROM,
+				to: [settings.reviewerEmail],
+				subject: "Report submitted",
+				react: <ReportReceivedEmail from={res.owner.name} title={res.title} />,
+			});
+
+			if (error) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send email",
+				});
+			}
+
+			if (report.owner.preferences?.notifications !== NotificationPreference.ALL) {
+				return res;
+			}
+
+			const { error: confirmError } = await resend.emails.send({
+				from: DEFAULT_EMAIL_FROM,
+				to: [report.owner.email],
+				subject: "Report submitted",
+				react: <ReportSubmittedEmail name={report.owner.name} title={res.title} />,
+			});
+
+			if (confirmError) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send confirmation email",
+				});
+			}
+		}),
+	createSummaryPdf: protectedProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const report = await ctx.db.report.findUnique({
+				where: { id: input.id },
+				include: {
+					owner: true,
+					expenses: true,
+				},
+			});
+
+			if (!report) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			// TODO: Get reviewer from database
+			const summaryPdf = await generatePdfSummary({
+				report,
+				reviewer: {
+					id: ctx.session.user.id,
+					name: ctx.session.user.name,
+					email: ctx.session.user.email,
+					admin: false,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					emailVerified: false,
+					image: null,
+					role: "user",
+					banReason: null,
+					banned: false,
+					banExpires: null,
+				},
+			});
+
+			// Convert buffer to base64 string for transmission
+			const base64Pdf = summaryPdf.toString("base64");
+
+			return {
+				pdf: base64Pdf,
+				filename: `${report.title.replace(/[^a-z0-9]/gi, "_")}_Zusammenfassung.pdf`,
+			};
 		}),
 });

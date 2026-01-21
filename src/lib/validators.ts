@@ -1,12 +1,12 @@
 import { isValid, parse } from "date-fns";
 import z from "zod";
-import { ExpenseType } from "@/generated/prisma/enums";
+import { ExpenseType, NotificationPreference } from "@/generated/prisma/enums";
 
 export const createReportSchema = z.object({
 	title: z.string().min(1),
 	description: z.string(),
-	businessUnit: z.string().min(1),
-	accountingUnit: z.string().min(1),
+	businessUnitId: z.string().min(1),
+	accountingUnitId: z.string().min(1),
 });
 
 export const baseCreateExpenseSchema = z.object({
@@ -76,4 +76,27 @@ export const foodExpenseMetaSchema = z.object({
 	breakfastDeduction: z.number().min(0),
 	lunchDeduction: z.number().min(0),
 	dinnerDeduction: z.number().min(0),
+});
+
+export const updatePreferencesSchema = z.object({
+	notificationPreference: z.enum(NotificationPreference),
+});
+
+export const createAccountingUnitSchema = z.object({
+	name: z.string().min(1),
+});
+
+export const createBusinessUnitSchema = z.object({
+	name: z.string().min(1),
+});
+
+export const updateMealAllowancesSchema = z.object({
+	dailyFoodAllowance: z.number().min(0),
+	breakfastDeduction: z.number().min(0),
+	lunchDeduction: z.number().min(0),
+	dinnerDeduction: z.number().min(0),
+});
+
+export const updateTravelAllowancesSchema = z.object({
+	kilometerRate: z.number().min(0),
 });

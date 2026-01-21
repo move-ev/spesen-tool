@@ -6,8 +6,10 @@
 			"package-name": "spesen-tool",
 			"version-file": "package.json",
 			"changelog-path": "CHANGELOG.md",
-			"extra-files": []
+			"extra-files": [],
+			"prerelease": true,
+			"prerelease-type": "alpha",
+			"versioning-strategy": "always-bump-patch"
 		}
-	},
-	"$versioning-strategy": "always-bump-patch"
+	}
 }

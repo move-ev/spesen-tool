@@ -27,3 +27,12 @@ export const ExpenseType = {
 } as const
 
 export type ExpenseType = (typeof ExpenseType)[keyof typeof ExpenseType]
+
+
+export const NotificationPreference = {
+  ALL: 'ALL',
+  STATUS_CHANGES: 'STATUS_CHANGES',
+  NONE: 'NONE'
+} as const
+
+export type NotificationPreference = (typeof NotificationPreference)[keyof typeof NotificationPreference]

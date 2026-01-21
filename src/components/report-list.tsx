@@ -1,8 +1,20 @@
+import { FileSearchCornerIcon, PlusIcon } from "lucide-react";
+import Link from "next/link";
 import type React from "react";
 import type { Report } from "@/generated/prisma/client";
+import { ROUTES } from "@/lib/consts";
 import type { ClientExpense } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ReportCard, ReportCardField } from "./report-card";
+import { Button } from "./ui/button";
+import {
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "./ui/empty";
 import { Skeleton } from "./ui/skeleton";
 
 export function ReportList({
@@ -20,18 +32,7 @@ export function ReportList({
 	reportRoute: string;
 }) {
 	if (reports.length === 0) {
-		return (
-			<div
-				className={cn(
-					"rounded-lg border border-dashed p-12 text-center",
-					className,
-				)}
-			>
-				<p className="font-medium text-muted-foreground text-sm">
-					Keine Anträge gefunden
-				</p>
-			</div>
-		);
+		return <ReportListEmpty />;
 	}
 
 	return (
@@ -96,5 +97,37 @@ export function ReportListSkeleton({
 				<Skeleton className="h-32 w-full" />
 			</li>
 		</ul>
+	);
+}
+
+export function ReportListEmpty({
+	className,
+	...props
+}: React.ComponentProps<typeof Empty>) {
+	return (
+		<Empty className={cn("border", className)} {...props}>
+			<EmptyHeader>
+				<EmptyMedia variant="icon">
+					<FileSearchCornerIcon />
+				</EmptyMedia>
+				<EmptyTitle>Keine Anträge gefunden</EmptyTitle>
+				<EmptyDescription>
+					Du hast noch keine Anträge erstellt. Stelle einen neuen Antrag um zu
+					beginnen.
+				</EmptyDescription>
+			</EmptyHeader>
+			<EmptyContent className="flex-row justify-center gap-2">
+				<Button
+					nativeButton={false}
+					render={
+						<Link href={ROUTES.REPORT_NEW}>
+							<PlusIcon />
+							Neuer Antrag
+						</Link>
+					}
+					size="sm"
+				/>
+			</EmptyContent>
+		</Empty>
 	);
 }

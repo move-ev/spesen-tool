@@ -25,11 +25,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { createFoodExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
-const DAILY_FOOD_ALLOWANCE = 12;
-const BREAKFAST_DEDUCTION = 5.8;
-const LUNCH_DEDUCTION = 11.1;
-const DINNER_DEDUCTION = 11.1;
-
 export function CreateFoodExpenseForm({
 	reportId,
 	onSuccess,
@@ -38,6 +33,7 @@ export function CreateFoodExpenseForm({
 	reportId: string;
 	onSuccess?: () => void;
 }) {
+	const [settings] = api.settings.get.useSuspenseQuery();
 	const utils = api.useUtils();
 	const createTravel = api.expense.createFood.useMutation({
 		onSuccess: () => {
@@ -107,13 +103,20 @@ export function CreateFoodExpenseForm({
 
 	React.useEffect(() => {
 		const amount =
-			DAILY_FOOD_ALLOWANCE * days -
-			(breakfastDeduction * BREAKFAST_DEDUCTION +
-				lunchDeduction * LUNCH_DEDUCTION +
-				dinnerDeduction * DINNER_DEDUCTION);
+			settings.dailyFoodAllowance * days -
+			(breakfastDeduction * settings.breakfastDeduction +
+				lunchDeduction * settings.lunchDeduction +
+				dinnerDeduction * settings.dinnerDeduction);
 
 		form.setFieldValue("amount", amount);
-	}, [days, breakfastDeduction, lunchDeduction, dinnerDeduction, form]);
+	}, [
+		days,
+		breakfastDeduction,
+		lunchDeduction,
+		dinnerDeduction,
+		settings,
+		form,
+	]);
 
 	return (
 		<form
@@ -273,6 +276,10 @@ export function CreateFoodExpenseForm({
 										/>
 									</NumberField.Group>
 								</NumberField.Root>
+								<FieldDescription>
+									Automatisch berechnet: - {settings.breakfastDeduction.toFixed(2)} € pro
+									Tag
+								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
@@ -313,6 +320,9 @@ export function CreateFoodExpenseForm({
 										/>
 									</NumberField.Group>
 								</NumberField.Root>
+								<FieldDescription>
+									Automatisch berechnet: - {settings.lunchDeduction.toFixed(2)} € pro Tag
+								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
@@ -353,6 +363,10 @@ export function CreateFoodExpenseForm({
 										/>
 									</NumberField.Group>
 								</NumberField.Root>
+								<FieldDescription>
+									Automatisch berechnet: - {settings.dinnerDeduction.toFixed(2)} € pro
+									Tag
+								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
@@ -402,7 +416,8 @@ export function CreateFoodExpenseForm({
 									</NumberField.Group>
 								</NumberField.Root>
 								<FieldDescription>
-									Automatisch berechnet: 0,30 € pro Kilometer
+									Automatisch berechnet: {settings.dailyFoodAllowance.toFixed(2)} € pro
+									Tag - Abzüge
 								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>

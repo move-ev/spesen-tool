@@ -1,14 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { ReactNode } from "react";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
 
-export default async function AdminLayout({
-	children,
-}: {
-	children: ReactNode;
-}) {
+export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});

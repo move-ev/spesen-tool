@@ -1,6 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
+	updateMealAllowancesSchema,
+	updateTravelAllowancesSchema,
+} from "@/lib/validators";
+import {
+	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
 	publicProcedure,
@@ -35,6 +40,10 @@ export const settingsRouter = createTRPCRouter({
 		return {
 			...settings,
 			kilometerRate: Number(settings.kilometerRate),
+			dailyFoodAllowance: Number(settings.dailyFoodAllowance),
+			breakfastDeduction: Number(settings.breakfastDeduction),
+			lunchDeduction: Number(settings.lunchDeduction),
+			dinnerDeduction: Number(settings.dinnerDeduction),
 		};
 	}),
 
@@ -92,5 +101,24 @@ export const settingsRouter = createTRPCRouter({
 			}
 
 			return settings;
+		}),
+	listUsers: adminProcedure.query(async ({ ctx }) => {
+		return await ctx.db.user.findMany({});
+	}),
+	updateMealAllowances: adminProcedure
+		.input(updateMealAllowancesSchema)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.db.settings.update({
+				where: { id: "singleton" },
+				data: input,
+			});
+		}),
+	updateTravelAllowances: adminProcedure
+		.input(updateTravelAllowancesSchema)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.db.settings.update({
+				where: { id: "singleton" },
+				data: input,
+			});
 		}),
 });

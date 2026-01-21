@@ -5,8 +5,12 @@ import { CreateReportForm } from "@/components/forms/create-report-form";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/consts";
+import { api } from "@/trpc/server";
 
 export default async function ServerPage() {
+	void api.accountingUnit.listAll.prefetch();
+	void api.businessUnit.listAll.prefetch();
+
 	return (
 		<React.Fragment>
 			<section className="container mt-12 max-w-4xl">
@@ -27,28 +31,7 @@ export default async function ServerPage() {
 				</PageDescription>
 			</section>
 			<section className="container mt-10 max-w-4xl">
-				<CreateReportForm
-					accountingUnits={[
-						{
-							label: "Test123",
-							value: "test123",
-						},
-						{
-							label: "TestABC",
-							value: "testabc",
-						},
-					]}
-					businessUnits={[
-						{
-							label: "Test123",
-							value: "test123",
-						},
-						{
-							label: "TestABC",
-							value: "testabc",
-						},
-					]}
-				/>
+				<CreateReportForm />
 			</section>
 		</React.Fragment>
 	);

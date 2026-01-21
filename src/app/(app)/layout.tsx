@@ -1,7 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
 
@@ -16,9 +18,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<>
-			<SiteHeader />
-			{children}
-		</>
+		<SidebarProvider>
+			<AppSidebar />
+			<div className="flex-1">
+				<SiteHeader />
+				{children}
+			</div>
+		</SidebarProvider>
 	);
 }

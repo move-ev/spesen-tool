@@ -28,10 +28,18 @@ export type AggregateSettings = {
 
 export type SettingsAvgAggregateOutputType = {
   kilometerRate: runtime.Decimal | null
+  dailyFoodAllowance: runtime.Decimal | null
+  breakfastDeduction: runtime.Decimal | null
+  lunchDeduction: runtime.Decimal | null
+  dinnerDeduction: runtime.Decimal | null
 }
 
 export type SettingsSumAggregateOutputType = {
   kilometerRate: runtime.Decimal | null
+  dailyFoodAllowance: runtime.Decimal | null
+  breakfastDeduction: runtime.Decimal | null
+  lunchDeduction: runtime.Decimal | null
+  dinnerDeduction: runtime.Decimal | null
 }
 
 export type SettingsMinAggregateOutputType = {
@@ -41,6 +49,10 @@ export type SettingsMinAggregateOutputType = {
   accountingUnitPdfUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  dailyFoodAllowance: runtime.Decimal | null
+  breakfastDeduction: runtime.Decimal | null
+  lunchDeduction: runtime.Decimal | null
+  dinnerDeduction: runtime.Decimal | null
 }
 
 export type SettingsMaxAggregateOutputType = {
@@ -50,6 +62,10 @@ export type SettingsMaxAggregateOutputType = {
   accountingUnitPdfUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  dailyFoodAllowance: runtime.Decimal | null
+  breakfastDeduction: runtime.Decimal | null
+  lunchDeduction: runtime.Decimal | null
+  dinnerDeduction: runtime.Decimal | null
 }
 
 export type SettingsCountAggregateOutputType = {
@@ -59,16 +75,28 @@ export type SettingsCountAggregateOutputType = {
   accountingUnitPdfUrl: number
   createdAt: number
   updatedAt: number
+  dailyFoodAllowance: number
+  breakfastDeduction: number
+  lunchDeduction: number
+  dinnerDeduction: number
   _all: number
 }
 
 
 export type SettingsAvgAggregateInputType = {
   kilometerRate?: true
+  dailyFoodAllowance?: true
+  breakfastDeduction?: true
+  lunchDeduction?: true
+  dinnerDeduction?: true
 }
 
 export type SettingsSumAggregateInputType = {
   kilometerRate?: true
+  dailyFoodAllowance?: true
+  breakfastDeduction?: true
+  lunchDeduction?: true
+  dinnerDeduction?: true
 }
 
 export type SettingsMinAggregateInputType = {
@@ -78,6 +106,10 @@ export type SettingsMinAggregateInputType = {
   accountingUnitPdfUrl?: true
   createdAt?: true
   updatedAt?: true
+  dailyFoodAllowance?: true
+  breakfastDeduction?: true
+  lunchDeduction?: true
+  dinnerDeduction?: true
 }
 
 export type SettingsMaxAggregateInputType = {
@@ -87,6 +119,10 @@ export type SettingsMaxAggregateInputType = {
   accountingUnitPdfUrl?: true
   createdAt?: true
   updatedAt?: true
+  dailyFoodAllowance?: true
+  breakfastDeduction?: true
+  lunchDeduction?: true
+  dinnerDeduction?: true
 }
 
 export type SettingsCountAggregateInputType = {
@@ -96,6 +132,10 @@ export type SettingsCountAggregateInputType = {
   accountingUnitPdfUrl?: true
   createdAt?: true
   updatedAt?: true
+  dailyFoodAllowance?: true
+  breakfastDeduction?: true
+  lunchDeduction?: true
+  dinnerDeduction?: true
   _all?: true
 }
 
@@ -192,6 +232,10 @@ export type SettingsGroupByOutputType = {
   accountingUnitPdfUrl: string | null
   createdAt: Date
   updatedAt: Date
+  dailyFoodAllowance: runtime.Decimal
+  breakfastDeduction: runtime.Decimal
+  lunchDeduction: runtime.Decimal
+  dinnerDeduction: runtime.Decimal
   _count: SettingsCountAggregateOutputType | null
   _avg: SettingsAvgAggregateOutputType | null
   _sum: SettingsSumAggregateOutputType | null
@@ -224,6 +268,10 @@ export type SettingsWhereInput = {
   accountingUnitPdfUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
+  dailyFoodAllowance?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsOrderByWithRelationInput = {
@@ -233,6 +281,10 @@ export type SettingsOrderByWithRelationInput = {
   accountingUnitPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
 }
 
 export type SettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -245,6 +297,10 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   accountingUnitPdfUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
+  dailyFoodAllowance?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
 }, "id">
 
 export type SettingsOrderByWithAggregationInput = {
@@ -254,6 +310,10 @@ export type SettingsOrderByWithAggregationInput = {
   accountingUnitPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
   _count?: Prisma.SettingsCountOrderByAggregateInput
   _avg?: Prisma.SettingsAvgOrderByAggregateInput
   _max?: Prisma.SettingsMaxOrderByAggregateInput
@@ -271,6 +331,10 @@ export type SettingsScalarWhereWithAggregatesInput = {
   accountingUnitPdfUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Settings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Settings"> | Date | string
+  dailyFoodAllowance?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsCreateInput = {
@@ -280,6 +344,10 @@ export type SettingsCreateInput = {
   accountingUnitPdfUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  dailyFoodAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsUncheckedCreateInput = {
@@ -289,6 +357,10 @@ export type SettingsUncheckedCreateInput = {
   accountingUnitPdfUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  dailyFoodAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsUpdateInput = {
@@ -298,6 +370,10 @@ export type SettingsUpdateInput = {
   accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsUncheckedUpdateInput = {
@@ -307,6 +383,10 @@ export type SettingsUncheckedUpdateInput = {
   accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsCreateManyInput = {
@@ -316,6 +396,10 @@ export type SettingsCreateManyInput = {
   accountingUnitPdfUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  dailyFoodAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsUpdateManyMutationInput = {
@@ -325,6 +409,10 @@ export type SettingsUpdateManyMutationInput = {
   accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsUncheckedUpdateManyInput = {
@@ -334,6 +422,10 @@ export type SettingsUncheckedUpdateManyInput = {
   accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  breakfastDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lunchDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dinnerDeduction?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SettingsCountOrderByAggregateInput = {
@@ -343,10 +435,18 @@ export type SettingsCountOrderByAggregateInput = {
   accountingUnitPdfUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
 }
 
 export type SettingsAvgOrderByAggregateInput = {
   kilometerRate?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
 }
 
 export type SettingsMaxOrderByAggregateInput = {
@@ -356,6 +456,10 @@ export type SettingsMaxOrderByAggregateInput = {
   accountingUnitPdfUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
 }
 
 export type SettingsMinOrderByAggregateInput = {
@@ -365,10 +469,18 @@ export type SettingsMinOrderByAggregateInput = {
   accountingUnitPdfUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
 }
 
 export type SettingsSumOrderByAggregateInput = {
   kilometerRate?: Prisma.SortOrder
+  dailyFoodAllowance?: Prisma.SortOrder
+  breakfastDeduction?: Prisma.SortOrder
+  lunchDeduction?: Prisma.SortOrder
+  dinnerDeduction?: Prisma.SortOrder
 }
 
 
@@ -380,6 +492,10 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   accountingUnitPdfUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  dailyFoodAllowance?: boolean
+  breakfastDeduction?: boolean
+  lunchDeduction?: boolean
+  dinnerDeduction?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -389,6 +505,10 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   accountingUnitPdfUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  dailyFoodAllowance?: boolean
+  breakfastDeduction?: boolean
+  lunchDeduction?: boolean
+  dinnerDeduction?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -398,6 +518,10 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   accountingUnitPdfUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  dailyFoodAllowance?: boolean
+  breakfastDeduction?: boolean
+  lunchDeduction?: boolean
+  dinnerDeduction?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectScalar = {
@@ -407,9 +531,13 @@ export type SettingsSelectScalar = {
   accountingUnitPdfUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  dailyFoodAllowance?: boolean
+  breakfastDeduction?: boolean
+  lunchDeduction?: boolean
+  dinnerDeduction?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kilometerRate" | "reviewerEmail" | "accountingUnitPdfUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kilometerRate" | "reviewerEmail" | "accountingUnitPdfUrl" | "createdAt" | "updatedAt" | "dailyFoodAllowance" | "breakfastDeduction" | "lunchDeduction" | "dinnerDeduction", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -421,6 +549,10 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     accountingUnitPdfUrl: string | null
     createdAt: Date
     updatedAt: Date
+    dailyFoodAllowance: runtime.Decimal
+    breakfastDeduction: runtime.Decimal
+    lunchDeduction: runtime.Decimal
+    dinnerDeduction: runtime.Decimal
   }, ExtArgs["result"]["settings"]>
   composites: {}
 }
@@ -850,6 +982,10 @@ export interface SettingsFieldRefs {
   readonly accountingUnitPdfUrl: Prisma.FieldRef<"Settings", 'String'>
   readonly createdAt: Prisma.FieldRef<"Settings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Settings", 'DateTime'>
+  readonly dailyFoodAllowance: Prisma.FieldRef<"Settings", 'Decimal'>
+  readonly breakfastDeduction: Prisma.FieldRef<"Settings", 'Decimal'>
+  readonly lunchDeduction: Prisma.FieldRef<"Settings", 'Decimal'>
+  readonly dinnerDeduction: Prisma.FieldRef<"Settings", 'Decimal'>
 }
     
 

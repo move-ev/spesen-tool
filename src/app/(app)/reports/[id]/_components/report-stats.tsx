@@ -1,11 +1,10 @@
 "use client";
 
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardTitle,
-} from "@/components/ui/card";
+	StatsCard,
+	StatsCardDescription,
+	StatsCardValue,
+} from "@/components/stats-card";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
@@ -22,28 +21,20 @@ export function ReportStats({
 			data-slot="report-stats"
 			{...props}
 		>
-			<Card>
-				<CardContent className="space-y-2">
-					<CardDescription>Gesamtbetrag</CardDescription>
-					<CardTitle className="font-semibold text-2xl">
-						{stats.totalAmount.toFixed(2)} €
-					</CardTitle>
-				</CardContent>
-			</Card>
-			<Card>
-				<CardContent className="space-y-2">
-					<CardDescription>Anzahl Ausgaben</CardDescription>
-					<CardTitle className="font-semibold text-2xl">
-						{stats.expenseCount}
-					</CardTitle>
-				</CardContent>
-			</Card>
-			<Card>
-				<CardContent className="space-y-2">
-					<CardDescription>Lenny was kann man hier eintragen</CardDescription>
-					<CardTitle className="font-semibold text-2xl">🤔</CardTitle>
-				</CardContent>
-			</Card>
+			<StatsCard>
+				<StatsCardDescription>Gesamtbetrag</StatsCardDescription>
+				<StatsCardValue>{stats.totalAmount.toFixed(2)} €</StatsCardValue>
+			</StatsCard>
+			<StatsCard>
+				<StatsCardDescription>Anzahl Ausgaben</StatsCardDescription>
+				<StatsCardValue>{stats.expenseCount}</StatsCardValue>
+			</StatsCard>
+			<StatsCard>
+				<StatsCardDescription>
+					Lenny was kann man hier eintragen
+				</StatsCardDescription>
+				<StatsCardValue>🤔</StatsCardValue>
+			</StatsCard>
 		</div>
 	);
 }
