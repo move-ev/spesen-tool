@@ -85,12 +85,12 @@ export type Preferences = Prisma.PreferencesModel
  */
 export type Settings = Prisma.SettingsModel
 /**
- * Model AccountingUnit
+ * Model CostUnitGroup
  * 
  */
-export type AccountingUnit = Prisma.AccountingUnitModel
+export type CostUnitGroup = Prisma.CostUnitGroupModel
 /**
- * Model BusinessUnit
+ * Model CostUnit
  * 
  */
-export type BusinessUnit = Prisma.BusinessUnitModel
+export type CostUnit = Prisma.CostUnitModel

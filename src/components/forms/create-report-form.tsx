@@ -2,26 +2,40 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { toast } from "sonner";
 import { ROUTES } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
-import {
-	Combobox,
-	ComboboxContent,
-	ComboboxEmpty,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxList,
-} from "../ui/combobox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import {
+	NativeSelect,
+	NativeSelectOptGroup,
+	NativeSelectOption,
+} from "../ui/native-select";
 import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
-	const [accountingUnits] = api.accountingUnit.listAll.useSuspenseQuery();
-	const [businessUnits] = api.businessUnit.listAll.useSuspenseQuery();
+	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
+
+	// Create a Map for O(1) cost unit lookups by ID
+	const costUnitMap = useMemo(() => {
+		const map = new Map<
+			string,
+			{ id: string; tag: string; title: string; examples: string[] }
+		>();
+		for (const costUnit of costUnits.ungrouped) {
+			map.set(costUnit.id, costUnit);
+		}
+		for (const group of costUnits.grouped) {
+			for (const costUnit of group.costUnits) {
+				map.set(costUnit.id, costUnit);
+			}
+		}
+		return map;
+	}, [costUnits]);
 
 	const router = useRouter();
 
@@ -41,8 +55,7 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 		defaultValues: {
 			title: "",
 			description: "",
-			businessUnitId: "",
-			accountingUnitId: "",
+			costUnitId: "",
 		},
 		validators: {
 			onSubmit: createReportSchema,
@@ -108,83 +121,66 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 					}}
 					name="description"
 				/>
+
 				<form.Field
 					children={(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
 							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Geschäftseinheit</FieldLabel>
-								<Combobox
-									items={businessUnits}
-									itemToStringLabel={(item) => item.name}
-									itemToStringValue={(item) => item.id}
-									onValueChange={(v) => {
-										field.handleChange(v ? v.id : "");
-									}}
-									value={businessUnits.find((u) => u.id === field.state.value) ?? null}
+								<FieldLabel htmlFor={field.name}>Kostenstelle</FieldLabel>
+								<NativeSelect
+									onChange={(e) => field.handleChange(e.target.value)}
+									value={field.state.value}
 								>
-									<ComboboxInput
-										aria-invalid={isInvalid}
-										data-invalid={isInvalid}
-										id={field.name}
-										name={field.name}
-										placeholder="Wähle eine Geschäftseinheit"
-									/>
-									<ComboboxContent>
-										<ComboboxEmpty>Keine Geschäftseinheiten gefunden.</ComboboxEmpty>
-										<ComboboxList>
-											{(item) => (
-												<ComboboxItem key={item.id} value={item}>
-													{item.name}
-												</ComboboxItem>
-											)}
-										</ComboboxList>
-									</ComboboxContent>
-								</Combobox>
+									<NativeSelectOption value="">
+										Kostenstelle auswählen
+									</NativeSelectOption>
+									{costUnits.ungrouped.map((costUnit) => (
+										<NativeSelectOption key={costUnit.id} value={costUnit.id}>
+											{costUnit.title}
+										</NativeSelectOption>
+									))}
+									{costUnits.grouped.map((group) => (
+										<NativeSelectOptGroup
+											key={group.group?.id}
+											label={group.group?.title ?? "Unbekannte Gruppe"}
+										>
+											{group.costUnits.map((costUnit) => (
+												<NativeSelectOption key={costUnit.id} value={costUnit.id}>
+													{costUnit.title}
+												</NativeSelectOption>
+											))}
+										</NativeSelectOptGroup>
+									))}
+								</NativeSelect>
+
+								{(() => {
+									const selectedCostUnit = costUnitMap.get(field.state.value);
+
+									if (
+										selectedCostUnit?.examples &&
+										selectedCostUnit.examples.length > 0
+									) {
+										return (
+											<div className="mt-1 rounded-lg border bg-muted/40 p-4 text-muted-foreground text-sm">
+												<p className="mb-2">
+													Zu der ausgewählten Kostenstelle gehören die folgenden Anliegen:
+												</p>
+												<ul className="list-inside list-disc">
+													{selectedCostUnit.examples.map((example) => (
+														<li key={example}>{example}</li>
+													))}
+												</ul>
+											</div>
+										);
+									}
+									return null;
+								})()}
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
 					}}
-					name="businessUnitId"
-				/>
-				<form.Field
-					children={(field) => {
-						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-						return (
-							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Rechnungseinheit</FieldLabel>
-								<Combobox
-									items={accountingUnits}
-									itemToStringLabel={(item) => item.name}
-									itemToStringValue={(item) => item.id}
-									onValueChange={(v) => {
-										field.handleChange(v ? v.id : "");
-									}}
-									value={accountingUnits.find((u) => u.id === field.state.value) ?? null}
-								>
-									<ComboboxInput
-										aria-invalid={isInvalid}
-										data-invalid={isInvalid}
-										id={field.name}
-										name={field.name}
-										placeholder="Wähle eine Rechnungseinheit"
-									/>
-									<ComboboxContent>
-										<ComboboxEmpty>Keine Rechnungseinheiten gefunden.</ComboboxEmpty>
-										<ComboboxList>
-											{(item) => (
-												<ComboboxItem key={item.id} value={item}>
-													{item.name}
-												</ComboboxItem>
-											)}
-										</ComboboxList>
-									</ComboboxContent>
-								</Combobox>
-								{isInvalid && <FieldError errors={field.state.meta.errors} />}
-							</Field>
-						);
-					}}
-					name="accountingUnitId"
+					name="costUnitId"
 				/>
 				<Button
 					disabled={createReport.isPending}

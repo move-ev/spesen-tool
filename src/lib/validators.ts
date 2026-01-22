@@ -5,8 +5,7 @@ import { ExpenseType, NotificationPreference } from "@/generated/prisma/enums";
 export const createReportSchema = z.object({
 	title: z.string().min(1),
 	description: z.string(),
-	businessUnitId: z.string().min(1),
-	accountingUnitId: z.string().min(1),
+	costUnitId: z.string().min(1),
 });
 
 export const baseCreateExpenseSchema = z.object({
@@ -82,14 +81,6 @@ export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
 });
 
-export const createAccountingUnitSchema = z.object({
-	name: z.string().min(1),
-});
-
-export const createBusinessUnitSchema = z.object({
-	name: z.string().min(1),
-});
-
 export const updateMealAllowancesSchema = z.object({
 	dailyFoodAllowance: z.number().min(0),
 	breakfastDeduction: z.number().min(0),
@@ -99,4 +90,36 @@ export const updateMealAllowancesSchema = z.object({
 
 export const updateTravelAllowancesSchema = z.object({
 	kilometerRate: z.number().min(0),
+});
+
+export const createCostUnitGroupSchema = z.object({
+	title: z.string().min(1),
+});
+
+export const updateCostUnitGroupSchema = z.object({
+	id: z.string().min(1),
+	title: z.string().min(1),
+});
+
+export const deleteCostUnitGroupSchema = z.object({
+	id: z.string().min(1),
+});
+
+export const createCostUnitSchema = z.object({
+	tag: z.string().min(1),
+	title: z.string().min(1),
+	examples: z.string().array(),
+	costUnitGroupId: z.string(),
+});
+
+export const updateCostUnitSchema = z.object({
+	id: z.string().min(1),
+	tag: z.string().min(1),
+	title: z.string().min(1),
+	examples: z.string().array(),
+	costUnitGroupId: z.string(),
+});
+
+export const deleteCostUnitSchema = z.object({
+	id: z.string().min(1),
 });

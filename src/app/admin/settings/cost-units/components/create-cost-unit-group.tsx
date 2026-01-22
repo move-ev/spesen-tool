@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import React from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,26 +12,31 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createAccountingUnitSchema } from "@/lib/validators";
+import { createCostUnitGroupSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
-export function CreateAccountingUnit({
+export function CreateCostUnitGroup({
 	...props
 }: React.ComponentProps<typeof Button>) {
 	const utils = api.useUtils();
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
 
-	const createAccountingUnit = api.accountingUnit.create.useMutation({
+	const createGroup = api.costUnit.createGroup.useMutation({
 		onSuccess: () => {
+			utils.costUnit.listGroups.invalidate();
 			setOpen(false);
 			form.reset();
-			toast.success("Buchungskreis erfolgreich erstellt");
-			utils.accountingUnit.listAll.invalidate();
+			toast.success("Kostenstellengruppe erfolgreich erstellt");
 		},
 		onError: (error) => {
-			toast.error("Fehler beim Erstellen des Buchungskreises", {
+			toast.error("Fehler beim Erstellen der Kostenstellengruppe", {
 				description: error.message ?? "Ein unerwarteter Fehler ist aufgetreten",
 			});
 		},
@@ -39,13 +44,13 @@ export function CreateAccountingUnit({
 
 	const form = useForm({
 		defaultValues: {
-			name: "",
+			title: "",
 		},
 		validators: {
-			onSubmit: createAccountingUnitSchema,
+			onSubmit: createCostUnitGroupSchema,
 		},
 		onSubmit: (value) => {
-			createAccountingUnit.mutate(value.value);
+			createGroup.mutate(value.value);
 		},
 	});
 
@@ -54,39 +59,44 @@ export function CreateAccountingUnit({
 			<DialogTrigger render={<Button {...props} />} />
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Neuer Buchungskreis</DialogTitle>
-					<DialogDescription>Erstelle einen neuen Buchungskreis</DialogDescription>
+					<DialogTitle>Neue Kostenstellengruppe</DialogTitle>
+					<DialogDescription>
+						Erstelle eine neue Kostenstellengruppe
+					</DialogDescription>
 				</DialogHeader>
-				<div className="">
+				<div>
 					<form
-						id="form-create-accounting-unit"
+						id="form-create-cost-unit-group"
 						onSubmit={(e) => {
 							e.preventDefault();
 							form.handleSubmit();
 						}}
 					>
 						<FieldGroup>
-							<form.Field name="name">
+							<form.Field name="title">
 								{(field) => {
 									const isInvalid =
 										field.state.meta.isTouched && !field.state.meta.isValid;
 									return (
 										<Field data-invalid={isInvalid}>
-											<FieldLabel htmlFor={field.name}>Name</FieldLabel>
+											<FieldLabel htmlFor={field.name}>Gruppentitel</FieldLabel>
 											<Input
 												aria-invalid={isInvalid}
 												id={field.name}
 												name={field.name}
+												onBlur={field.handleBlur}
 												onChange={(e) => field.handleChange(e.target.value)}
 												value={field.state.value}
 											/>
+											{isInvalid && <FieldError errors={field.state.meta.errors} />}
 										</Field>
 									);
 								}}
 							</form.Field>
 							<Button
-								disabled={createAccountingUnit.isPending}
-								form="form-create-accounting-unit"
+								className="w-full"
+								disabled={createGroup.isPending}
+								form="form-create-cost-unit-group"
 								type="submit"
 							>
 								Erstellen

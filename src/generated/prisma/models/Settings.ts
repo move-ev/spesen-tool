@@ -46,7 +46,7 @@ export type SettingsMinAggregateOutputType = {
   id: string | null
   kilometerRate: runtime.Decimal | null
   reviewerEmail: string | null
-  accountingUnitPdfUrl: string | null
+  costUnitInfoUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
   dailyFoodAllowance: runtime.Decimal | null
@@ -59,7 +59,7 @@ export type SettingsMaxAggregateOutputType = {
   id: string | null
   kilometerRate: runtime.Decimal | null
   reviewerEmail: string | null
-  accountingUnitPdfUrl: string | null
+  costUnitInfoUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
   dailyFoodAllowance: runtime.Decimal | null
@@ -72,7 +72,7 @@ export type SettingsCountAggregateOutputType = {
   id: number
   kilometerRate: number
   reviewerEmail: number
-  accountingUnitPdfUrl: number
+  costUnitInfoUrl: number
   createdAt: number
   updatedAt: number
   dailyFoodAllowance: number
@@ -103,7 +103,7 @@ export type SettingsMinAggregateInputType = {
   id?: true
   kilometerRate?: true
   reviewerEmail?: true
-  accountingUnitPdfUrl?: true
+  costUnitInfoUrl?: true
   createdAt?: true
   updatedAt?: true
   dailyFoodAllowance?: true
@@ -116,7 +116,7 @@ export type SettingsMaxAggregateInputType = {
   id?: true
   kilometerRate?: true
   reviewerEmail?: true
-  accountingUnitPdfUrl?: true
+  costUnitInfoUrl?: true
   createdAt?: true
   updatedAt?: true
   dailyFoodAllowance?: true
@@ -129,7 +129,7 @@ export type SettingsCountAggregateInputType = {
   id?: true
   kilometerRate?: true
   reviewerEmail?: true
-  accountingUnitPdfUrl?: true
+  costUnitInfoUrl?: true
   createdAt?: true
   updatedAt?: true
   dailyFoodAllowance?: true
@@ -229,7 +229,7 @@ export type SettingsGroupByOutputType = {
   id: string
   kilometerRate: runtime.Decimal
   reviewerEmail: string | null
-  accountingUnitPdfUrl: string | null
+  costUnitInfoUrl: string | null
   createdAt: Date
   updatedAt: Date
   dailyFoodAllowance: runtime.Decimal
@@ -265,7 +265,7 @@ export type SettingsWhereInput = {
   id?: Prisma.StringFilter<"Settings"> | string
   kilometerRate?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.StringNullableFilter<"Settings"> | string | null
-  accountingUnitPdfUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  costUnitInfoUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
   dailyFoodAllowance?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -278,7 +278,7 @@ export type SettingsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   kilometerRate?: Prisma.SortOrder
   reviewerEmail?: Prisma.SortOrderInput | Prisma.SortOrder
-  accountingUnitPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  costUnitInfoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   dailyFoodAllowance?: Prisma.SortOrder
@@ -294,7 +294,7 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SettingsWhereInput | Prisma.SettingsWhereInput[]
   kilometerRate?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.StringNullableFilter<"Settings"> | string | null
-  accountingUnitPdfUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  costUnitInfoUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
   dailyFoodAllowance?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -307,7 +307,7 @@ export type SettingsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   kilometerRate?: Prisma.SortOrder
   reviewerEmail?: Prisma.SortOrderInput | Prisma.SortOrder
-  accountingUnitPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  costUnitInfoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   dailyFoodAllowance?: Prisma.SortOrder
@@ -328,7 +328,7 @@ export type SettingsScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Settings"> | string
   kilometerRate?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
-  accountingUnitPdfUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  costUnitInfoUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Settings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Settings"> | Date | string
   dailyFoodAllowance?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -341,7 +341,7 @@ export type SettingsCreateInput = {
   id?: string
   kilometerRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: string | null
-  accountingUnitPdfUrl?: string | null
+  costUnitInfoUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   dailyFoodAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -354,7 +354,7 @@ export type SettingsUncheckedCreateInput = {
   id?: string
   kilometerRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: string | null
-  accountingUnitPdfUrl?: string | null
+  costUnitInfoUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   dailyFoodAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -367,7 +367,7 @@ export type SettingsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kilometerRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costUnitInfoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -380,7 +380,7 @@ export type SettingsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kilometerRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costUnitInfoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -393,7 +393,7 @@ export type SettingsCreateManyInput = {
   id?: string
   kilometerRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: string | null
-  accountingUnitPdfUrl?: string | null
+  costUnitInfoUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   dailyFoodAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -406,7 +406,7 @@ export type SettingsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kilometerRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costUnitInfoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -419,7 +419,7 @@ export type SettingsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kilometerRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   reviewerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  accountingUnitPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costUnitInfoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dailyFoodAllowance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -432,7 +432,7 @@ export type SettingsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kilometerRate?: Prisma.SortOrder
   reviewerEmail?: Prisma.SortOrder
-  accountingUnitPdfUrl?: Prisma.SortOrder
+  costUnitInfoUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   dailyFoodAllowance?: Prisma.SortOrder
@@ -453,7 +453,7 @@ export type SettingsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kilometerRate?: Prisma.SortOrder
   reviewerEmail?: Prisma.SortOrder
-  accountingUnitPdfUrl?: Prisma.SortOrder
+  costUnitInfoUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   dailyFoodAllowance?: Prisma.SortOrder
@@ -466,7 +466,7 @@ export type SettingsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kilometerRate?: Prisma.SortOrder
   reviewerEmail?: Prisma.SortOrder
-  accountingUnitPdfUrl?: Prisma.SortOrder
+  costUnitInfoUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   dailyFoodAllowance?: Prisma.SortOrder
@@ -489,7 +489,7 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   kilometerRate?: boolean
   reviewerEmail?: boolean
-  accountingUnitPdfUrl?: boolean
+  costUnitInfoUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFoodAllowance?: boolean
@@ -502,7 +502,7 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   kilometerRate?: boolean
   reviewerEmail?: boolean
-  accountingUnitPdfUrl?: boolean
+  costUnitInfoUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFoodAllowance?: boolean
@@ -515,7 +515,7 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   kilometerRate?: boolean
   reviewerEmail?: boolean
-  accountingUnitPdfUrl?: boolean
+  costUnitInfoUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFoodAllowance?: boolean
@@ -528,7 +528,7 @@ export type SettingsSelectScalar = {
   id?: boolean
   kilometerRate?: boolean
   reviewerEmail?: boolean
-  accountingUnitPdfUrl?: boolean
+  costUnitInfoUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   dailyFoodAllowance?: boolean
@@ -537,7 +537,7 @@ export type SettingsSelectScalar = {
   dinnerDeduction?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kilometerRate" | "reviewerEmail" | "accountingUnitPdfUrl" | "createdAt" | "updatedAt" | "dailyFoodAllowance" | "breakfastDeduction" | "lunchDeduction" | "dinnerDeduction", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kilometerRate" | "reviewerEmail" | "costUnitInfoUrl" | "createdAt" | "updatedAt" | "dailyFoodAllowance" | "breakfastDeduction" | "lunchDeduction" | "dinnerDeduction", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -546,7 +546,7 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     id: string
     kilometerRate: runtime.Decimal
     reviewerEmail: string | null
-    accountingUnitPdfUrl: string | null
+    costUnitInfoUrl: string | null
     createdAt: Date
     updatedAt: Date
     dailyFoodAllowance: runtime.Decimal
@@ -979,7 +979,7 @@ export interface SettingsFieldRefs {
   readonly id: Prisma.FieldRef<"Settings", 'String'>
   readonly kilometerRate: Prisma.FieldRef<"Settings", 'Decimal'>
   readonly reviewerEmail: Prisma.FieldRef<"Settings", 'String'>
-  readonly accountingUnitPdfUrl: Prisma.FieldRef<"Settings", 'String'>
+  readonly costUnitInfoUrl: Prisma.FieldRef<"Settings", 'String'>
   readonly createdAt: Prisma.FieldRef<"Settings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Settings", 'DateTime'>
   readonly dailyFoodAllowance: Prisma.FieldRef<"Settings", 'Decimal'>

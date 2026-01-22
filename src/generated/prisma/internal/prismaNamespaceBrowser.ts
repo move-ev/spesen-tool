@@ -60,8 +60,8 @@ export const ModelName = {
   Verification: 'Verification',
   Preferences: 'Preferences',
   Settings: 'Settings',
-  AccountingUnit: 'AccountingUnit',
-  BusinessUnit: 'BusinessUnit'
+  CostUnitGroup: 'CostUnitGroup',
+  CostUnit: 'CostUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -85,8 +85,7 @@ export const ReportScalarFieldEnum = {
   title: 'title',
   description: 'description',
   status: 'status',
-  accountingUnitId: 'accountingUnitId',
-  businessUnitId: 'businessUnitId',
+  costUnitId: 'costUnitId',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'
@@ -197,7 +196,7 @@ export const SettingsScalarFieldEnum = {
   id: 'id',
   kilometerRate: 'kilometerRate',
   reviewerEmail: 'reviewerEmail',
-  accountingUnitPdfUrl: 'accountingUnitPdfUrl',
+  costUnitInfoUrl: 'costUnitInfoUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   dailyFoodAllowance: 'dailyFoodAllowance',
@@ -209,24 +208,27 @@ export const SettingsScalarFieldEnum = {
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
 
 
-export const AccountingUnitScalarFieldEnum = {
+export const CostUnitGroupScalarFieldEnum = {
   id: 'id',
-  name: 'name',
+  title: 'title',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type AccountingUnitScalarFieldEnum = (typeof AccountingUnitScalarFieldEnum)[keyof typeof AccountingUnitScalarFieldEnum]
+export type CostUnitGroupScalarFieldEnum = (typeof CostUnitGroupScalarFieldEnum)[keyof typeof CostUnitGroupScalarFieldEnum]
 
 
-export const BusinessUnitScalarFieldEnum = {
+export const CostUnitScalarFieldEnum = {
   id: 'id',
-  name: 'name',
+  tag: 'tag',
+  title: 'title',
+  examples: 'examples',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  costUnitGroupId: 'costUnitGroupId'
 } as const
 
-export type BusinessUnitScalarFieldEnum = (typeof BusinessUnitScalarFieldEnum)[keyof typeof BusinessUnitScalarFieldEnum]
+export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typeof CostUnitScalarFieldEnum]
 
 
 export const SortOrder = {

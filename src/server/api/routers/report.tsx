@@ -188,9 +188,9 @@ export const reportRouter = createTRPCRouter({
 							email: true,
 						},
 					},
-					accountingUnit: {
+					costUnit: {
 						select: {
-							name: true,
+							title: true,
 						},
 					},
 				},
@@ -310,9 +310,9 @@ export const reportRouter = createTRPCRouter({
 							email: true,
 						},
 					},
-					accountingUnit: {
+					costUnit: {
 						select: {
-							name: true,
+							title: true,
 						},
 					},
 				},
@@ -441,9 +441,9 @@ export const reportRouter = createTRPCRouter({
 							},
 						},
 					},
-					accountingUnit: {
+					costUnit: {
 						select: {
-							name: true,
+							title: true,
 						},
 					},
 				},

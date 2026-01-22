@@ -14,7 +14,11 @@ export const DEFAULT_EMAIL_FROM =
 export const ADMIN_SETTINGS_MENU = {
 	GENERAL: "/admin/settings",
 	USERS: "/admin/settings/users",
-	ACCOUNTING_UNITS: "/admin/settings/accounting-units",
-	BUSINESS_UNITS: "/admin/settings/business-units",
 	ALLOWANCES: "/admin/settings/allowances",
+	COST_UNITS: "/admin/settings/cost-units",
 };
+
+/**
+ * Value used in select inputs to represent "no group" selection for cost units
+ */
+export const NO_COST_UNIT_GROUP = "NO_GROUP" as const;
