@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { env } from "@/env";
+import { getSuperuserId } from "@/lib/config";
 import {
 	ADMINS_DEMOTE_OTHER_ADMIN,
 	ADMINS_PROMOTE_OTHER_ADMIN,
@@ -44,10 +44,9 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
-			if (
-				!ADMINS_PROMOTE_OTHER_ADMIN &&
-				ctx.session.user.id !== env.SUPERUSER_ID
-			) {
+			const superuserId = getSuperuserId();
+
+			if (!ADMINS_PROMOTE_OTHER_ADMIN && ctx.session.user.id !== superuserId) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Only the superuser can promote other admins",
@@ -95,6 +94,8 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
+			const superuserId = getSuperuserId();
+
 			if (target.role !== "admin") {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
@@ -102,14 +103,14 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
-			if (target.id === env.SUPERUSER_ID) {
+			if (target.id === superuserId) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "The superuser cannot be demoted",
 				});
 			}
 
-			if (!ADMINS_DEMOTE_OTHER_ADMIN && ctx.session.user.id !== env.SUPERUSER_ID) {
+			if (!ADMINS_DEMOTE_OTHER_ADMIN && ctx.session.user.id !== superuserId) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Only the superuser can demote other admins",
