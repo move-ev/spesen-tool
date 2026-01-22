@@ -7,6 +7,7 @@ export const createReportSchema = z.object({
 	description: z.string(),
 	businessUnitId: z.string().min(1),
 	accountingUnitId: z.string().min(1),
+	costUnitId: z.string().min(1),
 });
 
 export const baseCreateExpenseSchema = z.object({

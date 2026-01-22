@@ -17,11 +17,17 @@ import {
 } from "../ui/combobox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import {
+	NativeSelect,
+	NativeSelectOptGroup,
+	NativeSelectOption,
+} from "../ui/native-select";
 import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 	const [accountingUnits] = api.accountingUnit.listAll.useSuspenseQuery();
 	const [businessUnits] = api.businessUnit.listAll.useSuspenseQuery();
+	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
 
 	const router = useRouter();
 
@@ -43,6 +49,7 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 			description: "",
 			businessUnitId: "",
 			accountingUnitId: "",
+			costUnitId: "",
 		},
 		validators: {
 			onSubmit: createReportSchema,
@@ -185,6 +192,78 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 						);
 					}}
 					name="accountingUnitId"
+				/>
+				<form.Field
+					children={(field) => {
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+						return (
+							<Field data-invalid={isInvalid}>
+								<FieldLabel htmlFor={field.name}>Kostenstelle</FieldLabel>
+								<NativeSelect
+									onChange={(e) => field.handleChange(e.target.value)}
+									value={field.state.value}
+								>
+									<NativeSelectOption value="">
+										Kostenstelle auswählen
+									</NativeSelectOption>
+									{costUnits.ungrouped.map((costUnit) => (
+										<NativeSelectOption key={costUnit.id} value={costUnit.id}>
+											{costUnit.title}
+										</NativeSelectOption>
+									))}
+									{costUnits.grouped.map((group) => (
+										<NativeSelectOptGroup
+											key={group.group?.id}
+											label={group.group?.title ?? "Unbekannte Gruppe"}
+										>
+											{group.costUnits.map((costUnit) => (
+												<NativeSelectOption key={costUnit.id} value={costUnit.id}>
+													{costUnit.title}
+												</NativeSelectOption>
+											))}
+										</NativeSelectOptGroup>
+									))}
+								</NativeSelect>
+
+								{(() => {
+									const selectedUngrouped = costUnits.ungrouped.find(
+										(u) => u.id === field.state.value,
+									);
+									const selectedGrouped = (() => {
+										for (const group of costUnits.grouped) {
+											const match = group.costUnits.find(
+												(cu) => cu.id === field.state.value,
+											);
+											if (match) return match;
+										}
+										return undefined;
+									})();
+									const selectedCostUnit = selectedUngrouped || selectedGrouped;
+
+									if (
+										selectedCostUnit?.examples &&
+										selectedCostUnit.examples.length > 0
+									) {
+										return (
+											<div className="mt-1 rounded-lg border bg-muted/40 p-4 text-muted-foreground text-sm">
+												<p className="mb-2">
+													Zu der ausgewählten Kostenstelle gehören die folgenden Anliegen:
+												</p>
+												<ul className="list-inside list-disc">
+													{selectedCostUnit.examples.map((example) => (
+														<li key={example}>{example}</li>
+													))}
+												</ul>
+											</div>
+										);
+									}
+									return null;
+								})()}
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</Field>
+						);
+					}}
+					name="costUnitId"
 				/>
 				<Button
 					disabled={createReport.isPending}

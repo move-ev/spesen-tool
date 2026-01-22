@@ -195,6 +195,7 @@ export type CostUnitWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
   costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupNullableScalarRelationFilter, Prisma.CostUnitGroupWhereInput> | null
+  reports?: Prisma.ReportListRelationFilter
 }
 
 export type CostUnitOrderByWithRelationInput = {
@@ -206,6 +207,7 @@ export type CostUnitOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   costUnitGroup?: Prisma.CostUnitGroupOrderByWithRelationInput
+  reports?: Prisma.ReportOrderByRelationAggregateInput
 }
 
 export type CostUnitWhereUniqueInput = Prisma.AtLeast<{
@@ -220,6 +222,7 @@ export type CostUnitWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
   costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupNullableScalarRelationFilter, Prisma.CostUnitGroupWhereInput> | null
+  reports?: Prisma.ReportListRelationFilter
 }, "id">
 
 export type CostUnitOrderByWithAggregationInput = {
@@ -256,6 +259,7 @@ export type CostUnitCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroup?: Prisma.CostUnitGroupCreateNestedOneWithoutCostUnitsInput
+  reports?: Prisma.ReportCreateNestedManyWithoutCostUnitInput
 }
 
 export type CostUnitUncheckedCreateInput = {
@@ -266,6 +270,7 @@ export type CostUnitUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroupId?: string | null
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutCostUnitInput
 }
 
 export type CostUnitUpdateInput = {
@@ -276,6 +281,7 @@ export type CostUnitUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroup?: Prisma.CostUnitGroupUpdateOneWithoutCostUnitsNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutCostUnitNestedInput
 }
 
 export type CostUnitUncheckedUpdateInput = {
@@ -286,6 +292,7 @@ export type CostUnitUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutCostUnitNestedInput
 }
 
 export type CostUnitCreateManyInput = {
@@ -315,6 +322,11 @@ export type CostUnitUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type CostUnitNullableScalarRelationFilter = {
+  is?: Prisma.CostUnitWhereInput | null
+  isNot?: Prisma.CostUnitWhereInput | null
 }
 
 export type CostUnitListRelationFilter = {
@@ -361,6 +373,22 @@ export type CostUnitMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrder
+}
+
+export type CostUnitCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.CostUnitCreateWithoutReportsInput, Prisma.CostUnitUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.CostUnitCreateOrConnectWithoutReportsInput
+  connect?: Prisma.CostUnitWhereUniqueInput
+}
+
+export type CostUnitUpdateOneWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.CostUnitCreateWithoutReportsInput, Prisma.CostUnitUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.CostUnitCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.CostUnitUpsertWithoutReportsInput
+  disconnect?: Prisma.CostUnitWhereInput | boolean
+  delete?: Prisma.CostUnitWhereInput | boolean
+  connect?: Prisma.CostUnitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CostUnitUpdateToOneWithWhereWithoutReportsInput, Prisma.CostUnitUpdateWithoutReportsInput>, Prisma.CostUnitUncheckedUpdateWithoutReportsInput>
 }
 
 export type CostUnitCreateNestedManyWithoutCostUnitGroupInput = {
@@ -414,6 +442,62 @@ export type CostUnitUpdateexamplesInput = {
   push?: string | string[]
 }
 
+export type CostUnitCreateWithoutReportsInput = {
+  id?: string
+  tag: string
+  title: string
+  examples?: Prisma.CostUnitCreateexamplesInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  costUnitGroup?: Prisma.CostUnitGroupCreateNestedOneWithoutCostUnitsInput
+}
+
+export type CostUnitUncheckedCreateWithoutReportsInput = {
+  id?: string
+  tag: string
+  title: string
+  examples?: Prisma.CostUnitCreateexamplesInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  costUnitGroupId?: string | null
+}
+
+export type CostUnitCreateOrConnectWithoutReportsInput = {
+  where: Prisma.CostUnitWhereUniqueInput
+  create: Prisma.XOR<Prisma.CostUnitCreateWithoutReportsInput, Prisma.CostUnitUncheckedCreateWithoutReportsInput>
+}
+
+export type CostUnitUpsertWithoutReportsInput = {
+  update: Prisma.XOR<Prisma.CostUnitUpdateWithoutReportsInput, Prisma.CostUnitUncheckedUpdateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.CostUnitCreateWithoutReportsInput, Prisma.CostUnitUncheckedCreateWithoutReportsInput>
+  where?: Prisma.CostUnitWhereInput
+}
+
+export type CostUnitUpdateToOneWithWhereWithoutReportsInput = {
+  where?: Prisma.CostUnitWhereInput
+  data: Prisma.XOR<Prisma.CostUnitUpdateWithoutReportsInput, Prisma.CostUnitUncheckedUpdateWithoutReportsInput>
+}
+
+export type CostUnitUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  examples?: Prisma.CostUnitUpdateexamplesInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  costUnitGroup?: Prisma.CostUnitGroupUpdateOneWithoutCostUnitsNestedInput
+}
+
+export type CostUnitUncheckedUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  examples?: Prisma.CostUnitUpdateexamplesInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type CostUnitCreateWithoutCostUnitGroupInput = {
   id?: string
   tag: string
@@ -421,6 +505,7 @@ export type CostUnitCreateWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
+  reports?: Prisma.ReportCreateNestedManyWithoutCostUnitInput
 }
 
 export type CostUnitUncheckedCreateWithoutCostUnitGroupInput = {
@@ -430,6 +515,7 @@ export type CostUnitUncheckedCreateWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutCostUnitInput
 }
 
 export type CostUnitCreateOrConnectWithoutCostUnitGroupInput = {
@@ -487,6 +573,7 @@ export type CostUnitUpdateWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reports?: Prisma.ReportUpdateManyWithoutCostUnitNestedInput
 }
 
 export type CostUnitUncheckedUpdateWithoutCostUnitGroupInput = {
@@ -496,6 +583,7 @@ export type CostUnitUncheckedUpdateWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutCostUnitNestedInput
 }
 
 export type CostUnitUncheckedUpdateManyWithoutCostUnitGroupInput = {
@@ -508,6 +596,35 @@ export type CostUnitUncheckedUpdateManyWithoutCostUnitGroupInput = {
 }
 
 
+/**
+ * Count Type CostUnitCountOutputType
+ */
+
+export type CostUnitCountOutputType = {
+  reports: number
+}
+
+export type CostUnitCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  reports?: boolean | CostUnitCountOutputTypeCountReportsArgs
+}
+
+/**
+ * CostUnitCountOutputType without action
+ */
+export type CostUnitCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CostUnitCountOutputType
+   */
+  select?: Prisma.CostUnitCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * CostUnitCountOutputType without action
+ */
+export type CostUnitCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportWhereInput
+}
+
 
 export type CostUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -518,6 +635,8 @@ export type CostUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   updatedAt?: boolean
   costUnitGroupId?: boolean
   costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
+  reports?: boolean | Prisma.CostUnit$reportsArgs<ExtArgs>
+  _count?: boolean | Prisma.CostUnitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["costUnit"]>
 
 export type CostUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -555,6 +674,8 @@ export type CostUnitSelectScalar = {
 export type CostUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tag" | "title" | "examples" | "createdAt" | "updatedAt" | "costUnitGroupId", ExtArgs["result"]["costUnit"]>
 export type CostUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
+  reports?: boolean | Prisma.CostUnit$reportsArgs<ExtArgs>
+  _count?: boolean | Prisma.CostUnitCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CostUnitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
@@ -567,6 +688,7 @@ export type $CostUnitPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "CostUnit"
   objects: {
     costUnitGroup: Prisma.$CostUnitGroupPayload<ExtArgs> | null
+    reports: Prisma.$ReportPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -971,6 +1093,7 @@ readonly fields: CostUnitFieldRefs;
 export interface Prisma__CostUnitClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   costUnitGroup<T extends Prisma.CostUnit$costUnitGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CostUnit$costUnitGroupArgs<ExtArgs>>): Prisma.Prisma__CostUnitGroupClient<runtime.Types.Result.GetResult<Prisma.$CostUnitGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  reports<T extends Prisma.CostUnit$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CostUnit$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1419,6 +1542,30 @@ export type CostUnit$costUnitGroupArgs<ExtArgs extends runtime.Types.Extensions.
    */
   include?: Prisma.CostUnitGroupInclude<ExtArgs> | null
   where?: Prisma.CostUnitGroupWhereInput
+}
+
+/**
+ * CostUnit.reports
+ */
+export type CostUnit$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Report
+   */
+  select?: Prisma.ReportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Report
+   */
+  omit?: Prisma.ReportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportInclude<ExtArgs> | null
+  where?: Prisma.ReportWhereInput
+  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
+  cursor?: Prisma.ReportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
 }
 
 /**

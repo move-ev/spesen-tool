@@ -20,6 +20,9 @@ model Report {
   description String?
   status      ReportStatus @default(DRAFT)
 
+  costUnitId String?
+  costUnit   CostUnit? @relation(fields: [costUnitId], references: [id], onDelete: Cascade)
+
   accountingUnit   AccountingUnit @relation(fields: [accountingUnitId], references: [id], onDelete: Cascade)
   accountingUnitId String
 
@@ -231,6 +234,8 @@ model CostUnit {
 
   costUnitGroupId String?
   costUnitGroup   CostUnitGroup? @relation(fields: [costUnitGroupId], references: [id], onDelete: Cascade)
+
+  reports Report[]
 
   @@map("cost_unit")
 }
