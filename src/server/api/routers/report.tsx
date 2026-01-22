@@ -107,6 +107,9 @@ export const reportRouter = createTRPCRouter({
 
 			const [totalAmount, expenseCount] = await ctx.db.$transaction([
 				ctx.db.expense.aggregate({
+					where: {
+						reportId: input.id,
+					},
 					_sum: {
 						amount: true,
 					},
