@@ -44,3 +44,18 @@
 - [ ] Fix authentication issues
   - [ ] Update better-auth config
   - [ ] Update app registration in Azure
+
+
+# Futher ToDo's
+
+- [ ] "Buchungskreise" und "Geschäftseinheit" zusammenfassen zu "Kostenstelle" (siehe Liste)
+  - [ ] Informationen zu welche Ausgaben zu welcher Kostenstelle gehören
+- [ ] IBAN + vollständiger Kontoname
+- [ ] Kopierbare Details im Report (IBAN, Kontoname, Betrag)
+  - [ ] evtl. QR Code für das Kopieren der Details
+- [ ] Löschen von Ausgaben im Report
+- [ ] Beschreibung des Reports im PDF hervorheben
+- [ ] Report ID aufsteigend
+- [ ] IBAN vom Antragssteller auf dem PDF
+- [ ] Anhänge im PDF REport
+- [ ] Kein Prüfer im PDF
