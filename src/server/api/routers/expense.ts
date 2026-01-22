@@ -27,7 +27,8 @@ export const expenseRouter = createTRPCRouter({
 				});
 			}
 
-			if (report.ownerId !== ctx.session.user.id) {
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin && report.ownerId !== ctx.session.user.id) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You don't have access to this report",
