@@ -87,7 +87,6 @@ model User {
 
   // Role required by better-auth admin plugin
   role  String   @default("user")
-  admin Boolean? @default(false)
 
   // Banning fields required by better-auth admin plugin
   banned     Boolean?  @default(false)
