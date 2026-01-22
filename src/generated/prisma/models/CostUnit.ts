@@ -212,10 +212,10 @@ export type CostUnitOrderByWithRelationInput = {
 
 export type CostUnitWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  tag?: string
   AND?: Prisma.CostUnitWhereInput | Prisma.CostUnitWhereInput[]
   OR?: Prisma.CostUnitWhereInput[]
   NOT?: Prisma.CostUnitWhereInput | Prisma.CostUnitWhereInput[]
+  tag?: Prisma.StringFilter<"CostUnit"> | string
   title?: Prisma.StringFilter<"CostUnit"> | string
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
@@ -223,7 +223,7 @@ export type CostUnitWhereUniqueInput = Prisma.AtLeast<{
   costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
   costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupNullableScalarRelationFilter, Prisma.CostUnitGroupWhereInput> | null
   reports?: Prisma.ReportListRelationFilter
-}, "id" | "tag">
+}, "id">
 
 export type CostUnitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

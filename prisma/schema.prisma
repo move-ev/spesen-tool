@@ -207,7 +207,6 @@ model CostUnit {
 
   reports Report[]
 
-  @@unique([tag])
   @@index([tag])
   @@map("cost_unit")
 }
