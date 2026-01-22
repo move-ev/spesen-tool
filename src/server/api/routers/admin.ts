@@ -3,6 +3,8 @@ import { z } from "zod";
 import { ReportStatus } from "@/generated/prisma/enums";
 import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 
+const THIRTY_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
+
 export const adminRouter = createTRPCRouter({
 	stats: adminProcedure.query(async ({ ctx }) => {
 		const { db } = ctx;
@@ -65,7 +67,7 @@ export const adminRouter = createTRPCRouter({
 	 * Lists all reports, which are NOT open and not a draft which have been updated in the last 30 days
 	 */
 	listRelevant: adminProcedure.query(async ({ ctx }) => {
-		const pastDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+		const pastDate = new Date(Date.now() - THIRTY_DAYS_IN_MS);
 
 		const reports = await ctx.db.report.findMany({
 			where: {
