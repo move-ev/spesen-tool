@@ -18,6 +18,14 @@ import type { Config } from "./schema";
 let _cachedConfig: Config | null = null;
 
 /**
+ * Check if we're in build/validation skip mode
+ * During Docker builds, config might not be available
+ */
+function isBuildMode(): boolean {
+	return !!process.env.SKIP_ENV_VALIDATION;
+}
+
+/**
  * Initialize configuration (call once at app startup)
  */
 export async function initializeConfig(): Promise<Config> {
@@ -41,6 +49,33 @@ function getConfigSafe(): Config | null {
 	}
 }
 
+/**
+ * Get a required config value, or return a placeholder during build
+ */
+function getRequiredValue(
+	envValue: string | undefined,
+	configValue: string | undefined,
+	errorMessage: string,
+	buildPlaceholder = "__BUILD_PLACEHOLDER__",
+): string {
+	// Environment variable override
+	if (envValue) {
+		return envValue;
+	}
+
+	// Config file value
+	if (configValue) {
+		return configValue;
+	}
+
+	// During build time, return placeholder instead of throwing
+	if (isBuildMode()) {
+		return buildPlaceholder;
+	}
+
+	throw new Error(errorMessage);
+}
+
 // =============================================================================
 // Database Configuration
 // =============================================================================
@@ -50,19 +85,12 @@ function getConfigSafe(): Config | null {
  * Priority: DATABASE_URL env var > config.database.url
  */
 export function getDatabaseUrl(): string {
-	// Environment variable override
-	if (env.DATABASE_URL) {
-		return env.DATABASE_URL;
-	}
-
-	// Config file value
 	const config = getConfigSafe();
-	if (config?.database?.url) {
-		return config.database.url;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.DATABASE_URL,
+		config?.database?.url,
 		"Database URL not configured. Set DATABASE_URL environment variable or configure database.url in config.ts",
+		"postgresql://placeholder:placeholder@localhost:5432/placeholder",
 	);
 }
 
@@ -89,17 +117,12 @@ export function getDatabaseLogging(): ("query" | "error" | "warn" | "info")[] {
  * Priority: BETTER_AUTH_URL env var > config.auth.url
  */
 export function getAuthUrl(): string {
-	if (env.BETTER_AUTH_URL) {
-		return env.BETTER_AUTH_URL;
-	}
-
 	const config = getConfigSafe();
-	if (config?.auth?.url) {
-		return config.auth.url;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.BETTER_AUTH_URL,
+		config?.auth?.url,
 		"Auth URL not configured. Set BETTER_AUTH_URL environment variable or configure auth.url in config.ts",
+		"http://localhost:3000",
 	);
 }
 
@@ -108,16 +131,10 @@ export function getAuthUrl(): string {
  * Priority: MICROSOFT_TENANT_ID env var > config.auth.microsoft.tenantId
  */
 export function getMicrosoftTenantId(): string {
-	if (env.MICROSOFT_TENANT_ID) {
-		return env.MICROSOFT_TENANT_ID;
-	}
-
 	const config = getConfigSafe();
-	if (config?.auth?.microsoft?.tenantId) {
-		return config.auth.microsoft.tenantId;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.MICROSOFT_TENANT_ID,
+		config?.auth?.microsoft?.tenantId,
 		"Microsoft tenant ID not configured. Set MICROSOFT_TENANT_ID environment variable or configure auth.microsoft.tenantId in config.ts",
 	);
 }
@@ -127,16 +144,10 @@ export function getMicrosoftTenantId(): string {
  * Priority: MICROSOFT_CLIENT_ID env var > config.auth.microsoft.clientId
  */
 export function getMicrosoftClientId(): string {
-	if (env.MICROSOFT_CLIENT_ID) {
-		return env.MICROSOFT_CLIENT_ID;
-	}
-
 	const config = getConfigSafe();
-	if (config?.auth?.microsoft?.clientId) {
-		return config.auth.microsoft.clientId;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.MICROSOFT_CLIENT_ID,
+		config?.auth?.microsoft?.clientId,
 		"Microsoft client ID not configured. Set MICROSOFT_CLIENT_ID environment variable or configure auth.microsoft.clientId in config.ts",
 	);
 }
@@ -150,17 +161,12 @@ export function getMicrosoftClientId(): string {
  * Priority: STORAGE_HOST env var > config.storage.host
  */
 export function getStorageHost(): string {
-	if (env.STORAGE_HOST) {
-		return env.STORAGE_HOST;
-	}
-
 	const config = getConfigSafe();
-	if (config?.storage?.host) {
-		return config.storage.host;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.STORAGE_HOST,
+		config?.storage?.host,
 		"Storage host not configured. Set STORAGE_HOST environment variable or configure storage.host in config.ts",
+		"s3.placeholder.com",
 	);
 }
 
@@ -169,17 +175,12 @@ export function getStorageHost(): string {
  * Priority: STORAGE_REGION env var > config.storage.region
  */
 export function getStorageRegion(): string {
-	if (env.STORAGE_REGION) {
-		return env.STORAGE_REGION;
-	}
-
 	const config = getConfigSafe();
-	if (config?.storage?.region) {
-		return config.storage.region;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.STORAGE_REGION,
+		config?.storage?.region,
 		"Storage region not configured. Set STORAGE_REGION environment variable or configure storage.region in config.ts",
+		"us-east-1",
 	);
 }
 
@@ -188,17 +189,12 @@ export function getStorageRegion(): string {
  * Priority: STORAGE_BUCKET env var > config.storage.bucket
  */
 export function getStorageBucket(): string {
-	if (env.STORAGE_BUCKET) {
-		return env.STORAGE_BUCKET;
-	}
-
 	const config = getConfigSafe();
-	if (config?.storage?.bucket) {
-		return config.storage.bucket;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.STORAGE_BUCKET,
+		config?.storage?.bucket,
 		"Storage bucket not configured. Set STORAGE_BUCKET environment variable or configure storage.bucket in config.ts",
+		"placeholder-bucket",
 	);
 }
 
@@ -247,17 +243,12 @@ export function getUploadMaxFiles(): number {
  * Priority: EMAIL_FROM env var > config.email.from
  */
 export function getEmailFrom(): string {
-	if (env.EMAIL_FROM) {
-		return env.EMAIL_FROM;
-	}
-
 	const config = getConfigSafe();
-	if (config?.email?.from) {
-		return config.email.from;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.EMAIL_FROM,
+		config?.email?.from,
 		"Email from address not configured. Set EMAIL_FROM environment variable or configure email.from in config.ts",
+		"noreply@placeholder.com",
 	);
 }
 
@@ -299,16 +290,10 @@ export function getAppUrl(): string {
  * Priority: SUPERUSER_ID env var > config.app.superuserId
  */
 export function getSuperuserId(): string {
-	if (env.SUPERUSER_ID) {
-		return env.SUPERUSER_ID;
-	}
-
 	const config = getConfigSafe();
-	if (config?.app?.superuserId) {
-		return config.app.superuserId;
-	}
-
-	throw new Error(
+	return getRequiredValue(
+		env.SUPERUSER_ID,
+		config?.app?.superuserId,
 		"Superuser ID not configured. Set SUPERUSER_ID environment variable or configure app.superuserId in config.ts",
 	);
 }
