@@ -6,7 +6,43 @@ import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const costUnitRouter = createTRPCRouter({
 	listGrouped: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.db.costUnit.findMany({});
+		const costUnits = await ctx.db.costUnit.findMany({
+			include: {
+				costUnitGroup: true,
+			},
+			orderBy: [{ costUnitGroup: { title: "asc" } }, { tag: "asc" }],
+		});
+
+		// Group cost units by their group
+		const ungrouped: typeof costUnits = [];
+		const grouped = new Map<
+			string,
+			{
+				group: (typeof costUnits)[0]["costUnitGroup"];
+				costUnits: typeof costUnits;
+			}
+		>();
+
+		for (const costUnit of costUnits) {
+			if (!costUnit.costUnitGroup) {
+				ungrouped.push(costUnit);
+			} else {
+				const existing = grouped.get(costUnit.costUnitGroup.id);
+				if (existing) {
+					existing.costUnits.push(costUnit);
+				} else {
+					grouped.set(costUnit.costUnitGroup.id, {
+						group: costUnit.costUnitGroup,
+						costUnits: [costUnit],
+					});
+				}
+			}
+		}
+
+		return {
+			ungrouped,
+			grouped: Array.from(grouped.values()),
+		};
 	}),
 
 	listGroups: protectedProcedure.query(async ({ ctx }) => {

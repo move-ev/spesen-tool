@@ -119,13 +119,13 @@ export function CreateCostUnit({
 
 	const createCostUnit = api.costUnit.create.useMutation({
 		onSuccess: () => {
-			utils.costUnit.listGroups.invalidate();
+			utils.costUnit.listGrouped.invalidate();
 			setOpen(false);
 			form.reset();
-			toast.success("Kostenstellengruppe erfolgreich erstellt");
+			toast.success("Kostenstelle erfolgreich erstellt");
 		},
 		onError: (error) => {
-			toast.error("Fehler beim Erstellen der Kostenstellengruppe", {
+			toast.error("Fehler beim Erstellen der Kostenstelle", {
 				description: error.message ?? "Ein unerwarteter Fehler ist aufgetreten",
 			});
 		},
