@@ -153,6 +153,29 @@ async function loadConfigFile(filePath: string): Promise<ConfigInput> {
 }
 
 /**
+ * Safely parse an integer from an environment variable
+ * Returns undefined if the value is not set or not a valid integer
+ * Throws a clear error if the value is set but not a valid number
+ */
+function parseIntEnv(
+	value: string | undefined,
+	envName: string,
+): number | undefined {
+	if (!value) {
+		return undefined;
+	}
+
+	const parsed = Number.parseInt(value, 10);
+	if (Number.isNaN(parsed)) {
+		throw new Error(
+			`Invalid value for ${envName}: "${value}" is not a valid integer`,
+		);
+	}
+
+	return parsed;
+}
+
+/**
  * Build configuration from environment variables only (fallback mode)
  *
  * This allows existing env-var-only setups to continue working
@@ -182,12 +205,8 @@ function buildConfigFromEnv(): ConfigInput {
 			bucket: env.STORAGE_BUCKET ?? "spesen-tool",
 		},
 		upload: {
-			maxFileSize: env.UPLOAD_MAX_FILE_SIZE
-				? Number.parseInt(env.UPLOAD_MAX_FILE_SIZE, 10)
-				: undefined,
-			maxFiles: env.UPLOAD_MAX_FILES
-				? Number.parseInt(env.UPLOAD_MAX_FILES, 10)
-				: undefined,
+			maxFileSize: parseIntEnv(env.UPLOAD_MAX_FILE_SIZE, "UPLOAD_MAX_FILE_SIZE"),
+			maxFiles: parseIntEnv(env.UPLOAD_MAX_FILES, "UPLOAD_MAX_FILES"),
 		},
 		email: {
 			from: env.EMAIL_FROM ?? "",
