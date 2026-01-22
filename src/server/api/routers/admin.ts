@@ -1,11 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { ReportStatus } from "@/generated/prisma/enums";
-import {
-	adminProcedure,
-	createTRPCRouter,
-	protectedProcedure,
-} from "@/server/api/trpc";
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 
 export const adminRouter = createTRPCRouter({
 	stats: adminProcedure.query(async ({ ctx }) => {
@@ -124,17 +120,9 @@ export const adminRouter = createTRPCRouter({
 	}),
 
 	// Get a single report by ID (admin can access any report)
-	getReportById: protectedProcedure
+	getReportById: adminProcedure
 		.input(z.object({ id: z.string() }))
 		.query(async ({ ctx, input }) => {
-			const isAdmin = ctx.session.user.role === "admin";
-			if (!isAdmin) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "Only admins can access this endpoint",
-				});
-			}
-
 			const report = await ctx.db.report.findUnique({
 				where: {
 					id: input.id,
@@ -162,7 +150,7 @@ export const adminRouter = createTRPCRouter({
 		}),
 
 	// Update report status (admin only)
-	updateReportStatus: protectedProcedure
+	updateReportStatus: adminProcedure
 		.input(
 			z.object({
 				id: z.string(),
@@ -170,14 +158,6 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const isAdmin = ctx.session.user.role === "admin";
-			if (!isAdmin) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "Only admins can update report status",
-				});
-			}
-
 			const report = await ctx.db.report.findUnique({
 				where: { id: input.id },
 			});

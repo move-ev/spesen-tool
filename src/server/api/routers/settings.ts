@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
 	updateMealAllowancesSchema,
@@ -7,22 +6,12 @@ import {
 import {
 	adminProcedure,
 	createTRPCRouter,
-	protectedProcedure,
 	publicProcedure,
 } from "@/server/api/trpc";
 
 export const settingsRouter = createTRPCRouter({
 	// Get settings (only admins)
-	get: protectedProcedure.query(async ({ ctx }) => {
-		const isAdmin = ctx.session.user.role === "admin";
-
-		if (!isAdmin) {
-			throw new TRPCError({
-				code: "FORBIDDEN",
-				message: "Only admins can access settings",
-			});
-		}
-
+	get: adminProcedure.query(async ({ ctx }) => {
 		let settings = await ctx.db.settings.findUnique({
 			where: { id: "singleton" },
 		});
@@ -62,7 +51,7 @@ export const settingsRouter = createTRPCRouter({
 	}),
 
 	// Update settings (only admins)
-	update: protectedProcedure
+	update: adminProcedure
 		.input(
 			z.object({
 				kilometerRate: z.number().positive().optional(),
@@ -71,15 +60,6 @@ export const settingsRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if user is admin
-			const isAdmin = ctx.session.user.role === "admin";
-			if (!isAdmin) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "Only admins can update settings",
-				});
-			}
-
 			// Ensure settings exist
 			let settings = await ctx.db.settings.findUnique({
 				where: { id: "singleton" },

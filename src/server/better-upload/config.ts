@@ -1,6 +1,7 @@
-import { type Router, route } from "@better-upload/server";
+import { RejectUpload, type Router, route } from "@better-upload/server";
 import { custom } from "@better-upload/server/clients";
 import { env } from "@/env";
+import { auth } from "@/server/better-auth";
 
 const s3 = custom({
 	host: env.STORAGE_HOST,
@@ -19,7 +20,15 @@ export const router: Router = {
 			multipleFiles: true,
 			maxFiles: 5,
 			maxFileSize: 1024 * 1024 * 5, // 5MB
-			onBeforeUpload() {
+			async onBeforeUpload({ req }) {
+				const session = await auth.api.getSession({
+					headers: req.headers,
+				});
+
+				if (!session?.user) {
+					throw new RejectUpload("Unauthorized");
+				}
+
 				return {
 					generateObjectInfo: ({ file }) => ({ key: `attachment/${file.name}` }),
 				};

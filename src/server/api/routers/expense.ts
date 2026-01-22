@@ -15,6 +15,26 @@ export const expenseRouter = createTRPCRouter({
 	listForReport: protectedProcedure
 		.input(z.object({ reportId: z.string() }))
 		.query(async ({ ctx, input }) => {
+			const report = await ctx.db.report.findUnique({
+				where: { id: input.reportId },
+				select: { ownerId: true },
+			});
+
+			if (!report) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin && report.ownerId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have access to this report",
+				});
+			}
+
 			const expenses = await ctx.db.expense.findMany({
 				where: { reportId: input.reportId },
 				include: {
@@ -43,7 +63,8 @@ export const expenseRouter = createTRPCRouter({
 				});
 			}
 
-			if (report.ownerId !== ctx.session.user.id) {
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin && report.ownerId !== ctx.session.user.id) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You don't have access to this report",
