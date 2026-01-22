@@ -9,6 +9,7 @@
 		"auth:generate": "pnpm dlx @better-auth/cli generate --config ./src/server/better-auth/server.ts",
 		"check:unsafe": "biome check --write --unsafe .",
 		"check:write": "biome check --write .",
+		"config:validate": "tsx scripts/validate-config.ts",
 		"db:generate": "prisma migrate dev && prisma generate",
 		"db:migrate": "prisma migrate deploy",
 		"db:migrate:prod": "dotenv -e .env.prod -- prisma migrate deploy",
@@ -59,6 +60,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.5",
+		"tsx": "^4.19.0",
 		"@commitlint/cli": "^20.3.1",
 		"@commitlint/config-conventional": "^20.3.1",
 		"@react-email/preview-server": "5.2.5",
