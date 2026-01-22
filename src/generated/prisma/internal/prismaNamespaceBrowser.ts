@@ -196,7 +196,7 @@ export const SettingsScalarFieldEnum = {
   id: 'id',
   kilometerRate: 'kilometerRate',
   reviewerEmail: 'reviewerEmail',
-  accountingUnitPdfUrl: 'accountingUnitPdfUrl',
+  costUnitInfoUrl: 'costUnitInfoUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   dailyFoodAllowance: 'dailyFoodAllowance',

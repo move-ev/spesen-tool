@@ -187,14 +187,14 @@ export type CostUnitGroupOrderByWithRelationInput = {
 
 export type CostUnitGroupWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  title?: string
   AND?: Prisma.CostUnitGroupWhereInput | Prisma.CostUnitGroupWhereInput[]
   OR?: Prisma.CostUnitGroupWhereInput[]
   NOT?: Prisma.CostUnitGroupWhereInput | Prisma.CostUnitGroupWhereInput[]
-  title?: Prisma.StringFilter<"CostUnitGroup"> | string
   createdAt?: Prisma.DateTimeFilter<"CostUnitGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnitGroup"> | Date | string
   costUnits?: Prisma.CostUnitListRelationFilter
-}, "id">
+}, "id" | "title">
 
 export type CostUnitGroupOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

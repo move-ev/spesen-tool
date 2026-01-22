@@ -52,12 +52,12 @@ export const settingsRouter = createTRPCRouter({
 		const settings = await ctx.db.settings.findUnique({
 			where: { id: "singleton" },
 			select: {
-				accountingUnitPdfUrl: true,
+				costUnitInfoUrl: true,
 			},
 		});
 
 		return {
-			accountingUnitPdfUrl: settings?.accountingUnitPdfUrl ?? null,
+			costUnitInfoUrl: settings?.costUnitInfoUrl ?? null,
 		};
 	}),
 
@@ -67,7 +67,7 @@ export const settingsRouter = createTRPCRouter({
 			z.object({
 				kilometerRate: z.number().positive().optional(),
 				reviewerEmail: z.email().optional().nullable(),
-				accountingUnitPdfUrl: z.string().optional().nullable(),
+				costUnitInfoUrl: z.string().optional().nullable(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
