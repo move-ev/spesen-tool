@@ -643,7 +643,6 @@ export const reportRouter = createTRPCRouter({
 					id: ctx.session.user.id,
 					name: ctx.session.user.name,
 					email: ctx.session.user.email,
-					admin: false,
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					emailVerified: false,

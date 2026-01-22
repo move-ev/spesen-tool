@@ -127,13 +127,8 @@ export const adminRouter = createTRPCRouter({
 	getReportById: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.query(async ({ ctx, input }) => {
-			// Check if user is admin
-			const user = await ctx.db.user.findUnique({
-				where: { id: ctx.session.user.id },
-				select: { admin: true },
-			});
-
-			if (user?.admin !== true) {
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Only admins can access this endpoint",
@@ -175,13 +170,8 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if user is admin
-			const user = await ctx.db.user.findUnique({
-				where: { id: ctx.session.user.id },
-				select: { admin: true },
-			});
-
-			if (user?.admin !== true) {
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Only admins can update report status",
