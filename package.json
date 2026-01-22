@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "next build",
+		"build": "SKIP_ENV_VALIDATION=1 next build",
 		"check": "biome check .",
 		"auth:generate": "pnpm dlx @better-auth/cli generate --config ./src/server/better-auth/server.ts",
 		"check:unsafe": "biome check --write --unsafe .",
@@ -17,7 +17,7 @@
 		"db:studio": "prisma studio",
 		"dev": "next dev --turbo",
 		"postinstall": "prisma generate",
-		"preview": "next build && next start",
+		"preview": "SKIP_ENV_VALIDATION=1 next build && next start",
 		"start": "next start",
 		"typecheck": "tsc --noEmit",
 		"prepare": "husky",

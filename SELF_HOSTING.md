@@ -42,12 +42,8 @@ This guide explains how to deploy and configure Spesen Tool for self-hosted envi
 
 5. **Build and start the application:**
    ```bash
-   SKIP_ENV_VALIDATION=1 pnpm build && pnpm start
+   pnpm build && pnpm start
    ```
-   
-   > **Note:** `SKIP_ENV_VALIDATION=1` is required during build because Next.js
-   > executes server code at build time before configuration can be loaded.
-   > At runtime, configuration is properly loaded from your `config.ts` file.
 
 ## Configuration Overview
 
