@@ -219,6 +219,8 @@ export function CreateCostUnit({
 										<Field className="col-span-3" data-invalid={isInvalid}>
 											<FieldLabel htmlFor={field.name}>Gruppe</FieldLabel>
 											<NativeSelect
+												id={field.name}
+												name={field.name}
 												onChange={(e) => field.handleChange(e.target.value)}
 												value={field.state.value}
 											>
