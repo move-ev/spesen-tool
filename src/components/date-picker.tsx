@@ -53,6 +53,9 @@ export function DatePicker({
 						e.preventDefault();
 						setOpen(true);
 					}
+					if (e.key === "Escape") {
+						setOpen(false);
+					}
 				}}
 				value={value}
 				{...props}

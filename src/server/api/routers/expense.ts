@@ -404,7 +404,7 @@ export const expenseRouter = createTRPCRouter({
 			const type = expense.type;
 
 			if (type === "RECEIPT") {
-				const result = await receiptExpenseMetaSchema.safeParse(expense.meta);
+				const result = receiptExpenseMetaSchema.safeParse(expense.meta);
 
 				if (!result.success) {
 					throw new TRPCError({
@@ -420,7 +420,7 @@ export const expenseRouter = createTRPCRouter({
 				};
 			}
 			if (type === "TRAVEL") {
-				const result = await travelExpenseMetaSchema.safeParse(expense.meta);
+				const result = travelExpenseMetaSchema.safeParse(expense.meta);
 
 				if (!result.success) {
 					throw new TRPCError({
@@ -437,7 +437,7 @@ export const expenseRouter = createTRPCRouter({
 			}
 
 			if (type === "FOOD") {
-				const result = await foodExpenseMetaSchema.safeParse(expense.meta);
+				const result = foodExpenseMetaSchema.safeParse(expense.meta);
 
 				if (!result.success) {
 					throw new TRPCError({

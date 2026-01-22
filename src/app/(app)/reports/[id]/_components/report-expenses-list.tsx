@@ -48,6 +48,7 @@ export function ReportExpensesList({
 				</EmptyHeader>
 				<EmptyContent className="flex-row justify-center gap-2">
 					<Button
+						aria-disabled={!canAddExpense}
 						className={
 							"data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 sm:w-fit"
 						}
@@ -60,7 +61,7 @@ export function ReportExpensesList({
 							</Link>
 						}
 						size="sm"
-						tabIndex={!canAddExpense ? 0 : -1}
+						tabIndex={canAddExpense ? 0 : -1}
 					/>
 				</EmptyContent>
 			</Empty>

@@ -67,7 +67,11 @@ export function ReportExpenseCard({
 						<DropdownMenu>
 							<DropdownMenuTrigger
 								render={
-									<Button size={"icon"} variant={"ghost"}>
+									<Button
+										aria-label="Open expense actions"
+										size={"icon"}
+										variant={"ghost"}
+									>
 										<EllipsisVerticalIcon />
 									</Button>
 								}
@@ -99,13 +103,16 @@ export function ReportExpenseCard({
 	);
 }
 
+/**
+ * Builds a human-readable description from expense metadata.
+ */
 const metaToDescription = ({
 	type,
 	meta,
 }: {
 	type: ExpenseType;
 	meta: JsonValue;
-}) => {
+}): string | null => {
 	let desc: string = "Ungültige Ausgabe";
 
 	if (type === "TRAVEL") {

@@ -59,6 +59,7 @@ export function UploadDropzone({
 		>
 			<label
 				{...getRootProps()}
+				aria-disabled={isPending}
 				className={cn(
 					"flex w-full min-w-72 cursor-pointer flex-col items-center justify-center rounded-lg bg-transparent px-2 py-6 transition-colors dark:bg-input/10",
 					{
@@ -106,7 +107,10 @@ export function UploadDropzone({
 			</label>
 
 			{isDragActive && (
-				<div className="pointer-events-none absolute inset-0 rounded-lg">
+				<output
+					aria-live="polite"
+					className="pointer-events-none absolute inset-0 rounded-lg"
+				>
 					<div className="flex size-full flex-col items-center justify-center rounded-lg bg-accent dark:bg-accent/40">
 						<div className="my-2">
 							<Upload className="size-6" />
@@ -114,7 +118,7 @@ export function UploadDropzone({
 
 						<p className="mt-3 font-semibold text-sm">Drop files here</p>
 					</div>
-				</div>
+				</output>
 			)}
 		</div>
 	);

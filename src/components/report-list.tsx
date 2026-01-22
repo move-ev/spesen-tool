@@ -1,6 +1,6 @@
 import { FileSearchCornerIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import type React from "react";
+import React from "react";
 import type { Report } from "@/generated/prisma/client";
 import { ROUTES } from "@/lib/consts";
 import type { ClientExpense } from "@/lib/types";
@@ -17,13 +17,44 @@ import {
 } from "./ui/empty";
 import { Skeleton } from "./ui/skeleton";
 
+type ReportWithExpenses = Report & { expenses: ClientExpense[] };
+
+const ReportListItem = React.memo(function ReportListItem({
+	report,
+	reportRoute,
+}: {
+	report: ReportWithExpenses;
+	reportRoute: string;
+}) {
+	const reportTotal = React.useMemo(
+		() => report.expenses.reduce((sum, expense) => sum + expense.amount, 0),
+		[report.expenses],
+	);
+	const expenseCountLabel =
+		report.expenses.length === 0
+			? "Keine Ausgaben"
+			: report.expenses.length.toString();
+
+	return (
+		<li className="group/list-item relative isolate rounded-lg">
+			<ReportCard report={report} reportRoute={reportRoute}>
+				<ReportCardField
+					label="Gesamtbetrag"
+					value={`${reportTotal.toFixed(2)} €`}
+				/>
+				<ReportCardField label="Anzahl Ausgaben" value={expenseCountLabel} />
+			</ReportCard>
+		</li>
+	);
+});
+
 export function ReportList({
 	reports,
 	reportRoute,
 	className,
 	...props
 }: React.ComponentProps<"ul"> & {
-	reports: (Report & { expenses: ClientExpense[] })[];
+	reports: ReportWithExpenses[];
 
 	/**
 	 * The route to the report details page. `:reportId` will be replaced
@@ -43,34 +74,9 @@ export function ReportList({
 			)}
 			{...props}
 		>
-			{reports.map((report) => {
-				const reportTotal = report.expenses.reduce(
-					(sum, expense) => sum + expense.amount,
-					0,
-				);
-
-				return (
-					<li
-						className="group/list-item relative isolate rounded-lg"
-						key={report.id}
-					>
-						<ReportCard report={report} reportRoute={reportRoute}>
-							<ReportCardField
-								label="Gesamtbetrag"
-								value={`${reportTotal.toFixed(2)} €`}
-							/>
-							<ReportCardField
-								label="Anzahl Ausgaben"
-								value={
-									report.expenses.length === 0
-										? "Keine Ausgaben"
-										: report.expenses.length.toString()
-								}
-							/>
-						</ReportCard>
-					</li>
-				);
-			})}
+			{reports.map((report) => (
+				<ReportListItem key={report.id} report={report} reportRoute={reportRoute} />
+			))}
 		</ul>
 	);
 }
