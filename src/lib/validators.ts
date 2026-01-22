@@ -100,3 +100,14 @@ export const updateMealAllowancesSchema = z.object({
 export const updateTravelAllowancesSchema = z.object({
 	kilometerRate: z.number().min(0),
 });
+
+export const createCostUnitGroupSchema = z.object({
+	title: z.string().min(1),
+});
+
+export const createCostUnitSchema = z.object({
+	tag: z.string().min(1),
+	title: z.string().min(1),
+	examples: z.string().array(),
+	costUnitGroupId: z.string(),
+});

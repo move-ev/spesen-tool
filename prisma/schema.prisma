@@ -229,8 +229,8 @@ model CostUnit {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  costUnitGroupId String
-  costUnitGroup   CostUnitGroup @relation(fields: [costUnitGroupId], references: [id], onDelete: Cascade)
+  costUnitGroupId String?
+  costUnitGroup   CostUnitGroup? @relation(fields: [costUnitGroupId], references: [id], onDelete: Cascade)
 
   @@map("cost_unit")
 }

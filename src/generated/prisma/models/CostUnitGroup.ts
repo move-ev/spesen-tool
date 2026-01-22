@@ -290,9 +290,9 @@ export type CostUnitGroupMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type CostUnitGroupScalarRelationFilter = {
-  is?: Prisma.CostUnitGroupWhereInput
-  isNot?: Prisma.CostUnitGroupWhereInput
+export type CostUnitGroupNullableScalarRelationFilter = {
+  is?: Prisma.CostUnitGroupWhereInput | null
+  isNot?: Prisma.CostUnitGroupWhereInput | null
 }
 
 export type CostUnitGroupCreateNestedOneWithoutCostUnitsInput = {
@@ -301,10 +301,12 @@ export type CostUnitGroupCreateNestedOneWithoutCostUnitsInput = {
   connect?: Prisma.CostUnitGroupWhereUniqueInput
 }
 
-export type CostUnitGroupUpdateOneRequiredWithoutCostUnitsNestedInput = {
+export type CostUnitGroupUpdateOneWithoutCostUnitsNestedInput = {
   create?: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
   connectOrCreate?: Prisma.CostUnitGroupCreateOrConnectWithoutCostUnitsInput
   upsert?: Prisma.CostUnitGroupUpsertWithoutCostUnitsInput
+  disconnect?: Prisma.CostUnitGroupWhereInput | boolean
+  delete?: Prisma.CostUnitGroupWhereInput | boolean
   connect?: Prisma.CostUnitGroupWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CostUnitGroupUpdateToOneWithWhereWithoutCostUnitsInput, Prisma.CostUnitGroupUpdateWithoutCostUnitsInput>, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
 }

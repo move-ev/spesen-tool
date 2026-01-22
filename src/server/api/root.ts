@@ -1,4 +1,5 @@
 import { adminRouter } from "@/server/api/routers/admin";
+import { costUnitRouter } from "@/server/api/routers/cost-unit";
 import { expenseRouter } from "@/server/api/routers/expense";
 import { reportRouter } from "@/server/api/routers/report";
 import { settingsRouter } from "@/server/api/routers/settings";
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
 	admin: adminRouter,
 	accountingUnit: accountingUnitRouter,
 	businessUnit: businessUnitRouter,
+	costUnit: costUnitRouter,
 });
 
 // export type definition of API

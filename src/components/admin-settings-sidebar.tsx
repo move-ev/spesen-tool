@@ -46,6 +46,11 @@ const settingsMenu = [
 		href: ADMIN_SETTINGS_MENU.ALLOWANCES,
 		icon: EuroIcon,
 	},
+	{
+		label: "Kostenstellen",
+		href: ADMIN_SETTINGS_MENU.COST_UNITS,
+		icon: FolderTreeIcon,
+	},
 ];
 
 export function AdminSettingsSidebar({

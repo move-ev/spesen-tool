@@ -17,4 +17,5 @@ export const ADMIN_SETTINGS_MENU = {
 	ACCOUNTING_UNITS: "/admin/settings/accounting-units",
 	BUSINESS_UNITS: "/admin/settings/business-units",
 	ALLOWANCES: "/admin/settings/allowances",
+	COST_UNITS: "/admin/settings/cost-units",
 };

@@ -162,7 +162,7 @@ export type CostUnitGroupByOutputType = {
   examples: string[]
   createdAt: Date
   updatedAt: Date
-  costUnitGroupId: string
+  costUnitGroupId: string | null
   _count: CostUnitCountAggregateOutputType | null
   _min: CostUnitMinAggregateOutputType | null
   _max: CostUnitMaxAggregateOutputType | null
@@ -193,8 +193,8 @@ export type CostUnitWhereInput = {
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
-  costUnitGroupId?: Prisma.StringFilter<"CostUnit"> | string
-  costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupScalarRelationFilter, Prisma.CostUnitGroupWhereInput>
+  costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
+  costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupNullableScalarRelationFilter, Prisma.CostUnitGroupWhereInput> | null
 }
 
 export type CostUnitOrderByWithRelationInput = {
@@ -204,7 +204,7 @@ export type CostUnitOrderByWithRelationInput = {
   examples?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  costUnitGroupId?: Prisma.SortOrder
+  costUnitGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   costUnitGroup?: Prisma.CostUnitGroupOrderByWithRelationInput
 }
 
@@ -218,8 +218,8 @@ export type CostUnitWhereUniqueInput = Prisma.AtLeast<{
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
-  costUnitGroupId?: Prisma.StringFilter<"CostUnit"> | string
-  costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupScalarRelationFilter, Prisma.CostUnitGroupWhereInput>
+  costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
+  costUnitGroup?: Prisma.XOR<Prisma.CostUnitGroupNullableScalarRelationFilter, Prisma.CostUnitGroupWhereInput> | null
 }, "id">
 
 export type CostUnitOrderByWithAggregationInput = {
@@ -229,7 +229,7 @@ export type CostUnitOrderByWithAggregationInput = {
   examples?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  costUnitGroupId?: Prisma.SortOrder
+  costUnitGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.CostUnitCountOrderByAggregateInput
   _max?: Prisma.CostUnitMaxOrderByAggregateInput
   _min?: Prisma.CostUnitMinOrderByAggregateInput
@@ -245,7 +245,7 @@ export type CostUnitScalarWhereWithAggregatesInput = {
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CostUnit"> | Date | string
-  costUnitGroupId?: Prisma.StringWithAggregatesFilter<"CostUnit"> | string
+  costUnitGroupId?: Prisma.StringNullableWithAggregatesFilter<"CostUnit"> | string | null
 }
 
 export type CostUnitCreateInput = {
@@ -255,7 +255,7 @@ export type CostUnitCreateInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
-  costUnitGroup: Prisma.CostUnitGroupCreateNestedOneWithoutCostUnitsInput
+  costUnitGroup?: Prisma.CostUnitGroupCreateNestedOneWithoutCostUnitsInput
 }
 
 export type CostUnitUncheckedCreateInput = {
@@ -265,7 +265,7 @@ export type CostUnitUncheckedCreateInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
-  costUnitGroupId: string
+  costUnitGroupId?: string | null
 }
 
 export type CostUnitUpdateInput = {
@@ -275,7 +275,7 @@ export type CostUnitUpdateInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  costUnitGroup?: Prisma.CostUnitGroupUpdateOneRequiredWithoutCostUnitsNestedInput
+  costUnitGroup?: Prisma.CostUnitGroupUpdateOneWithoutCostUnitsNestedInput
 }
 
 export type CostUnitUncheckedUpdateInput = {
@@ -285,7 +285,7 @@ export type CostUnitUncheckedUpdateInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  costUnitGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CostUnitCreateManyInput = {
@@ -295,7 +295,7 @@ export type CostUnitCreateManyInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
-  costUnitGroupId: string
+  costUnitGroupId?: string | null
 }
 
 export type CostUnitUpdateManyMutationInput = {
@@ -314,7 +314,7 @@ export type CostUnitUncheckedUpdateManyInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  costUnitGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CostUnitListRelationFilter = {
@@ -468,7 +468,7 @@ export type CostUnitScalarWhereInput = {
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
-  costUnitGroupId?: Prisma.StringFilter<"CostUnit"> | string
+  costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
 }
 
 export type CostUnitCreateManyCostUnitGroupInput = {
@@ -517,7 +517,7 @@ export type CostUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
-  costUnitGroup?: boolean | Prisma.CostUnitGroupDefaultArgs<ExtArgs>
+  costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
 }, ExtArgs["result"]["costUnit"]>
 
 export type CostUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -528,7 +528,7 @@ export type CostUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
-  costUnitGroup?: boolean | Prisma.CostUnitGroupDefaultArgs<ExtArgs>
+  costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
 }, ExtArgs["result"]["costUnit"]>
 
 export type CostUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -539,7 +539,7 @@ export type CostUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
-  costUnitGroup?: boolean | Prisma.CostUnitGroupDefaultArgs<ExtArgs>
+  costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
 }, ExtArgs["result"]["costUnit"]>
 
 export type CostUnitSelectScalar = {
@@ -554,19 +554,19 @@ export type CostUnitSelectScalar = {
 
 export type CostUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tag" | "title" | "examples" | "createdAt" | "updatedAt" | "costUnitGroupId", ExtArgs["result"]["costUnit"]>
 export type CostUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  costUnitGroup?: boolean | Prisma.CostUnitGroupDefaultArgs<ExtArgs>
+  costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
 }
 export type CostUnitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  costUnitGroup?: boolean | Prisma.CostUnitGroupDefaultArgs<ExtArgs>
+  costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
 }
 export type CostUnitIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  costUnitGroup?: boolean | Prisma.CostUnitGroupDefaultArgs<ExtArgs>
+  costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
 }
 
 export type $CostUnitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CostUnit"
   objects: {
-    costUnitGroup: Prisma.$CostUnitGroupPayload<ExtArgs>
+    costUnitGroup: Prisma.$CostUnitGroupPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -575,7 +575,7 @@ export type $CostUnitPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     examples: string[]
     createdAt: Date
     updatedAt: Date
-    costUnitGroupId: string
+    costUnitGroupId: string | null
   }, ExtArgs["result"]["costUnit"]>
   composites: {}
 }
@@ -970,7 +970,7 @@ readonly fields: CostUnitFieldRefs;
  */
 export interface Prisma__CostUnitClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  costUnitGroup<T extends Prisma.CostUnitGroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CostUnitGroupDefaultArgs<ExtArgs>>): Prisma.Prisma__CostUnitGroupClient<runtime.Types.Result.GetResult<Prisma.$CostUnitGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  costUnitGroup<T extends Prisma.CostUnit$costUnitGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CostUnit$costUnitGroupArgs<ExtArgs>>): Prisma.Prisma__CostUnitGroupClient<runtime.Types.Result.GetResult<Prisma.$CostUnitGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1400,6 +1400,25 @@ export type CostUnitDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many CostUnits to delete.
    */
   limit?: number
+}
+
+/**
+ * CostUnit.costUnitGroup
+ */
+export type CostUnit$costUnitGroupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CostUnitGroup
+   */
+  select?: Prisma.CostUnitGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CostUnitGroup
+   */
+  omit?: Prisma.CostUnitGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CostUnitGroupInclude<ExtArgs> | null
+  where?: Prisma.CostUnitGroupWhereInput
 }
 
 /**
