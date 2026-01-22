@@ -109,10 +109,16 @@ export async function initConfig(): Promise<Config> {
 		return _configPromise;
 	}
 
-	_configPromise = loadConfig().then((result) => {
-		_config = result.config;
-		return _config;
-	});
+	_configPromise = loadConfig()
+		.then((result) => {
+			_config = result.config;
+			return _config;
+		})
+		.catch((error) => {
+			// Reset promise on failure to allow retry on transient errors
+			_configPromise = null;
+			throw error;
+		});
 
 	return _configPromise;
 }
