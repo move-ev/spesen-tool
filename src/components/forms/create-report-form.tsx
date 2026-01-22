@@ -2,6 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { toast } from "sonner";
 import { ROUTES } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
@@ -18,6 +19,23 @@ import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
+
+	// Create a Map for O(1) cost unit lookups by ID
+	const costUnitMap = useMemo(() => {
+		const map = new Map<
+			string,
+			{ id: string; tag: string; title: string; examples: string[] }
+		>();
+		for (const costUnit of costUnits.ungrouped) {
+			map.set(costUnit.id, costUnit);
+		}
+		for (const group of costUnits.grouped) {
+			for (const costUnit of group.costUnits) {
+				map.set(costUnit.id, costUnit);
+			}
+		}
+		return map;
+	}, [costUnits]);
 
 	const router = useRouter();
 
@@ -137,19 +155,7 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 								</NativeSelect>
 
 								{(() => {
-									const selectedUngrouped = costUnits.ungrouped.find(
-										(u) => u.id === field.state.value,
-									);
-									const selectedGrouped = (() => {
-										for (const group of costUnits.grouped) {
-											const match = group.costUnits.find(
-												(cu) => cu.id === field.state.value,
-											);
-											if (match) return match;
-										}
-										return undefined;
-									})();
-									const selectedCostUnit = selectedUngrouped || selectedGrouped;
+									const selectedCostUnit = costUnitMap.get(field.state.value);
 
 									if (
 										selectedCostUnit?.examples &&

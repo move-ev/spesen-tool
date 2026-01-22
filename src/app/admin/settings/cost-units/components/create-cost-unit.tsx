@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +24,7 @@ import {
 	NativeSelectOptGroup,
 	NativeSelectOption,
 } from "@/components/ui/native-select";
+import { NO_COST_UNIT_GROUP } from "@/lib/consts";
 import { createCostUnitSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
@@ -38,14 +39,16 @@ interface InputItem {
 	value: string;
 }
 
-let inputIdCounter = 0;
-function generateInputId() {
-	return `input-${++inputIdCounter}`;
-}
-
 function ExamplesInput({ value, onChange, placeholder }: ExamplesInputProps) {
+	const baseId = useId();
+	const counterRef = useRef(0);
+
+	const generateInputId = useCallback(() => {
+		return `${baseId}-input-${++counterRef.current}`;
+	}, [baseId]);
+
 	const [inputs, setInputs] = useState<InputItem[]>(() => [
-		{ id: generateInputId(), value: "" },
+		{ id: `${baseId}-input-0`, value: "" },
 	]);
 
 	// Sync inputs when external value changes (e.g., form reset)
@@ -55,7 +58,7 @@ function ExamplesInput({ value, onChange, placeholder }: ExamplesInputProps) {
 			setInputs([{ id: generateInputId(), value: "" }]);
 		}
 		valueRef.current = value;
-	}, [value]);
+	}, [value, generateInputId]);
 
 	// Sync non-empty values to parent form (separate effect to avoid setState during render)
 	const onChangeRef = useRef(onChange);
@@ -67,34 +70,37 @@ function ExamplesInput({ value, onChange, placeholder }: ExamplesInputProps) {
 		onChangeRef.current(nonEmptyValues);
 	}, [inputs]);
 
-	const handleChange = useCallback((inputId: string, newValue: string) => {
-		setInputs((prev) => {
-			const index = prev.findIndex((item) => item.id === inputId);
-			if (index === -1) return prev;
+	const handleChange = useCallback(
+		(inputId: string, newValue: string) => {
+			setInputs((prev) => {
+				const index = prev.findIndex((item) => item.id === inputId);
+				if (index === -1) return prev;
 
-			const updated = [...prev];
-			updated[index] = { id: inputId, value: newValue };
+				const updated = [...prev];
+				updated[index] = { id: inputId, value: newValue };
 
-			// If the last input now has content, add a new empty input
-			const isLastInput = index === prev.length - 1;
-			if (isLastInput && newValue.trim() !== "") {
-				updated.push({ id: generateInputId(), value: "" });
-			}
+				// If the last input now has content, add a new empty input
+				const isLastInput = index === prev.length - 1;
+				if (isLastInput && newValue.trim() !== "") {
+					updated.push({ id: generateInputId(), value: "" });
+				}
 
-			// Remove empty inputs except for one trailing empty input
-			const filtered = updated.filter(
-				(item, i) => item.value.trim() !== "" || i === updated.length - 1,
-			);
+				// Remove empty inputs except for one trailing empty input
+				const filtered = updated.filter(
+					(item, i) => item.value.trim() !== "" || i === updated.length - 1,
+				);
 
-			// Ensure there's always at least one empty input at the end
-			const lastItem = filtered[filtered.length - 1];
-			if (filtered.length === 0 || (lastItem && lastItem.value.trim() !== "")) {
-				filtered.push({ id: generateInputId(), value: "" });
-			}
+				// Ensure there's always at least one empty input at the end
+				const lastItem = filtered[filtered.length - 1];
+				if (filtered.length === 0 || (lastItem && lastItem.value.trim() !== "")) {
+					filtered.push({ id: generateInputId(), value: "" });
+				}
 
-			return filtered;
-		});
-	}, []);
+				return filtered;
+			});
+		},
+		[generateInputId],
+	);
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -136,7 +142,7 @@ export function CreateCostUnit({
 			tag: "",
 			title: "",
 			examples: [] as string[],
-			costUnitGroupId: "",
+			costUnitGroupId: NO_COST_UNIT_GROUP as string,
 		},
 		validators: {
 			onSubmit: createCostUnitSchema,
@@ -216,7 +222,9 @@ export function CreateCostUnit({
 												onChange={(e) => field.handleChange(e.target.value)}
 												value={field.state.value}
 											>
-												<NativeSelectOption value="NONE">Keine Gruppe</NativeSelectOption>
+												<NativeSelectOption value={NO_COST_UNIT_GROUP}>
+													Keine Gruppe
+												</NativeSelectOption>
 												<NativeSelectOptGroup label="Gruppen">
 													{groups.map((group) => (
 														<NativeSelectOption key={group.id} value={group.id}>
