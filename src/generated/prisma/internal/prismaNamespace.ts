@@ -393,8 +393,6 @@ export const ModelName = {
   Verification: 'Verification',
   Preferences: 'Preferences',
   Settings: 'Settings',
-  AccountingUnit: 'AccountingUnit',
-  BusinessUnit: 'BusinessUnit',
   CostUnitGroup: 'CostUnitGroup',
   CostUnit: 'CostUnit'
 } as const
@@ -412,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "report" | "expense" | "attachment" | "user" | "session" | "account" | "verification" | "preferences" | "settings" | "accountingUnit" | "businessUnit" | "costUnitGroup" | "costUnit"
+    modelProps: "report" | "expense" | "attachment" | "user" | "session" | "account" | "verification" | "preferences" | "settings" | "costUnitGroup" | "costUnit"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1082,154 +1080,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    AccountingUnit: {
-      payload: Prisma.$AccountingUnitPayload<ExtArgs>
-      fields: Prisma.AccountingUnitFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.AccountingUnitFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.AccountingUnitFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>
-        }
-        findFirst: {
-          args: Prisma.AccountingUnitFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.AccountingUnitFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>
-        }
-        findMany: {
-          args: Prisma.AccountingUnitFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>[]
-        }
-        create: {
-          args: Prisma.AccountingUnitCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>
-        }
-        createMany: {
-          args: Prisma.AccountingUnitCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.AccountingUnitCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>[]
-        }
-        delete: {
-          args: Prisma.AccountingUnitDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>
-        }
-        update: {
-          args: Prisma.AccountingUnitUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>
-        }
-        deleteMany: {
-          args: Prisma.AccountingUnitDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.AccountingUnitUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.AccountingUnitUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>[]
-        }
-        upsert: {
-          args: Prisma.AccountingUnitUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccountingUnitPayload>
-        }
-        aggregate: {
-          args: Prisma.AccountingUnitAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateAccountingUnit>
-        }
-        groupBy: {
-          args: Prisma.AccountingUnitGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AccountingUnitGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.AccountingUnitCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AccountingUnitCountAggregateOutputType> | number
-        }
-      }
-    }
-    BusinessUnit: {
-      payload: Prisma.$BusinessUnitPayload<ExtArgs>
-      fields: Prisma.BusinessUnitFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.BusinessUnitFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.BusinessUnitFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>
-        }
-        findFirst: {
-          args: Prisma.BusinessUnitFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.BusinessUnitFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>
-        }
-        findMany: {
-          args: Prisma.BusinessUnitFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>[]
-        }
-        create: {
-          args: Prisma.BusinessUnitCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>
-        }
-        createMany: {
-          args: Prisma.BusinessUnitCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.BusinessUnitCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>[]
-        }
-        delete: {
-          args: Prisma.BusinessUnitDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>
-        }
-        update: {
-          args: Prisma.BusinessUnitUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>
-        }
-        deleteMany: {
-          args: Prisma.BusinessUnitDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.BusinessUnitUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.BusinessUnitUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>[]
-        }
-        upsert: {
-          args: Prisma.BusinessUnitUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusinessUnitPayload>
-        }
-        aggregate: {
-          args: Prisma.BusinessUnitAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateBusinessUnit>
-        }
-        groupBy: {
-          args: Prisma.BusinessUnitGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.BusinessUnitGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.BusinessUnitCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.BusinessUnitCountAggregateOutputType> | number
-        }
-      }
-    }
     CostUnitGroup: {
       payload: Prisma.$CostUnitGroupPayload<ExtArgs>
       fields: Prisma.CostUnitGroupFieldRefs
@@ -1423,8 +1273,6 @@ export const ReportScalarFieldEnum = {
   description: 'description',
   status: 'status',
   costUnitId: 'costUnitId',
-  accountingUnitId: 'accountingUnitId',
-  businessUnitId: 'businessUnitId',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'
@@ -1545,26 +1393,6 @@ export const SettingsScalarFieldEnum = {
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
-
-
-export const AccountingUnitScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type AccountingUnitScalarFieldEnum = (typeof AccountingUnitScalarFieldEnum)[keyof typeof AccountingUnitScalarFieldEnum]
-
-
-export const BusinessUnitScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BusinessUnitScalarFieldEnum = (typeof BusinessUnitScalarFieldEnum)[keyof typeof BusinessUnitScalarFieldEnum]
 
 
 export const CostUnitGroupScalarFieldEnum = {
@@ -1858,8 +1686,6 @@ export type GlobalOmitConfig = {
   verification?: Prisma.VerificationOmit
   preferences?: Prisma.PreferencesOmit
   settings?: Prisma.SettingsOmit
-  accountingUnit?: Prisma.AccountingUnitOmit
-  businessUnit?: Prisma.BusinessUnitOmit
   costUnitGroup?: Prisma.CostUnitGroupOmit
   costUnit?: Prisma.CostUnitOmit
 }

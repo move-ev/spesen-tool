@@ -1,6 +1,5 @@
 import {
 	ArrowLeftIcon,
-	Building2Icon,
 	EuroIcon,
 	FolderTreeIcon,
 	SettingsIcon,
@@ -30,16 +29,6 @@ const settingsMenu = [
 		label: "Benutzer",
 		href: ADMIN_SETTINGS_MENU.USERS,
 		icon: UsersIcon,
-	},
-	{
-		label: "Buchungskreise",
-		href: ADMIN_SETTINGS_MENU.ACCOUNTING_UNITS,
-		icon: Building2Icon,
-	},
-	{
-		label: "Geschäftseinheiten",
-		href: ADMIN_SETTINGS_MENU.BUSINESS_UNITS,
-		icon: FolderTreeIcon,
 	},
 	{
 		label: "Zulagen",

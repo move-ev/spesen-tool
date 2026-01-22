@@ -324,9 +324,9 @@ export type CostUnitUncheckedUpdateManyInput = {
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type CostUnitNullableScalarRelationFilter = {
-  is?: Prisma.CostUnitWhereInput | null
-  isNot?: Prisma.CostUnitWhereInput | null
+export type CostUnitScalarRelationFilter = {
+  is?: Prisma.CostUnitWhereInput
+  isNot?: Prisma.CostUnitWhereInput
 }
 
 export type CostUnitListRelationFilter = {
@@ -381,12 +381,10 @@ export type CostUnitCreateNestedOneWithoutReportsInput = {
   connect?: Prisma.CostUnitWhereUniqueInput
 }
 
-export type CostUnitUpdateOneWithoutReportsNestedInput = {
+export type CostUnitUpdateOneRequiredWithoutReportsNestedInput = {
   create?: Prisma.XOR<Prisma.CostUnitCreateWithoutReportsInput, Prisma.CostUnitUncheckedCreateWithoutReportsInput>
   connectOrCreate?: Prisma.CostUnitCreateOrConnectWithoutReportsInput
   upsert?: Prisma.CostUnitUpsertWithoutReportsInput
-  disconnect?: Prisma.CostUnitWhereInput | boolean
-  delete?: Prisma.CostUnitWhereInput | boolean
   connect?: Prisma.CostUnitWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CostUnitUpdateToOneWithWhereWithoutReportsInput, Prisma.CostUnitUpdateWithoutReportsInput>, Prisma.CostUnitUncheckedUpdateWithoutReportsInput>
 }

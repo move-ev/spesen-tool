@@ -20,14 +20,8 @@ model Report {
   description String?
   status      ReportStatus @default(DRAFT)
 
-  costUnitId String?
-  costUnit   CostUnit? @relation(fields: [costUnitId], references: [id], onDelete: Cascade)
-
-  accountingUnit   AccountingUnit @relation(fields: [accountingUnitId], references: [id], onDelete: Cascade)
-  accountingUnitId String
-
-  businessUnit   BusinessUnit @relation(fields: [businessUnitId], references: [id], onDelete: Cascade)
-  businessUnitId String
+  costUnitId String
+  costUnit   CostUnit @relation(fields: [costUnitId], references: [id], onDelete: Cascade)
 
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
@@ -186,30 +180,6 @@ model Settings {
   dinnerDeduction    Decimal @default(0.00)
 
   @@map("settings")
-}
-
-model AccountingUnit {
-  id      String   @id @default(cuid())
-  name    String
-  reports Report[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  @@unique([name])
-  @@map("accounting_unit")
-}
-
-model BusinessUnit {
-  id      String   @id @default(cuid())
-  name    String
-  reports Report[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  @@unique([name])
-  @@map("business_unit")
 }
 
 model CostUnitGroup {

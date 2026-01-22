@@ -26,8 +26,8 @@ type Attachment = {
 
 interface ExpenseReportCreatorNotificationProps {
 	report: Report & {
-		accountingUnit: {
-			name: string;
+		costUnit: {
+			title: string;
 		};
 	};
 	attachments: Attachment[];
@@ -98,7 +98,7 @@ export default function ExpenseReportCreatorNotification({
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Rechnungseinheit:</Text>
-							<Text style={detailValue}>{report.accountingUnit.name}</Text>
+							<Text style={detailValue}>{report.costUnit.title}</Text>
 						</Row>
 						<Row style={detailRow}>
 							<Text style={detailLabel}>Gesamtausgaben:</Text>

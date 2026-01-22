@@ -9,8 +9,6 @@ import { ROUTES } from "@/lib/consts";
 import { api } from "@/trpc/server";
 
 export default async function ServerPage() {
-	void api.accountingUnit.listAll.prefetch();
-	void api.businessUnit.listAll.prefetch();
 	void api.costUnit.listGrouped.prefetch();
 
 	return (

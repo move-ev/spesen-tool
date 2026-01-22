@@ -7,14 +7,6 @@ import { ROUTES } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
-import {
-	Combobox,
-	ComboboxContent,
-	ComboboxEmpty,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxList,
-} from "../ui/combobox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import {
@@ -25,8 +17,6 @@ import {
 import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
-	const [accountingUnits] = api.accountingUnit.listAll.useSuspenseQuery();
-	const [businessUnits] = api.businessUnit.listAll.useSuspenseQuery();
 	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
 
 	const router = useRouter();
@@ -47,8 +37,6 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 		defaultValues: {
 			title: "",
 			description: "",
-			businessUnitId: "",
-			accountingUnitId: "",
 			costUnitId: "",
 		},
 		validators: {
@@ -115,84 +103,7 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 					}}
 					name="description"
 				/>
-				<form.Field
-					children={(field) => {
-						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-						return (
-							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Geschäftseinheit</FieldLabel>
-								<Combobox
-									items={businessUnits}
-									itemToStringLabel={(item) => item.name}
-									itemToStringValue={(item) => item.id}
-									onValueChange={(v) => {
-										field.handleChange(v ? v.id : "");
-									}}
-									value={businessUnits.find((u) => u.id === field.state.value) ?? null}
-								>
-									<ComboboxInput
-										aria-invalid={isInvalid}
-										data-invalid={isInvalid}
-										id={field.name}
-										name={field.name}
-										placeholder="Wähle eine Geschäftseinheit"
-									/>
-									<ComboboxContent>
-										<ComboboxEmpty>Keine Geschäftseinheiten gefunden.</ComboboxEmpty>
-										<ComboboxList>
-											{(item) => (
-												<ComboboxItem key={item.id} value={item}>
-													{item.name}
-												</ComboboxItem>
-											)}
-										</ComboboxList>
-									</ComboboxContent>
-								</Combobox>
-								{isInvalid && <FieldError errors={field.state.meta.errors} />}
-							</Field>
-						);
-					}}
-					name="businessUnitId"
-				/>
-				<form.Field
-					children={(field) => {
-						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-						return (
-							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Rechnungseinheit</FieldLabel>
-								<Combobox
-									items={accountingUnits}
-									itemToStringLabel={(item) => item.name}
-									itemToStringValue={(item) => item.id}
-									onValueChange={(v) => {
-										field.handleChange(v ? v.id : "");
-									}}
-									value={accountingUnits.find((u) => u.id === field.state.value) ?? null}
-								>
-									<ComboboxInput
-										aria-invalid={isInvalid}
-										data-invalid={isInvalid}
-										id={field.name}
-										name={field.name}
-										placeholder="Wähle eine Rechnungseinheit"
-									/>
-									<ComboboxContent>
-										<ComboboxEmpty>Keine Rechnungseinheiten gefunden.</ComboboxEmpty>
-										<ComboboxList>
-											{(item) => (
-												<ComboboxItem key={item.id} value={item}>
-													{item.name}
-												</ComboboxItem>
-											)}
-										</ComboboxList>
-									</ComboboxContent>
-								</Combobox>
-								{isInvalid && <FieldError errors={field.state.meta.errors} />}
-							</Field>
-						);
-					}}
-					name="accountingUnitId"
-				/>
+
 				<form.Field
 					children={(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;

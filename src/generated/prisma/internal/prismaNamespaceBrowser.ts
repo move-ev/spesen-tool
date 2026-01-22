@@ -60,8 +60,6 @@ export const ModelName = {
   Verification: 'Verification',
   Preferences: 'Preferences',
   Settings: 'Settings',
-  AccountingUnit: 'AccountingUnit',
-  BusinessUnit: 'BusinessUnit',
   CostUnitGroup: 'CostUnitGroup',
   CostUnit: 'CostUnit'
 } as const
@@ -88,8 +86,6 @@ export const ReportScalarFieldEnum = {
   description: 'description',
   status: 'status',
   costUnitId: 'costUnitId',
-  accountingUnitId: 'accountingUnitId',
-  businessUnitId: 'businessUnitId',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'
@@ -210,26 +206,6 @@ export const SettingsScalarFieldEnum = {
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
-
-
-export const AccountingUnitScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type AccountingUnitScalarFieldEnum = (typeof AccountingUnitScalarFieldEnum)[keyof typeof AccountingUnitScalarFieldEnum]
-
-
-export const BusinessUnitScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BusinessUnitScalarFieldEnum = (typeof BusinessUnitScalarFieldEnum)[keyof typeof BusinessUnitScalarFieldEnum]
 
 
 export const CostUnitGroupScalarFieldEnum = {
