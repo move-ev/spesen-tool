@@ -127,46 +127,6 @@ export const reportRouter = createTRPCRouter({
 			};
 		}),
 
-	// Get a single report by ID
-	getByIdDepr: protectedProcedure
-		.input(z.object({ id: z.string() }))
-		.query(async ({ ctx, input }) => {
-			const report = await ctx.db.report.findUnique({
-				where: {
-					id: input.id,
-				},
-				include: {
-					expenses: true,
-					owner: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-						},
-					},
-				},
-			});
-
-			if (!report) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Report not found",
-				});
-			}
-
-			const isAdmin = ctx.session.user.role === "admin";
-
-			// Check if user owns the report
-			if (report.ownerId !== ctx.session.user.id && !isAdmin) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "You don't have access to this report",
-				});
-			}
-
-			return report;
-		}),
-
 	// Create a new report
 	create: protectedProcedure
 		.input(createReportSchema)
