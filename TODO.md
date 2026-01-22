@@ -48,8 +48,8 @@
 
 # Futher ToDo's
 
-- [ ] "Buchungskreise" und "Geschäftseinheit" zusammenfassen zu "Kostenstelle" (siehe Liste)
-  - [ ] Informationen zu welche Ausgaben zu welcher Kostenstelle gehören
+- [x] "Buchungskreise" und "Geschäftseinheit" zusammenfassen zu "Kostenstelle" (siehe Liste)
+  - [x] Informationen zu welche Ausgaben zu welcher Kostenstelle gehören
 - [ ] IBAN + vollständiger Kontoname
 - [ ] Kopierbare Details im Report (IBAN, Kontoname, Betrag)
   - [ ] evtl. QR Code für das Kopieren der Details
