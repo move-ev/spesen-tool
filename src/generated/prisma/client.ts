@@ -94,3 +94,13 @@ export type AccountingUnit = Prisma.AccountingUnitModel
  * 
  */
 export type BusinessUnit = Prisma.BusinessUnitModel
+/**
+ * Model CostUnitGroup
+ * 
+ */
+export type CostUnitGroup = Prisma.CostUnitGroupModel
+/**
+ * Model CostUnit
+ * 
+ */
+export type CostUnit = Prisma.CostUnitModel

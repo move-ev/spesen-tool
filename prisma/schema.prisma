@@ -208,3 +208,29 @@ model BusinessUnit {
   @@unique([name])
   @@map("business_unit")
 }
+
+model CostUnitGroup {
+  id        String     @id @default(cuid())
+  title     String
+  costUnits CostUnit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("cost_unit_group")
+}
+
+model CostUnit {
+  id       String   @id @default(cuid())
+  tag      String
+  title    String
+  examples String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  costUnitGroupId String
+  costUnitGroup   CostUnitGroup @relation(fields: [costUnitGroupId], references: [id], onDelete: Cascade)
+
+  @@map("cost_unit")
+}

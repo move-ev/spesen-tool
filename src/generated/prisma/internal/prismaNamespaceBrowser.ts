@@ -61,7 +61,9 @@ export const ModelName = {
   Preferences: 'Preferences',
   Settings: 'Settings',
   AccountingUnit: 'AccountingUnit',
-  BusinessUnit: 'BusinessUnit'
+  BusinessUnit: 'BusinessUnit',
+  CostUnitGroup: 'CostUnitGroup',
+  CostUnit: 'CostUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -227,6 +229,29 @@ export const BusinessUnitScalarFieldEnum = {
 } as const
 
 export type BusinessUnitScalarFieldEnum = (typeof BusinessUnitScalarFieldEnum)[keyof typeof BusinessUnitScalarFieldEnum]
+
+
+export const CostUnitGroupScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CostUnitGroupScalarFieldEnum = (typeof CostUnitGroupScalarFieldEnum)[keyof typeof CostUnitGroupScalarFieldEnum]
+
+
+export const CostUnitScalarFieldEnum = {
+  id: 'id',
+  tag: 'tag',
+  title: 'title',
+  examples: 'examples',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  costUnitGroupId: 'costUnitGroupId'
+} as const
+
+export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typeof CostUnitScalarFieldEnum]
 
 
 export const SortOrder = {
