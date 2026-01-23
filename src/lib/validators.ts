@@ -14,6 +14,10 @@ export const ibanSchema = z
 		message: "Ungültige IBAN",
 	});
 
+export const unformattedIbanSchema = z.string().regex(/^DE\d{20}$/, {
+	message: "Ungültige IBAN",
+});
+
 export const baseCreateExpenseSchema = z.object({
 	description: z.string(),
 	amount: z.number().min(0),
@@ -83,9 +87,16 @@ export const foodExpenseMetaSchema = z.object({
 	dinnerDeduction: z.number().min(0),
 });
 
+// Schema for form validation (formatted IBAN with spaces)
 export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
-	iban: ibanSchema.optional(),
+	iban: z.union([z.string().length(0), ibanSchema]),
+});
+
+// Schema for server validation (unformatted IBAN without spaces)
+export const updatePreferencesServerSchema = z.object({
+	notificationPreference: z.enum(NotificationPreference),
+	iban: z.union([z.string().length(0), unformattedIbanSchema]),
 });
 
 export const updateMealAllowancesSchema = z.object({

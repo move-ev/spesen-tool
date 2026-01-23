@@ -3,6 +3,7 @@
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { NotificationPreference } from "@/generated/prisma/enums";
+import { formatIban, unformatIban } from "@/lib/utils";
 import { updatePreferencesSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
@@ -10,9 +11,11 @@ import {
 	Field,
 	FieldContent,
 	FieldDescription,
+	FieldError,
 	FieldGroup,
 	FieldLabel,
 } from "../ui/field";
+import { IbanInput } from "../ui/iban-input";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
@@ -21,8 +24,10 @@ export function PreferencesForm() {
 	const [preferences] = api.preferences.getOwn.useSuspenseQuery();
 
 	const updatePreferences = api.preferences.updateOwn.useMutation({
-		onSuccess: () => {
-			toast.success("Einstellungen wurden erfolgreich gespeichert");
+		onSuccess: (input) => {
+			toast.success("Einstellungen wurden erfolgreich gespeichert", {
+				description: <pre>{JSON.stringify(input, null, 2)}</pre>,
+			});
 			utils.preferences.getOwn.invalidate();
 		},
 		onError: (error) => {
@@ -35,12 +40,16 @@ export function PreferencesForm() {
 	const form = useForm({
 		defaultValues: {
 			notificationPreference: preferences.notifications,
+			iban: preferences.iban ? formatIban(preferences.iban) : "",
 		},
 		validators: {
 			onSubmit: updatePreferencesSchema,
 		},
 		onSubmit: ({ value }) => {
-			updatePreferences.mutate(value);
+			updatePreferences.mutate({
+				notificationPreference: value.notificationPreference,
+				iban: value.iban.length > 0 ? unformatIban(value.iban) : "",
+			});
 		},
 	});
 
@@ -52,15 +61,14 @@ export function PreferencesForm() {
 				form.handleSubmit();
 			}}
 		>
-			<FieldGroup>
+			<FieldGroup className="grid gap-12">
 				<form.Field name="notificationPreference">
 					{(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
 							<Field
-								className="items-start"
+								className="grid gap-4 md:grid-cols-2 md:gap-8"
 								data-invalid={isInvalid}
-								orientation="responsive"
 							>
 								<FieldContent>
 									<FieldLabel>Benachrichtigungen</FieldLabel>
@@ -110,7 +118,37 @@ export function PreferencesForm() {
 						);
 					}}
 				</form.Field>
-				<Field orientation={"responsive"}>
+				<form.Field name="iban">
+					{(field) => {
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+						return (
+							<Field
+								className="grid gap-4 md:grid-cols-2 md:gap-8"
+								data-invalid={isInvalid}
+							>
+								<FieldContent>
+									<FieldLabel htmlFor={field.name}>IBAN</FieldLabel>
+									<FieldDescription>
+										Ausstehende Zahlungen werden an das Konto mit dieser IBAN geleitet.
+									</FieldDescription>
+								</FieldContent>
+								<div>
+									<IbanInput
+										aria-invalid={isInvalid}
+										className="w-full"
+										id={field.name}
+										name={field.name}
+										onBlur={field.handleBlur}
+										onChange={field.handleChange}
+										value={field.state.value}
+									/>
+									{isInvalid && <FieldError errors={field.state.meta.errors} />}
+								</div>
+							</Field>
+						);
+					}}
+				</form.Field>
+				<div className="flex items-center justify-end">
 					<Button
 						disabled={updatePreferences.isPending}
 						form="form-preferences"
@@ -118,7 +156,7 @@ export function PreferencesForm() {
 					>
 						Speichern
 					</Button>
-				</Field>
+				</div>
 			</FieldGroup>
 		</form>
 	);
