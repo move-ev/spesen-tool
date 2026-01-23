@@ -57,5 +57,5 @@
 - [ ] Beschreibung des Reports im PDF hervorheben
 - [X] Report ID aufsteigend
 - [X] IBAN vom Antragssteller auf dem PDF
-- [ ] Anhänge im PDF REport
+- [X] Anhänge im PDF REport
 - [X] Kein Prüfer im PDF
