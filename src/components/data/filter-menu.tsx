@@ -2,7 +2,7 @@
 
 import type { Column, Table } from "@tanstack/react-table";
 import type React from "react";
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { Button } from "../ui/button";
 import {
 	DropdownMenu,
@@ -84,10 +84,7 @@ export function FilterMenu<TData>({
 }: FilterMenuProps<TData>) {
 	const filterableColumns = useFilterableColumns(table);
 
-	const hasActiveFilters = useMemo(
-		() => table.getState().columnFilters.length >= 1,
-		[table],
-	);
+	const hasActiveFilters = table.getState().columnFilters.length >= 1;
 
 	if (filterableColumns.length === 0) {
 		return null;
