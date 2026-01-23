@@ -130,8 +130,18 @@ function resolveConfigPath(): string | null {
 async function loadConfigFile(filePath: string): Promise<ConfigInput> {
 	try {
 		// Dynamic import of the config file
-		// This works for both .ts (with tsx/ts-node) and .js files
-		const configModule = await import(filePath);
+		// For .ts files, we need jiti to handle TypeScript at runtime
+		let configModule: Record<string, unknown>;
+
+		if (filePath.endsWith(".ts")) {
+			// Use jiti to load TypeScript files at runtime
+			const { createJiti } = await import("jiti");
+			const jiti = createJiti(import.meta.url);
+			configModule = (await jiti.import(filePath)) as Record<string, unknown>;
+		} else {
+			// For .js files, use native dynamic import
+			configModule = await import(filePath);
+		}
 
 		// Support both default export and named 'config' export
 		const rawConfig = configModule.default ?? configModule.config;

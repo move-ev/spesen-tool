@@ -1,7 +1,9 @@
 import { writeFile } from "node:fs/promises";
 import { format } from "date-fns";
+import { PDFDocument as PDFLibDocument } from "pdf-lib";
 import PDFDocument from "pdfkit";
 import type {
+	Attachment,
 	Expense,
 	Preferences,
 	Report,
@@ -12,12 +14,18 @@ import {
 	foodExpenseMetaSchema,
 	travelExpenseMetaSchema,
 } from "@/lib/validators";
+import { getFileFromStorage, isImageFile, isPdfFile } from "@/server/storage";
 
 interface SummaryProps {
 	report: Report & {
-		expenses: Expense[];
+		expenses: (Expense & { attachments: Attachment[] })[];
 		owner: User & { preferences: Preferences | null };
 	};
+}
+
+interface AttachmentData {
+	key: string;
+	buffer: Buffer;
 }
 
 const MUTED_COLOR = "#6b7280";
@@ -52,10 +60,155 @@ function formatExpenseMeta(expense: Expense): string {
 	return "";
 }
 
+/**
+ * Fetch all attachments from storage and categorize them
+ */
+async function fetchAttachments(
+	expenses: (Expense & { attachments: Attachment[] })[],
+): Promise<{ images: AttachmentData[]; pdfs: AttachmentData[] }> {
+	const images: AttachmentData[] = [];
+	const pdfs: AttachmentData[] = [];
+
+	// Collect all attachments from all expenses
+	const allAttachments = expenses.flatMap((expense) => expense.attachments);
+
+	// Fetch all attachments in parallel
+	const fetchPromises = allAttachments.map(async (attachment) => {
+		const buffer = await getFileFromStorage(attachment.key);
+		if (!buffer) {
+			console.warn(`[PDF] Failed to fetch attachment: ${attachment.key}`);
+			return null;
+		}
+		return { key: attachment.key, buffer };
+	});
+
+	const results = await Promise.all(fetchPromises);
+
+	// Categorize fetched attachments
+	for (const result of results) {
+		if (!result) continue;
+
+		if (isImageFile(result.key)) {
+			images.push(result);
+		} else if (isPdfFile(result.key)) {
+			pdfs.push(result);
+		}
+		// Skip other file types (cannot be rendered)
+	}
+
+	return { images, pdfs };
+}
+
+/**
+ * Add image attachments to the PDF document
+ */
+function addImagesToPdf(
+	doc: typeof PDFDocument.prototype,
+	images: AttachmentData[],
+): void {
+	if (images.length === 0) return;
+
+	// Add section header for attachments
+	doc.addPage();
+	doc.fontSize(14);
+	doc.font("Helvetica-Bold");
+	doc.text("Belege / Anhänge", { align: "left" });
+	doc.moveDown(1);
+
+	const pageWidth =
+		doc.page.width - doc.page.margins.left - doc.page.margins.right;
+	const pageHeight =
+		doc.page.height - doc.page.margins.top - doc.page.margins.bottom;
+	const maxImageHeight = pageHeight - 60; // Leave room for filename label
+
+	let imageIndex = 0;
+	for (const image of images) {
+		// Add new page for each image (except the first one which already has the header)
+		if (imageIndex > 0) {
+			doc.addPage();
+		}
+
+		// Add filename label
+		doc.fontSize(10);
+		doc.font("Helvetica");
+		doc.fillColor("#6b7280");
+		const filename = image.key.split("/").pop() || image.key;
+		doc.text(`Anhang ${imageIndex + 1}: ${filename}`, { align: "left" });
+		doc.fillColor("black");
+		doc.moveDown(0.5);
+
+		try {
+			// Add the image, scaling to fit page while maintaining aspect ratio
+			doc.image(image.buffer, {
+				fit: [pageWidth, maxImageHeight],
+				align: "center",
+				valign: "top",
+			});
+		} catch (error) {
+			console.error(`[PDF] Failed to embed image: ${image.key}`, error);
+			doc.fontSize(10);
+			doc.fillColor("#dc2626");
+			doc.text(`Fehler beim Einbetten des Bildes: ${filename}`);
+			doc.fillColor("black");
+		}
+
+		imageIndex++;
+	}
+}
+
+/**
+ * Merge PDF attachments into the final document using pdf-lib
+ */
+async function mergePdfAttachments(
+	summaryBuffer: Buffer,
+	pdfAttachments: AttachmentData[],
+): Promise<Buffer> {
+	if (pdfAttachments.length === 0) {
+		return summaryBuffer;
+	}
+
+	try {
+		// Load the summary PDF
+		const mergedPdf = await PDFLibDocument.load(summaryBuffer);
+
+		// Merge each PDF attachment
+		for (const attachment of pdfAttachments) {
+			try {
+				const attachmentPdf = await PDFLibDocument.load(attachment.buffer);
+				const pages = await mergedPdf.copyPages(
+					attachmentPdf,
+					attachmentPdf.getPageIndices(),
+				);
+
+				for (const page of pages) {
+					mergedPdf.addPage(page);
+				}
+			} catch (error) {
+				console.error(
+					`[PDF] Failed to merge PDF attachment: ${attachment.key}`,
+					error,
+				);
+				// Continue with other attachments
+			}
+		}
+
+		// Save the merged PDF
+		const mergedBuffer = await mergedPdf.save();
+		return Buffer.from(mergedBuffer);
+	} catch (error) {
+		console.error("[PDF] Failed to merge PDF attachments", error);
+		// Return original summary if merge fails
+		return summaryBuffer;
+	}
+}
+
 export async function generatePdfSummary({
 	report,
 }: SummaryProps): Promise<Buffer> {
 	const pdfCreationDate = new Date();
+
+	// Fetch all attachments from storage
+	const { images, pdfs } = await fetchAttachments(report.expenses);
 
 	const doc = new PDFDocument({
 		autoFirstPage: true,
@@ -199,10 +352,14 @@ export async function generatePdfSummary({
 		},
 	);
 
+	// Add image attachments to the PDF
+	addImagesToPdf(doc, images);
+
+	// Generate the PDFKit document buffer
 	const chunks: Uint8Array[] = [];
 	doc.on("data", (chunk) => chunks.push(chunk));
 
-	return new Promise((resolve, reject) => {
+	const summaryBuffer = await new Promise<Buffer>((resolve, reject) => {
 		doc.on("end", () => {
 			const buffer = Buffer.concat(chunks);
 			resolve(buffer);
@@ -210,6 +367,11 @@ export async function generatePdfSummary({
 		doc.on("error", reject);
 		doc.end();
 	});
+
+	// Merge PDF attachments using pdf-lib
+	const finalBuffer = await mergePdfAttachments(summaryBuffer, pdfs);
+
+	return finalBuffer;
 }
 
 export async function savePdfSummaryToFile(
