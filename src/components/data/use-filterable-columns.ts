@@ -1,0 +1,26 @@
+import type { Column, Table } from "@tanstack/react-table";
+import { useMemo } from "react";
+import { hasMenuBasedFilter } from "./filter-types";
+
+/**
+ * Returns all columns that can be filtered via the filter menu dropdown.
+ *
+ * This hook filters out columns that:
+ * - Cannot be filtered (based on TanStack Table's `getCanFilter`)
+ * - Use inline filter inputs (text, number) or have filtering disabled (none)
+ *
+ * @example
+ * ```tsx
+ * const filterableColumns = useFilterableColumns(table);
+ * ```
+ */
+export function useFilterableColumns<TData>(
+	table: Table<TData>,
+): Column<TData, unknown>[] {
+	return useMemo(() => {
+		return table.getAllColumns().filter((column) => {
+			const meta = column.columnDef.meta;
+			return column.getCanFilter() && hasMenuBasedFilter(meta?.filterType);
+		});
+	}, [table]);
+}
