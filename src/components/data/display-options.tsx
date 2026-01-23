@@ -121,13 +121,42 @@ function DataDisplaySorting<TData>({
 }: React.ComponentProps<typeof NativeSelect> & {
 	display: Table<TData>;
 }) {
+	const sorting = display.getState().sorting;
+
+	const sortableColumns = React.useMemo(() => {
+		return display.getAllColumns().filter((column) => column.getCanSort());
+	}, [display]);
+
 	return (
 		<NativeSelect
 			className="w-full"
+			onChange={(e) => {
+				const value = e.target.value;
+
+				if (!value) {
+					display.setSorting([]);
+					return;
+				}
+
+				// Preserve the current sort direction if sorting by the same column,
+				// otherwise default to ascending (desc: false)
+				const currentSort = sorting.find((s) => s.id === value);
+				display.setSorting([{ id: value, desc: currentSort?.desc ?? false }]);
+			}}
 			size="sm"
-			value={display.getState().sorting[0]?.id ?? undefined}
+			value={sorting[0]?.id ?? undefined}
 			{...props}
-		/>
+		>
+			<NativeSelectOption value="">No Sorting</NativeSelectOption>
+
+			{sortableColumns.map((column) => {
+				return (
+					<NativeSelectOption key={column.id} value={column.id}>
+						{column.columnDef.meta?.label}
+					</NativeSelectOption>
+				);
+			})}
+		</NativeSelect>
 	);
 }
 
