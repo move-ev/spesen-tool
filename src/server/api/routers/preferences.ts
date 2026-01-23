@@ -1,6 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { updatePreferencesServerSchema } from "@/lib/validators";
+import {
+	unformattedIbanSchema,
+	updatePreferencesServerSchema,
+} from "@/lib/validators";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const preferencesRouter = createTRPCRouter({
@@ -33,7 +36,11 @@ export const preferencesRouter = createTRPCRouter({
 		}),
 
 	updateIban: protectedProcedure
-		.input(z.object({ iban: z.string() }))
+		.input(
+			z.object({
+				iban: z.union([z.string().length(0), unformattedIbanSchema]),
+			}),
+		)
 		.mutation(async ({ ctx, input }) => {
 			const preferences = await ctx.db.preferences.findUnique({
 				where: { userId: ctx.session.user.id },
@@ -51,7 +58,9 @@ export const preferencesRouter = createTRPCRouter({
 
 			return await ctx.db.preferences.update({
 				where: { userId: ctx.session.user.id },
-				data: { iban: input.iban },
+				data: {
+					iban: input.iban && input.iban.length > 0 ? input.iban : null,
+				},
 			});
 		}),
 });
