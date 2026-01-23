@@ -81,3 +81,27 @@ export function translateExpenseType(type: ExpenseType) {
 			return "Verpflegung";
 	}
 }
+
+/**
+ * Formats an IBAN string by removing non-alphanumeric characters,
+ * converting to uppercase, and adding spaces every 4 characters.
+ * Maximum length is 34 characters (standard IBAN length).
+ */
+export function formatIban(value: string): string {
+	// Remove all non-alphanumeric characters and convert to uppercase
+	const cleaned = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+
+	// Limit to 34 characters (max IBAN length)
+	const limited = cleaned.slice(0, 34);
+
+	// Add spaces every 4 characters
+	return limited.replace(/(.{4})/g, "$1 ").trim();
+}
+
+/**
+ * Removes formatting from an IBAN string (removes spaces and converts to uppercase).
+ * This is useful when storing the IBAN in the database.
+ */
+export function unformatIban(value: string): string {
+	return value.replace(/\s/g, "").toUpperCase();
+}

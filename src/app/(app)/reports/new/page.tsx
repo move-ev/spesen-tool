@@ -10,6 +10,7 @@ import { api } from "@/trpc/server";
 
 export default async function ServerPage() {
 	void api.costUnit.listGrouped.prefetch();
+	void api.preferences.getOwn.prefetch();
 
 	return (
 		<React.Fragment>
