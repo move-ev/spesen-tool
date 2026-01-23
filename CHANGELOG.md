@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.3.0-alpha.1](https://github.com/move-ev/spesen-tool/compare/spesen-tool-v0.2.0-alpha.1...spesen-tool-v0.3.0-alpha.1) (2026-01-23)
+
+
+### Features
+
+* **admin:** add clickable row navigation with proper z-index stacking ([18f0fe4](https://github.com/move-ev/spesen-tool/commit/18f0fe405deddb1ee60343ca95fef87318da88b7))
+* **admin:** cost unit and group creation ([a938aeb](https://github.com/move-ev/spesen-tool/commit/a938aeb939c6101c263bc29d3e7d48aa42e827dc))
+* **admin:** replace report lists with filterable data table ([4e22cc6](https://github.com/move-ev/spesen-tool/commit/4e22cc637376aca01596405842a2e9317654f3b0))
+* **api:** add CRUD operations and validation for cost units ([8741aea](https://github.com/move-ev/spesen-tool/commit/8741aea30ae57feffc715dac1a14a89bd824caf0))
+* **api:** implement user IBAN ([ca85d1f](https://github.com/move-ev/spesen-tool/commit/ca85d1f13af70c99587366d7e65a247bb23ea8a6))
+* **config:** add type-safe file-based configuration system ([1e06878](https://github.com/move-ev/spesen-tool/commit/1e0687822fcbbc113721dc381a8a0825d473b4d8))
+* **config:** file based app configuration system ([30248f0](https://github.com/move-ev/spesen-tool/commit/30248f075684c9f46f9802513472438bdbbc6701))
+* **cost-unit:** cost units list ([0477939](https://github.com/move-ev/spesen-tool/commit/0477939abb6dea80cdf4d50ad3e3e71878adf8be))
+* **data:** add filtering and display infrastructure ([c3606ac](https://github.com/move-ev/spesen-tool/commit/c3606ac6e10dd29a272954be50411d9f028bcbda))
+* **db:** implement cost unit model ([06fa550](https://github.com/move-ev/spesen-tool/commit/06fa5504c9b498b2008a4c058ad2accc46bcab0d))
+* **deps:** install @tanstack/react-table ([7e6964a](https://github.com/move-ev/spesen-tool/commit/7e6964a20317b882bf627f5e3a2b69a5628b13ef))
+* **display-options:** add sorting direction toggle ([875f363](https://github.com/move-ev/spesen-tool/commit/875f363fd97002df6d63d62f2a9f3e3c0c3313e6))
+* implement cost units ([7d7939c](https://github.com/move-ev/spesen-tool/commit/7d7939cba1d34fee841d4d52f0b25e7604b4db12))
+* implement data list component for report filtering ([19bbbaa](https://github.com/move-ev/spesen-tool/commit/19bbbaa64a9d4254c744a09654522ca423f9b3dd))
+* **lib:** add formatTimeElapsed utility and status icons ([6d5fe22](https://github.com/move-ev/spesen-tool/commit/6d5fe22461cb2c9bbbbdf393802b3d933141592a))
+* **mail:** implement new email designs ([fcfab1b](https://github.com/move-ev/spesen-tool/commit/fcfab1b6b5882d8d5029b3bc9579ac9e5b341832))
+* **report:** add masked input to create report iban ([b1d9f8f](https://github.com/move-ev/spesen-tool/commit/b1d9f8f175bf0885e03b15ee3adedf37e8e0e9c8))
+* **report:** append report attachments to PDF export ([5ee747d](https://github.com/move-ev/spesen-tool/commit/5ee747d394f00e77250eb145bd94cdd7b5e49520))
+* **report:** connect cost unit and reports ([d971bde](https://github.com/move-ev/spesen-tool/commit/d971bdeb33252393df165519ac7eb3bb2317069f))
+* **report:** implement increasing report ids ([e7aa92b](https://github.com/move-ev/spesen-tool/commit/e7aa92bc9ac98ad3f652cef085ee0e706784e734))
+* **report:** implement increasing report ids ([e7ce2cc](https://github.com/move-ev/spesen-tool/commit/e7ce2ccd1a7cb8e31834bd98a339f712114f3524))
+* **report:** implement user IBAN in create report form ([1ea86b7](https://github.com/move-ev/spesen-tool/commit/1ea86b7d9ad7e16b7bc34ec462cfd1c3e60b9d72))
+* **ui:** add reusable list components ([e7e4cc7](https://github.com/move-ev/spesen-tool/commit/e7e4cc783c4ae192ff0a330ec18b42e6cd2ca50f))
+* **ui:** install checkbox and button-group ([f3125bf](https://github.com/move-ev/spesen-tool/commit/f3125bf37c74af71b41752d2f89315435c550372))
+* **user:** iban in user prefferences ([9c29d0e](https://github.com/move-ev/spesen-tool/commit/9c29d0eb9c7a060008a7469fa35a005c5940e9e3))
+
+
+### Bug Fixes
+
+* **a11y:** improve report UI accessibility ([ea60df4](https://github.com/move-ev/spesen-tool/commit/ea60df45bb3df1eadef25abb5f40056bc9dc7d2d))
+* **api:** allow admins to access report expenses ([63fb488](https://github.com/move-ev/spesen-tool/commit/63fb488021c4f485c4eaf2028d7a71da37a6eec4))
+* **api:** remove deprecated admin field from api ([992fd84](https://github.com/move-ev/spesen-tool/commit/992fd84327348def48c7abb9b44bd2fbe44b0f7e))
+* **api:** scope report stats to report expenses ([f166aba](https://github.com/move-ev/spesen-tool/commit/f166aba724da5d750d00d7590305859b56506495))
+* **api:** update report request query ([87b77c1](https://github.com/move-ev/spesen-tool/commit/87b77c1f8bffaa0f796be976e9e54b080b9a923d))
+* **api:** wrong email argument ([77b2e91](https://github.com/move-ev/spesen-tool/commit/77b2e91427842afed6a8d9209d3df899aa94385a))
+* biome ([e734fd2](https://github.com/move-ev/spesen-tool/commit/e734fd24fedf3c18b96c884935d1729609b196a4))
+* change plain html to react components ([bf0c89f](https://github.com/move-ev/spesen-tool/commit/bf0c89f10b0597906f504fee7d7813c94d8b7a6c))
+* **config:** fix config loading issue ([847ab7c](https://github.com/move-ev/spesen-tool/commit/847ab7c08c13f2d388512ec3541f9425974b3798))
+* **config:** handle build-time config loading gracefully ([22a45a6](https://github.com/move-ev/spesen-tool/commit/22a45a6c36fb1d2e3f907e1cc40a56ebd8d57090))
+* **config:** reset cached promise on initialization failure ([a49e5c3](https://github.com/move-ev/spesen-tool/commit/a49e5c32787e16e039f9a7767608c95f297ca5d6))
+* **config:** validate parseInt result for env var numbers ([7f93f4c](https://github.com/move-ev/spesen-tool/commit/7f93f4cf29b4c479d42100a389495b8fef7669c9))
+* **data:** remove stale useMemo in FilterMenu hasActiveFilters ([12ce175](https://github.com/move-ev/spesen-tool/commit/12ce1757fe1acfe569510bb0f5dd38c630b0329b))
+* **db:** add unique constraints and index for cost units ([f6b0638](https://github.com/move-ev/spesen-tool/commit/f6b0638bcbe6e5cf3c9d033270c679d032459317))
+* **db:** remove tag unique constraint ([1ea9bd9](https://github.com/move-ev/spesen-tool/commit/1ea9bd96a533893fa5807fe9d9df014cb608e3a2))
+* **form:** await IBAN update before creating report ([c4054a2](https://github.com/move-ev/spesen-tool/commit/c4054a250cc3d61a0fd0bf831af0042e24a94cc9))
+* **form:** await IBAN update before creating report ([3845353](https://github.com/move-ev/spesen-tool/commit/38453539bb88b70e8f07d0366655b12b8122c7f6))
+* generate database ([de312c9](https://github.com/move-ev/spesen-tool/commit/de312c9d3d20069a558ec71a19657341f2aeffe5))
+* **input:** update IBAN validators ([f3d46bf](https://github.com/move-ev/spesen-tool/commit/f3d46bf785b7df05f208eb1c65efd83fca3b9625))
+* **pdf:** improved file handling ([7349fc4](https://github.com/move-ev/spesen-tool/commit/7349fc449dbc216fe72a5d2f782a80e99dbd4b64))
+* **security:** add authentication to file upload route ([0e7b415](https://github.com/move-ev/spesen-tool/commit/0e7b415f0de499e56c06ad1d34d63ca04a6d4b16))
+* **security:** enforce report access in listForReport ([e05cffa](https://github.com/move-ev/spesen-tool/commit/e05cffa143cfa62ad7350002195e5649cf11ebc3))
+* **security:** restrict settings pdf uploads to admins ([9a20d24](https://github.com/move-ev/spesen-tool/commit/9a20d24ed8c9daaaae09ecf71f6b33b2db964ec3))
+* took out generated/prisma ([0519113](https://github.com/move-ev/spesen-tool/commit/05191138f57fc1722fa319742a2ded82bab8d13d))
+* **ui:** padding on auth layout ([e8cc259](https://github.com/move-ev/spesen-tool/commit/e8cc2590dc0211f09e340b5d223bbfcaa05118bd))
+* **ui:** padding on auth layout ([2099d97](https://github.com/move-ev/spesen-tool/commit/2099d97bd4246eaf1b09089a3703871e63dfb43b))
+* **ui:** remove debug code from preferences form toast ([935446b](https://github.com/move-ev/spesen-tool/commit/935446bea309c55fcee0bf73887ab5c6890f3011))
+* url-enconde attachment keys in email links ([001e022](https://github.com/move-ev/spesen-tool/commit/001e022d9db538df75a0f94aa394a2a930b61b31))
+* **utils:** correct argument order in formatTimeElapsed ([7e104ae](https://github.com/move-ev/spesen-tool/commit/7e104aea846b8ff3a3d7ce7464061bec5fbbd5ef))
+
+
+### Performance Improvements
+
+* **components:** memoize report list totals ([9c8d188](https://github.com/move-ev/spesen-tool/commit/9c8d188b3a6dbc49cbd95d99c2335761c3d0ab21))
+* **db:** add indexes for common report queries ([50f69fe](https://github.com/move-ev/spesen-tool/commit/50f69fe2f7e85e71fd4f6dd9c1ea147bd236aa90))
+
 ## [0.2.0-alpha.1](https://github.com/move-ev/spesen-tool/compare/spesen-tool-v0.1.0-alpha.1...spesen-tool-v0.2.0-alpha.1) (2026-01-21)
 
 
