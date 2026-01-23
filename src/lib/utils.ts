@@ -1,4 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
+import {
+	differenceInDays,
+	differenceInHours,
+	differenceInMinutes,
+	format,
+} from "date-fns";
 import { twMerge } from "tailwind-merge";
 import type { ExpenseType, ReportStatus } from "@/generated/prisma/enums";
 
@@ -104,4 +110,22 @@ export function formatIban(value: string): string {
  */
 export function unformatIban(value: string): string {
 	return value.replace(/\s/g, "").toUpperCase();
+}
+
+export function formatTimeElapsed(date: Date): string {
+	const now = new Date();
+
+	if (differenceInMinutes(now, date) < 60) {
+		return `vor ${differenceInMinutes(now, date)} Minuten`;
+	}
+
+	if (differenceInHours(now, date) < 24) {
+		return `vor ${differenceInHours(now, date)} Stunden`;
+	}
+
+	if (differenceInDays(date, now) < 7) {
+		return `vor ${differenceInDays(now, date)} Tagen`;
+	}
+
+	return `am ${format(date, "dd.MM.yyyy")}`;
 }
