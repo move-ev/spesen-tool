@@ -1,11 +1,9 @@
 import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
-import { ReportListSkeleton } from "@/components/report-list";
 import { cn } from "@/lib/utils";
 import { api, HydrateClient } from "@/trpc/server";
-import { OpenReportList } from "./_components/open-report-list";
-import { RelevantReportList } from "./_components/relevant-report-list";
-import { AdminStats, AdminStatsSkeleton } from "./_components/stats";
+import { AdminStatsSkeleton } from "./_components/stats";
+import { ReportsList } from "./data-display/reports-list";
 
 export default async function ServerPage() {
 	void api.admin.stats.prefetch();
@@ -26,21 +24,9 @@ export default async function ServerPage() {
 					</PageDescription>
 				</div>
 			</section>
-			<section className="container mt-8">
+			<section className="mt-8">
 				<Suspense fallback={<AdminStatsSkeleton />}>
-					<AdminStats />
-				</Suspense>
-			</section>
-			<section className="container mt-12">
-				<h2 className="mb-6 font-semibold">Offene Anträge</h2>
-				<Suspense fallback={<ReportListSkeleton />}>
-					<OpenReportList />
-				</Suspense>
-			</section>
-			<section className="container my-12">
-				<h2 className="mb-6 font-semibold">Bearbeitete Anträge</h2>
-				<Suspense fallback={<ReportListSkeleton />}>
-					<RelevantReportList />
+					<ReportsList />
 				</Suspense>
 			</section>
 		</HydrateClient>

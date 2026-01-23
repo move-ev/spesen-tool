@@ -6,6 +6,28 @@ import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 const THIRTY_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const adminRouter = createTRPCRouter({
+	listAll: adminProcedure.query(async ({ ctx }) => {
+		return ctx.db.report.findMany({
+			include: {
+				owner: {
+					select: {
+						name: true,
+						image: true,
+						email: true,
+					},
+				},
+				costUnit: {
+					select: {
+						tag: true,
+					},
+				},
+			},
+			orderBy: {
+				lastUpdatedAt: "desc",
+			},
+		});
+	}),
+
 	stats: adminProcedure.query(async ({ ctx }) => {
 		const { db } = ctx;
 
