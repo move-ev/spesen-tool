@@ -155,7 +155,6 @@ async function loadConfigFile(filePath: string): Promise<ConfigInput> {
 
 		return rawConfig as ConfigInput;
 	} catch (error) {
-		console.error("[Config] Error loading config file:", error);
 		if (error instanceof Error && error.message.includes("Cannot find module")) {
 			throw new ConfigFileNotFoundError([filePath]);
 		}

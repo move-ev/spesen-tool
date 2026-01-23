@@ -64,7 +64,11 @@ function loadConfigSync(): Config | null {
 		const validated = configSchema.parse(rawConfig);
 
 		return validated as Config;
-	} catch {
+	} catch (error) {
+		// Log the error to help debug configuration issues
+		// This is a fallback path, so we don't throw, but logging helps identify
+		// issues like validation failures or syntax errors in config.ts
+		console.error("[Config] Failed to load config synchronously:", error);
 		return null;
 	}
 }
@@ -77,11 +81,13 @@ function getConfigSafe(): Config | null {
 	if (_cachedConfig) return _cachedConfig;
 
 	// Try to get from loader cache first
+	// This throws if loadConfig() hasn't been called yet, which is expected
+	// during module initialization - we intentionally fall back to sync load
 	try {
 		_cachedConfig = getConfig();
 		return _cachedConfig;
 	} catch {
-		// Loader cache not available, try sync load
+		// Expected: loader cache not initialized yet, fall through to sync load
 	}
 
 	// Fallback: load config synchronously using jiti

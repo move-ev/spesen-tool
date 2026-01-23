@@ -82,7 +82,10 @@ export async function getFileFromStorage(key: string): Promise<Buffer | null> {
  * @returns The file extension in lowercase (e.g., "pdf")
  */
 export function getFileExtension(key: string): string {
-	const parts = key.split(".");
+	// Extract the filename from the path first
+	const filename = key.split("/").at(-1) ?? "";
+	// Then get the extension from the filename
+	const parts = filename.split(".");
 	if (parts.length <= 1) return "";
 	const ext = parts.at(-1);
 	return ext ? ext.toLowerCase() : "";
