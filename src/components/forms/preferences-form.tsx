@@ -24,10 +24,8 @@ export function PreferencesForm() {
 	const [preferences] = api.preferences.getOwn.useSuspenseQuery();
 
 	const updatePreferences = api.preferences.updateOwn.useMutation({
-		onSuccess: (input) => {
-			toast.success("Einstellungen wurden erfolgreich gespeichert", {
-				description: <pre>{JSON.stringify(input, null, 2)}</pre>,
-			});
+		onSuccess: () => {
+			toast.success("Einstellungen wurden erfolgreich gespeichert");
 			utils.preferences.getOwn.invalidate();
 		},
 		onError: (error) => {

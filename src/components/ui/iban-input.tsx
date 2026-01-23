@@ -28,7 +28,7 @@ export function IbanInput({ value, onChange, ...props }: IbanInputProps) {
 		<Input
 			{...props}
 			autoComplete="off"
-			maxLength={41}
+			maxLength={42}
 			onChange={handleChange}
 			placeholder="DE85 1234 5678 9012 3456 78"
 			value={value}
