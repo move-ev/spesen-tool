@@ -8,6 +8,7 @@ import {
 	TagIcon,
 	UserCircleIcon,
 } from "lucide-react";
+import Link from "next/link";
 import type {
 	DateRangeFilterValue,
 	MultiSelectFilterValue,
@@ -101,22 +102,29 @@ const statusColumn: ColumnDef<ExtendedReport> = {
 	},
 	cell: ({ row }) => {
 		const Icon = StatusIcons[row.original.status];
+		const translatedStatus = translateReportStatus(row.original.status);
 		return (
-			<span>
-				<Icon
-					className={cn(
-						"size-4",
-						row.original.status === "DRAFT" && "text-muted-foreground",
-						row.original.status === "PENDING_APPROVAL" && "text-yellow-500",
-						row.original.status === "NEEDS_REVISION" && "text-orange-500",
-						row.original.status === "ACCEPTED" && "text-green-500",
-						row.original.status === "REJECTED" && "text-red-500",
-					)}
+			<Tooltip>
+				<TooltipTrigger
+					className="relative z-10"
+					render={
+						<span>
+							<Icon
+								className={cn(
+									"size-4",
+									row.original.status === "DRAFT" && "text-muted-foreground",
+									row.original.status === "PENDING_APPROVAL" && "text-yellow-500",
+									row.original.status === "NEEDS_REVISION" && "text-orange-500",
+									row.original.status === "ACCEPTED" && "text-green-500",
+									row.original.status === "REJECTED" && "text-red-500",
+								)}
+							/>
+							<span className="sr-only">{translatedStatus}</span>
+						</span>
+					}
 				/>
-				<span className="sr-only">
-					{translateReportStatus(row.original.status)}
-				</span>
-			</span>
+				<TooltipContent>{translatedStatus}</TooltipContent>
+			</Tooltip>
 		);
 	},
 	meta: {
@@ -150,9 +158,13 @@ const titleColumn: ColumnDef<ExtendedReport> = {
 	sortingFn: "text",
 	cell: ({ row }) => {
 		return (
-			<span className="truncate font-medium text-foreground">
+			<Link
+				className="font-medium text-foreground"
+				href={`/reports/${row.original.id}`}
+			>
+				<span className="absolute inset-0 z-0 h-full w-full transition-colors" />
 				{row.original.title}
-			</span>
+			</Link>
 		);
 	},
 	meta: {
@@ -186,7 +198,7 @@ const createOwnerColumn = (
 	cell: ({ row }) => {
 		return (
 			<Tooltip>
-				<TooltipTrigger>
+				<TooltipTrigger className="relative z-10">
 					<Avatar className={cn("size-5")}>
 						<AvatarImage src={row.original.owner.image ?? undefined} />
 						<AvatarFallback>{row.original.owner.name.charAt(0)}</AvatarFallback>
@@ -240,14 +252,11 @@ const createCostUnitColumn = (
 	enableSorting: true,
 	enableHiding: true,
 	filterFn: (row, _columnId, filterValue) => {
-		// const { operator = "is", value } = (filterValue ??
-		// 	{}) as SelectFilterValue<string>;
-
-		// return operator === "is"
-		// 	? row.original.costUnit.tag === value
-		// 	: row.original.costUnit.tag !== value;
-		const { operator = "in", value } = (filterValue ??
+		const { operator = "in", value = [] } = (filterValue ??
 			{}) as MultiSelectFilterValue<string>;
+
+		// If no values selected, include all rows
+		if (value.length === 0) return true;
 
 		return operator === "in"
 			? value.includes(row.original.costUnit.tag)
@@ -287,7 +296,7 @@ const createdAtColumn: ColumnDef<ExtendedReport> = {
 	cell: ({ row }) => {
 		return (
 			<Tooltip>
-				<TooltipTrigger>
+				<TooltipTrigger className="relative z-10">
 					<Badge variant="outline">{format(row.original.createdAt, "dd.MM.")}</Badge>
 				</TooltipTrigger>
 				<TooltipContent>

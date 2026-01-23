@@ -100,7 +100,7 @@ export function ReportsList() {
 
 	return (
 		<div>
-			<div className="container mb-4 flex flex-nowrap items-start justify-between gap-4">
+			<div className="container flex flex-nowrap items-start justify-between gap-4 border-b pb-4">
 				<FilterList className="grow" table={table}>
 					<FilterMenu
 						className={"group/filter-menu data-[filtered=true]:size-6"}
@@ -116,7 +116,6 @@ export function ReportsList() {
 				</FilterList>
 				<DisplayOptions
 					className={"shrink-0"}
-					defaultExpanded={true}
 					display={table}
 					size={"sm"}
 					variant={"outline"}
@@ -127,12 +126,19 @@ export function ReportsList() {
 			<List>
 				{table.getRowModel().rows.map((row) => {
 					if (row.getIsGrouped()) {
-						return <DataListGroupHeader display={table} key={row.id} row={row} />;
+						return (
+							<DataListGroupHeader
+								className="first:border-t-0"
+								display={table}
+								key={row.id}
+								row={row}
+							/>
+						);
 					}
 					return (
 						<ListItem
 							{...(row.getIsSelected() ? { "data-selected": true } : {})}
-							className="pr-8"
+							className="relative pr-8"
 							key={row.id}
 						>
 							{row.getVisibleCells().map((cell) => (
