@@ -1,14 +1,12 @@
 import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { api, HydrateClient } from "@/trpc/server";
-import { AdminStatsSkeleton } from "./_components/stats";
 import { ReportsList } from "./data-display/reports-list";
 
 export default async function ServerPage() {
-	void api.admin.stats.prefetch();
-	void api.admin.listOpen.prefetch();
-	void api.admin.listRelevant.prefetch();
+	void api.admin.listAll.prefetch();
 
 	return (
 		<HydrateClient>
@@ -25,7 +23,17 @@ export default async function ServerPage() {
 				</div>
 			</section>
 			<section className="mt-8">
-				<Suspense fallback={<AdminStatsSkeleton />}>
+				<Suspense
+					fallback={
+						<div className="container space-y-2">
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+						</div>
+					}
+				>
 					<ReportsList />
 				</Suspense>
 			</section>
