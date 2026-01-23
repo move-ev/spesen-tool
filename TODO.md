@@ -51,7 +51,7 @@
 - [x] "Buchungskreise" und "Geschäftseinheit" zusammenfassen zu "Kostenstelle" (siehe Liste)
   - [x] Informationen zu welche Ausgaben zu welcher Kostenstelle gehören
 - [x] IBAN + vollständiger Kontoname
-- [ ] Kopierbare Details im Report (IBAN, Kontoname, Betrag)
+- [X] Kopierbare Details im Report (IBAN, Kontoname, Betrag)
   - [ ] evtl. QR Code für das Kopieren der Details
 - [ ] Löschen von Ausgaben im Report
 - [ ] Beschreibung des Reports im PDF hervorheben
