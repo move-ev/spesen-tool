@@ -8,6 +8,12 @@ export const createReportSchema = z.object({
 	costUnitId: z.string().min(1),
 });
 
+export const ibanSchema = z
+	.string()
+	.regex(/^DE\d{2} \d{4} \d{4} \d{4} \d{4} \d{2}$/, {
+		message: "Ungültige IBAN",
+	});
+
 export const baseCreateExpenseSchema = z.object({
 	description: z.string(),
 	amount: z.number().min(0),

@@ -6,7 +6,8 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 import z from "zod";
 import { ROUTES } from "@/lib/consts";
-import { createReportSchema } from "@/lib/validators";
+import { formatIban, unformatIban } from "@/lib/utils";
+import { createReportSchema, ibanSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
@@ -70,19 +71,24 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 			title: "",
 			description: "",
 			costUnitId: "",
-			iban: preferences.iban ?? "",
+			iban: preferences.iban ? formatIban(preferences.iban) : "",
 		},
 		validators: {
 			onSubmit: createReportSchema.and(
 				z.object({
-					iban: z.string().min(1),
+					iban: ibanSchema,
 				}),
 			),
 		},
 		onSubmit: (value) => {
-			if (value.value.iban !== preferences.iban) {
+			const unformattedIban = unformatIban(value.value.iban);
+			const unformattedStoredIban = preferences.iban
+				? unformatIban(preferences.iban)
+				: "";
+
+			if (unformattedIban !== unformattedStoredIban) {
 				updateIban.mutate({
-					iban: value.value.iban,
+					iban: unformattedIban,
 				});
 			}
 
@@ -156,9 +162,13 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 									aria-invalid={isInvalid}
 									autoComplete="off"
 									id={field.name}
+									maxLength={41}
 									name={field.name}
 									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
+									onChange={(e) => {
+										const formatted = formatIban(e.target.value);
+										field.handleChange(formatted);
+									}}
 									placeholder="DE85 1234 5678 9012 3456 78"
 									value={field.state.value}
 								/>
