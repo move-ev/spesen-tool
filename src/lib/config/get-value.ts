@@ -35,18 +35,62 @@ export async function initializeConfig(): Promise<Config> {
 }
 
 /**
+ * Synchronously load config using jiti if not already loaded
+ * This handles the case where module instances don't share the cached config
+ */
+function loadConfigSync(): Config | null {
+	try {
+		const { existsSync } = require("node:fs");
+		const { resolve } = require("node:path");
+		const { createJiti } = require("jiti");
+
+		// Check for config file
+		const configPath = resolve(process.cwd(), "config.ts");
+		if (!existsSync(configPath)) {
+			return null;
+		}
+
+		// Use jiti to load TypeScript config synchronously
+		const jiti = createJiti(import.meta.url, { interopDefault: true });
+		const configModule = jiti(configPath);
+		const rawConfig = configModule.default ?? configModule.config ?? configModule;
+
+		if (!rawConfig || typeof rawConfig !== "object") {
+			return null;
+		}
+
+		// Validate with schema
+		const { configSchema } = require("./schema");
+		const validated = configSchema.parse(rawConfig);
+
+		return validated as Config;
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Get config synchronously (for use after initialization)
- * Falls back to env vars if config not yet loaded
+ * Falls back to sync loading, then env vars if config not available
  */
 function getConfigSafe(): Config | null {
 	if (_cachedConfig) return _cachedConfig;
 
+	// Try to get from loader cache first
 	try {
 		_cachedConfig = getConfig();
 		return _cachedConfig;
 	} catch {
-		return null;
+		// Loader cache not available, try sync load
 	}
+
+	// Fallback: load config synchronously using jiti
+	_cachedConfig = loadConfigSync();
+	if (_cachedConfig) {
+		return _cachedConfig;
+	}
+
+	return null;
 }
 
 /**

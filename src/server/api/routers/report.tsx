@@ -592,7 +592,11 @@ export const reportRouter = createTRPCRouter({
 							preferences: true,
 						},
 					},
-					expenses: true,
+					expenses: {
+						include: {
+							attachments: true,
+						},
+					},
 				},
 			});
 
