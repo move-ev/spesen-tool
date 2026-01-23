@@ -1,10 +1,14 @@
 "use client";
 
+import type React from "react";
+import { useCallback, useState } from "react";
+import { StatsCard, StatsCardDescription } from "@/components/stats-card";
+import { Button } from "@/components/ui/button";
 import {
-	StatsCard,
-	StatsCardDescription,
-	StatsCardValue,
-} from "@/components/stats-card";
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 
@@ -13,7 +17,7 @@ export function ReportStats({
 	reportId,
 	...props
 }: React.ComponentProps<"div"> & { reportId: string }) {
-	const [stats] = api.report.getStats.useSuspenseQuery({ id: reportId });
+	const [stats] = api.report.getDetails.useSuspenseQuery({ id: reportId });
 
 	return (
 		<div
@@ -21,20 +25,60 @@ export function ReportStats({
 			data-slot="report-stats"
 			{...props}
 		>
-			<StatsCard>
-				<StatsCardDescription>Gesamtbetrag</StatsCardDescription>
-				<StatsCardValue>{stats.totalAmount.toFixed(2)} €</StatsCardValue>
-			</StatsCard>
-			<StatsCard>
-				<StatsCardDescription>Anzahl Ausgaben</StatsCardDescription>
-				<StatsCardValue>{stats.expenseCount}</StatsCardValue>
-			</StatsCard>
-			<StatsCard>
-				<StatsCardDescription>
-					Lenny was kann man hier eintragen
-				</StatsCardDescription>
-				<StatsCardValue>🤔</StatsCardValue>
-			</StatsCard>
+			<ReportCopyStats
+				textValue={`${stats.totalAmount.toFixed(2)} €`}
+				title="Gesamtbetrag"
+				value={stats.totalAmount}
+			/>
+
+			<ReportCopyStats textValue={stats.iban} title="IBAN" value={stats.iban} />
+			<ReportCopyStats
+				textValue={stats.ownerName}
+				title="Kontoname"
+				value={stats.ownerName}
+			/>
 		</div>
+	);
+}
+
+export function ReportCopyStats({
+	value,
+	title,
+	textValue = value.toString(),
+	...props
+}: Omit<React.ComponentProps<typeof StatsCard>, "title" | "value"> & {
+	title: string;
+	value: string | number;
+	textValue?: string;
+}) {
+	const [isCopied, setIsCopied] = useState(false);
+
+	const handleCopy = useCallback(() => {
+		navigator.clipboard.writeText(value.toString());
+		setIsCopied(true);
+		setTimeout(() => {
+			setIsCopied(false);
+		}, 2000);
+	}, [value]);
+
+	return (
+		<StatsCard {...props}>
+			<StatsCardDescription>{title}</StatsCardDescription>
+			<Tooltip>
+				<TooltipTrigger
+					closeDelay={2000}
+					render={
+						<Button
+							className={"p-0 font-semibold text-xl"}
+							onClick={handleCopy}
+							variant={"ghost"}
+						>
+							{textValue}
+						</Button>
+					}
+				/>
+				<TooltipContent>{isCopied ? "Kopiert" : "Kopieren"}</TooltipContent>
+			</Tooltip>
+		</StatsCard>
 	);
 }

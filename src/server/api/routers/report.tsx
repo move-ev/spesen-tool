@@ -81,6 +81,67 @@ export const reportRouter = createTRPCRouter({
 
 			return report;
 		}),
+
+	getDetails: protectedProcedure
+		.input(z.object({ id: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const existsReport = await ctx.db.report.findUnique({
+				where: {
+					id: input.id,
+				},
+			});
+
+			if (!existsReport) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			const isAdmin = ctx.session.user.role === "admin";
+			if (!isAdmin && existsReport?.ownerId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have access to this report",
+				});
+			}
+
+			const [report, totalAmount] = await ctx.db.$transaction([
+				ctx.db.report.findUnique({
+					where: {
+						id: input.id,
+					},
+					select: {
+						owner: {
+							select: {
+								name: true,
+								preferences: {
+									select: {
+										iban: true,
+									},
+								},
+							},
+						},
+					},
+				}),
+				// Query to sum the amount of all expenses for this report
+				ctx.db.expense.aggregate({
+					where: {
+						reportId: input.id,
+					},
+					_sum: {
+						amount: true,
+					},
+				}),
+			]);
+
+			return {
+				totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
+				iban: report?.owner.preferences?.iban ?? "null",
+				ownerName: report?.owner.name ?? "Unbekannt",
+			};
+		}),
+
 	getStats: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.query(async ({ ctx, input }) => {
