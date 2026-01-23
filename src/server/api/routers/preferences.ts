@@ -59,6 +59,7 @@ export const preferencesRouter = createTRPCRouter({
 			return await ctx.db.preferences.update({
 				where: { userId: ctx.session.user.id },
 				data: {
+					// Convert empty IBAN to null for consistency with updateOwn
 					iban: input.iban && input.iban.length > 0 ? input.iban : null,
 				},
 			});
