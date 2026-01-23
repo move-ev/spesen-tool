@@ -82,6 +82,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const ReportScalarFieldEnum = {
   id: 'id',
+  tag: 'tag',
   title: 'title',
   description: 'description',
   status: 'status',
