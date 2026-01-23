@@ -1,4 +1,5 @@
 import type { Table } from "@tanstack/react-table";
+import { ArrowDownNarrowWideIcon, ArrowUpNarrowWideIcon } from "lucide-react";
 import React from "react";
 import type { ListLayout } from "../list";
 import { Button } from "../ui/button";
@@ -13,7 +14,6 @@ export function DisplayOptions<TData>({
 	onLayoutChange,
 	display,
 	grouping = true,
-	defaultExpanded = true,
 	sorting = true,
 	...props
 }: React.ComponentProps<typeof Button> & {
@@ -21,7 +21,6 @@ export function DisplayOptions<TData>({
 	layout?: ListLayout;
 	onLayoutChange?: (layout: ListLayout) => void;
 	grouping?: boolean;
-	defaultExpanded: boolean;
 	sorting?: boolean;
 }) {
 	return (
@@ -45,11 +44,7 @@ export function DisplayOptions<TData>({
 					{grouping && (
 						<div className="grid gap-2">
 							<Label htmlFor="grouping">Grouping</Label>
-							<DataDisplayGrouping
-								defaultExpanded={defaultExpanded}
-								display={display}
-								id="grouping"
-							/>
+							<DataDisplayGrouping display={display} id="grouping" />
 						</div>
 					)}
 				</div>
@@ -74,11 +69,9 @@ export function DisplayOptions<TData>({
 
 function DataDisplayGrouping<TData>({
 	display,
-	defaultExpanded,
 	...props
 }: React.ComponentProps<typeof NativeSelect> & {
 	display: Table<TData>;
-	defaultExpanded: boolean;
 }) {
 	const grouping = display.getState().grouping;
 
@@ -92,11 +85,16 @@ function DataDisplayGrouping<TData>({
 			onChange={(e) => {
 				const value = e.target.value;
 
+				if (value === "") {
+					display.setGrouping([]);
+					return;
+				}
+
 				// TODO: With this implementation, the list can only be grouped by
 				// one column at a time. This should be improved to allow grouping by
 				// multiple columns.
 				display.setGrouping([value]);
-				display.toggleAllRowsExpanded(defaultExpanded);
+				display.toggleAllRowsExpanded(true);
 			}}
 			size="sm"
 			value={grouping[0] ?? undefined}
@@ -121,13 +119,64 @@ function DataDisplaySorting<TData>({
 }: React.ComponentProps<typeof NativeSelect> & {
 	display: Table<TData>;
 }) {
+	const sorting = display.getState().sorting;
+
+	const sortableColumns = React.useMemo(() => {
+		return display.getAllColumns().filter((column) => column.getCanSort());
+	}, [display]);
+
+	const handleSortingDirectionChange = (columnId: string) => {
+		const currentSorting = display.getState().sorting;
+		const currentDirection = currentSorting[0]?.desc ?? false;
+		display.setSorting([{ id: columnId, desc: !currentDirection }]);
+	};
+
 	return (
-		<NativeSelect
-			className="w-full"
-			size="sm"
-			value={display.getState().sorting[0]?.id ?? undefined}
-			{...props}
-		/>
+		<div className="flex items-center gap-2">
+			<NativeSelect
+				className="grow"
+				onChange={(e) => {
+					const value = e.target.value;
+
+					if (value === "") {
+						display.setSorting([]);
+						return;
+					}
+
+					// TODO: With this implementation, the list can only be sorted by
+					// one column at a time. This should be improved to allow sorting by
+					// multiple columns with different directions.
+					display.setSorting([{ id: value, desc: false }]);
+				}}
+				size="sm"
+				value={sorting[0]?.id ?? ""}
+				{...props}
+			>
+				<NativeSelectOption value="">No Sorting</NativeSelectOption>
+
+				{sortableColumns.map((column) => {
+					return (
+						<NativeSelectOption key={column.id} value={column.id}>
+							{column.columnDef.meta?.label ?? column.id}
+						</NativeSelectOption>
+					);
+				})}
+			</NativeSelect>
+			{sorting[0] !== undefined && (
+				<Button
+					className="shrink-0"
+					onClick={() => handleSortingDirectionChange(sorting[0]?.id ?? "")}
+					size="icon-sm"
+					variant="outline"
+				>
+					{sorting[0]?.desc ? (
+						<ArrowDownNarrowWideIcon />
+					) : (
+						<ArrowUpNarrowWideIcon />
+					)}
+				</Button>
+			)}
+		</div>
 	);
 }
 
