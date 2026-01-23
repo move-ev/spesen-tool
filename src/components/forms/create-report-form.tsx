@@ -81,16 +81,21 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 				}),
 			),
 		},
-		onSubmit: (value) => {
+		onSubmit: async (value) => {
 			const unformattedIban = unformatIban(value.value.iban);
 			const unformattedStoredIban = preferences.iban
 				? unformatIban(preferences.iban)
 				: "";
 
 			if (unformattedIban !== unformattedStoredIban) {
-				updateIban.mutate({
-					iban: unformattedIban,
-				});
+				try {
+					await updateIban.mutateAsync({
+						iban: unformattedIban,
+					});
+				} catch {
+					// Error is already handled by the mutation's onError callback
+					return;
+				}
 			}
 
 			createReport.mutate({
@@ -234,7 +239,7 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 					name="costUnitId"
 				/>
 				<Button
-					disabled={createReport.isPending}
+					disabled={createReport.isPending || updateIban.isPending}
 					form="form-create-report"
 					type="submit"
 				>
