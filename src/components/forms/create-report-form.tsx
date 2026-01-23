@@ -4,6 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
+import z from "zod";
 import { ROUTES } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
@@ -18,6 +19,8 @@ import {
 import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
+	const utils = api.useUtils();
+	const [preferences] = api.preferences.getOwn.useSuspenseQuery();
 	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
 
 	// Create a Map for O(1) cost unit lookups by ID
@@ -51,16 +54,38 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 		},
 	});
 
+	const updateIban = api.preferences.updateIban.useMutation({
+		onSuccess: () => {
+			utils.preferences.getOwn.invalidate();
+		},
+		onError: (error) => {
+			toast.error("Fehler beim Aktualisieren der IBAN", {
+				description: error.message ?? "Ein unerwarteter Fehler ist aufgetreten",
+			});
+		},
+	});
+
 	const form = useForm({
 		defaultValues: {
 			title: "",
 			description: "",
 			costUnitId: "",
+			iban: preferences.iban ?? "",
 		},
 		validators: {
-			onSubmit: createReportSchema,
+			onSubmit: createReportSchema.and(
+				z.object({
+					iban: z.string().min(1),
+				}),
+			),
 		},
 		onSubmit: (value) => {
+			if (value.value.iban !== preferences.iban) {
+				updateIban.mutate({
+					iban: value.value.iban,
+				});
+			}
+
 			createReport.mutate({
 				...value.value,
 			});
@@ -121,6 +146,27 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 					}}
 					name="description"
 				/>
+				<form.Field name="iban">
+					{(field) => {
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+						return (
+							<Field data-invalid={isInvalid}>
+								<FieldLabel htmlFor={field.name}>IBAN</FieldLabel>
+								<Input
+									aria-invalid={isInvalid}
+									autoComplete="off"
+									id={field.name}
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="DE85 1234 5678 9012 3456 78"
+									value={field.state.value}
+								/>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</Field>
+						);
+					}}
+				</form.Field>
 
 				<form.Field
 					children={(field) => {

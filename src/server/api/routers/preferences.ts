@@ -1,3 +1,5 @@
+import { TRPCError } from "@trpc/server";
+import z from "zod";
 import { updatePreferencesSchema } from "@/lib/validators";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -26,6 +28,29 @@ export const preferencesRouter = createTRPCRouter({
 				data: {
 					notifications: input.notificationPreference,
 				},
+			});
+		}),
+
+	updateIban: protectedProcedure
+		.input(z.object({ iban: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const preferences = await ctx.db.preferences.findUnique({
+				where: { userId: ctx.session.user.id },
+				select: {
+					userId: true,
+				},
+			});
+
+			if (!preferences) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Preferences not found",
+				});
+			}
+
+			return await ctx.db.preferences.update({
+				where: { userId: ctx.session.user.id },
+				data: { iban: input.iban },
 			});
 		}),
 });
