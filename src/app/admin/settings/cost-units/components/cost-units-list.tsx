@@ -1,13 +1,37 @@
 "use client";
 
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { api } from "@/trpc/react";
+import { UpdateCostUnit } from "./update-cost-unit";
 
 export function CostUnitsList() {
 	const [data] = api.costUnit.listGrouped.useSuspenseQuery();
@@ -46,6 +70,7 @@ interface CostUnitSectionProps {
 		tag: string;
 		title: string;
 		examples: string[];
+		costUnitGroupId: string | null;
 	}[];
 }
 
@@ -68,10 +93,28 @@ interface CostUnitCardProps {
 		tag: string;
 		title: string;
 		examples: string[];
+		costUnitGroupId: string | null;
 	};
 }
 
 function CostUnitCard({ costUnit }: CostUnitCardProps) {
+	const [isEditing, setIsEditing] = useState(false);
+	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+	const utils = api.useUtils();
+
+	const deleteCostUnit = api.costUnit.delete.useMutation({
+		onSuccess: () => {
+			utils.costUnit.listGrouped.invalidate();
+			setIsDeleteOpen(false);
+			toast.success("Kostenstelle erfolgreich gelöscht");
+		},
+		onError: (error) => {
+			toast.error("Fehler beim Löschen der Kostenstelle", {
+				description: error.message ?? "Ein unerwarteter Fehler ist aufgetreten",
+			});
+		},
+	});
+
 	return (
 		<Card size="sm">
 			<CardHeader>
@@ -88,6 +131,54 @@ function CostUnitCard({ costUnit }: CostUnitCardProps) {
 					</ul>
 				</CardContent>
 			)}
+			<CardFooter className="justify-end gap-2">
+				<Dialog onOpenChange={setIsEditing} open={isEditing}>
+					<DialogTrigger
+						render={
+							<Button size="sm" variant="outline">
+								Bearbeiten
+							</Button>
+						}
+					/>
+					<DialogContent className="sm:max-w-2xl">
+						<DialogHeader>
+							<DialogTitle>Kostenstelle bearbeiten</DialogTitle>
+							<DialogDescription>
+								Passe Tag, Titel, Gruppe und Beispiele an.
+							</DialogDescription>
+						</DialogHeader>
+						<UpdateCostUnit costUnit={costUnit} onClose={() => setIsEditing(false)} />
+					</DialogContent>
+				</Dialog>
+				<AlertDialog onOpenChange={setIsDeleteOpen} open={isDeleteOpen}>
+					<AlertDialogTrigger
+						render={
+							<Button size="sm" variant="destructive">
+								Löschen
+							</Button>
+						}
+					/>
+					<AlertDialogContent className="w-full max-w-xs">
+						<AlertDialogHeader>
+							<AlertDialogTitle>Kostenstelle löschen?</AlertDialogTitle>
+							<AlertDialogDescription>
+								Die Kostenstelle "{costUnit.title}" wird dauerhaft gelöscht. Diese
+								Aktion kann nicht rückgängig gemacht werden.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>Abbrechen</AlertDialogCancel>
+							<AlertDialogAction
+								disabled={deleteCostUnit.isPending}
+								onClick={() => deleteCostUnit.mutate({ id: costUnit.id })}
+								variant="destructive"
+							>
+								Löschen
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+			</CardFooter>
 		</Card>
 	);
 }
