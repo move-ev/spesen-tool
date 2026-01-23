@@ -1,7 +1,8 @@
 "use client";
 
-import type { Table } from "@tanstack/react-table";
-import React from "react";
+import type { Column, Table } from "@tanstack/react-table";
+import type React from "react";
+import { memo, useMemo } from "react";
 import { Button } from "../ui/button";
 import {
 	DropdownMenu,
@@ -12,6 +13,11 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { renderFilterMenuContent } from "./filter-registry";
+import { useFilterableColumns } from "./use-filterable-columns";
+
+// ============================================================================
+// Types
+// ============================================================================
 
 export type FilterMenuProps<TData> = React.ComponentProps<typeof Button> & {
 	/**
@@ -19,6 +25,43 @@ export type FilterMenuProps<TData> = React.ComponentProps<typeof Button> & {
 	 */
 	table: Table<TData>;
 };
+
+type FilterMenuItemProps<TData> = {
+	column: Column<TData, unknown>;
+	table: Table<TData>;
+};
+
+// ============================================================================
+// FilterMenuItem Component
+// ============================================================================
+
+/**
+ * Renders a single filter menu item with its submenu content.
+ * Memoized to prevent unnecessary re-renders when other columns change.
+ */
+const FilterMenuItem = memo(function FilterMenuItem<TData>({
+	column,
+	table,
+}: FilterMenuItemProps<TData>) {
+	const meta = column.columnDef.meta;
+	const menuContent = renderFilterMenuContent(column, table);
+
+	if (!menuContent) return null;
+
+	return (
+		<DropdownMenuSub>
+			<DropdownMenuSubTrigger>
+				{meta?.icon && <meta.icon className="size-4" />}
+				{meta?.label ?? column.id}
+			</DropdownMenuSubTrigger>
+			{menuContent}
+		</DropdownMenuSub>
+	);
+}) as <TData>(props: FilterMenuItemProps<TData>) => React.ReactNode;
+
+// ============================================================================
+// FilterMenu Component
+// ============================================================================
 
 /**
  * A dropdown menu that displays filter options for all filterable columns.
@@ -39,21 +82,12 @@ export function FilterMenu<TData>({
 	children,
 	...buttonProps
 }: FilterMenuProps<TData>) {
-	const filterableColumns = React.useMemo(() => {
-		return table.getAllColumns().filter((column) => {
-			const meta = column.columnDef.meta;
-			// Only include columns that can be filtered and have a valid filter type
-			return (
-				column.getCanFilter() &&
-				meta?.filterType &&
-				meta.filterType !== "none" &&
-				meta.filterType !== "text" &&
-				meta.filterType !== "number"
-			);
-		});
-	}, [table]);
+	const filterableColumns = useFilterableColumns(table);
 
-	const hasActiveFilters = table.getState().columnFilters.length >= 1;
+	const hasActiveFilters = useMemo(
+		() => table.getState().columnFilters.length >= 1,
+		[table],
+	);
 
 	if (filterableColumns.length === 0) {
 		return null;
@@ -65,24 +99,14 @@ export function FilterMenu<TData>({
 				data-filtered={hasActiveFilters}
 				render={<Button {...buttonProps}>{children}</Button>}
 			/>
-			<DropdownMenuContent className="w-full min-w-48 max-w-72">
+			<DropdownMenuContent
+				aria-label="Filteroptionen"
+				className="w-full min-w-48 max-w-72"
+			>
 				<DropdownMenuGroup>
-					{filterableColumns.map((column) => {
-						const meta = column.columnDef.meta;
-						const menuContent = renderFilterMenuContent(column, table);
-
-						if (!menuContent) return null;
-
-						return (
-							<DropdownMenuSub key={column.id}>
-								<DropdownMenuSubTrigger>
-									{meta?.icon && <meta.icon className="size-4" />}
-									{meta?.label ?? column.id}
-								</DropdownMenuSubTrigger>
-								{menuContent}
-							</DropdownMenuSub>
-						);
-					})}
+					{filterableColumns.map((column) => (
+						<FilterMenuItem column={column} key={column.id} table={table} />
+					))}
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>

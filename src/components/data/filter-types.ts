@@ -81,6 +81,21 @@ export function isMultiSelectFilter(
 	);
 }
 
+/**
+ * Checks if a filter type has a menu-based UI (dropdown with options).
+ * Returns false for filter types that use inline inputs (text, number) or are disabled (none).
+ */
+export function hasMenuBasedFilter(
+	filterType: ColumnFilterType | undefined,
+): boolean {
+	return (
+		filterType !== undefined &&
+		filterType !== "none" &&
+		filterType !== "text" &&
+		filterType !== "number"
+	);
+}
+
 // ============================================================================
 // Filter Preset Types
 // ============================================================================
