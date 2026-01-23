@@ -55,7 +55,7 @@
   - [ ] evtl. QR Code für das Kopieren der Details
 - [ ] Löschen von Ausgaben im Report
 - [ ] Beschreibung des Reports im PDF hervorheben
-- [ ] Report ID aufsteigend
-- [ ] IBAN vom Antragssteller auf dem PDF
+- [X] Report ID aufsteigend
+- [X] IBAN vom Antragssteller auf dem PDF
 - [ ] Anhänge im PDF REport
-- [ ] Kein Prüfer im PDF
+- [X] Kein Prüfer im PDF
