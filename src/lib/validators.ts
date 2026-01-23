@@ -85,6 +85,7 @@ export const foodExpenseMetaSchema = z.object({
 
 export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
+	iban: ibanSchema.optional(),
 });
 
 export const updateMealAllowancesSchema = z.object({

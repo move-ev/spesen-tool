@@ -11,6 +11,7 @@ import { createReportSchema, ibanSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { IbanInput } from "../ui/iban-input";
 import { Input } from "../ui/input";
 import {
 	NativeSelect,
@@ -158,18 +159,12 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 						return (
 							<Field data-invalid={isInvalid}>
 								<FieldLabel htmlFor={field.name}>IBAN</FieldLabel>
-								<Input
+								<IbanInput
 									aria-invalid={isInvalid}
-									autoComplete="off"
 									id={field.name}
-									maxLength={41}
 									name={field.name}
 									onBlur={field.handleBlur}
-									onChange={(e) => {
-										const formatted = formatIban(e.target.value);
-										field.handleChange(formatted);
-									}}
-									placeholder="DE85 1234 5678 9012 3456 78"
+									onChange={field.handleChange}
 									value={field.state.value}
 								/>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
