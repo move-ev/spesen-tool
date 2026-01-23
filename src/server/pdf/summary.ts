@@ -244,7 +244,7 @@ export async function generatePdfSummary({
 	if (report.description) {
 		doc.fontSize(11);
 		doc.fillColor(MUTED_COLOR);
-		doc.text(report.description, {
+		doc.text(`Beschreibung: ${report.description}`, {
 			align: "left",
 			width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
 		});
