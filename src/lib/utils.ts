@@ -123,7 +123,7 @@ export function formatTimeElapsed(date: Date): string {
 		return `vor ${differenceInHours(now, date)} Stunden`;
 	}
 
-	if (differenceInDays(date, now) < 7) {
+	if (differenceInDays(now, date) < 7) {
 		return `vor ${differenceInDays(now, date)} Tagen`;
 	}
 
