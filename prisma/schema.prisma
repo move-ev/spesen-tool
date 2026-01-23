@@ -16,6 +16,7 @@ datasource db {
 
 model Report {
   id          String       @id @default(cuid())
+  tag         Int          @unique @default(autoincrement())
   title       String
   description String?
   status      ReportStatus @default(DRAFT)

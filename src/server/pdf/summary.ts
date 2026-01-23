@@ -1,7 +1,12 @@
 import { writeFile } from "node:fs/promises";
 import { format } from "date-fns";
 import PDFDocument from "pdfkit";
-import type { Expense, Report, User } from "@/generated/prisma/client";
+import type {
+	Expense,
+	Preferences,
+	Report,
+	User,
+} from "@/generated/prisma/client";
 import { translateExpenseType, translateReportStatus } from "@/lib/utils";
 import {
 	foodExpenseMetaSchema,
@@ -11,9 +16,8 @@ import {
 interface SummaryProps {
 	report: Report & {
 		expenses: Expense[];
-		owner: User;
+		owner: User & { preferences: Preferences | null };
 	};
-	reviewer: User;
 }
 
 const MUTED_COLOR = "#6b7280";
@@ -48,8 +52,9 @@ function formatExpenseMeta(expense: Expense): string {
 	return "";
 }
 
-export async function generatePdfSummary(props: SummaryProps): Promise<Buffer> {
-	const { report, reviewer } = props;
+export async function generatePdfSummary({
+	report,
+}: SummaryProps): Promise<Buffer> {
 	const pdfCreationDate = new Date();
 
 	const doc = new PDFDocument({
@@ -74,9 +79,12 @@ export async function generatePdfSummary(props: SummaryProps): Promise<Buffer> {
 	doc.fillColor(MUTED_COLOR);
 	const creationDateStr = format(report.createdAt, "dd.MM.yyyy");
 	const statusStr = translateReportStatus(report.status);
-	doc.text(`Erstellt am ${creationDateStr} | Status: ${statusStr}`, {
-		align: "left",
-	});
+	doc.text(
+		`Erstellt am ${creationDateStr} | Report ID: ${report.tag} | Status: ${statusStr}`,
+		{
+			align: "left",
+		},
+	);
 	doc.fillColor("black");
 	doc.moveDown(1);
 
@@ -104,14 +112,12 @@ export async function generatePdfSummary(props: SummaryProps): Promise<Buffer> {
 
 	doc.font("Helvetica-Bold");
 	doc.fontSize(11);
-	userInfoTable.row(["Prüfer", "Ersteller"]);
+	userInfoTable.row(["Ersteller"]);
 
 	doc.font("Helvetica");
-	userInfoTable.row([
-		reviewer.name || reviewer.email,
-		report.owner.name || report.owner.email,
-	]);
-	userInfoTable.row([reviewer.email, report.owner.email]);
+	userInfoTable.row([report.owner.name || report.owner.email]);
+	userInfoTable.row([report.owner.email]);
+	userInfoTable.row([report.owner.preferences?.iban ?? ""]);
 
 	doc.moveDown(3);
 

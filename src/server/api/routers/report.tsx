@@ -587,7 +587,11 @@ export const reportRouter = createTRPCRouter({
 			const report = await ctx.db.report.findUnique({
 				where: { id: input.id },
 				include: {
-					owner: true,
+					owner: {
+						include: {
+							preferences: true,
+						},
+					},
 					expenses: true,
 				},
 			});
@@ -602,19 +606,6 @@ export const reportRouter = createTRPCRouter({
 			// TODO: Get reviewer from database
 			const summaryPdf = await generatePdfSummary({
 				report,
-				reviewer: {
-					id: ctx.session.user.id,
-					name: ctx.session.user.name,
-					email: ctx.session.user.email,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-					emailVerified: false,
-					image: null,
-					role: "user",
-					banReason: null,
-					banned: false,
-					banExpires: null,
-				},
 			});
 
 			// Convert buffer to base64 string for transmission

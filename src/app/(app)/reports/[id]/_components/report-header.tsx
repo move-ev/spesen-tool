@@ -67,7 +67,10 @@ export function ReportHeader({
 		>
 			<div className="me-auto">
 				<div className="flex flex-wrap-reverse items-center justify-start gap-4">
-					<PageTitle>{report.title}</PageTitle>
+					<PageTitle>
+						<span className="me-2 text-muted-foreground">#{report.tag}</span>
+						{report.title}
+					</PageTitle>
 					<ReportStatusBadge status={report.status} />
 				</div>
 				<PageDescription className="mt-2">

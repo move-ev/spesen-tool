@@ -148,6 +148,28 @@ const statusColumn: ColumnDef<ExtendedReport> = {
 	},
 };
 
+const tagColumn: ColumnDef<ExtendedReport> = {
+	id: "tag",
+	accessorKey: "tag",
+	enableGrouping: false,
+	enableColumnFilter: false,
+	enableSorting: true,
+	enableHiding: true,
+	cell: ({ row }) => {
+		return (
+			<span className="font-normal text-muted-foreground">
+				#{row.original.tag}
+			</span>
+		);
+	},
+	meta: {
+		label: "Report ID",
+		icon: TagIcon,
+		placeholder: "Report ID",
+		filterType: "none",
+	},
+};
+
 const titleColumn: ColumnDef<ExtendedReport> = {
 	id: "title",
 	accessorKey: "title",
@@ -326,6 +348,7 @@ export const createColumns = (
 ): ColumnDef<ExtendedReport>[] => [
 	actionsColumn,
 	statusColumn,
+	tagColumn,
 	titleColumn,
 	lastUpdatedAtColumn,
 	{
