@@ -1,3 +1,7 @@
+import { ReportStatus } from "@/generated/prisma/enums";
+import type { DatePreset } from "./types";
+import { translateReportStatus } from "./utils";
+
 export const ROUTES = {
 	USER_DASHBOARD: "/",
 	AUTH: "/auth",
@@ -18,3 +22,28 @@ export const ADMIN_SETTINGS_MENU = {
 	BUSINESS_UNITS: "/admin/settings/business-units",
 	ALLOWANCES: "/admin/settings/allowances",
 };
+
+export const PRESET_OPTIONS: { value: DatePreset; label: string }[] = [
+	{ value: "LAST_7", label: "Letzte 7 Tage" },
+	{ value: "LAST_30", label: "Letzte 30 Tage" },
+	{ value: "LAST_90", label: "Letzte 90 Tage" },
+	{ value: "CUSTOM", label: "Custom" },
+];
+
+export const DATE_FORMAT = "dd.MM.yyyy";
+
+export const STATUS_OPTIONS = [
+	{ value: "ALL", label: "Alle Status" },
+	{
+		value: ReportStatus.NEEDS_REVISION,
+		label: translateReportStatus(ReportStatus.NEEDS_REVISION),
+	},
+	{
+		value: ReportStatus.ACCEPTED,
+		label: translateReportStatus(ReportStatus.ACCEPTED),
+	},
+	{
+		value: ReportStatus.REJECTED,
+		label: translateReportStatus(ReportStatus.REJECTED),
+	},
+];

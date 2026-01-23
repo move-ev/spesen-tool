@@ -66,45 +66,72 @@ export const adminRouter = createTRPCRouter({
 		}));
 	}),
 	/**
-	 * Lists all reports, which are NOT open and not a draft which have been updated in the last 30 days
+	 * Lists all reports, which are NOT open and not a draft which have been updated in the last 30 days.
+	 * Optional filters allow narrowing by status and date range.
 	 */
-	listRelevant: adminProcedure.query(async ({ ctx }) => {
-		const pastDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+	listRelevant: adminProcedure
+		.input(
+			z
+				.object({
+					dateFrom: z.date().optional(),
+					dateTo: z.date().optional(),
+					status: z.nativeEnum(ReportStatus).optional(),
+				})
+				.optional(),
+		)
+		.query(async ({ ctx, input }) => {
+			const pastDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+			const hasCustomRange = !!(input?.dateFrom || input?.dateTo);
+			const dateFrom = hasCustomRange ? input?.dateFrom : pastDate;
+			const dateTo = input?.dateTo;
 
-		const reports = await ctx.db.report.findMany({
-			where: {
-				status: {
-					notIn: [ReportStatus.PENDING_APPROVAL, ReportStatus.DRAFT],
+			const lastUpdatedAt: { gte?: Date; lte?: Date } = {};
+			if (dateFrom) {
+				lastUpdatedAt.gte = dateFrom;
+			}
+			if (dateTo) {
+				const endOfDay = new Date(dateTo);
+				endOfDay.setHours(23, 59, 59, 999);
+				lastUpdatedAt.lte = endOfDay;
+			}
+
+			const reports = await ctx.db.report.findMany({
+				where: {
+					status: input?.status
+						? {
+								in: [input.status],
+								notIn: [ReportStatus.PENDING_APPROVAL, ReportStatus.DRAFT],
+							}
+						: {
+								notIn: [ReportStatus.PENDING_APPROVAL, ReportStatus.DRAFT],
+							},
+					lastUpdatedAt,
 				},
-				lastUpdatedAt: {
-					gte: pastDate,
-				},
-			},
-			include: {
-				expenses: {
-					select: {
-						amount: true,
+				include: {
+					expenses: {
+						select: {
+							amount: true,
+						},
+					},
+					owner: {
+						select: {
+							name: true,
+						},
 					},
 				},
-				owner: {
-					select: {
-						name: true,
-					},
+				orderBy: {
+					lastUpdatedAt: "desc",
 				},
-			},
-			orderBy: {
-				lastUpdatedAt: "desc",
-			},
-		});
+			});
 
-		return reports.map((report) => ({
-			...report,
-			expenses: report.expenses.map((expense) => ({
-				...expense,
-				amount: Number(expense.amount),
-			})),
-		}));
-	}),
+			return reports.map((report) => ({
+				...report,
+				expenses: report.expenses.map((expense) => ({
+					...expense,
+					amount: Number(expense.amount),
+				})),
+			}));
+		}),
 	getAllReports: adminProcedure.query(async ({ ctx }) => {
 		return ctx.db.report.findMany({
 			include: {

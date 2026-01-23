@@ -1,6 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
+import { isValid, parse, subDays } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import type { ExpenseType, ReportStatus } from "@/generated/prisma/enums";
+import { DATE_FORMAT } from "./consts";
+import type { DatePreset } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -80,4 +83,22 @@ export function translateExpenseType(type: ExpenseType) {
 		case "FOOD":
 			return "Verpflegung";
 	}
+}
+
+// Date-specific utility functions
+
+export function parseFilterDate(value: string): Date | undefined {
+	if (!value) return undefined;
+	const parsed = parse(value, DATE_FORMAT, new Date());
+	return isValid(parsed) ? parsed : undefined;
+}
+
+export function getPresetRange(preset: DatePreset): { from?: Date; to?: Date } {
+	if (preset === "CUSTOM") return {};
+	const today = new Date();
+	const days = preset === "LAST_7" ? 7 : preset === "LAST_90" ? 90 : 30;
+	return {
+		from: subDays(today, days),
+		to: today,
+	};
 }
