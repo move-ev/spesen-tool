@@ -18,7 +18,6 @@ import { useTheme } from "next-themes";
 import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/server/better-auth/client";
-import { api } from "@/trpc/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -37,9 +36,11 @@ import {
 export function UserMenu() {
 	const router = useRouter();
 	const { theme, setTheme } = useTheme();
-	const [user] = api.user.getCurrent.useSuspenseQuery();
+	const { isPending, data: session } = authClient.useSession();
 
-	if (!user) return null;
+	if (isPending || !session?.user) return null;
+
+	const user = session.user;
 
 	const handleSignout = () => {
 		authClient.signOut().then(() => {
