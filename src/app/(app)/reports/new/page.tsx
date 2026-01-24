@@ -1,19 +1,19 @@
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { CreateReportForm } from "@/components/forms/create-report-form";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/consts";
-import { api } from "@/trpc/server";
+import { api, HydrateClient } from "@/trpc/server";
 
 export default async function ServerPage() {
 	void api.costUnit.listGrouped.prefetch();
-	void api.preferences.getOwn.prefetch();
+	void api.bankingDetails.list.prefetch();
 
 	return (
-		<React.Fragment>
+		<HydrateClient>
 			<section className="container mt-12 max-w-4xl">
 				<Button
 					className={"-ms-2"}
@@ -36,6 +36,6 @@ export default async function ServerPage() {
 					<CreateReportForm />
 				</Suspense>
 			</section>
-		</React.Fragment>
+		</HydrateClient>
 	);
 }

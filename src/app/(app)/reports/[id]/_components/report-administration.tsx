@@ -31,7 +31,7 @@ export function ReportAdministration({
 	const utils = api.useUtils();
 	const [open, setOpen] = React.useState(false);
 
-	const createSummaryPdf = api.report.createSummaryPdf.useMutation({
+	const createSummaryPdf = api.report.exportToPdf.useMutation({
 		onMutate: () => {
 			toast.info("PDF wird erstellt", {
 				description: "Dies kann einige Sekunden dauern",

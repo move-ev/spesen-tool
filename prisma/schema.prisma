@@ -165,7 +165,6 @@ model Preferences {
   id            String                 @id @default(cuid())
   userId        String                 @unique
   user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  iban          String?
   notifications NotificationPreference @default(ALL)
 
   @@map("preferences")

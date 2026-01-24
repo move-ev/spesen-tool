@@ -188,7 +188,6 @@ export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[k
 export const PreferencesScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  iban: 'iban',
   notifications: 'notifications'
 } as const
 

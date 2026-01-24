@@ -1,10 +1,12 @@
 import { TRPCError } from "@trpc/server";
+import { TreesIcon } from "lucide-react";
 import { z } from "zod";
 import ExpenseReportCreatorNotification from "@/components/emails/expense-report-creator-notification";
 import ExpenseReportReviewerNotification from "@/components/emails/expense-report-reviewer-notification";
 import ReportReceivedEmail from "@/components/emails/report-received-email";
 import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
 import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
+import { decryptBankingDetails } from "@/lib/banking/cryptic";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
 import {
@@ -115,11 +117,6 @@ export const reportRouter = createTRPCRouter({
 						owner: {
 							select: {
 								name: true,
-								preferences: {
-									select: {
-										iban: true,
-									},
-								},
 							},
 						},
 					},
@@ -137,7 +134,7 @@ export const reportRouter = createTRPCRouter({
 
 			return {
 				totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
-				iban: report?.owner.preferences?.iban ?? "null",
+				iban: "null",
 				ownerName: report?.owner.name ?? "Unbekannt",
 			};
 		}),
@@ -596,6 +593,72 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 		}),
+
+	exportToPdf: protectedProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const existsReport = await ctx.db.report.findUnique({
+				where: { id: input.id },
+				select: {
+					ownerId: true,
+				},
+			});
+
+			if (!existsReport) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			if (
+				ctx.session.user.role !== "admin" &&
+				existsReport.ownerId !== ctx.session.user.id
+			) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to export this report to PDF",
+				});
+			}
+
+			const report = await ctx.db.report.findUnique({
+				where: { id: input.id },
+				include: {
+					expenses: {
+						include: {
+							attachments: true,
+						},
+					},
+					owner: true,
+					bankingDetails: true,
+				},
+			});
+
+			if (!report) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			const decryptedBankingDetails = decryptBankingDetails(report.bankingDetails);
+
+			const pdfBuffer = await generatePdfSummary({
+				report: {
+					...report,
+					bankingDetails: decryptedBankingDetails,
+				},
+			});
+
+			// Convert buffer to base64 string for transmission
+			const base64Pdf = pdfBuffer.toString("base64");
+
+			return {
+				pdf: base64Pdf,
+				filename: `${report.title.replace(/[^a-z0-9]/gi, "_")}_Zusammenfassung.pdf`,
+			};
+		}),
+
 	createSummaryPdf: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.mutation(async ({ ctx, input }) => {
@@ -612,6 +675,7 @@ export const reportRouter = createTRPCRouter({
 							attachments: true,
 						},
 					},
+					bankingDetails: true,
 				},
 			});
 
