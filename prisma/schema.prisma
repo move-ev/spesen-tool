@@ -39,6 +39,7 @@ model Report {
   @@index([status])
   @@index([costUnitId])
   @@index([bankingDetailsId])
+  @@map("report")
 }
 
 enum ReportStatus {
@@ -63,6 +64,7 @@ model Expense {
   attachments Attachment[]
 
   @@index([reportId])
+  @@map("expense")
 }
 
 enum ExpenseType {
@@ -80,6 +82,7 @@ model Attachment {
   expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 
   @@index([key])
+  @@index([expenseId])
   @@map("attachment")
 }
 
@@ -106,10 +109,10 @@ model User {
 
   preferences Preferences?
 
+  bankingDetails BankingDetails[]
+
   @@unique([email])
   @@map("user")
-
-  bankingDetails BankingDetails[]
 }
 
 model Session {
@@ -224,21 +227,21 @@ model CostUnit {
 }
 
 model BankingDetails {
-  id String @id @default(cuid())
+  id    String @id @default(cuid())
   // Used for displaying the banking details in the UI without exposing the iban
   title String
 
-  iban String
+  iban     String
   fullName String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   reports Report[]
-  
+
   @@index([userId])
   @@map("banking_details")
 }

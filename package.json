@@ -21,7 +21,7 @@
 		"start": "next start",
 		"typecheck": "tsc --noEmit",
 		"prepare": "husky",
-		"email:preview": "dotenv -e .env -- email dev --dir ./src/components/emails --port 3030"
+		"email:preview": "dotenv -e .env.prod -- email dev --dir ./src/components/emails --port 3030"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.7.2",
