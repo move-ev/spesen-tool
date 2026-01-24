@@ -202,11 +202,12 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 										{costUnitsGroups.map((group) => (
 											<SelectGroup key={group.id}>
 												<SelectLabel>{group.title}</SelectLabel>
-												{group.costUnits.map((costUnit) => (
-													<SelectItem key={costUnit.id} value={costUnit.id}>
-														<span>{costUnit.title}</span>
-													</SelectItem>
-												))}
+												{group.costUnits.length > 0 &&
+													group.costUnits.map((costUnit) => (
+														<SelectItem key={costUnit.id} value={costUnit.id}>
+															<span>{costUnit.title}</span>
+														</SelectItem>
+													))}
 											</SelectGroup>
 										))}
 									</SelectContent>
