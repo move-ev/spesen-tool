@@ -11,7 +11,7 @@ import { env } from "@/env";
  */
 
 const ALGORITHM = "aes-256-gcm";
-const IV_LENGTH = 16;
+const IV_LENGTH = 12; // 96 bits - recommended by NIST SP 800-38D for GCM mode
 const AUTH_TAG_LENGTH = 16;
 
 /**
@@ -55,7 +55,7 @@ export function encrypt(plaintext: string): string {
 	const authTag = cipher.getAuthTag();
 
 	// Combine IV + AuthTag + Ciphertext into a single buffer
-	// Format: [16 bytes IV][16 bytes AuthTag][N bytes Ciphertext]
+	// Format: [12 bytes IV][16 bytes AuthTag][N bytes Ciphertext]
 	const combined = Buffer.concat([iv, authTag, encrypted]);
 
 	return combined.toString("base64");
@@ -76,7 +76,7 @@ export function decrypt(encryptedData: string): string {
 	const key = getEncryptionKey();
 	const combined = Buffer.from(encryptedData, "base64");
 
-	// Validate minimum length: IV (16) + AuthTag (16) + at least 1 byte ciphertext
+	// Validate minimum length: IV (12) + AuthTag (16) + at least 1 byte ciphertext
 	if (combined.length < IV_LENGTH + AUTH_TAG_LENGTH + 1) {
 		throw new Error("Invalid encrypted data: too short");
 	}

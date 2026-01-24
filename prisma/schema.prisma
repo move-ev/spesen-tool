@@ -38,6 +38,7 @@ model Report {
   @@index([ownerId])
   @@index([status])
   @@index([costUnitId])
+  @@index([bankingDetailsId])
 }
 
 enum ReportStatus {
@@ -238,5 +239,6 @@ model BankingDetails {
   
   reports Report[]
   
+  @@index([userId])
   @@map("banking_details")
 }
