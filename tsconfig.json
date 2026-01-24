@@ -28,8 +28,7 @@
 		/* Path Aliases */
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@prisma/client": ["./generated/prisma/client"]
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": [
