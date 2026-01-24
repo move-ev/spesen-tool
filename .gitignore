@@ -54,3 +54,6 @@ config.js
 
 # uploads
 /public/uploads
+
+# Sentry Config File
+.env.sentry-build-plugin
