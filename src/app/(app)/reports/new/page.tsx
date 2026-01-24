@@ -9,7 +9,7 @@ import { ROUTES } from "@/lib/consts";
 import { api, HydrateClient } from "@/trpc/server";
 
 export default async function ServerPage() {
-	void api.costUnit.listGrouped.prefetch();
+	void api.costUnit.listGroupsWithUnits.prefetch();
 	void api.bankingDetails.list.prefetch();
 
 	return (

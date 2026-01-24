@@ -29,7 +29,6 @@ import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 	const [costUnitsGroups] = api.costUnit.listGroupsWithUnits.useSuspenseQuery();
-	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
 	const [bankingDetails] = api.bankingDetails.list.useSuspenseQuery();
 
 	const allCostUnits = useMemo(() => {
@@ -37,6 +36,8 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 			group.costUnits.map((costUnit) => ({
 				label: costUnit.title,
 				value: costUnit.id,
+				examples: costUnit.examples,
+				tag: costUnit.tag,
 			})),
 		);
 	}, [costUnitsGroups]);
@@ -47,16 +48,16 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 			string,
 			{ id: string; tag: string; title: string; examples: string[] }
 		>();
-		for (const costUnit of costUnits.ungrouped) {
-			map.set(costUnit.id, costUnit);
-		}
-		for (const group of costUnits.grouped) {
-			for (const costUnit of group.costUnits) {
-				map.set(costUnit.id, costUnit);
-			}
+		for (const costUnit of allCostUnits) {
+			map.set(costUnit.value, {
+				id: costUnit.value,
+				tag: costUnit.tag,
+				title: costUnit.label,
+				examples: costUnit.examples,
+			});
 		}
 		return map;
-	}, [costUnits]);
+	}, [allCostUnits]);
 
 	const router = useRouter();
 
