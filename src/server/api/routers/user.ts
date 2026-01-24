@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { getSuperuserId } from "@/lib/config";
+import { env } from "@/env";
 import {
 	ADMINS_DEMOTE_OTHER_ADMIN,
 	ADMINS_PROMOTE_OTHER_ADMIN,
@@ -34,7 +34,7 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
-			const superuserId = getSuperuserId();
+			const superuserId = env.SUPERUSER_ID;
 
 			if (!ADMINS_PROMOTE_OTHER_ADMIN && ctx.session.user.id !== superuserId) {
 				throw new TRPCError({
@@ -84,7 +84,7 @@ export const userRouter = createTRPCRouter({
 				});
 			}
 
-			const superuserId = getSuperuserId();
+			const superuserId = env.SUPERUSER_ID;
 
 			if (target.role !== "admin") {
 				throw new TRPCError({

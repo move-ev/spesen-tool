@@ -3,17 +3,12 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin } from "better-auth/plugins";
 import { env } from "@/env";
-import {
-	getAuthUrl,
-	getMicrosoftClientId,
-	getMicrosoftTenantId,
-} from "@/lib/config";
 import { db } from "@/server/db";
 
 // Get configuration values
-const authUrl = getAuthUrl();
-const microsoftTenantId = getMicrosoftTenantId();
-const microsoftClientId = getMicrosoftClientId();
+const authUrl = env.BETTER_AUTH_URL;
+const microsoftTenantId = env.MICROSOFT_TENANT_ID;
+const microsoftClientId = env.MICROSOFT_CLIENT_ID;
 
 export const auth = betterAuth({
 	database: prismaAdapter(db, {
