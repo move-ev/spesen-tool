@@ -113,11 +113,7 @@ export const reportRouter = createTRPCRouter({
 						id: input.id,
 					},
 					select: {
-						owner: {
-							select: {
-								name: true,
-							},
-						},
+						bankingDetails: true,
 					},
 				}),
 				// Query to sum the amount of all expenses for this report
@@ -131,10 +127,19 @@ export const reportRouter = createTRPCRouter({
 				}),
 			]);
 
+			if (!report || !report.bankingDetails) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			const decryptedBankingDetails = decryptBankingDetails(report.bankingDetails);
+
 			return {
 				totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
-				iban: "null",
-				ownerName: report?.owner.name ?? "Unbekannt",
+				iban: decryptedBankingDetails.iban,
+				ownerName: decryptedBankingDetails.fullName,
 			};
 		}),
 
