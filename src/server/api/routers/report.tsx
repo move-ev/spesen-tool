@@ -7,6 +7,7 @@ import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
 import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
 import { decryptBankingDetails } from "@/lib/banking/cryptic";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
+import { mailer } from "@/lib/email";
 import { createReportSchema } from "@/lib/validators";
 import {
 	adminProcedure,
@@ -14,7 +15,6 @@ import {
 	protectedProcedure,
 } from "@/server/api/trpc";
 import { generatePdfSummary } from "@/server/pdf/summary";
-import { resend } from "@/server/resend";
 
 export const reportRouter = createTRPCRouter({
 	// Get all reports for the current user
@@ -222,7 +222,7 @@ export const reportRouter = createTRPCRouter({
 				report.owner.email &&
 				report.owner.preferences?.notifications === NotificationPreference.ALL
 			) {
-				resend.emails
+				mailer
 					.send({
 						from: DEFAULT_EMAIL_FROM,
 						to: [report.owner.email],
@@ -242,7 +242,7 @@ export const reportRouter = createTRPCRouter({
 
 			// Send email to reviewer if configured (non-blocking)
 			if (settings?.reviewerEmail) {
-				resend.emails
+				mailer
 					.send({
 						from: DEFAULT_EMAIL_FROM,
 						to: [settings.reviewerEmail],
@@ -352,7 +352,7 @@ export const reportRouter = createTRPCRouter({
 				report.owner.email &&
 				report.owner.preferences?.notifications === NotificationPreference.ALL
 			) {
-				resend.emails
+				mailer
 					.send({
 						from: DEFAULT_EMAIL_FROM,
 						to: [report.owner.email],
@@ -372,7 +372,7 @@ export const reportRouter = createTRPCRouter({
 
 			// Send email to reviewer if configured (non-blocking)
 			if (settings?.reviewerEmail) {
-				resend.emails
+				mailer
 					.send({
 						from: DEFAULT_EMAIL_FROM,
 						to: [settings.reviewerEmail],
@@ -486,7 +486,7 @@ export const reportRouter = createTRPCRouter({
 				})),
 			);
 
-			const { error } = await resend.emails.send({
+			const emailResult = await mailer.send({
 				from: DEFAULT_EMAIL_FROM,
 				to: [result.owner.email],
 				subject: "Report status changed",
@@ -500,10 +500,10 @@ export const reportRouter = createTRPCRouter({
 				),
 			});
 
-			if (error) {
+			if (emailResult.ok === false) {
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: "Failed to send email",
+					message: emailResult.error ?? "Failed to send email",
 				});
 			}
 
@@ -598,17 +598,17 @@ export const reportRouter = createTRPCRouter({
 				return res;
 			}
 
-			const { error } = await resend.emails.send({
+			const emailResult = await mailer.send({
 				from: DEFAULT_EMAIL_FROM,
 				to: [settings.reviewerEmail],
 				subject: "Report submitted",
 				react: <ReportReceivedEmail from={res.owner.name} title={res.title} />,
 			});
 
-			if (error) {
+			if (emailResult.ok === false) {
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: "Failed to send email",
+					message: emailResult.error ?? "Failed to send email",
 				});
 			}
 
@@ -616,17 +616,17 @@ export const reportRouter = createTRPCRouter({
 				return res;
 			}
 
-			const { error: confirmError } = await resend.emails.send({
+			const confirmEmailResult = await mailer.send({
 				from: DEFAULT_EMAIL_FROM,
 				to: [report.owner.email],
 				subject: "Report submitted",
 				react: <ReportSubmittedEmail name={report.owner.name} title={res.title} />,
 			});
 
-			if (confirmError) {
+			if (confirmEmailResult.ok === false) {
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: "Failed to send confirmation email",
+					message: confirmEmailResult.error ?? "Failed to send confirmation email",
 				});
 			}
 		}),

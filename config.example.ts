@@ -182,6 +182,7 @@ const config: ConfigInput = {
 		replyTo: "support@example.com",
 
 		// NOTE: API key must be set via RESEND_API_KEY environment variable
+		provider: "resend",
 	},
 };
 
