@@ -26,15 +26,39 @@ export function ExamplesInput({
 		return `${baseId}-input-${++counterRef.current}`;
 	}, [baseId]);
 
-	const [inputs, setInputs] = useState<InputItem[]>(() => [
-		{ id: `${baseId}-input-0`, value: "" },
-	]);
+	// Initialize inputs from value prop, with a trailing empty input for new entries
+	const [inputs, setInputs] = useState<InputItem[]>(() => {
+		if (value.length === 0) {
+			return [{ id: `${baseId}-input-0`, value: "" }];
+		}
+		// Map existing values to inputs and add a trailing empty input
+		const initialInputs = value.map((v, i) => ({
+			id: `${baseId}-input-${i}`,
+			value: v,
+		}));
+		counterRef.current = value.length;
+		initialInputs.push({
+			id: `${baseId}-input-${counterRef.current}`,
+			value: "",
+		});
+		return initialInputs;
+	});
 
 	// Sync inputs when external value changes (e.g., form reset)
 	const valueRef = useRef(value);
 	useEffect(() => {
-		if (valueRef.current !== value && value.length === 0) {
-			setInputs([{ id: generateInputId(), value: "" }]);
+		if (valueRef.current !== value) {
+			if (value.length === 0) {
+				setInputs([{ id: generateInputId(), value: "" }]);
+			} else {
+				// Restore inputs from external value (e.g., form reset with values)
+				const restoredInputs = value.map((v) => ({
+					id: generateInputId(),
+					value: v,
+				}));
+				restoredInputs.push({ id: generateInputId(), value: "" });
+				setInputs(restoredInputs);
+			}
 		}
 		valueRef.current = value;
 	}, [value, generateInputId]);
