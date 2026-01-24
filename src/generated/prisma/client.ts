@@ -94,3 +94,8 @@ export type CostUnitGroup = Prisma.CostUnitGroupModel
  * 
  */
 export type CostUnit = Prisma.CostUnitModel
+/**
+ * Model BankingDetails
+ * 
+ */
+export type BankingDetails = Prisma.BankingDetailsModel

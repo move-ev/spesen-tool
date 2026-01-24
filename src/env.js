@@ -128,6 +128,12 @@ export const env = createEnv({
 		 * When set, takes precedence over config.ts email.from
 		 */
 		EMAIL_FROM: z.string().email().optional(),
+
+		/**
+		 * Secret key for signing banking details
+		 * Generate with: openssl rand -base64 32
+		 */
+		SECRET_ENCRYPTION_KEY: z.string(),
 	},
 
 	/**
@@ -153,6 +159,7 @@ export const env = createEnv({
 		STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
 		STORAGE_ACCESS_KEY: process.env.STORAGE_ACCESS_KEY,
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		SECRET_ENCRYPTION_KEY: process.env.SECRET_ENCRYPTION_KEY,
 
 		// Runtime
 		NODE_ENV: process.env.NODE_ENV,

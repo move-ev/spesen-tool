@@ -6,6 +6,7 @@ export const createReportSchema = z.object({
 	title: z.string().min(1),
 	description: z.string(),
 	costUnitId: z.string().min(1),
+	bankingDetailsId: z.string().min(1),
 });
 
 export const ibanSchema = z
@@ -90,13 +91,11 @@ export const foodExpenseMetaSchema = z.object({
 // Schema for form validation (formatted IBAN with spaces)
 export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
-	iban: z.union([z.string().length(0), ibanSchema]),
 });
 
 // Schema for server validation (unformatted IBAN without spaces)
 export const updatePreferencesServerSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),
-	iban: z.union([z.string().length(0), unformattedIbanSchema]),
 });
 
 export const updateMealAllowancesSchema = z.object({

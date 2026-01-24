@@ -27,6 +27,9 @@ model Report {
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
 
+  bankingDetailsId String
+  bankingDetails   BankingDetails @relation(fields: [bankingDetailsId], references: [id], onDelete: Restrict)
+
   createdAt     DateTime @default(now())
   lastUpdatedAt DateTime @updatedAt
 
@@ -35,6 +38,7 @@ model Report {
   @@index([ownerId])
   @@index([status])
   @@index([costUnitId])
+  @@index([bankingDetailsId])
 }
 
 enum ReportStatus {
@@ -104,6 +108,8 @@ model User {
 
   @@unique([email])
   @@map("user")
+
+  bankingDetails BankingDetails[]
 }
 
 model Session {
@@ -160,7 +166,6 @@ model Preferences {
   id            String                 @id @default(cuid())
   userId        String                 @unique
   user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  iban          String?
   notifications NotificationPreference @default(ALL)
 
   @@map("preferences")
@@ -216,4 +221,24 @@ model CostUnit {
 
   @@index([tag])
   @@map("cost_unit")
+}
+
+model BankingDetails {
+  id String @id @default(cuid())
+  // Used for displaying the banking details in the UI without exposing the iban
+  title String
+
+  iban String
+  fullName String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  reports Report[]
+  
+  @@index([userId])
+  @@map("banking_details")
 }

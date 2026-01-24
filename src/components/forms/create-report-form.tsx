@@ -4,14 +4,17 @@ import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import z from "zod";
 import { ROUTES } from "@/lib/consts";
-import { formatIban, unformatIban } from "@/lib/utils";
-import { createReportSchema, ibanSchema } from "@/lib/validators";
+import { createReportSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
-import { IbanInput } from "../ui/iban-input";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "../ui/field";
 import { Input } from "../ui/input";
 import {
 	NativeSelect,
@@ -21,9 +24,8 @@ import {
 import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
-	const utils = api.useUtils();
-	const [preferences] = api.preferences.getOwn.useSuspenseQuery();
 	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
+	const [bankingDetails] = api.bankingDetails.list.useSuspenseQuery();
 
 	// Create a Map for O(1) cost unit lookups by ID
 	const costUnitMap = useMemo(() => {
@@ -56,50 +58,19 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 		},
 	});
 
-	const updateIban = api.preferences.updateIban.useMutation({
-		onSuccess: () => {
-			utils.preferences.getOwn.invalidate();
-		},
-		onError: (error) => {
-			toast.error("Fehler beim Aktualisieren der IBAN", {
-				description: error.message ?? "Ein unerwarteter Fehler ist aufgetreten",
-			});
-		},
-	});
-
 	const form = useForm({
 		defaultValues: {
 			title: "",
 			description: "",
 			costUnitId: "",
-			iban: preferences.iban ? formatIban(preferences.iban) : "",
+			bankingDetailsId: "",
 		},
 		validators: {
-			onSubmit: createReportSchema.and(
-				z.object({
-					iban: ibanSchema,
-				}),
-			),
+			onSubmit: createReportSchema,
 		},
-		onSubmit: async (value) => {
-			const unformattedIban = unformatIban(value.value.iban);
-			const unformattedStoredIban = preferences.iban
-				? unformatIban(preferences.iban)
-				: "";
-
-			if (unformattedIban !== unformattedStoredIban) {
-				try {
-					await updateIban.mutateAsync({
-						iban: unformattedIban,
-					});
-				} catch {
-					// Error is already handled by the mutation's onError callback
-					return;
-				}
-			}
-
+		onSubmit: async ({ value }) => {
 			createReport.mutate({
-				...value.value,
+				...value,
 			});
 		},
 	});
@@ -158,25 +129,36 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 					}}
 					name="description"
 				/>
-				<form.Field name="iban">
-					{(field) => {
+
+				<form.Field
+					children={(field) => {
 						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 						return (
 							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>IBAN</FieldLabel>
-								<IbanInput
-									aria-invalid={isInvalid}
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={field.handleChange}
+								<FieldLabel htmlFor={field.name}>Bankverbindung</FieldLabel>
+								<NativeSelect
+									onChange={(e) => field.handleChange(e.target.value)}
 									value={field.state.value}
-								/>
+								>
+									<NativeSelectOption value="">
+										Bankverbindung auswählen
+									</NativeSelectOption>
+									{bankingDetails.map((bankingDetail) => (
+										<NativeSelectOption key={bankingDetail.id} value={bankingDetail.id}>
+											{bankingDetail.title}
+										</NativeSelectOption>
+									))}
+								</NativeSelect>
+								<FieldDescription>
+									Wähle die Bankverbindung aus, die für diesen Report verwendet werden
+									soll.
+								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
 					}}
-				</form.Field>
+					name="bankingDetailsId"
+				/>
 
 				<form.Field
 					children={(field) => {
@@ -239,7 +221,7 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 					name="costUnitId"
 				/>
 				<Button
-					disabled={createReport.isPending || updateIban.isPending}
+					disabled={createReport.isPending}
 					form="form-create-report"
 					type="submit"
 				>

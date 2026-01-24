@@ -61,7 +61,8 @@ export const ModelName = {
   Preferences: 'Preferences',
   Settings: 'Settings',
   CostUnitGroup: 'CostUnitGroup',
-  CostUnit: 'CostUnit'
+  CostUnit: 'CostUnit',
+  BankingDetails: 'BankingDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,6 +89,7 @@ export const ReportScalarFieldEnum = {
   status: 'status',
   costUnitId: 'costUnitId',
   ownerId: 'ownerId',
+  bankingDetailsId: 'bankingDetailsId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'
 } as const
@@ -186,7 +188,6 @@ export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[k
 export const PreferencesScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  iban: 'iban',
   notifications: 'notifications'
 } as const
 
@@ -230,6 +231,19 @@ export const CostUnitScalarFieldEnum = {
 } as const
 
 export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typeof CostUnitScalarFieldEnum]
+
+
+export const BankingDetailsScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  iban: 'iban',
+  fullName: 'fullName',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BankingDetailsScalarFieldEnum = (typeof BankingDetailsScalarFieldEnum)[keyof typeof BankingDetailsScalarFieldEnum]
 
 
 export const SortOrder = {

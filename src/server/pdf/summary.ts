@@ -5,7 +5,6 @@ import PDFDocument from "pdfkit";
 import type {
 	Attachment,
 	Expense,
-	Preferences,
 	Report,
 	User,
 } from "@/generated/prisma/client";
@@ -19,7 +18,11 @@ import { getFileFromStorage, isImageFile, isPdfFile } from "@/server/storage";
 interface SummaryProps {
 	report: Report & {
 		expenses: (Expense & { attachments: Attachment[] })[];
-		owner: User & { preferences: Preferences | null };
+		owner: User;
+		bankingDetails: {
+			iban: string;
+			fullName: string;
+		};
 	};
 }
 
@@ -265,12 +268,11 @@ export async function generatePdfSummary({
 
 	doc.font("Helvetica-Bold");
 	doc.fontSize(11);
-	userInfoTable.row(["Ersteller"]);
+	userInfoTable.row(["Antragssteller", "Kontoangaben"]);
 
 	doc.font("Helvetica");
-	userInfoTable.row([report.owner.name || report.owner.email]);
-	userInfoTable.row([report.owner.email]);
-	userInfoTable.row([report.owner.preferences?.iban ?? ""]);
+	userInfoTable.row([report.owner.name, report.bankingDetails.fullName]);
+	userInfoTable.row([report.owner.email, report.bankingDetails.iban]);
 
 	doc.moveDown(3);
 

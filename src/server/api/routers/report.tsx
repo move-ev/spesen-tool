@@ -5,6 +5,7 @@ import ExpenseReportReviewerNotification from "@/components/emails/expense-repor
 import ReportReceivedEmail from "@/components/emails/report-received-email";
 import ReportSubmittedEmail from "@/components/emails/report-submitted-email";
 import { NotificationPreference, ReportStatus } from "@/generated/prisma/enums";
+import { decryptBankingDetails } from "@/lib/banking/cryptic";
 import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
 import { createReportSchema } from "@/lib/validators";
 import {
@@ -112,16 +113,7 @@ export const reportRouter = createTRPCRouter({
 						id: input.id,
 					},
 					select: {
-						owner: {
-							select: {
-								name: true,
-								preferences: {
-									select: {
-										iban: true,
-									},
-								},
-							},
-						},
+						bankingDetails: true,
 					},
 				}),
 				// Query to sum the amount of all expenses for this report
@@ -135,10 +127,19 @@ export const reportRouter = createTRPCRouter({
 				}),
 			]);
 
+			if (!report || !report.bankingDetails) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			const decryptedBankingDetails = decryptBankingDetails(report.bankingDetails);
+
 			return {
 				totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
-				iban: report?.owner.preferences?.iban ?? "null",
-				ownerName: report?.owner.name ?? "Unbekannt",
+				iban: decryptedBankingDetails.iban,
+				ownerName: decryptedBankingDetails.fullName,
 			};
 		}),
 
@@ -146,6 +147,23 @@ export const reportRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(createReportSchema)
 		.mutation(async ({ ctx, input }) => {
+			const bankingDetails = await ctx.db.bankingDetails.findUnique({
+				where: {
+					id: input.bankingDetailsId,
+				},
+				select: {
+					userId: true,
+				},
+			});
+
+			if (!bankingDetails || bankingDetails.userId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message:
+						"You don't have permission to create a report with these banking details",
+				});
+			}
+
 			// Create the report
 			const report = await ctx.db.report.create({
 				data: {
@@ -596,22 +614,44 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 		}),
-	createSummaryPdf: protectedProcedure
+
+	exportToPdf: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.mutation(async ({ ctx, input }) => {
+			const existsReport = await ctx.db.report.findUnique({
+				where: { id: input.id },
+				select: {
+					ownerId: true,
+				},
+			});
+
+			if (!existsReport) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report not found",
+				});
+			}
+
+			if (
+				ctx.session.user.role !== "admin" &&
+				existsReport.ownerId !== ctx.session.user.id
+			) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to export this report to PDF",
+				});
+			}
+
 			const report = await ctx.db.report.findUnique({
 				where: { id: input.id },
 				include: {
-					owner: {
-						include: {
-							preferences: true,
-						},
-					},
 					expenses: {
 						include: {
 							attachments: true,
 						},
 					},
+					owner: true,
+					bankingDetails: true,
 				},
 			});
 
@@ -622,13 +662,17 @@ export const reportRouter = createTRPCRouter({
 				});
 			}
 
-			// TODO: Get reviewer from database
-			const summaryPdf = await generatePdfSummary({
-				report,
+			const decryptedBankingDetails = decryptBankingDetails(report.bankingDetails);
+
+			const pdfBuffer = await generatePdfSummary({
+				report: {
+					...report,
+					bankingDetails: decryptedBankingDetails,
+				},
 			});
 
 			// Convert buffer to base64 string for transmission
-			const base64Pdf = summaryPdf.toString("base64");
+			const base64Pdf = pdfBuffer.toString("base64");
 
 			return {
 				pdf: base64Pdf,
