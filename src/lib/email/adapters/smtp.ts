@@ -50,30 +50,45 @@ export function createSMTPAdapter(): EmailAdapter {
 			const { from, to, subject } = args;
 			const { html, text } = await sendArgsToContent(args);
 
-			const info = await transporter.sendMail({
-				from,
-				to,
-				subject,
-				html,
-				text,
-			});
+			try {
+				const info = await transporter.sendMail({
+					from,
+					to,
+					subject,
+					html,
+					text,
+				});
 
-			if (info.rejected.length > 0 || info.accepted.length < to.length) {
-				const error = info.rejected
-					? info.rejected.join(", ")
-					: "Unknown error occurred while sending email (SMTP Adapter)";
+				if (info.rejected.length > 0 || info.accepted.length < to.length) {
+					const error =
+						info.rejected.length > 0
+							? info.rejected.join(", ")
+							: "Unknown error occurred while sending email (SMTP Adapter)";
+
+					return {
+						ok: false,
+						error,
+						status: 500,
+					};
+				}
+
+				return {
+					ok: true,
+					status: 200,
+				};
+			} catch (error) {
+				// Handle network errors, authentication failures, timeouts, etc.
+				const errorMessage =
+					error instanceof Error
+						? error.message
+						: "Unknown error occurred while sending email (SMTP Adapter)";
 
 				return {
 					ok: false,
-					error,
+					error: errorMessage,
 					status: 500,
 				};
 			}
-
-			return {
-				ok: true,
-				status: 200,
-			};
 		},
 	};
 }
