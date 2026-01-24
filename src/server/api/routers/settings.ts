@@ -6,12 +6,12 @@ import {
 import {
 	adminProcedure,
 	createTRPCRouter,
+	protectedProcedure,
 	publicProcedure,
 } from "@/server/api/trpc";
 
 export const settingsRouter = createTRPCRouter({
-	// Get settings (only admins)
-	get: adminProcedure.query(async ({ ctx }) => {
+	get: protectedProcedure.query(async ({ ctx }) => {
 		let settings = await ctx.db.settings.findUnique({
 			where: { id: "singleton" },
 		});
