@@ -77,3 +77,18 @@ export type CostUnit = Prisma.CostUnitModel
  * 
  */
 export type BankingDetails = Prisma.BankingDetailsModel
+/**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model Member
+ * 
+ */
+export type Member = Prisma.MemberModel
+/**
+ * Model Invitation
+ * 
+ */
+export type Invitation = Prisma.InvitationModel
