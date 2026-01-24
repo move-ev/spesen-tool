@@ -182,6 +182,11 @@ export const reportRouter = createTRPCRouter({
 							id: true,
 							name: true,
 							email: true,
+							preferences: {
+								select: {
+									notifications: true,
+								},
+							},
 						},
 					},
 					costUnit: {
@@ -213,7 +218,10 @@ export const reportRouter = createTRPCRouter({
 			});
 
 			// Send email to creator (non-blocking)
-			if (report.owner.email) {
+			if (
+				report.owner.email &&
+				report.owner.preferences?.notifications === NotificationPreference.ALL
+			) {
 				resend.emails
 					.send({
 						from: DEFAULT_EMAIL_FROM,
@@ -304,6 +312,11 @@ export const reportRouter = createTRPCRouter({
 							id: true,
 							name: true,
 							email: true,
+							preferences: {
+								select: {
+									notifications: true,
+								},
+							},
 						},
 					},
 					costUnit: {
@@ -335,7 +348,10 @@ export const reportRouter = createTRPCRouter({
 			});
 
 			// Send email to creator (non-blocking)
-			if (report.owner.email) {
+			if (
+				report.owner.email &&
+				report.owner.preferences?.notifications === NotificationPreference.ALL
+			) {
 				resend.emails
 					.send({
 						from: DEFAULT_EMAIL_FROM,
