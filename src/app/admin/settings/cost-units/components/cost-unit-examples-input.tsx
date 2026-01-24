@@ -45,22 +45,36 @@ export function ExamplesInput({
 	});
 
 	// Sync inputs when external value changes (e.g., form reset)
-	const valueRef = useRef(value);
+	// Compare against current internal state to avoid regenerating on round-trips
 	useEffect(() => {
-		if (valueRef.current !== value) {
-			if (value.length === 0) {
-				setInputs([{ id: generateInputId(), value: "" }]);
-			} else {
-				// Restore inputs from external value (e.g., form reset with values)
-				const restoredInputs = value.map((v) => ({
-					id: generateInputId(),
-					value: v,
-				}));
-				restoredInputs.push({ id: generateInputId(), value: "" });
-				setInputs(restoredInputs);
+		setInputs((currentInputs) => {
+			// Get current non-empty values from internal state
+			const currentValues = currentInputs
+				.map((item) => item.value)
+				.filter((v) => v.trim() !== "");
+
+			// Compare incoming value against current internal values
+			const isSameContent =
+				currentValues.length === value.length &&
+				currentValues.every((v, i) => v === value[i]);
+
+			// If content matches, don't regenerate (avoids focus loss on round-trips)
+			if (isSameContent) {
+				return currentInputs;
 			}
-		}
-		valueRef.current = value;
+
+			// External value differs from internal state - regenerate inputs
+			if (value.length === 0) {
+				return [{ id: generateInputId(), value: "" }];
+			}
+
+			const restoredInputs = value.map((v) => ({
+				id: generateInputId(),
+				value: v,
+			}));
+			restoredInputs.push({ id: generateInputId(), value: "" });
+			return restoredInputs;
+		});
 	}, [value, generateInputId]);
 
 	// Sync non-empty values to parent form (separate effect to avoid setState during render)
