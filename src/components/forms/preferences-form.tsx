@@ -3,7 +3,6 @@
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { NotificationPreference } from "@/generated/prisma/enums";
-import { formatIban, unformatIban } from "@/lib/utils";
 import { updatePreferencesSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 import { Button } from "../ui/button";
@@ -11,11 +10,9 @@ import {
 	Field,
 	FieldContent,
 	FieldDescription,
-	FieldError,
 	FieldGroup,
 	FieldLabel,
 } from "../ui/field";
-import { IbanInput } from "../ui/iban-input";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
@@ -38,7 +35,6 @@ export function PreferencesForm() {
 	const form = useForm({
 		defaultValues: {
 			notificationPreference: preferences.notifications,
-			iban: preferences.iban ? formatIban(preferences.iban) : "",
 		},
 		validators: {
 			onSubmit: updatePreferencesSchema,
@@ -46,7 +42,6 @@ export function PreferencesForm() {
 		onSubmit: ({ value }) => {
 			updatePreferences.mutate({
 				notificationPreference: value.notificationPreference,
-				iban: value.iban.length > 0 ? unformatIban(value.iban) : "",
 			});
 		},
 	});
@@ -116,36 +111,7 @@ export function PreferencesForm() {
 						);
 					}}
 				</form.Field>
-				<form.Field name="iban">
-					{(field) => {
-						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-						return (
-							<Field
-								className="grid gap-4 md:grid-cols-2 md:gap-8"
-								data-invalid={isInvalid}
-							>
-								<FieldContent>
-									<FieldLabel htmlFor={field.name}>IBAN</FieldLabel>
-									<FieldDescription>
-										Ausstehende Zahlungen werden an das Konto mit dieser IBAN geleitet.
-									</FieldDescription>
-								</FieldContent>
-								<div>
-									<IbanInput
-										aria-invalid={isInvalid}
-										className="w-full"
-										id={field.name}
-										name={field.name}
-										onBlur={field.handleBlur}
-										onChange={field.handleChange}
-										value={field.state.value}
-									/>
-									{isInvalid && <FieldError errors={field.state.meta.errors} />}
-								</div>
-							</Field>
-						);
-					}}
-				</form.Field>
+
 				<div className="flex items-center justify-end">
 					<Button
 						disabled={updatePreferences.isPending}

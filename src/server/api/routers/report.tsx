@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { TreesIcon } from "lucide-react";
 import { z } from "zod";
 import ExpenseReportCreatorNotification from "@/components/emails/expense-report-creator-notification";
 import ExpenseReportReviewerNotification from "@/components/emails/expense-report-reviewer-notification";
