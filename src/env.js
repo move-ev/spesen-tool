@@ -134,6 +134,11 @@ export const env = createEnv({
 		 * Generate with: openssl rand -base64 32
 		 */
 		SECRET_ENCRYPTION_KEY: z.string(),
+
+		/**
+		 * Mail Adapter
+		 */
+		MAIL_ADAPTER: z.enum(["resend", "smtp"]),
 	},
 
 	/**
@@ -174,6 +179,7 @@ export const env = createEnv({
 		STORAGE_REGION: process.env.STORAGE_REGION,
 		STORAGE_BUCKET: process.env.STORAGE_BUCKET,
 		EMAIL_FROM: process.env.EMAIL_FROM,
+		MAIL_ADAPTER: process.env.MAIL_ADAPTER,
 	},
 
 	/**

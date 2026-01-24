@@ -221,6 +221,7 @@ function buildConfigFromEnv(): ConfigInput {
 		email: {
 			from: env.EMAIL_FROM ?? "",
 			replyTo: env.EMAIL_REPLY_TO,
+			provider: "resend",
 		},
 	};
 }
