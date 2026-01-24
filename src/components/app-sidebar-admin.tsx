@@ -3,7 +3,7 @@
 import { Settings2, ShieldUserIcon } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/consts";
-import { api } from "@/trpc/react";
+import { authClient } from "@/server/better-auth/client";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -13,9 +13,11 @@ import {
 } from "./ui/sidebar";
 
 export function AppSidebarAdmin() {
-	const [user] = api.user.getCurrent.useSuspenseQuery();
+	const { isPending, data } = authClient.useSession();
 
-	if (!user || user.role !== "admin") return null;
+	if (isPending || !data?.user) return null;
+
+	if (data.user.role !== "admin") return null;
 
 	return (
 		<SidebarGroup>

@@ -142,52 +142,6 @@ export const reportRouter = createTRPCRouter({
 			};
 		}),
 
-	getStats: protectedProcedure
-		.input(z.object({ id: z.string() }))
-		.query(async ({ ctx, input }) => {
-			const report = await ctx.db.report.findUnique({
-				where: {
-					id: input.id,
-				},
-			});
-
-			if (!report) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Report not found",
-				});
-			}
-
-			const isAdmin = ctx.session.user.role === "admin";
-			if (!isAdmin && report?.ownerId !== ctx.session.user.id) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "You don't have access to this report",
-				});
-			}
-
-			const [totalAmount, expenseCount] = await ctx.db.$transaction([
-				ctx.db.expense.aggregate({
-					where: {
-						reportId: input.id,
-					},
-					_sum: {
-						amount: true,
-					},
-				}),
-				ctx.db.expense.count({
-					where: {
-						reportId: input.id,
-					},
-				}),
-			]);
-
-			return {
-				totalAmount: totalAmount._sum.amount ? Number(totalAmount._sum.amount) : 0,
-				expenseCount: expenseCount,
-			};
-		}),
-
 	// Create a new report
 	create: protectedProcedure
 		.input(createReportSchema)
@@ -434,7 +388,7 @@ export const reportRouter = createTRPCRouter({
 		}),
 	/**
 	 * This procedure is only intended for admin use. To set the status of a report from
-	 * draft to pending approval, use the submit procedure
+	 * draft to pending approval, use the submit procedure.
 	 */
 	updateStatus: adminProcedure
 		.input(

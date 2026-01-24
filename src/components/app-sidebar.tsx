@@ -2,7 +2,7 @@ import { HomeIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ROUTES } from "@/lib/consts";
-import { api, HydrateClient } from "@/trpc/server";
+import { HydrateClient } from "@/trpc/server";
 import { AppSidebarAdmin } from "./app-sidebar-admin";
 import {
 	Sidebar,
@@ -31,8 +31,6 @@ const sidebarItems = [
 ];
 
 export function AppSidebar() {
-	void api.user.getCurrent.prefetch();
-
 	return (
 		<HydrateClient>
 			<Sidebar>
