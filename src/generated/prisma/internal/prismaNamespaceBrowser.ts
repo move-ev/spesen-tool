@@ -235,8 +235,9 @@ export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typ
 
 export const BankingDetailsScalarFieldEnum = {
   id: 'id',
+  title: 'title',
   iban: 'iban',
-  accountName: 'accountName',
+  fullName: 'fullName',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

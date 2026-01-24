@@ -26,8 +26,9 @@ export type AggregateBankingDetails = {
 
 export type BankingDetailsMinAggregateOutputType = {
   id: string | null
+  title: string | null
   iban: string | null
-  accountName: string | null
+  fullName: string | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -35,8 +36,9 @@ export type BankingDetailsMinAggregateOutputType = {
 
 export type BankingDetailsMaxAggregateOutputType = {
   id: string | null
+  title: string | null
   iban: string | null
-  accountName: string | null
+  fullName: string | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -44,8 +46,9 @@ export type BankingDetailsMaxAggregateOutputType = {
 
 export type BankingDetailsCountAggregateOutputType = {
   id: number
+  title: number
   iban: number
-  accountName: number
+  fullName: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -55,8 +58,9 @@ export type BankingDetailsCountAggregateOutputType = {
 
 export type BankingDetailsMinAggregateInputType = {
   id?: true
+  title?: true
   iban?: true
-  accountName?: true
+  fullName?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -64,8 +68,9 @@ export type BankingDetailsMinAggregateInputType = {
 
 export type BankingDetailsMaxAggregateInputType = {
   id?: true
+  title?: true
   iban?: true
-  accountName?: true
+  fullName?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -73,8 +78,9 @@ export type BankingDetailsMaxAggregateInputType = {
 
 export type BankingDetailsCountAggregateInputType = {
   id?: true
+  title?: true
   iban?: true
-  accountName?: true
+  fullName?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -155,8 +161,9 @@ export type BankingDetailsGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type BankingDetailsGroupByOutputType = {
   id: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -185,8 +192,9 @@ export type BankingDetailsWhereInput = {
   OR?: Prisma.BankingDetailsWhereInput[]
   NOT?: Prisma.BankingDetailsWhereInput | Prisma.BankingDetailsWhereInput[]
   id?: Prisma.StringFilter<"BankingDetails"> | string
+  title?: Prisma.StringFilter<"BankingDetails"> | string
   iban?: Prisma.StringFilter<"BankingDetails"> | string
-  accountName?: Prisma.StringFilter<"BankingDetails"> | string
+  fullName?: Prisma.StringFilter<"BankingDetails"> | string
   userId?: Prisma.StringFilter<"BankingDetails"> | string
   createdAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
@@ -195,8 +203,9 @@ export type BankingDetailsWhereInput = {
 
 export type BankingDetailsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   iban?: Prisma.SortOrder
-  accountName?: Prisma.SortOrder
+  fullName?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -208,8 +217,9 @@ export type BankingDetailsWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.BankingDetailsWhereInput | Prisma.BankingDetailsWhereInput[]
   OR?: Prisma.BankingDetailsWhereInput[]
   NOT?: Prisma.BankingDetailsWhereInput | Prisma.BankingDetailsWhereInput[]
+  title?: Prisma.StringFilter<"BankingDetails"> | string
   iban?: Prisma.StringFilter<"BankingDetails"> | string
-  accountName?: Prisma.StringFilter<"BankingDetails"> | string
+  fullName?: Prisma.StringFilter<"BankingDetails"> | string
   userId?: Prisma.StringFilter<"BankingDetails"> | string
   createdAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
@@ -218,8 +228,9 @@ export type BankingDetailsWhereUniqueInput = Prisma.AtLeast<{
 
 export type BankingDetailsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   iban?: Prisma.SortOrder
-  accountName?: Prisma.SortOrder
+  fullName?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -233,8 +244,9 @@ export type BankingDetailsScalarWhereWithAggregatesInput = {
   OR?: Prisma.BankingDetailsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.BankingDetailsScalarWhereWithAggregatesInput | Prisma.BankingDetailsScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"BankingDetails"> | string
+  title?: Prisma.StringWithAggregatesFilter<"BankingDetails"> | string
   iban?: Prisma.StringWithAggregatesFilter<"BankingDetails"> | string
-  accountName?: Prisma.StringWithAggregatesFilter<"BankingDetails"> | string
+  fullName?: Prisma.StringWithAggregatesFilter<"BankingDetails"> | string
   userId?: Prisma.StringWithAggregatesFilter<"BankingDetails"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BankingDetails"> | Date | string
@@ -242,8 +254,9 @@ export type BankingDetailsScalarWhereWithAggregatesInput = {
 
 export type BankingDetailsCreateInput = {
   id?: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutBankingDetailsInput
@@ -251,8 +264,9 @@ export type BankingDetailsCreateInput = {
 
 export type BankingDetailsUncheckedCreateInput = {
   id?: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -260,8 +274,9 @@ export type BankingDetailsUncheckedCreateInput = {
 
 export type BankingDetailsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutBankingDetailsNestedInput
@@ -269,8 +284,9 @@ export type BankingDetailsUpdateInput = {
 
 export type BankingDetailsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -278,8 +294,9 @@ export type BankingDetailsUncheckedUpdateInput = {
 
 export type BankingDetailsCreateManyInput = {
   id?: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -287,16 +304,18 @@ export type BankingDetailsCreateManyInput = {
 
 export type BankingDetailsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BankingDetailsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -314,8 +333,9 @@ export type BankingDetailsOrderByRelationAggregateInput = {
 
 export type BankingDetailsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   iban?: Prisma.SortOrder
-  accountName?: Prisma.SortOrder
+  fullName?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -323,8 +343,9 @@ export type BankingDetailsCountOrderByAggregateInput = {
 
 export type BankingDetailsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   iban?: Prisma.SortOrder
-  accountName?: Prisma.SortOrder
+  fullName?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -332,8 +353,9 @@ export type BankingDetailsMaxOrderByAggregateInput = {
 
 export type BankingDetailsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   iban?: Prisma.SortOrder
-  accountName?: Prisma.SortOrder
+  fullName?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -383,16 +405,18 @@ export type BankingDetailsUncheckedUpdateManyWithoutUserNestedInput = {
 
 export type BankingDetailsCreateWithoutUserInput = {
   id?: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BankingDetailsUncheckedCreateWithoutUserInput = {
   id?: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -428,8 +452,9 @@ export type BankingDetailsScalarWhereInput = {
   OR?: Prisma.BankingDetailsScalarWhereInput[]
   NOT?: Prisma.BankingDetailsScalarWhereInput | Prisma.BankingDetailsScalarWhereInput[]
   id?: Prisma.StringFilter<"BankingDetails"> | string
+  title?: Prisma.StringFilter<"BankingDetails"> | string
   iban?: Prisma.StringFilter<"BankingDetails"> | string
-  accountName?: Prisma.StringFilter<"BankingDetails"> | string
+  fullName?: Prisma.StringFilter<"BankingDetails"> | string
   userId?: Prisma.StringFilter<"BankingDetails"> | string
   createdAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
@@ -437,32 +462,36 @@ export type BankingDetailsScalarWhereInput = {
 
 export type BankingDetailsCreateManyUserInput = {
   id?: string
+  title: string
   iban: string
-  accountName: string
+  fullName: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BankingDetailsUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BankingDetailsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BankingDetailsUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   iban?: Prisma.StringFieldUpdateOperationsInput | string
-  accountName?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -471,8 +500,9 @@ export type BankingDetailsUncheckedUpdateManyWithoutUserInput = {
 
 export type BankingDetailsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  title?: boolean
   iban?: boolean
-  accountName?: boolean
+  fullName?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -481,8 +511,9 @@ export type BankingDetailsSelect<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type BankingDetailsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  title?: boolean
   iban?: boolean
-  accountName?: boolean
+  fullName?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -491,8 +522,9 @@ export type BankingDetailsSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 
 export type BankingDetailsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  title?: boolean
   iban?: boolean
-  accountName?: boolean
+  fullName?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -501,14 +533,15 @@ export type BankingDetailsSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 
 export type BankingDetailsSelectScalar = {
   id?: boolean
+  title?: boolean
   iban?: boolean
-  accountName?: boolean
+  fullName?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BankingDetailsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "iban" | "accountName" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["bankingDetails"]>
+export type BankingDetailsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "iban" | "fullName" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["bankingDetails"]>
 export type BankingDetailsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -526,8 +559,9 @@ export type $BankingDetailsPayload<ExtArgs extends runtime.Types.Extensions.Inte
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    title: string
     iban: string
-    accountName: string
+    fullName: string
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -956,8 +990,9 @@ export interface Prisma__BankingDetailsClient<T, Null = never, ExtArgs extends r
  */
 export interface BankingDetailsFieldRefs {
   readonly id: Prisma.FieldRef<"BankingDetails", 'String'>
+  readonly title: Prisma.FieldRef<"BankingDetails", 'String'>
   readonly iban: Prisma.FieldRef<"BankingDetails", 'String'>
-  readonly accountName: Prisma.FieldRef<"BankingDetails", 'String'>
+  readonly fullName: Prisma.FieldRef<"BankingDetails", 'String'>
   readonly userId: Prisma.FieldRef<"BankingDetails", 'String'>
   readonly createdAt: Prisma.FieldRef<"BankingDetails", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BankingDetails", 'DateTime'>

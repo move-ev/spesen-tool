@@ -222,8 +222,11 @@ model CostUnit {
 
 model BankingDetails {
   id String @id @default(cuid())
+  // Used for displaying the banking details in the UI without exposing the iban
+  title String
+
   iban String
-  accountName String
+  fullName String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
