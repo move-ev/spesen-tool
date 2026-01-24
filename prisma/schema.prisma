@@ -28,7 +28,7 @@ model Report {
   ownerId String
 
   bankingDetailsId String
-  bankingDetails   BankingDetails @relation(fields: [bankingDetailsId], references: [id], onDelete: Cascade)
+  bankingDetails   BankingDetails @relation(fields: [bankingDetailsId], references: [id], onDelete: Restrict)
 
   createdAt     DateTime @default(now())
   lastUpdatedAt DateTime @updatedAt

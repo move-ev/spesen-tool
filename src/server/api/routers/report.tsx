@@ -147,6 +147,23 @@ export const reportRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(createReportSchema)
 		.mutation(async ({ ctx, input }) => {
+			const bankingDetails = await ctx.db.bankingDetails.findUnique({
+				where: {
+					id: input.bankingDetailsId,
+				},
+				select: {
+					userId: true,
+				},
+			});
+
+			if (!bankingDetails || bankingDetails.userId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message:
+						"You don't have permission to create a report with these banking details",
+				});
+			}
+
 			// Create the report
 			const report = await ctx.db.report.create({
 				data: {
