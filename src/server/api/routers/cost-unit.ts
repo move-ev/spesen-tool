@@ -25,6 +25,38 @@ function isPrismaUniqueConstraintError(
 }
 
 export const costUnitRouter = createTRPCRouter({
+	listGroupsWithUnits: protectedProcedure.query(async ({ ctx }) => {
+		const [groups, ungroupedCostUnits] = await ctx.db.$transaction([
+			// Fetch groups with their cost units
+			ctx.db.costUnitGroup.findMany({
+				include: {
+					costUnits: true,
+				},
+				orderBy: { title: "asc" },
+			}),
+			// Fetch ungrouped cost units (those with costUnitGroupId = null)
+			ctx.db.costUnit.findMany({
+				where: { costUnitGroupId: null },
+				orderBy: { tag: "asc" },
+			}),
+		]);
+
+		// If there are ungrouped cost units, add them as a synthetic group
+		if (ungroupedCostUnits.length > 0) {
+			return [
+				{
+					id: NO_COST_UNIT_GROUP,
+					title: "Ohne Gruppe",
+					costUnits: ungroupedCostUnits,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+				...groups,
+			];
+		}
+
+		return groups;
+	}),
 	listGrouped: protectedProcedure.query(async ({ ctx }) => {
 		const costUnits = await ctx.db.costUnit.findMany({
 			include: {

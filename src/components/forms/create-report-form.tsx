@@ -17,15 +17,30 @@ import {
 } from "../ui/field";
 import { Input } from "../ui/input";
 import {
-	NativeSelect,
-	NativeSelectOptGroup,
-	NativeSelectOption,
-} from "../ui/native-select";
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
-	const [costUnits] = api.costUnit.listGrouped.useSuspenseQuery();
+	const [costUnitsGroups] = api.costUnit.listGroupsWithUnits.useSuspenseQuery();
 	const [bankingDetails] = api.bankingDetails.list.useSuspenseQuery();
+
+	const allCostUnits = useMemo(() => {
+		return costUnitsGroups.flatMap((group) =>
+			group.costUnits.map((costUnit) => ({
+				label: costUnit.title,
+				value: costUnit.id,
+				examples: costUnit.examples,
+				tag: costUnit.tag,
+			})),
+		);
+	}, [costUnitsGroups]);
 
 	// Create a Map for O(1) cost unit lookups by ID
 	const costUnitMap = useMemo(() => {
@@ -33,16 +48,16 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 			string,
 			{ id: string; tag: string; title: string; examples: string[] }
 		>();
-		for (const costUnit of costUnits.ungrouped) {
-			map.set(costUnit.id, costUnit);
-		}
-		for (const group of costUnits.grouped) {
-			for (const costUnit of group.costUnits) {
-				map.set(costUnit.id, costUnit);
-			}
+		for (const costUnit of allCostUnits) {
+			map.set(costUnit.value, {
+				id: costUnit.value,
+				tag: costUnit.tag,
+				title: costUnit.label,
+				examples: costUnit.examples,
+			});
 		}
 		return map;
-	}, [costUnits]);
+	}, [allCostUnits]);
 
 	const router = useRouter();
 
@@ -136,19 +151,28 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 						return (
 							<Field data-invalid={isInvalid}>
 								<FieldLabel htmlFor={field.name}>Bankverbindung</FieldLabel>
-								<NativeSelect
-									onChange={(e) => field.handleChange(e.target.value)}
+								<Select
+									items={bankingDetails.map((detail) => ({
+										label: detail.title,
+										value: detail.id,
+									}))}
+									onValueChange={(value) => field.handleChange(value ?? "")}
 									value={field.state.value}
 								>
-									<NativeSelectOption value="">
-										Bankverbindung auswählen
-									</NativeSelectOption>
-									{bankingDetails.map((bankingDetail) => (
-										<NativeSelectOption key={bankingDetail.id} value={bankingDetail.id}>
-											{bankingDetail.title}
-										</NativeSelectOption>
-									))}
-								</NativeSelect>
+									<SelectTrigger aria-invalid={isInvalid} data-invalid={isInvalid}>
+										<SelectValue placeholder="Bankverbindung auswählen" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectGroup>
+											{bankingDetails.map((detail) => (
+												<SelectItem key={detail.id} value={detail.id}>
+													<span>{detail.title}</span>
+												</SelectItem>
+											))}
+										</SelectGroup>
+									</SelectContent>
+								</Select>
+
 								<FieldDescription>
 									Wähle die Bankverbindung aus, die für diesen Report verwendet werden
 									soll.
@@ -166,31 +190,28 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 						return (
 							<Field data-invalid={isInvalid}>
 								<FieldLabel htmlFor={field.name}>Kostenstelle</FieldLabel>
-								<NativeSelect
-									onChange={(e) => field.handleChange(e.target.value)}
+								<Select
+									items={allCostUnits}
+									onValueChange={(value) => field.handleChange(value ?? "")}
 									value={field.state.value}
 								>
-									<NativeSelectOption value="">
-										Kostenstelle auswählen
-									</NativeSelectOption>
-									{costUnits.ungrouped.map((costUnit) => (
-										<NativeSelectOption key={costUnit.id} value={costUnit.id}>
-											{costUnit.title}
-										</NativeSelectOption>
-									))}
-									{costUnits.grouped.map((group) => (
-										<NativeSelectOptGroup
-											key={group.group?.id}
-											label={group.group?.title ?? "Unbekannte Gruppe"}
-										>
-											{group.costUnits.map((costUnit) => (
-												<NativeSelectOption key={costUnit.id} value={costUnit.id}>
-													{costUnit.title}
-												</NativeSelectOption>
-											))}
-										</NativeSelectOptGroup>
-									))}
-								</NativeSelect>
+									<SelectTrigger aria-invalid={isInvalid} data-invalid={isInvalid}>
+										<SelectValue placeholder="Kostenstelle auswählen" />
+									</SelectTrigger>
+									<SelectContent>
+										{costUnitsGroups.map((group) => (
+											<SelectGroup key={group.id}>
+												<SelectLabel>{group.title}</SelectLabel>
+												{group.costUnits.length > 0 &&
+													group.costUnits.map((costUnit) => (
+														<SelectItem key={costUnit.id} value={costUnit.id}>
+															<span>{costUnit.title}</span>
+														</SelectItem>
+													))}
+											</SelectGroup>
+										))}
+									</SelectContent>
+								</Select>
 
 								{(() => {
 									const selectedCostUnit = costUnitMap.get(field.state.value);
