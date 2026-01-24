@@ -1,21 +1,14 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { env } from "@/env";
-import {
-	getStorageBucket,
-	getStorageForcePathStyle,
-	getStorageHost,
-	getStorageRegion,
-	getStorageSecure,
-} from "@/lib/config";
 
 /**
  * S3 client for fetching files from storage
  */
 function createS3Client(): S3Client {
-	const host = getStorageHost();
-	const region = getStorageRegion();
-	const secure = getStorageSecure();
-	const forcePathStyle = getStorageForcePathStyle();
+	const host = env.STORAGE_HOST;
+	const region = env.STORAGE_REGION;
+	const secure = env.STORAGE_SECURE;
+	const forcePathStyle = env.STORAGE_FORCE_PATH_STYLE;
 
 	const protocol = secure ? "https" : "http";
 	const endpoint = `${protocol}://${host}`;
@@ -48,7 +41,7 @@ function getS3Client(): S3Client {
  */
 export async function getFileFromStorage(key: string): Promise<Buffer | null> {
 	const client = getS3Client();
-	const bucket = getStorageBucket();
+	const bucket = env.STORAGE_BUCKET;
 
 	try {
 		const command = new GetObjectCommand({

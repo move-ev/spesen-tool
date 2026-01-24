@@ -49,6 +49,19 @@ export const env = createEnv({
 		 */
 		STORAGE_ACCESS_KEY: z.string(),
 
+		/**
+		 * S3-compatible storage secure
+		 */
+		STORAGE_SECURE: z.boolean().default(true),
+
+		/**
+		 * S3-compatible storage force path style
+		 */
+		STORAGE_FORCE_PATH_STYLE: z.boolean().default(false),
+
+		/**
+		 * S3-compatible storage force path style
+		 */
 		// =================================================================
 		// Email Service Secret
 		// =================================================================
@@ -85,7 +98,7 @@ export const env = createEnv({
 		 * Better Auth URL override
 		 * When set, takes precedence over config.ts auth.url
 		 */
-		BETTER_AUTH_URL: z.string().url().optional(),
+		BETTER_AUTH_URL: z.url(),
 
 		/**
 		 * Superuser ID override
@@ -97,31 +110,31 @@ export const env = createEnv({
 		 * Microsoft tenant ID override
 		 * When set, takes precedence over config.ts auth.microsoft.tenantId
 		 */
-		MICROSOFT_TENANT_ID: z.string().optional(),
+		MICROSOFT_TENANT_ID: z.string(),
 
 		/**
 		 * Microsoft client ID override
 		 * When set, takes precedence over config.ts auth.microsoft.clientId
 		 */
-		MICROSOFT_CLIENT_ID: z.string().optional(),
+		MICROSOFT_CLIENT_ID: z.string(),
 
 		/**
 		 * Storage host override
 		 * When set, takes precedence over config.ts storage.host
 		 */
-		STORAGE_HOST: z.string().optional(),
+		STORAGE_HOST: z.string(),
 
 		/**
 		 * Storage region override
 		 * When set, takes precedence over config.ts storage.region
 		 */
-		STORAGE_REGION: z.string().optional(),
+		STORAGE_REGION: z.string(),
 
 		/**
 		 * Storage bucket override
 		 * When set, takes precedence over config.ts storage.bucket
 		 */
-		STORAGE_BUCKET: z.string().optional(),
+		STORAGE_BUCKET: z.string(),
 
 		/**
 		 * Email from address override
@@ -163,6 +176,8 @@ export const env = createEnv({
 		MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
 		STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
 		STORAGE_ACCESS_KEY: process.env.STORAGE_ACCESS_KEY,
+		STORAGE_SECURE: process.env.STORAGE_SECURE,
+		STORAGE_FORCE_PATH_STYLE: process.env.STORAGE_FORCE_PATH_STYLE,
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		SECRET_ENCRYPTION_KEY: process.env.SECRET_ENCRYPTION_KEY,
 
