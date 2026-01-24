@@ -89,6 +89,7 @@ export const ReportScalarFieldEnum = {
   status: 'status',
   costUnitId: 'costUnitId',
   ownerId: 'ownerId',
+  bankingDetailsId: 'bankingDetailsId',
   createdAt: 'createdAt',
   lastUpdatedAt: 'lastUpdatedAt'
 } as const

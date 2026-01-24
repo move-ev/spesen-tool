@@ -199,6 +199,7 @@ export type BankingDetailsWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  reports?: Prisma.ReportListRelationFilter
 }
 
 export type BankingDetailsOrderByWithRelationInput = {
@@ -210,6 +211,7 @@ export type BankingDetailsOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  reports?: Prisma.ReportOrderByRelationAggregateInput
 }
 
 export type BankingDetailsWhereUniqueInput = Prisma.AtLeast<{
@@ -224,6 +226,7 @@ export type BankingDetailsWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  reports?: Prisma.ReportListRelationFilter
 }, "id">
 
 export type BankingDetailsOrderByWithAggregationInput = {
@@ -260,6 +263,7 @@ export type BankingDetailsCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutBankingDetailsInput
+  reports?: Prisma.ReportCreateNestedManyWithoutBankingDetailsInput
 }
 
 export type BankingDetailsUncheckedCreateInput = {
@@ -270,6 +274,7 @@ export type BankingDetailsUncheckedCreateInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutBankingDetailsInput
 }
 
 export type BankingDetailsUpdateInput = {
@@ -280,6 +285,7 @@ export type BankingDetailsUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutBankingDetailsNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutBankingDetailsNestedInput
 }
 
 export type BankingDetailsUncheckedUpdateInput = {
@@ -290,6 +296,7 @@ export type BankingDetailsUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutBankingDetailsNestedInput
 }
 
 export type BankingDetailsCreateManyInput = {
@@ -319,6 +326,11 @@ export type BankingDetailsUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BankingDetailsScalarRelationFilter = {
+  is?: Prisma.BankingDetailsWhereInput
+  isNot?: Prisma.BankingDetailsWhereInput
 }
 
 export type BankingDetailsListRelationFilter = {
@@ -359,6 +371,20 @@ export type BankingDetailsMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BankingDetailsCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
+  connect?: Prisma.BankingDetailsWhereUniqueInput
+}
+
+export type BankingDetailsUpdateOneRequiredWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.BankingDetailsUpsertWithoutReportsInput
+  connect?: Prisma.BankingDetailsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BankingDetailsUpdateToOneWithWhereWithoutReportsInput, Prisma.BankingDetailsUpdateWithoutReportsInput>, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
 }
 
 export type BankingDetailsCreateNestedManyWithoutUserInput = {
@@ -403,6 +429,62 @@ export type BankingDetailsUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.BankingDetailsScalarWhereInput | Prisma.BankingDetailsScalarWhereInput[]
 }
 
+export type BankingDetailsCreateWithoutReportsInput = {
+  id?: string
+  title: string
+  iban: string
+  fullName: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutBankingDetailsInput
+}
+
+export type BankingDetailsUncheckedCreateWithoutReportsInput = {
+  id?: string
+  title: string
+  iban: string
+  fullName: string
+  userId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BankingDetailsCreateOrConnectWithoutReportsInput = {
+  where: Prisma.BankingDetailsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+}
+
+export type BankingDetailsUpsertWithoutReportsInput = {
+  update: Prisma.XOR<Prisma.BankingDetailsUpdateWithoutReportsInput, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+  where?: Prisma.BankingDetailsWhereInput
+}
+
+export type BankingDetailsUpdateToOneWithWhereWithoutReportsInput = {
+  where?: Prisma.BankingDetailsWhereInput
+  data: Prisma.XOR<Prisma.BankingDetailsUpdateWithoutReportsInput, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
+}
+
+export type BankingDetailsUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  iban?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutBankingDetailsNestedInput
+}
+
+export type BankingDetailsUncheckedUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  iban?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type BankingDetailsCreateWithoutUserInput = {
   id?: string
   title: string
@@ -410,6 +492,7 @@ export type BankingDetailsCreateWithoutUserInput = {
   fullName: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  reports?: Prisma.ReportCreateNestedManyWithoutBankingDetailsInput
 }
 
 export type BankingDetailsUncheckedCreateWithoutUserInput = {
@@ -419,6 +502,7 @@ export type BankingDetailsUncheckedCreateWithoutUserInput = {
   fullName: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutBankingDetailsInput
 }
 
 export type BankingDetailsCreateOrConnectWithoutUserInput = {
@@ -476,6 +560,7 @@ export type BankingDetailsUpdateWithoutUserInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reports?: Prisma.ReportUpdateManyWithoutBankingDetailsNestedInput
 }
 
 export type BankingDetailsUncheckedUpdateWithoutUserInput = {
@@ -485,6 +570,7 @@ export type BankingDetailsUncheckedUpdateWithoutUserInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutBankingDetailsNestedInput
 }
 
 export type BankingDetailsUncheckedUpdateManyWithoutUserInput = {
@@ -497,6 +583,35 @@ export type BankingDetailsUncheckedUpdateManyWithoutUserInput = {
 }
 
 
+/**
+ * Count Type BankingDetailsCountOutputType
+ */
+
+export type BankingDetailsCountOutputType = {
+  reports: number
+}
+
+export type BankingDetailsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  reports?: boolean | BankingDetailsCountOutputTypeCountReportsArgs
+}
+
+/**
+ * BankingDetailsCountOutputType without action
+ */
+export type BankingDetailsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BankingDetailsCountOutputType
+   */
+  select?: Prisma.BankingDetailsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BankingDetailsCountOutputType without action
+ */
+export type BankingDetailsCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportWhereInput
+}
+
 
 export type BankingDetailsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -507,6 +622,8 @@ export type BankingDetailsSelect<ExtArgs extends runtime.Types.Extensions.Intern
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reports?: boolean | Prisma.BankingDetails$reportsArgs<ExtArgs>
+  _count?: boolean | Prisma.BankingDetailsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bankingDetails"]>
 
 export type BankingDetailsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -544,6 +661,8 @@ export type BankingDetailsSelectScalar = {
 export type BankingDetailsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "iban" | "fullName" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["bankingDetails"]>
 export type BankingDetailsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reports?: boolean | Prisma.BankingDetails$reportsArgs<ExtArgs>
+  _count?: boolean | Prisma.BankingDetailsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BankingDetailsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -556,6 +675,7 @@ export type $BankingDetailsPayload<ExtArgs extends runtime.Types.Extensions.Inte
   name: "BankingDetails"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    reports: Prisma.$ReportPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -960,6 +1080,7 @@ readonly fields: BankingDetailsFieldRefs;
 export interface Prisma__BankingDetailsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reports<T extends Prisma.BankingDetails$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BankingDetails$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1389,6 +1510,30 @@ export type BankingDetailsDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many BankingDetails to delete.
    */
   limit?: number
+}
+
+/**
+ * BankingDetails.reports
+ */
+export type BankingDetails$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Report
+   */
+  select?: Prisma.ReportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Report
+   */
+  omit?: Prisma.ReportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportInclude<ExtArgs> | null
+  where?: Prisma.ReportWhereInput
+  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
+  cursor?: Prisma.ReportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
 }
 
 /**

@@ -6,6 +6,7 @@ export const createReportSchema = z.object({
 	title: z.string().min(1),
 	description: z.string(),
 	costUnitId: z.string().min(1),
+	bankingDetailsId: z.string().min(1),
 });
 
 export const ibanSchema = z
