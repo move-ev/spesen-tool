@@ -662,45 +662,4 @@ export const reportRouter = createTRPCRouter({
 				filename: `${report.title.replace(/[^a-z0-9]/gi, "_")}_Zusammenfassung.pdf`,
 			};
 		}),
-
-	createSummaryPdf: protectedProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(async ({ ctx, input }) => {
-			const report = await ctx.db.report.findUnique({
-				where: { id: input.id },
-				include: {
-					owner: {
-						include: {
-							preferences: true,
-						},
-					},
-					expenses: {
-						include: {
-							attachments: true,
-						},
-					},
-					bankingDetails: true,
-				},
-			});
-
-			if (!report) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Report not found",
-				});
-			}
-
-			// TODO: Get reviewer from database
-			const summaryPdf = await generatePdfSummary({
-				report,
-			});
-
-			// Convert buffer to base64 string for transmission
-			const base64Pdf = summaryPdf.toString("base64");
-
-			return {
-				pdf: base64Pdf,
-				filename: `${report.title.replace(/[^a-z0-9]/gi, "_")}_Zusammenfassung.pdf`,
-			};
-		}),
 });
