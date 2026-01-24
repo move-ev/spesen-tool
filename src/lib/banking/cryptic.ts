@@ -1,5 +1,3 @@
-"use server";
-
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { env } from "@/env";
 

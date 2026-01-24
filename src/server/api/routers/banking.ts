@@ -98,7 +98,88 @@ export const bankingDetailsRouter = createTRPCRouter({
 			select: {
 				id: true,
 				title: true,
+				createdAt: true,
 			},
 		});
 	}),
+	/**
+	 * Updates existing banking details for the current user.
+	 */
+	update: protectedProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				title: z.string(),
+				iban: z.string(),
+				fullName: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const details = await ctx.db.bankingDetails.findUnique({
+				where: { id: input.id },
+				select: {
+					userId: true,
+				},
+			});
+
+			if (!details) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Banking details not found",
+				});
+			}
+
+			if (details.userId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have access to these banking details",
+				});
+			}
+
+			const encrypted = await encryptBankingDetails({
+				iban: input.iban,
+				fullName: input.fullName,
+			});
+
+			return await ctx.db.bankingDetails.update({
+				where: { id: input.id },
+				data: {
+					title: input.title,
+					...encrypted,
+				},
+			});
+		}),
+
+	delete: protectedProcedure
+		.input(
+			z.object({
+				id: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const details = await ctx.db.bankingDetails.findUnique({
+				where: { id: input.id },
+				select: {
+					userId: true,
+				},
+			});
+
+			if (!details) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Banking details not found",
+				});
+			}
+
+			if (details.userId !== ctx.session.user.id) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have access to these banking details",
+				});
+			}
+
+			return await ctx.db.bankingDetails.delete({
+				where: { id: input.id },
+			});
+		}),
 });
