@@ -4,6 +4,7 @@ import {
 	decryptBankingDetails,
 	encryptBankingDetails,
 } from "@/lib/banking/cryptic";
+import { ibanSchema } from "@/lib/validators";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const bankingDetailsRouter = createTRPCRouter({
@@ -13,15 +14,13 @@ export const bankingDetailsRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(
 			z.object({
-				title: z.string(),
-				iban: z.string(),
-				fullName: z.string(),
+				title: z.string().min(1, "Titel ist erforderlich"),
+				iban: ibanSchema,
+				fullName: z.string().min(1, "Name ist erforderlich"),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { session } = ctx;
-
-			// TODO: Add validation for the iban and full name
 
 			const encrypted = await encryptBankingDetails({
 				iban: input.iban,
@@ -108,10 +107,10 @@ export const bankingDetailsRouter = createTRPCRouter({
 	update: protectedProcedure
 		.input(
 			z.object({
-				id: z.string(),
-				title: z.string(),
-				iban: z.string(),
-				fullName: z.string(),
+				id: z.string().min(1),
+				title: z.string().min(1, "Titel ist erforderlich"),
+				iban: ibanSchema,
+				fullName: z.string().min(1, "Name ist erforderlich"),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
