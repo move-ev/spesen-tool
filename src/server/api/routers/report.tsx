@@ -434,7 +434,7 @@ export const reportRouter = createTRPCRouter({
 		}),
 	/**
 	 * This procedure is only intended for admin use. To set the status of a report from
-	 * draft to pending approval, use the submit procedure
+	 * draft to pending approval, use the submit procedure.
 	 */
 	updateStatus: adminProcedure
 		.input(

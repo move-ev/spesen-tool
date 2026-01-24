@@ -5,20 +5,10 @@ import {
 	ADMINS_DEMOTE_OTHER_ADMIN,
 	ADMINS_PROMOTE_OTHER_ADMIN,
 } from "@/lib/flags";
-import {
-	adminProcedure,
-	createTRPCRouter,
-	protectedProcedure,
-} from "@/server/api/trpc";
+import { adminProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { auth } from "@/server/better-auth";
 
 export const userRouter = createTRPCRouter({
-	// Get current user info
-	getCurrent: protectedProcedure.query(async ({ ctx }) => {
-		return ctx.db.user.findUnique({
-			where: { id: ctx.session.user.id },
-		});
-	}),
 	promoteToAdmin: adminProcedure
 		.input(z.object({ targetUserId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
