@@ -25,6 +25,13 @@ function isPrismaUniqueConstraintError(
 }
 
 export const costUnitRouter = createTRPCRouter({
+	listGroupsWithUnits: protectedProcedure.query(async ({ ctx }) => {
+		return await ctx.db.costUnitGroup.findMany({
+			include: {
+				costUnits: true,
+			},
+		});
+	}),
 	listGrouped: protectedProcedure.query(async ({ ctx }) => {
 		const costUnits = await ctx.db.costUnit.findMany({
 			include: {
