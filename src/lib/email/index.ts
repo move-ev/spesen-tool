@@ -17,3 +17,5 @@ const globalForEmail = globalThis as unknown as {
 };
 
 export const mailer = globalForEmail.email ?? createMailer();
+
+if (env.NODE_ENV !== "production") globalForEmail.email = mailer;

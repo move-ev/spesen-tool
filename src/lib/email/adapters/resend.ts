@@ -18,7 +18,9 @@ export function createResendAdapter(): EmailAdapter {
 	});
 
 	if (!validationResult.success) {
-		throw new Error("Invalid Resend adapter configuration");
+		throw new Error(
+			`Invalid Resend adapter configuration: ${validationResult.error.message}`,
+		);
 	}
 
 	const { data } = validationResult;

@@ -101,7 +101,7 @@ export const emailConfigSchema = z.object({
 		.email("Invalid email address for 'replyTo' field")
 		.optional(),
 	// Note: RESEND_API_KEY is provided via env var
-	provider: z.enum(["resend", "SES"]),
+	provider: z.enum(["resend", "smtp"]),
 });
 
 // =============================================================================
