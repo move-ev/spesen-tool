@@ -104,6 +104,8 @@ model User {
 
   @@unique([email])
   @@map("user")
+
+  bankingDetails BankingDetails[]
 }
 
 model Session {
@@ -216,4 +218,18 @@ model CostUnit {
 
   @@index([tag])
   @@map("cost_unit")
+}
+
+model BankingDetails {
+  id String @id @default(cuid())
+  iban String
+  accountName String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("banking_details")
 }

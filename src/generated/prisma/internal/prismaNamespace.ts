@@ -394,7 +394,8 @@ export const ModelName = {
   Preferences: 'Preferences',
   Settings: 'Settings',
   CostUnitGroup: 'CostUnitGroup',
-  CostUnit: 'CostUnit'
+  CostUnit: 'CostUnit',
+  BankingDetails: 'BankingDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -410,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "report" | "expense" | "attachment" | "user" | "session" | "account" | "verification" | "preferences" | "settings" | "costUnitGroup" | "costUnit"
+    modelProps: "report" | "expense" | "attachment" | "user" | "session" | "account" | "verification" | "preferences" | "settings" | "costUnitGroup" | "costUnit" | "bankingDetails"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1228,6 +1229,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BankingDetails: {
+      payload: Prisma.$BankingDetailsPayload<ExtArgs>
+      fields: Prisma.BankingDetailsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BankingDetailsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BankingDetailsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>
+        }
+        findFirst: {
+          args: Prisma.BankingDetailsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BankingDetailsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>
+        }
+        findMany: {
+          args: Prisma.BankingDetailsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>[]
+        }
+        create: {
+          args: Prisma.BankingDetailsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>
+        }
+        createMany: {
+          args: Prisma.BankingDetailsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BankingDetailsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>[]
+        }
+        delete: {
+          args: Prisma.BankingDetailsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>
+        }
+        update: {
+          args: Prisma.BankingDetailsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BankingDetailsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BankingDetailsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BankingDetailsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BankingDetailsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankingDetailsPayload>
+        }
+        aggregate: {
+          args: Prisma.BankingDetailsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBankingDetails>
+        }
+        groupBy: {
+          args: Prisma.BankingDetailsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BankingDetailsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BankingDetailsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BankingDetailsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1417,6 +1492,18 @@ export const CostUnitScalarFieldEnum = {
 } as const
 
 export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typeof CostUnitScalarFieldEnum]
+
+
+export const BankingDetailsScalarFieldEnum = {
+  id: 'id',
+  iban: 'iban',
+  accountName: 'accountName',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BankingDetailsScalarFieldEnum = (typeof BankingDetailsScalarFieldEnum)[keyof typeof BankingDetailsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1703,6 +1790,7 @@ export type GlobalOmitConfig = {
   settings?: Prisma.SettingsOmit
   costUnitGroup?: Prisma.CostUnitGroupOmit
   costUnit?: Prisma.CostUnitOmit
+  bankingDetails?: Prisma.BankingDetailsOmit
 }
 
 /* Types for Logging */
