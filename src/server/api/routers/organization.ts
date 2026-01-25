@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import z from "zod";
+import { getDomainFromEmail } from "@/lib/utils/organization";
 import {
 	createOrganizationSchema,
 	updateOrganizationSchema,
@@ -8,6 +9,12 @@ import { auth } from "@/server/better-auth";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const organizationRouter = createTRPCRouter({
+	listOwn: protectedProcedure.query(async ({ ctx }) => {
+		return await auth.api.listOrganizations({
+			headers: ctx.headers,
+		});
+	}),
+
 	get: protectedProcedure
 		.input(z.object({ organizationId: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
@@ -126,4 +133,80 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+
+	getForDomain: protectedProcedure
+		.input(z.object({ domain: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const organizationDomain = await ctx.db.organizationDomain.findUnique({
+				where: {
+					domain: input.domain,
+				},
+				include: {
+					organization: true,
+				},
+			});
+
+			if (!organizationDomain) {
+				return null;
+			}
+
+			return organizationDomain.organization;
+		}),
+
+	/**
+	 * Lets a user joib a suggested organization when possible.
+	 *
+	 * Searches for an organization by domain. If found, the user is added as
+	 * a member.
+	 */
+	joinSuggestedOrganization: protectedProcedure.mutation(async ({ ctx }) => {
+		const emailParseResult = z.email().safeParse(ctx.session.user.email);
+
+		if (!emailParseResult.success) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Invalid email",
+			});
+		}
+
+		const emailDomain = getDomainFromEmail(emailParseResult.data);
+
+		if (!emailDomain) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Invalid email domain",
+			});
+		}
+
+		const organizationDomain = await ctx.db.organizationDomain.findUnique({
+			where: {
+				domain: emailDomain,
+			},
+		});
+
+		if (!organizationDomain) {
+			throw new TRPCError({
+				code: "NOT_FOUND",
+				message: "No organization found for this domain",
+			});
+		}
+
+		const res = await auth.api.addMember({
+			headers: ctx.headers,
+			body: {
+				role: "member",
+				userId: ctx.session.user.id,
+				organizationId: organizationDomain.organizationId,
+			},
+		});
+
+		if (!res) {
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: "Failed to add member to organization",
+			});
+		}
+
+		return res;
+	}),
 });

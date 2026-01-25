@@ -261,6 +261,10 @@ model Organization {
   members     Member[]
   invitations Invitation[]
 
+  settingsId          String?
+  settings            OrganizationSettings?
+  organizationDomains OrganizationDomain[]
+
   @@unique([slug])
   @@map("organization")
 }
@@ -294,4 +298,31 @@ model Invitation {
   @@index([organizationId])
   @@index([email])
   @@map("invitation")
+}
+
+model OrganizationSettings {
+  id String @id @default(cuid())
+
+  organizationId String        @unique
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  allowedDomains String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@map("organization_settings")
+}
+
+model OrganizationDomain {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  domain         String       @unique
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@map("organization_domain")
 }

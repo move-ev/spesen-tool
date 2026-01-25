@@ -80,6 +80,16 @@ export const auth = betterAuth({
 					),
 				});
 			},
+			organizationHooks: {
+				async afterCreateOrganization(data) {
+					await db.organizationSettings.create({
+						data: {
+							allowedDomains: [],
+							organizationId: data.organization.id,
+						},
+					});
+				},
+			},
 		}),
 		nextCookies(),
 	],

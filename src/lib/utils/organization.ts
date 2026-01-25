@@ -30,3 +30,7 @@ export function translateOrganizationRole(role: string) {
 			return "Unbekannte Rolle";
 	}
 }
+
+export function getDomainFromEmail(email: string) {
+	return email.split("@")[1] ?? null;
+}
