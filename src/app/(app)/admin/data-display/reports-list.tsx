@@ -74,6 +74,7 @@ export function ReportsList() {
 
 	const table = useReactTable<ExtendedReport>({
 		autoResetExpanded: false,
+		autoResetPageIndex: false, // Prevent state update during render/hydration
 		enableExpanding: true,
 		data,
 		columns,
