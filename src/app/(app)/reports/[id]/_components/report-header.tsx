@@ -8,6 +8,7 @@ import { PageDescription, PageTitle } from "@/components/page-title";
 import { ReportStatusBadge } from "@/components/report-status-badge";
 import { Button } from "@/components/ui/button";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import type { Report, User } from "@/generated/prisma/client";
 import { ADMINS_UPDATE_OWN_REPORT } from "@/lib/flags";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/server/better-auth/client";
@@ -16,11 +17,13 @@ import { ReportAdministration } from "./report-administration";
 
 export function ReportHeader({
 	className,
-	reportId,
+	report,
 	...props
-}: React.ComponentProps<"header"> & { reportId: string }) {
+}: React.ComponentProps<"header"> & {
+	report: Report & { owner: Pick<User, "id" | "name" | "email"> };
+}) {
 	const utils = api.useUtils();
-	const [report] = api.report.getById.useSuspenseQuery({ id: reportId });
+	// const [report] = api.report.getById.useSuspenseQuery({ id: reportId });
 	const { data, isPending } = authClient.useSession();
 
 	const handleSubmit = api.report.submit.useMutation({
