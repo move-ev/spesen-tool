@@ -1,8 +1,18 @@
+import { HeartHandshakeIcon } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { CreateOrganizationForm } from "@/components/forms/create-organization-form";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
 import { HydrateClient } from "@/trpc/server";
@@ -22,11 +32,14 @@ export default async function ServerPage() {
 
 	return (
 		<HydrateClient>
-			<main>
-				<section className="container max-w-2xl py-20">
-					<PageTitle>Willkommen zurück!</PageTitle>
+			<main className="flex min-h-svh items-center justify-center bg-muted py-20">
+				<section className="container max-w-2xl rounded-lg border bg-background px-10 py-12 shadow-xs">
+					<PageTitle className="flex items-center gap-2">
+						<HeartHandshakeIcon className="text-primary" />
+						Willkommen zurück!
+					</PageTitle>
 					<PageDescription className="mt-2">
-						Um über das Spesentool gemeinsam mit anderen zu arbeiten, musst du
+						Um über das Spesentool gemeinsam mit anderen arbeiten zu können, musst du
 						Mitglied in einer Organisation sein. Trete entweder einer bestehenden
 						Organisation bei oder erstelle deine Eigene.
 					</PageDescription>
@@ -47,7 +60,22 @@ export default async function ServerPage() {
 								erstellen.
 							</p>
 						</div>
-						<Button variant={"outline"}>Neue Organisation erstellen</Button>
+						<Dialog>
+							<DialogTrigger
+								render={
+									<Button variant={"outline"}>Neue Organisation erstellen</Button>
+								}
+							/>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Neue Organisation erstellen</DialogTitle>
+								</DialogHeader>
+								<DialogDescription>
+									Erstelle eine neue Organisation um mehrere Nutzer zu verwalten.
+								</DialogDescription>
+								<CreateOrganizationForm />
+							</DialogContent>
+						</Dialog>
 					</div>
 				</section>
 			</main>
