@@ -147,7 +147,7 @@ export function ReportsList() {
 								<div
 									className={cn(
 										"has-data-spacer:grow",
-										cell.column.columnDef.meta?.hideOnMobile ? "hidden sm:block" : "",
+										cell.column.columnDef.meta?.hideOnMobile ? "hidden md:block" : "",
 									)}
 									key={cell.id}
 								>
