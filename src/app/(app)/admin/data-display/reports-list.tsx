@@ -24,7 +24,6 @@ import { DisplayOptions } from "@/components/data/display-options";
 import { FilterList } from "@/components/data/filter-list";
 import { FilterMenu } from "@/components/data/filter-menu";
 import { List, ListItem } from "@/components/list";
-import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { createColumns, type ExtendedReport } from "./columns";
 
