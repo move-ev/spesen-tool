@@ -9,3 +9,7 @@ export const createInvitationSchema = z.object({
 	email: z.email(),
 	role: z.enum(["owner", "admin", "member"]),
 });
+
+export const updateOrganizationSchema = z.object({
+	name: z.string(),
+});

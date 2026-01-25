@@ -1,10 +1,26 @@
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { createOrganizationSchema } from "@/lib/validators/organization";
+import {
+	createOrganizationSchema,
+	updateOrganizationSchema,
+} from "@/lib/validators/organization";
 import { auth } from "@/server/better-auth";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const organizationRouter = createTRPCRouter({
+	get: protectedProcedure
+		.input(z.object({ organizationId: z.string().optional() }))
+		.query(async ({ ctx, input }) => {
+			return await ctx.db.organization.findUnique({
+				where: {
+					id:
+						input.organizationId ??
+						ctx.session.session.activeOrganizationId ??
+						undefined,
+				},
+			});
+		}),
+
 	create: protectedProcedure
 		.input(createOrganizationSchema)
 		.mutation(async ({ ctx, input }) => {
@@ -36,6 +52,36 @@ export const organizationRouter = createTRPCRouter({
 			}
 
 			return organization;
+		}),
+
+	update: protectedProcedure
+		.input(updateOrganizationSchema)
+		.mutation(async ({ ctx, input }) => {
+			const { success: hasPermission } = await auth.api.hasPermission({
+				headers: ctx.headers,
+				body: {
+					organizationId: ctx.session.session.activeOrganizationId ?? undefined,
+					permission: {
+						organization: ["update"],
+					},
+				},
+			});
+
+			if (!hasPermission) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to update the organization",
+				});
+			}
+
+			return await auth.api.updateOrganization({
+				headers: ctx.headers,
+				body: {
+					data: {
+						name: input.name,
+					},
+				},
+			});
 		}),
 
 	listMembers: protectedProcedure
