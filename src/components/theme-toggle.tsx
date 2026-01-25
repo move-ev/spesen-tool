@@ -2,16 +2,22 @@
 
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Kbd, KbdGroup } from "./ui/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
-	const { theme, setTheme } = useTheme();
+	const { resolvedTheme, setTheme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+
+	// Only render theme-dependent content after mounting to avoid hydration mismatch
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	const handleThemeToggle = () => {
-		setTheme(theme === "dark" ? "light" : "dark");
+		setTheme(resolvedTheme === "dark" ? "light" : "dark");
 	};
 
 	useEffect(() => {
@@ -19,21 +25,21 @@ export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
 			// On Mac: event.metaKey (⌘), on Windows: event.ctrlKey, but spec says meta for ⌘
 			if (event.metaKey && (event.key === "d" || event.key === "D")) {
 				event.preventDefault();
-				setTheme(theme === "dark" ? "light" : "dark");
+				setTheme(resolvedTheme === "dark" ? "light" : "dark");
 			}
 		};
 		window.addEventListener("keydown", handleKeyDown);
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [theme, setTheme]);
+	}, [resolvedTheme, setTheme]);
 
 	return (
 		<Tooltip>
 			<TooltipTrigger
 				render={
 					<Button onClick={handleThemeToggle} size="icon" variant="ghost" {...props}>
-						{theme === "dark" ? <SunIcon /> : <MoonIcon />}
+						{mounted && resolvedTheme === "dark" ? <SunIcon /> : <MoonIcon />}
 					</Button>
 				}
 			/>

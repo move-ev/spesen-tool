@@ -6,7 +6,9 @@ import { api, HydrateClient } from "@/trpc/server";
 import { ReportsList } from "./data-display/reports-list";
 
 export default async function ServerPage() {
-	void api.admin.listAll.prefetch();
+	// Prefetch filter options and first page of reports in parallel
+	void api.admin.getFilterOptions.prefetch();
+	void api.admin.listAllPaginated.prefetchInfinite({ limit: 50 });
 
 	return (
 		<HydrateClient>

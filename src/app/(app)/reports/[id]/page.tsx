@@ -17,7 +17,7 @@ export default async function ServerPage({
 
 	const report = await api.report.getById({ id: reportId });
 
-	void api.report.getById.prefetch({ id: reportId });
+	// Prefetch additional data for client components
 	void api.report.getDetails.prefetch({ id: reportId });
 	void api.expense.listForReport.prefetch({ reportId });
 
@@ -39,9 +39,7 @@ export default async function ServerPage({
 					}
 					variant={"ghost"}
 				/>
-				<Suspense fallback={<Skeleton className="h-12 w-full" />}>
-					<ReportHeader reportId={reportId} />
-				</Suspense>
+				<ReportHeader report={report} />
 			</section>
 			<section className="container mt-8">
 				<Suspense fallback={<Skeleton className="h-12 w-full" />}>
