@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { admin as adminPlugin } from "better-auth/plugins";
+import { admin as adminPlugin, organization } from "better-auth/plugins";
 import { env } from "@/env";
 import { db } from "@/server/db";
 
@@ -51,7 +51,7 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	plugins: [adminPlugin(), nextCookies()],
+	plugins: [adminPlugin(), organization(), nextCookies()],
 });
 
 export type Session = typeof auth.$Infer.Session;
