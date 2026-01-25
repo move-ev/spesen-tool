@@ -71,7 +71,7 @@ export function UserMenu() {
 			/>
 			<DropdownMenuContent
 				className={"w-full min-w-(--anchor-width) max-w-64"}
-				side="right"
+				side="top"
 			>
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>{user.email}</DropdownMenuLabel>
