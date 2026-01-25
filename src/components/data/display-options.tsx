@@ -1,6 +1,7 @@
 import type { Table } from "@tanstack/react-table";
 import { ArrowDownNarrowWideIcon, ArrowUpNarrowWideIcon } from "lucide-react";
 import React from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { ListLayout } from "../list";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -186,9 +187,16 @@ function DataDisplayColumnVisibility<TData>({
 }: React.ComponentProps<"div"> & {
 	display: Table<TData>;
 }) {
-	const toggleableColumns = display
-		.getAllColumns()
-		.filter((column) => column.getCanHide());
+	const isMobile = useIsMobile();
+
+	const toggleableColumns = React.useMemo(() => {
+		return display
+			.getAllColumns()
+			.filter(
+				(column) =>
+					column.getCanHide() && !(isMobile && column.columnDef.meta?.hideOnMobile),
+			);
+	}, [display, isMobile]);
 
 	return (
 		<div className="flex flex-wrap gap-1" {...props}>

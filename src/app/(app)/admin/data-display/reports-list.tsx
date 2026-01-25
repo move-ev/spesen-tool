@@ -23,6 +23,7 @@ import { DisplayOptions } from "@/components/data/display-options";
 import { FilterList } from "@/components/data/filter-list";
 import { FilterMenu } from "@/components/data/filter-menu";
 import { List, ListItem } from "@/components/list";
+import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { createColumns, type ExtendedReport } from "./columns";
 
@@ -73,6 +74,7 @@ export function ReportsList() {
 
 	const table = useReactTable<ExtendedReport>({
 		autoResetExpanded: false,
+		autoResetPageIndex: false, // Prevent state update during render/hydration
 		enableExpanding: true,
 		data,
 		columns,
@@ -142,7 +144,13 @@ export function ReportsList() {
 							key={row.id}
 						>
 							{row.getVisibleCells().map((cell) => (
-								<div className="has-data-spacer:grow" key={cell.id}>
+								<div
+									className={cn(
+										"has-data-spacer:grow",
+										cell.column.columnDef.meta?.hideOnMobile ? "hidden md:block" : "",
+									)}
+									key={cell.id}
+								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</div>
 							))}
