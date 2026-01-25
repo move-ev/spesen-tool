@@ -16,8 +16,9 @@ import {
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ListFilterIcon, Settings2Icon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { ListFilterIcon, Loader2Icon, Settings2Icon } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DataListGroupHeader } from "@/components/data/data-list";
 import { DisplayOptions } from "@/components/data/display-options";
 import { FilterList } from "@/components/data/filter-list";
@@ -26,8 +27,33 @@ import { List, ListItem } from "@/components/list";
 import { api } from "@/trpc/react";
 import { createColumns, type ExtendedReport } from "./columns";
 
+const PAGE_SIZE = 50;
+const ROW_HEIGHT = 40; // Default row height in pixels
+const OVERSCAN = 5; // Number of items to render outside visible area
+
 export function ReportsList() {
-	const [data] = api.admin.listAll.useSuspenseQuery();
+	// Fetch filter options from server (separate query, cached independently)
+	const [filterOptions] = api.admin.getFilterOptions.useSuspenseQuery();
+
+	// Infinite query for paginated reports
+	const {
+		data: reportsData,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = api.admin.listAllPaginated.useInfiniteQuery(
+		{ limit: PAGE_SIZE },
+		{
+			getNextPageParam: (lastPage) => lastPage.nextCursor,
+		},
+	);
+
+	// Flatten all pages into a single array
+	const data = useMemo(() => {
+		return reportsData?.pages.flatMap((page) => page.items) ?? [];
+	}, [reportsData]);
+
+	const totalCount = reportsData?.pages[0]?.totalCount ?? 0;
 
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [grouping, setGrouping] = useState<string[]>([]);
@@ -36,39 +62,14 @@ export function ReportsList() {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [expanded, setExpanded] = useState<ExpandedState>(true);
 
-	// Extract unique cost units from the dataset
-	const costUnitOptions = useMemo(() => {
-		const uniqueTags = [...new Set(data.map((report) => report.costUnit.tag))];
-		return uniqueTags.sort().map((tag) => ({
-			label: tag,
-			value: tag,
-		}));
-	}, [data]);
-
-	// Extract unique owners from the dataset
-	const ownerOptions = useMemo(() => {
-		const ownersMap = new Map<string, { name: string; image: string | null }>();
-		for (const report of data) {
-			if (!ownersMap.has(report.owner.email)) {
-				ownersMap.set(report.owner.email, {
-					name: report.owner.name,
-					image: report.owner.image,
-				});
-			}
-		}
-		return Array.from(ownersMap.entries())
-			.sort((a, b) => a[1].name.localeCompare(b[1].name))
-			.map(([email, owner]) => ({
-				label: owner.name,
-				value: email,
-				image: owner.image,
-			}));
-	}, [data]);
-
-	// Create columns with dynamic options
+	// Create columns with server-provided filter options
 	const columns = useMemo(
-		() => createColumns({ costUnits: costUnitOptions, owners: ownerOptions }),
-		[costUnitOptions, ownerOptions],
+		() =>
+			createColumns({
+				costUnits: filterOptions.costUnits,
+				owners: filterOptions.owners,
+			}),
+		[filterOptions],
 	);
 
 	const table = useReactTable<ExtendedReport>({
@@ -98,8 +99,44 @@ export function ReportsList() {
 		getFilteredRowModel: getFilteredRowModel(),
 	});
 
+	const { rows } = table.getRowModel();
+
+	// Container ref for virtualization
+	const parentRef = useRef<HTMLDivElement>(null);
+
+	// Set up virtualizer
+	const virtualizer = useVirtualizer({
+		count: rows.length,
+		getScrollElement: () => parentRef.current,
+		estimateSize: () => ROW_HEIGHT,
+		overscan: OVERSCAN,
+	});
+
+	const virtualItems = virtualizer.getVirtualItems();
+
+	// Load more when scrolling near the bottom
+	const handleScroll = useCallback(() => {
+		if (!parentRef.current) return;
+
+		const { scrollHeight, scrollTop, clientHeight } = parentRef.current;
+		const scrollBottom = scrollHeight - scrollTop - clientHeight;
+
+		// Load more when within 200px of the bottom
+		if (scrollBottom < 200 && hasNextPage && !isFetchingNextPage) {
+			void fetchNextPage();
+		}
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	useEffect(() => {
+		const element = parentRef.current;
+		if (!element) return;
+
+		element.addEventListener("scroll", handleScroll);
+		return () => element.removeEventListener("scroll", handleScroll);
+	}, [handleScroll]);
+
 	return (
-		<div>
+		<div className="flex flex-col">
 			<div className="container flex flex-nowrap items-start justify-between gap-4 border-b pb-4">
 				<FilterList className="grow" table={table}>
 					<FilterMenu
@@ -114,42 +151,78 @@ export function ReportsList() {
 						</span>
 					</FilterMenu>
 				</FilterList>
-				<DisplayOptions
-					className={"shrink-0"}
-					display={table}
-					size={"sm"}
-					variant={"outline"}
-				>
-					<Settings2Icon /> Display
-				</DisplayOptions>
+				<div className="flex items-center gap-2">
+					<span className="text-muted-foreground text-sm">
+						{rows.length} / {totalCount}
+					</span>
+					<DisplayOptions
+						className={"shrink-0"}
+						display={table}
+						size={"sm"}
+						variant={"outline"}
+					>
+						<Settings2Icon /> Display
+					</DisplayOptions>
+				</div>
 			</div>
-			<List>
-				{table.getRowModel().rows.map((row) => {
-					if (row.getIsGrouped()) {
+			<div className="max-h-[calc(100vh-200px)] overflow-auto" ref={parentRef}>
+				<List
+					style={{
+						height: `${virtualizer.getTotalSize()}px`,
+						position: "relative",
+					}}
+				>
+					{virtualItems.map((virtualRow) => {
+						const row = rows[virtualRow.index];
+						if (!row) return null;
+
+						if (row.getIsGrouped()) {
+							return (
+								<DataListGroupHeader
+									className="first:border-t-0"
+									display={table}
+									key={row.id}
+									row={row}
+									style={{
+										position: "absolute",
+										top: 0,
+										left: 0,
+										width: "100%",
+										height: `${virtualRow.size}px`,
+										transform: `translateY(${virtualRow.start}px)`,
+									}}
+								/>
+							);
+						}
 						return (
-							<DataListGroupHeader
-								className="first:border-t-0"
-								display={table}
+							<ListItem
 								key={row.id}
-								row={row}
-							/>
+								{...(row.getIsSelected() ? { "data-selected": true } : {})}
+								className="relative pr-8"
+								style={{
+									position: "absolute",
+									top: 0,
+									left: 0,
+									width: "100%",
+									height: `${virtualRow.size}px`,
+									transform: `translateY(${virtualRow.start}px)`,
+								}}
+							>
+								{row.getVisibleCells().map((cell) => (
+									<div className="has-data-spacer:grow" key={cell.id}>
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</div>
+								))}
+							</ListItem>
 						);
-					}
-					return (
-						<ListItem
-							{...(row.getIsSelected() ? { "data-selected": true } : {})}
-							className="relative pr-8"
-							key={row.id}
-						>
-							{row.getVisibleCells().map((cell) => (
-								<div className="has-data-spacer:grow" key={cell.id}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</div>
-							))}
-						</ListItem>
-					);
-				})}
-			</List>
+					})}
+				</List>
+				{isFetchingNextPage && (
+					<div className="flex items-center justify-center py-4">
+						<Loader2Icon className="size-6 animate-spin text-muted-foreground" />
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

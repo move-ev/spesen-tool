@@ -17,7 +17,7 @@ export default async function ServerPage({
 
 	const report = await api.report.getById({ id: reportId });
 
-	void api.report.getById.prefetch({ id: reportId });
+	// Prefetch additional data for client components
 	void api.report.getDetails.prefetch({ id: reportId });
 	void api.expense.listForReport.prefetch({ reportId });
 

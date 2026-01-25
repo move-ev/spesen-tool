@@ -83,11 +83,15 @@ export const createTRPCRouter = t.router;
  *
  * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
  * network latency that would occur in production but not in local development.
+ *
+ * Set DISABLE_DEV_DELAY=true in your environment to disable the artificial delay.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
 	const start = Date.now();
 
-	if (t._config.isDev) {
+	const shouldAddDelay =
+		t._config.isDev && process.env.DISABLE_DEV_DELAY !== "true";
+	if (shouldAddDelay) {
 		// artificial delay in dev
 		const waitMs = Math.floor(Math.random() * 400) + 100;
 		await new Promise((resolve) => setTimeout(resolve, waitMs));
