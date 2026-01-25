@@ -38,5 +38,10 @@ declare module "@tanstack/react-table" {
 		 * based on whether the filter type is "date-past" or "date-future".
 		 */
 		datePresets?: DateRangePreset[];
+
+		/**
+		 * When true, cell cannot be displayed on mobile devices.
+		 */
+		hideOnMobile?: boolean;
 	}
 }

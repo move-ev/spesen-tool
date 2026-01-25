@@ -181,11 +181,11 @@ const titleColumn: ColumnDef<ExtendedReport> = {
 	cell: ({ row }) => {
 		return (
 			<Link
-				className="font-medium text-foreground"
+				className="max-w-full font-medium text-foreground"
 				href={`/reports/${row.original.id}`}
 			>
 				<span className="absolute inset-0 z-0 h-full w-full transition-colors" />
-				{row.original.title}
+				<span className="line-clamp-1">{row.original.title}</span>
 			</Link>
 		);
 	},
@@ -261,6 +261,7 @@ const lastUpdatedAtColumn: ColumnDef<ExtendedReport> = {
 		icon: TagIcon,
 		placeholder: "Zuletzt aktualisiert",
 		filterType: "none",
+		hideOnMobile: true,
 	},
 };
 
@@ -298,6 +299,7 @@ const createCostUnitColumn = (
 		options,
 		placeholder: "Kostenstelle",
 		filterType: "multiselect",
+		hideOnMobile: true,
 	},
 });
 
