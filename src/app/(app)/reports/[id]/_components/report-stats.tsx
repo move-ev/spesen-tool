@@ -66,10 +66,9 @@ export function ReportCopyStats({
 			<StatsCardDescription>{title}</StatsCardDescription>
 			<Tooltip>
 				<TooltipTrigger
-					closeDelay={2000}
 					render={
 						<Button
-							className={"p-0 font-semibold text-xl"}
+							className={"p-0 font-semibold text-lg"}
 							onClick={handleCopy}
 							variant={"ghost"}
 						>
