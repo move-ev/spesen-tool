@@ -17,3 +17,16 @@ export function generateSlugFromName(name: string): string {
 		.replace(/-+/g, "-")
 		.replace(/^-+|-+$/g, "");
 }
+
+export function translateOrganizationRole(role: string) {
+	switch (role) {
+		case "owner":
+			return "Owner";
+		case "admin":
+			return "Admin";
+		case "member":
+			return "Mitglied";
+		default:
+			return "Unbekannte Rolle";
+	}
+}

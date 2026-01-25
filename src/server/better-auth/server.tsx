@@ -2,8 +2,12 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin, organization } from "better-auth/plugins";
+import OrganizationInvitationEmail from "@/components/emails/organization/invitation";
 import { env } from "@/env";
+import { DEFAULT_EMAIL_FROM } from "@/lib/consts";
+import { mailer } from "@/lib/email";
 import { db } from "@/server/db";
+import { admin, member, organizationAc, owner } from "./permissions";
 
 // Get configuration values
 const authUrl = env.BETTER_AUTH_URL;
@@ -51,7 +55,34 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	plugins: [adminPlugin(), organization(), nextCookies()],
+	plugins: [
+		adminPlugin(),
+		organization({
+			ac: organizationAc,
+			roles: {
+				owner,
+				admin,
+				member,
+			},
+			async sendInvitationEmail(data) {
+				const inviteLink = `https://example.com/accept-invitation/${data.id}`;
+
+				mailer.send({
+					from: DEFAULT_EMAIL_FROM,
+					to: [data.email],
+					subject: `Einladung zur Organisation ${data.organization.name}`,
+					react: (
+						<OrganizationInvitationEmail
+							inviteLink={inviteLink}
+							inviterName={data.inviter.user.name}
+							orgName={data.organization.name}
+						/>
+					),
+				});
+			},
+		}),
+		nextCookies(),
+	],
 });
 
 export type Session = typeof auth.$Infer.Session;
