@@ -1,5 +1,6 @@
 import type { Column, Table } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { hasMenuBasedFilter } from "./filter-types";
 
 /**
@@ -17,10 +18,16 @@ import { hasMenuBasedFilter } from "./filter-types";
 export function useFilterableColumns<TData>(
 	table: Table<TData>,
 ): Column<TData, unknown>[] {
+	const isMobile = useIsMobile();
+
 	return useMemo(() => {
 		return table.getAllColumns().filter((column) => {
 			const meta = column.columnDef.meta;
-			return column.getCanFilter() && hasMenuBasedFilter(meta?.filterType);
+			return (
+				column.getCanFilter() &&
+				hasMenuBasedFilter(meta?.filterType) &&
+				!(isMobile && meta?.hideOnMobile)
+			);
 		});
-	}, [table]);
+	}, [table, isMobile]);
 }
