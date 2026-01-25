@@ -26,8 +26,11 @@ import {
 const SLUG_CHECK_DEBOUNCE_MS = 500;
 
 export function CreateOrganizationForm({
+	onSuccess,
 	...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<"form"> & {
+	onSuccess?: (props: { id: string; name: string; slug: string }) => void;
+}) {
 	// Track if user has manually edited the slug field
 	const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 	// Track slug availability check state
@@ -37,8 +40,13 @@ export function CreateOrganizationForm({
 	const slugCheckTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const createOrganization = api.organization.create.useMutation({
-		onSuccess: () => {
+		onSuccess: (organization) => {
 			toast.success("Organisation erfolgreich erstellt");
+			onSuccess?.({
+				id: organization.id,
+				name: organization.name,
+				slug: organization.slug,
+			});
 		},
 		onError: (error) => {
 			toast.error("Fehler beim Erstellen der Organisation", {
@@ -120,9 +128,11 @@ export function CreateOrganizationForm({
 
 			if (!slugManuallyEdited && name.trim()) {
 				const generatedSlug = generateSlugFromName(name);
-				setSlugValue(generatedSlug);
-				// Check availability for generated slug
-				void checkSlugAvailability(generatedSlug);
+				// Defer the update to avoid interfering with focus management in dialogs
+				setTimeout(() => {
+					setSlugValue(generatedSlug);
+					void checkSlugAvailability(generatedSlug);
+				}, 0);
 			}
 		},
 		[slugManuallyEdited, checkSlugAvailability],
@@ -158,11 +168,13 @@ export function CreateOrganizationForm({
 									aria-invalid={isInvalid}
 									id={field.name}
 									name={field.name}
-									onBlur={() =>
+									onBlur={(e) => {
+										// Stop propagation to prevent dialog/dropdown focus conflicts
+										e.stopPropagation();
 										handleNameBlur(field.state.value, field.handleBlur, (slug) =>
 											form.setFieldValue("slug", slug),
-										)
-									}
+										);
+									}}
 									onChange={(e) => field.handleChange(e.target.value)}
 									placeholder="Deine Organisation"
 									value={field.state.value}
