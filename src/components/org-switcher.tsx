@@ -2,6 +2,7 @@
 
 import { GlobeIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
+import { useOrgSlug } from "@/hooks/use-org-slug";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/server/better-auth/client";
 import { CreateOrganizationForm } from "./forms/create-organization-form";
@@ -30,6 +31,7 @@ export function OrganizationSwitcher({
 }: React.ComponentProps<typeof Button>) {
 	const [createNewOpen, setCreateNewOpen] = useState(false);
 	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const { replace: replaceOrgSlug } = useOrgSlug();
 
 	const handleCreateNew = () => {
 		// Close dropdown first, then open dialog after a tick
@@ -80,11 +82,10 @@ export function OrganizationSwitcher({
 							organizations?.map((org) => (
 								<DropdownMenuItem
 									key={org.id}
-									onClick={() =>
-										authClient.organization.setActive({
-											organizationId: org.id,
-										})
-									}
+									onClick={() => {
+										replaceOrgSlug(org.slug);
+										refetchActiveOrganization();
+									}}
 								>
 									<span className="flex w-full min-w-0 flex-col items-start justify-center">
 										<span className="block w-full min-w-0 truncate font-medium text-sm">
