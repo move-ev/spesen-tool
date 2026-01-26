@@ -251,7 +251,10 @@ const lastUpdatedAtColumn: ColumnDef<ExtendedReport> = {
 	enableHiding: true,
 	cell: ({ row }) => {
 		return (
-			<span className="align-text-top font-normal text-muted-foreground text-xs">
+			<span
+				className="align-text-top font-normal text-muted-foreground text-xs"
+				suppressHydrationWarning
+			>
 				{formatTimeElapsed(row.original.lastUpdatedAt)}
 			</span>
 		);
