@@ -15,6 +15,13 @@ const createPrismaClient = () => {
 		connectionTimeoutMillis: 10000, // Timeout connection attempts after 10s
 	});
 
+	// Handle errors from idle clients in the pool to prevent process crashes.
+	// Without this handler, connection errors during idle periods would be unhandled
+	// and crash the Node.js process.
+	pool.on("error", (err) => {
+		console.error("Unexpected error on idle database client:", err);
+	});
+
 	const adapter = new PrismaPg(pool);
 
 	return new PrismaClient({
