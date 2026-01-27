@@ -42,3 +42,17 @@ jobs:
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/db
           SKIP_ENV_VALIDATION: true
+
+      - name: Run typecheck
+        run: pnpm typecheck
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/db
+          SKIP_ENV_VALIDATION: true
+
+      - name: Run build
+        run: pnpm turbo run build --filter=@repo/web
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/db
+          SKIP_ENV_VALIDATION: true
+          BETTER_AUTH_SECRET: ci-placeholder
+          BETTER_AUTH_URL: http://localhost:3000

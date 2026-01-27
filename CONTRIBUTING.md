@@ -2,11 +2,11 @@
 
 ## Getting started
 
-1. Clone the repositor to your local machine
+1. Clone the repository to your local machine
 
    ```bash
-   git clone https://github.com/move-ev/spesen-app.git
-   cd spesen-app
+   git clone https://github.com/move-ev/spesen-tool.git
+   cd spesen-tool
    ```
 
 2. Install Node.js (LTS version recommended)
@@ -49,7 +49,7 @@
 6. Start and migrate the database:
 
    ```bash
-   cd infra && docker compose up -d
+   cd infra && docker compose up -d && cd ..
    pnpm --filter @repo/web db:migrate
    ```
 
