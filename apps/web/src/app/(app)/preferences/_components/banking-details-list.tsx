@@ -1,8 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
-import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { toast } from "sonner";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -16,6 +13,9 @@ import {
 } from "@repo/ui/components/alert-dialog";
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent } from "@repo/ui/components/card";
+import { format } from "date-fns";
+import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 import type { BankingDetails } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";

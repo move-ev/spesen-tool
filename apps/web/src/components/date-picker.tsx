@@ -1,9 +1,5 @@
-	"use client";
+"use client";
 
-import { formatDate as formatDateFn } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import React from "react";
-import { de } from "react-day-picker/locale";
 import { Calendar } from "@repo/ui/components/calendar";
 import type { Input } from "@repo/ui/components/input";
 import {
@@ -12,7 +8,15 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from "@repo/ui/components/input-group";
-import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@repo/ui/components/popover";
+import { formatDate as formatDateFn } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import React from "react";
+import { de } from "react-day-picker/locale";
 
 function formatDate(date: Date | undefined): string {
 	if (!date) return "";

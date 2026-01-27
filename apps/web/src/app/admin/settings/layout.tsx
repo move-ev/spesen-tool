@@ -1,10 +1,10 @@
+import { Button } from "@repo/ui/components/button";
+import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
 import { ArrowLeftIcon, MenuIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminSettingsSidebar } from "@/components/admin-settings-sidebar";
-import { Button } from "@repo/ui/components/button";
-import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
 

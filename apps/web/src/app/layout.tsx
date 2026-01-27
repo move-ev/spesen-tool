@@ -1,9 +1,9 @@
 import "./globals.css";
 
+import { Toaster } from "@repo/ui/components/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";
-import { Toaster } from "@repo/ui/components/sonner";
 import { TRPCReactProvider } from "@/trpc/react";
 
 export const metadata: Metadata = {

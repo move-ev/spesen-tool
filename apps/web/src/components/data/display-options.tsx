@@ -1,14 +1,21 @@
-	import type { Table } from "@tanstack/react-table";
-import { ArrowDownNarrowWideIcon, ArrowUpNarrowWideIcon } from "lucide-react";
-import React from "react";
-import { useIsMobile } from "@repo/ui/hooks/use-mobile";
-import type { ListLayout } from "../list";
 import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
-import { NativeSelect, NativeSelectOption } from "@repo/ui/components/native-select";
-import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/popover";
+import {
+	NativeSelect,
+	NativeSelectOption,
+} from "@repo/ui/components/native-select";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@repo/ui/components/popover";
 import { Separator } from "@repo/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/tabs";
+import { useIsMobile } from "@repo/ui/hooks/use-mobile";
+import type { Table } from "@tanstack/react-table";
+import { ArrowDownNarrowWideIcon, ArrowUpNarrowWideIcon } from "lucide-react";
+import React from "react";
+import type { ListLayout } from "../list";
 
 export function DisplayOptions<TData>({
 	layout,

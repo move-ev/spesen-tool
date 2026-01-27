@@ -1,7 +1,7 @@
+import { Skeleton } from "@repo/ui/components/skeleton";
 import { Suspense } from "react";
 import { AdminSettingsForm } from "@/components/forms/admin-settings-form";
 import { PageTitle } from "@/components/page-title";
-import { Skeleton } from "@repo/ui/components/skeleton";
 import { api, HydrateClient } from "@/trpc/server";
 
 export default async function ServerPage() {

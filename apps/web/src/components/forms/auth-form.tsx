@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@repo/ui/components/button";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ROUTES } from "@/lib/consts";
 import { authClient } from "@/server/better-auth/client";
-import { Button } from "@repo/ui/components/button";
 
 const formSchema = z.object({});
 

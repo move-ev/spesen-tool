@@ -1,11 +1,3 @@
-import {
-	ArrowLeftIcon,
-	EuroIcon,
-	FolderTreeIcon,
-	SettingsIcon,
-	UsersIcon,
-} from "lucide-react";
-import Link from "next/link";
 import { Button } from "@repo/ui/components/button";
 import {
 	Sidebar,
@@ -17,6 +9,14 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@repo/ui/components/sidebar";
+import {
+	ArrowLeftIcon,
+	EuroIcon,
+	FolderTreeIcon,
+	SettingsIcon,
+	UsersIcon,
+} from "lucide-react";
+import Link from "next/link";
 import { ADMIN_SETTINGS_MENU, ROUTES } from "@/lib/consts";
 
 const settingsMenu = [

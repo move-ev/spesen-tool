@@ -1,10 +1,5 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
-import { NotificationPreference } from "@/generated/prisma/enums";
-import { updatePreferencesSchema } from "@/lib/validators";
-import { api } from "@/trpc/react";
 import { Button } from "@repo/ui/components/button";
 import {
 	Field,
@@ -15,6 +10,11 @@ import {
 } from "@repo/ui/components/field";
 import { Label } from "@repo/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
+import { NotificationPreference } from "@/generated/prisma/enums";
+import { updatePreferencesSchema } from "@/lib/validators";
+import { api } from "@/trpc/react";
 
 export function PreferencesForm() {
 	const utils = api.useUtils();

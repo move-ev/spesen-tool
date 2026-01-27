@@ -1,8 +1,8 @@
+import { Separator } from "@repo/ui/components/separator";
+import { Skeleton } from "@repo/ui/components/skeleton";
 import { Suspense } from "react";
 import { PreferencesForm } from "@/components/forms/preferences-form";
 import { PageDescription, PageTitle } from "@/components/page-title";
-import { Separator } from "@repo/ui/components/separator";
-import { Skeleton } from "@repo/ui/components/skeleton";
 import { api, HydrateClient } from "@/trpc/server";
 import { BankingDetailsList } from "./_components/banking-details-list";
 

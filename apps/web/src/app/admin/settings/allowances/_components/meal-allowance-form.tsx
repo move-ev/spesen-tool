@@ -1,8 +1,6 @@
 "use client";
 
 import { NumberField } from "@base-ui/react";
-import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
 import { Button } from "@repo/ui/components/button";
 import {
 	Field,
@@ -17,6 +15,8 @@ import {
 	InputGroupInput,
 	InputGroupText,
 } from "@repo/ui/components/input-group";
+import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
 import { updateMealAllowancesSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 

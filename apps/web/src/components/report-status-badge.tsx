@@ -1,8 +1,8 @@
+import { Badge } from "@repo/ui/components/badge";
 import { CircleIcon } from "lucide-react";
 import type React from "react";
 import type { ReportStatus } from "@/generated/prisma/enums";
 import { cn, translateReportStatus } from "@/lib/utils";
-import { Badge } from "@repo/ui/components/badge";
 
 export function ReportStatusBadge({
 	status,

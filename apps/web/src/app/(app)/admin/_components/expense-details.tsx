@@ -1,7 +1,5 @@
 "use client";
 
-import { formatDate } from "date-fns";
-import React from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -10,6 +8,8 @@ import {
 	DialogTitle,
 } from "@repo/ui/components/dialog";
 import { Separator } from "@repo/ui/components/separator";
+import { formatDate } from "date-fns";
+import React from "react";
 import type { ClientExpense } from "@/lib/types";
 import { cn, translateExpenseType } from "@/lib/utils";
 import {

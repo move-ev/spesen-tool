@@ -1,11 +1,11 @@
 "use client";
 
+import { Skeleton } from "@repo/ui/components/skeleton";
 import {
 	StatsCard,
 	StatsCardDescription,
 	StatsCardValue,
 } from "@/components/stats-card";
-import { Skeleton } from "@repo/ui/components/skeleton";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 

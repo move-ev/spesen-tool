@@ -1,8 +1,8 @@
 import type { UploadHookControl } from "@better-upload/client";
+import { cn } from "@repo/ui/lib/utils";
 import { Loader2, Upload } from "lucide-react";
 import { useId } from "react";
 import { type Accept, useDropzone } from "react-dropzone";
-import { cn } from "@repo/ui/lib/utils";
 
 type UploadDropzoneProps = {
 	control: UploadHookControl<true>;

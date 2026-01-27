@@ -1,7 +1,7 @@
 "use client";
 
-import type * as React from "react";
 import { formatIban } from "@repo/ui/lib/utils";
+import type * as React from "react";
 import { Input } from "./input";
 
 export interface IbanInputProps

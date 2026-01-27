@@ -1,5 +1,10 @@
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardTitle,
+} from "@repo/ui/components/card";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardTitle } from "@repo/ui/components/card";
 
 export function StatsCard({
 	children,

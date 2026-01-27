@@ -1,6 +1,6 @@
+import { Skeleton } from "@repo/ui/components/skeleton";
 import { Suspense } from "react";
 import { PageTitle } from "@/components/page-title";
-import { Skeleton } from "@repo/ui/components/skeleton";
 import { api, HydrateClient } from "@/trpc/server";
 import { UserList } from "./_components/user-list";
 

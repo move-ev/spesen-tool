@@ -1,6 +1,6 @@
+import { useIsMobile } from "@repo/ui/hooks/use-mobile";
 import type { Column, Table } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { useIsMobile } from "@repo/ui/hooks/use-mobile";
 import { hasMenuBasedFilter } from "./filter-types";
 
 /**

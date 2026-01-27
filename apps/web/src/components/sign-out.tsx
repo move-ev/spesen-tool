@@ -1,12 +1,12 @@
 "use client";
 
+import { Button } from "@repo/ui/components/button";
 import { LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 import { ROUTES } from "@/lib/consts";
 import { authClient } from "@/server/better-auth/client";
-import { Button } from "@repo/ui/components/button";
 
 export function SignOut({ ...props }: React.ComponentProps<typeof Button>) {
 	const [pending, setPending] = React.useState(false);

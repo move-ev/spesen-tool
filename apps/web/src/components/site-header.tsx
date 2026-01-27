@@ -1,9 +1,9 @@
 "use client";
 
+import { SidebarTrigger } from "@repo/ui/components/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import { SignOut } from "./sign-out";
-import { SidebarTrigger } from "@repo/ui/components/sidebar";
 
 export function SiteHeader({
 	className,

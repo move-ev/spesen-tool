@@ -1,9 +1,9 @@
+import { SidebarProvider } from "@repo/ui/components/sidebar";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { SidebarProvider } from "@repo/ui/components/sidebar";
 import { ROUTES } from "@/lib/consts";
 import { auth } from "@/server/better-auth";
 

@@ -1,11 +1,15 @@
 "use client";
 
+import { Button } from "@repo/ui/components/button";
+import { Kbd, KbdGroup } from "@repo/ui/components/kbd";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@repo/ui/components/tooltip";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Button } from "@repo/ui/components/button";
-import { Kbd, KbdGroup } from "@repo/ui/components/kbd";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@repo/ui/components/tooltip";
 
 export function ThemeToggle({ ...props }: React.ComponentProps<typeof Button>) {
 	const { resolvedTheme, setTheme } = useTheme();

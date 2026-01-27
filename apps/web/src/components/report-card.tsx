@@ -1,8 +1,3 @@
-import { format } from "date-fns";
-import Link from "next/link";
-import type { Report } from "@/generated/prisma/client";
-import { cn } from "@/lib/utils";
-import { ReportStatusBadge } from "./report-status-badge";
 import {
 	Card,
 	CardContent,
@@ -11,6 +6,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@repo/ui/components/card";
+import { format } from "date-fns";
+import Link from "next/link";
+import type { Report } from "@/generated/prisma/client";
+import { cn } from "@/lib/utils";
+import { ReportStatusBadge } from "./report-status-badge";
 
 export function ReportCard<T extends Report>({
 	className,

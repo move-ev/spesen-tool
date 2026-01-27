@@ -1,9 +1,5 @@
 "use client";
 
-import { Settings2, ShieldUserIcon } from "lucide-react";
-import Link from "next/link";
-import { ROUTES } from "@/lib/consts";
-import { authClient } from "@/server/better-auth/client";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -11,6 +7,10 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@repo/ui/components/sidebar";
+import { Settings2, ShieldUserIcon } from "lucide-react";
+import Link from "next/link";
+import { ROUTES } from "@/lib/consts";
+import { authClient } from "@/server/better-auth/client";
 
 export function AppSidebarAdmin() {
 	const { isPending, data } = authClient.useSession();

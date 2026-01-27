@@ -1,11 +1,3 @@
-import { FileSearchCornerIcon, PlusIcon } from "lucide-react";
-import Link from "next/link";
-import React from "react";
-import type { Report } from "@/generated/prisma/client";
-import { ROUTES } from "@/lib/consts";
-import type { ClientExpense } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { ReportCard, ReportCardField } from "./report-card";
 import { Button } from "@repo/ui/components/button";
 import {
 	Empty,
@@ -16,6 +8,14 @@ import {
 	EmptyTitle,
 } from "@repo/ui/components/empty";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { FileSearchCornerIcon, PlusIcon } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+import type { Report } from "@/generated/prisma/client";
+import { ROUTES } from "@/lib/consts";
+import type { ClientExpense } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { ReportCard, ReportCardField } from "./report-card";
 
 type ReportWithExpenses = Report & { expenses: ClientExpense[] };
 

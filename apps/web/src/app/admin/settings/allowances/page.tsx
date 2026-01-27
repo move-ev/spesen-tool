@@ -1,7 +1,7 @@
-import { Suspense } from "react";
-import { PageDescription, PageTitle } from "@/components/page-title";
 import { Separator } from "@repo/ui/components/separator";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { Suspense } from "react";
+import { PageDescription, PageTitle } from "@/components/page-title";
 import { api, HydrateClient } from "@/trpc/server";
 import { MealAllowanceForm } from "./_components/meal-allowance-form";
 import { TravelAllowanceForm } from "./_components/travel-allowance-form";

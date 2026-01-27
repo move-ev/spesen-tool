@@ -1,12 +1,12 @@
 {
-  "extends": "../typescript-config/react-library.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@repo/ui/components/*": ["./src/components/*"],
-      "@repo/ui/hooks/*": ["./src/hooks/*"],
-      "@repo/ui/lib/*": ["./src/lib/*"]
-    }
-  },
-  "include": ["src/**/*"]
+	"extends": "../typescript-config/react-library.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@repo/ui/components/*": ["./src/components/*"],
+			"@repo/ui/hooks/*": ["./src/hooks/*"],
+			"@repo/ui/lib/*": ["./src/lib/*"]
+		}
+	},
+	"include": ["src/**/*"]
 }

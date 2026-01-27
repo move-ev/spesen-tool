@@ -1,8 +1,5 @@
 "use client";
 
-import type { Column, Table } from "@tanstack/react-table";
-import type React from "react";
-import { memo } from "react";
 import { Button } from "@repo/ui/components/button";
 import {
 	DropdownMenu,
@@ -12,6 +9,9 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
+import type { Column, Table } from "@tanstack/react-table";
+import type React from "react";
+import { memo } from "react";
 import { renderFilterMenuContent } from "./filter-registry";
 import { useFilterableColumns } from "./use-filterable-columns";
 

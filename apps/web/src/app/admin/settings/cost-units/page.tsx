@@ -1,7 +1,7 @@
+import { Skeleton } from "@repo/ui/components/skeleton";
 import { BoxesIcon, PlusIcon } from "lucide-react";
 import { Suspense } from "react";
 import { PageTitle } from "@/components/page-title";
-import { Skeleton } from "@repo/ui/components/skeleton";
 import { api, HydrateClient } from "@/trpc/server";
 import { CostUnitsList } from "./components/cost-units-list";
 import { CreateCostUnit } from "./components/create-cost-unit";

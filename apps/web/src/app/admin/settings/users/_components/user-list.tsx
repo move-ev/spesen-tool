@@ -1,8 +1,10 @@
 "use client";
 
-import { EllipsisIcon, ShieldUserIcon, ShieldXIcon } from "lucide-react";
-import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@repo/ui/components/avatar";
 import { Button } from "@repo/ui/components/button";
 import {
 	DropdownMenu,
@@ -18,6 +20,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@repo/ui/components/table";
+import { EllipsisIcon, ShieldUserIcon, ShieldXIcon } from "lucide-react";
+import { toast } from "sonner";
 import type { User } from "@/generated/prisma/client";
 import { api } from "@/trpc/react";
 

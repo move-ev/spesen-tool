@@ -1,6 +1,24 @@
 "use client";
 
 import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@repo/ui/components/avatar";
+import { Button } from "@repo/ui/components/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from "@repo/ui/components/dropdown-menu";
+import {
 	BookOpenIcon,
 	CheckIcon,
 	ChevronsUpDownIcon,
@@ -18,20 +36,6 @@ import { useTheme } from "next-themes";
 import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/server/better-auth/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
-import { Button } from "@repo/ui/components/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
-	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
 
 export function UserMenu() {
 	const router = useRouter();

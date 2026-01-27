@@ -1,16 +1,6 @@
 "use client";
 
 import type { JsonValue } from "@prisma/client/runtime/client";
-import {
-	CarIcon,
-	EllipsisVerticalIcon,
-	InfoIcon,
-	ReceiptIcon,
-	UtensilsIcon,
-} from "lucide-react";
-import React from "react";
-import { ExpenseDetails } from "@/app/(app)/admin/_components/expense-details";
-import { ReportCardField } from "@/components/report-card";
 import { Button } from "@repo/ui/components/button";
 import {
 	Card,
@@ -27,6 +17,16 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
+import {
+	CarIcon,
+	EllipsisVerticalIcon,
+	InfoIcon,
+	ReceiptIcon,
+	UtensilsIcon,
+} from "lucide-react";
+import React from "react";
+import { ExpenseDetails } from "@/app/(app)/admin/_components/expense-details";
+import { ReportCardField } from "@/components/report-card";
 import type { Attachment, ExpenseType } from "@/generated/prisma/client";
 import type { ClientExpense } from "@/lib/types";
 import { translateExpenseType } from "@/lib/utils";

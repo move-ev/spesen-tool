@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Input } from "@repo/ui/components/input";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 interface ExamplesInputProps {
 	value: string[];

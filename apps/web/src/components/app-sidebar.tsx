@@ -1,9 +1,3 @@
-import { HomeIcon, SettingsIcon } from "lucide-react";
-import Link from "next/link";
-import { Suspense } from "react";
-import { ROUTES } from "@/lib/consts";
-import { HydrateClient } from "@/trpc/server";
-import { AppSidebarAdmin } from "./app-sidebar-admin";
 import {
 	Sidebar,
 	SidebarContent,
@@ -15,6 +9,12 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@repo/ui/components/sidebar";
+import { HomeIcon, SettingsIcon } from "lucide-react";
+import Link from "next/link";
+import { Suspense } from "react";
+import { ROUTES } from "@/lib/consts";
+import { HydrateClient } from "@/trpc/server";
+import { AppSidebarAdmin } from "./app-sidebar-admin";
 import { UserMenu } from "./user-menu";
 
 const sidebarItems = [
