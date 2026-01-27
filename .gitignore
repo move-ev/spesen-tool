@@ -38,8 +38,7 @@ yarn-error.log*
 .env.prod
 
 # config files
-# do not commit config.ts (contains instance-specific settings)
-# config.example.ts is the template and should be committed
+# instance-specific configuration files (if you add any locally)
 config.ts
 config.js
 

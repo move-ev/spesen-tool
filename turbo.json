@@ -56,9 +56,6 @@
 		"auth:generate": {
 			"cache": false
 		},
-		"config:validate": {
-			"cache": false
-		},
 		"email:preview": {
 			"cache": false,
 			"persistent": true

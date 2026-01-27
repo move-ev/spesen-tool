@@ -6,7 +6,6 @@
 	"scripts": {
 		"build": "next build",
 		"auth:generate": "pnpm dlx @better-auth/cli generate --config ./src/server/better-auth/server.ts",
-		"config:validate": "tsx scripts/validate-config.ts",
 		"db:generate": "prisma migrate dev && prisma generate",
 		"db:migrate": "prisma migrate deploy",
 		"db:migrate:prod": "dotenv -e .env.prod -- prisma migrate deploy",

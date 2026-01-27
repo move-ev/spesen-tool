@@ -5,9 +5,7 @@ import { z } from "zod";
  * Environment Variables (Secrets Only)
  *
  * This file validates environment variables that contain sensitive values (secrets).
- * Non-sensitive configuration should be placed in config.ts at the project root.
- *
- * For self-hosting documentation, see SELF_HOSTING.md
+ * For self-hosting documentation, see docs/self-hosting.md
  */
 export const env = createEnv({
 	/**
@@ -84,61 +82,51 @@ export const env = createEnv({
 			.default("development"),
 
 		// =================================================================
-		// Optional Overrides (for CI/CD and backward compatibility)
+		// Runtime configuration (env-only)
 		// =================================================================
 
 		/**
-		 * Database URL override
-		 * When set, takes precedence over config.ts database.url
-		 * Useful for CI/CD pipelines and Docker deployments
+		 * PostgreSQL connection URL
 		 */
-		DATABASE_URL: z.string().url().optional(),
+		DATABASE_URL: z.string().url(),
 
 		/**
-		 * Better Auth URL override
-		 * When set, takes precedence over config.ts auth.url
+		 * Better Auth URL (base URL for callbacks)
 		 */
 		BETTER_AUTH_URL: z.url(),
 
 		/**
-		 * Superuser ID override
-		 * When set, takes precedence over config.ts app.superuserId
+		 * Optional superuser ID (instance-specific)
 		 */
 		SUPERUSER_ID: z.string().optional(),
 
 		/**
-		 * Microsoft tenant ID override
-		 * When set, takes precedence over config.ts auth.microsoft.tenantId
+		 * Microsoft tenant ID
 		 */
 		MICROSOFT_TENANT_ID: z.string(),
 
 		/**
-		 * Microsoft client ID override
-		 * When set, takes precedence over config.ts auth.microsoft.clientId
+		 * Microsoft client ID
 		 */
 		MICROSOFT_CLIENT_ID: z.string(),
 
 		/**
-		 * Storage host override
-		 * When set, takes precedence over config.ts storage.host
+		 * Storage host (S3-compatible)
 		 */
 		STORAGE_HOST: z.string(),
 
 		/**
-		 * Storage region override
-		 * When set, takes precedence over config.ts storage.region
+		 * Storage region
 		 */
 		STORAGE_REGION: z.string(),
 
 		/**
-		 * Storage bucket override
-		 * When set, takes precedence over config.ts storage.bucket
+		 * Storage bucket name
 		 */
 		STORAGE_BUCKET: z.string(),
 
 		/**
-		 * Email from address override
-		 * When set, takes precedence over config.ts email.from
+		 * Optional email \"from\" override
 		 */
 		EMAIL_FROM: z.string().email().optional(),
 
@@ -184,7 +172,7 @@ export const env = createEnv({
 		// Runtime
 		NODE_ENV: process.env.NODE_ENV,
 
-		// Optional overrides
+		// Configuration (may be provided via .env)
 		DATABASE_URL: process.env.DATABASE_URL,
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 		SUPERUSER_ID: process.env.SUPERUSER_ID,

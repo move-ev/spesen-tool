@@ -34,23 +34,23 @@
    pnpm install
    ```
 
-5. Create a `.env` file by copying the `.env.example` file:
+5. Create a `.env` file by copying the `apps/web/.env.example` file:
    - On Unix-based systems:
 
      ```bash
-     cp -n .env.example .env
+     cp -n apps/web/.env.example apps/web/.env
      ```
 
    - On Windows:
      ```bash
-     copy /Y .env.example .env
+     copy /Y apps/web/.env.example apps/web/.env
      ```
 
 6. Start and migrate the database:
 
    ```bash
-   docker compose up -d
-   pnpm db:migrate
+   cd infra && docker compose up -d
+   pnpm --filter @repo/web db:migrate
    ```
 
 7. Start the development server:
