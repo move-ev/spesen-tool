@@ -1,4 +1,4 @@
-import { Badge } from "@repo/ui/components/badge";
+import { Badge } from "@zemio/ui/components/badge";
 import { CircleIcon } from "lucide-react";
 import type React from "react";
 import type { ReportStatus } from "@/generated/prisma/enums";

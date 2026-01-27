@@ -1,7 +1,7 @@
 "use client";
 
-import { Button, buttonVariants } from "@repo/ui/components/button";
-import { cn } from "@repo/ui/lib/utils";
+import { Button, buttonVariants } from "@zemio/ui/components/button";
+import { cn } from "@zemio/ui/lib/utils";
 import {
 	ChevronDownIcon,
 	ChevronLeftIcon,

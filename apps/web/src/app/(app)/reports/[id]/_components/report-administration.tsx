@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@zemio/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
+} from "@zemio/ui/components/dropdown-menu";
 import {
 	CheckIcon,
 	ReceiptIcon,

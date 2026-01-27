@@ -1,5 +1,5 @@
-import { Button } from "@repo/ui/components/button";
-import { Skeleton } from "@repo/ui/components/skeleton";
+import { Button } from "@zemio/ui/components/button";
+import { Skeleton } from "@zemio/ui/components/skeleton";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";

@@ -10,9 +10,9 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@repo/ui/components/alert-dialog";
-import { Button } from "@repo/ui/components/button";
-import { Card, CardContent } from "@repo/ui/components/card";
+} from "@zemio/ui/components/alert-dialog";
+import { Button } from "@zemio/ui/components/button";
+import { Card, CardContent } from "@zemio/ui/components/card";
 import { format } from "date-fns";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";

@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
 import type { Table } from "@tanstack/react-table";
+import { Button } from "@zemio/ui/components/button";
 import { XIcon } from "lucide-react";
 import { useCallback } from "react";
 import { cn } from "@/lib/utils";

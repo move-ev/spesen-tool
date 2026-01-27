@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@zemio/ui/components/button";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/tooltip";
+} from "@zemio/ui/components/tooltip";
 import type React from "react";
 import { useCallback, useState } from "react";
 import { StatsCard, StatsCardDescription } from "@/components/stats-card";

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatIban } from "@repo/ui/lib/utils";
+import { formatIban } from "@zemio/ui/lib/utils";
 import type * as React from "react";
 import { Input } from "./input";
 

@@ -1,5 +1,5 @@
 import type { UploadHookControl } from "@better-upload/client";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@zemio/ui/lib/utils";
 import { Loader2, Upload } from "lucide-react";
 import { useId } from "react";
 import { type Accept, useDropzone } from "react-dropzone";

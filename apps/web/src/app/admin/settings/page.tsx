@@ -1,4 +1,4 @@
-import { Skeleton } from "@repo/ui/components/skeleton";
+import { Skeleton } from "@zemio/ui/components/skeleton";
 import { Suspense } from "react";
 import { AdminSettingsForm } from "@/components/forms/admin-settings-form";
 import { PageTitle } from "@/components/page-title";

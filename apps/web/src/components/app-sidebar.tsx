@@ -8,7 +8,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@repo/ui/components/sidebar";
+} from "@zemio/ui/components/sidebar";
 import { HomeIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";

@@ -1,16 +1,16 @@
+import type { ColumnDef } from "@tanstack/react-table";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/avatar";
-import { Badge } from "@repo/ui/components/badge";
-import { Checkbox } from "@repo/ui/components/checkbox";
+} from "@zemio/ui/components/avatar";
+import { Badge } from "@zemio/ui/components/badge";
+import { Checkbox } from "@zemio/ui/components/checkbox";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/tooltip";
-import type { ColumnDef } from "@tanstack/react-table";
+} from "@zemio/ui/components/tooltip";
 import { format } from "date-fns";
 import {
 	ALargeSmallIcon,

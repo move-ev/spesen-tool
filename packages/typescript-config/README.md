@@ -1,4 +1,4 @@
-# @repo/typescript-config
+# @zemio/typescript-config
 
 Shared TypeScript configuration for the monorepo.
 

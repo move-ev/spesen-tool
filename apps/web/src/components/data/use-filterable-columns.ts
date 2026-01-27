@@ -1,5 +1,5 @@
-import { useIsMobile } from "@repo/ui/hooks/use-mobile";
 import type { Column, Table } from "@tanstack/react-table";
+import { useIsMobile } from "@zemio/ui/hooks/use-mobile";
 import { useMemo } from "react";
 import { hasMenuBasedFilter } from "./filter-types";
 

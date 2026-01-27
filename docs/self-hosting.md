@@ -27,7 +27,7 @@ The compose file exposes Postgres on port `5435` (see `infra/docker-compose.yml`
 4. **Run migrations**
 
 ```bash
-pnpm --filter @repo/web db:migrate
+pnpm --filter @zemio/web db:migrate
 ```
 
 5. **Start the app**
@@ -53,7 +53,7 @@ For S3 CORS configuration, see:
 
 ```bash
 pnpm build
-pnpm --filter @repo/web start
+pnpm --filter @zemio/web start
 ```
 
 ## Troubleshooting

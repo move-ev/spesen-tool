@@ -1,5 +1,5 @@
 {
-	"name": "@repo/web",
+	"name": "@zemio/web",
 	"version": "0.3.0-alpha.1",
 	"private": true,
 	"type": "module",
@@ -19,7 +19,7 @@
 		"email:preview": "dotenv -e .env.prod -- email dev --dir ./src/components/emails --port 3030"
 	},
 	"dependencies": {
-		"@repo/ui": "workspace:*",
+		"@zemio/ui": "workspace:*",
 		"@auth/prisma-adapter": "^2.7.2",
 		"@aws-sdk/client-s3": "^3.975.0",
 		"@base-ui/react": "^1.1.0",

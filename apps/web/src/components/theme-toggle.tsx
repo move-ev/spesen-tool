@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
-import { Kbd, KbdGroup } from "@repo/ui/components/kbd";
+import { Button } from "@zemio/ui/components/button";
+import { Kbd, KbdGroup } from "@zemio/ui/components/kbd";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/tooltip";
+} from "@zemio/ui/components/tooltip";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";

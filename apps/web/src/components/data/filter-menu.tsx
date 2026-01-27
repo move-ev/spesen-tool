@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
+import type { Column, Table } from "@tanstack/react-table";
+import { Button } from "@zemio/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,8 +9,7 @@ import {
 	DropdownMenuSub,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
-import type { Column, Table } from "@tanstack/react-table";
+} from "@zemio/ui/components/dropdown-menu";
 import type React from "react";
 import { memo } from "react";
 import { renderFilterMenuContent } from "./filter-registry";

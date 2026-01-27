@@ -50,7 +50,7 @@ jobs:
           SKIP_ENV_VALIDATION: true
 
       - name: Run build
-        run: pnpm turbo run build --filter=@repo/web
+        run: pnpm turbo run build --filter=@zemio/web
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/db
           SKIP_ENV_VALIDATION: true

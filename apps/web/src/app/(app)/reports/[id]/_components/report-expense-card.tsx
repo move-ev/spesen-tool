@@ -1,7 +1,7 @@
 "use client";
 
 import type { JsonValue } from "@prisma/client/runtime/client";
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@zemio/ui/components/button";
 import {
 	Card,
 	CardAction,
@@ -9,14 +9,14 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/card";
+} from "@zemio/ui/components/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
+} from "@zemio/ui/components/dropdown-menu";
 import {
 	CarIcon,
 	EllipsisVerticalIcon,

@@ -8,7 +8,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import("next").NextConfig} */
 const config = {
 	serverExternalPackages: ["pdfkit"],
-	transpilePackages: ["@repo/ui"],
+	transpilePackages: ["@zemio/ui"],
 };
 
 // Injected content via Sentry wizard below

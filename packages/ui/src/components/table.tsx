@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@zemio/ui/lib/utils";
 import type * as React from "react";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {

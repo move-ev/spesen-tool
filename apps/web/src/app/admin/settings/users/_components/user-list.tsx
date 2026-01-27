@@ -4,14 +4,14 @@ import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/avatar";
-import { Button } from "@repo/ui/components/button";
+} from "@zemio/ui/components/avatar";
+import { Button } from "@zemio/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
+} from "@zemio/ui/components/dropdown-menu";
 import {
 	Table,
 	TableBody,
@@ -19,7 +19,7 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@repo/ui/components/table";
+} from "@zemio/ui/components/table";
 import { EllipsisIcon, ShieldUserIcon, ShieldXIcon } from "lucide-react";
 import { toast } from "sonner";
 import type { User } from "@/generated/prisma/client";

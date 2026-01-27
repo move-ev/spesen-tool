@@ -42,7 +42,7 @@ Keep minimal root package.json with only Turborepo scripts. Move all app depende
 ### 2.1 Create packages/ui/package.json
 
 **Key Points:**
-- Name: `@repo/ui`
+- Name: `@zemio/ui`
 - Export UI components, hooks, lib, and globals.css
 - Include dependencies: @base-ui/react, clsx, tailwind-merge, lucide-react, etc.
 - Use peerDependencies for React
@@ -52,7 +52,7 @@ Keep minimal root package.json with only Turborepo scripts. Move all app depende
 Configure with:
 - ES2022 target
 - Strict mode enabled
-- Path aliases for `@repo/ui/*`
+- Path aliases for `@zemio/ui/*`
 - JSX support for React
 
 ### 2.3 Create packages/ui/components.json
@@ -62,11 +62,11 @@ Configure with:
 {
   "style": "base-nova",
   "aliases": {
-    "components": "@repo/ui/components",
-    "utils": "@repo/ui/lib/utils",
-    "ui": "@repo/ui/components",
-    "lib": "@repo/ui/lib",
-    "hooks": "@repo/ui/hooks"
+    "components": "@zemio/ui/components",
+    "utils": "@zemio/ui/lib/utils",
+    "ui": "@zemio/ui/components",
+    "lib": "@zemio/ui/lib",
+    "hooks": "@zemio/ui/hooks"
   },
   "tailwind": {
     "config": "",
@@ -99,8 +99,8 @@ Configure with:
 ### 2.6 Update Component Imports
 
 In all moved UI components, update:
-- `@/lib/utils` → `@repo/ui/lib/utils`
-- `@/hooks/use-mobile` → `@repo/ui/hooks/use-mobile`
+- `@/lib/utils` → `@zemio/ui/lib/utils`
+- `@/hooks/use-mobile` → `@zemio/ui/hooks/use-mobile`
 
 ## Phase 3: Set Up apps/web Package
 
@@ -124,8 +124,8 @@ sentry configs          → apps/web/
 ### 3.2 Create apps/web/package.json
 
 **Key changes:**
-- Name: `@repo/web`
-- Add dependency: `"@repo/ui": "workspace:*"`
+- Name: `@zemio/web`
+- Add dependency: `"@zemio/ui": "workspace:*"`
 - Keep all existing app dependencies
 - Keep all existing scripts
 
@@ -137,15 +137,15 @@ sentry configs          → apps/web/
   "style": "base-nova",
   "aliases": {
     "components": "@/components",
-    "utils": "@repo/ui/lib/utils",
-    "ui": "@repo/ui/components",
+    "utils": "@zemio/ui/lib/utils",
+    "ui": "@zemio/ui/components",
     "lib": "@/lib",
     "hooks": "@/hooks"
   }
 }
 ```
 
-**Critical:** `utils` points to `@repo/ui/lib/utils` for shared utils.
+**Critical:** `utils` points to `@zemio/ui/lib/utils` for shared utils.
 
 ### 3.4 Create apps/web/tsconfig.json
 
@@ -155,9 +155,9 @@ Add workspace package paths:
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@repo/ui/components/*": ["../../packages/ui/src/components/*"],
-      "@repo/ui/hooks/*": ["../../packages/ui/src/hooks/*"],
-      "@repo/ui/lib/*": ["../../packages/ui/src/lib/*"]
+      "@zemio/ui/components/*": ["../../packages/ui/src/components/*"],
+      "@zemio/ui/hooks/*": ["../../packages/ui/src/hooks/*"],
+      "@zemio/ui/lib/*": ["../../packages/ui/src/lib/*"]
     }
   }
 }
@@ -167,15 +167,15 @@ Add workspace package paths:
 
 **Import shared theme:**
 ```css
-@import "@repo/ui/globals.css";
+@import "@zemio/ui/globals.css";
 ```
 
 ### 3.6 Update apps/web/src/lib/utils.ts
 
 **Hybrid approach - re-export shared + add app-specific:**
 ```typescript
-// Re-export shared utils from @repo/ui
-export { cn, formatBytes, formatIban, unformatIban, renameFileWithHash } from "@repo/ui/lib/utils";
+// Re-export shared utils from @zemio/ui
+export { cn, formatBytes, formatIban, unformatIban, renameFileWithHash } from "@zemio/ui/lib/utils";
 
 // App-specific utils (Prisma-dependent)
 export function translateReportStatus(status: ReportStatus) { ... }
@@ -192,11 +192,11 @@ This maintains backward compatibility - all imports from `@/lib/utils` still wor
 **Find and replace across apps/web/src/:**
 
 Pattern: `from "@/components/ui/([^"]+)"`
-Replace: `from "@repo/ui/components/$1"`
+Replace: `from "@zemio/ui/components/$1"`
 
 **Examples:**
-- `from "@/components/ui/button"` → `from "@repo/ui/components/button"`
-- `from "@/components/ui/dialog"` → `from "@repo/ui/components/dialog"`
+- `from "@/components/ui/button"` → `from "@zemio/ui/components/button"`
+- `from "@/components/ui/dialog"` → `from "@zemio/ui/components/dialog"`
 
 **Affected files:** ~47 files based on exploration (all components, forms, pages)
 
@@ -204,11 +204,11 @@ Replace: `from "@repo/ui/components/$1"`
 
 **apps/web/src/app/layout.tsx:**
 - Change: `import "@/styles/globals.css"` → `import "./globals.css"`
-- Change: `import { Toaster } from "@/components/ui/sonner"` → `import { Toaster } from "@repo/ui/components/sonner"`
+- Change: `import { Toaster } from "@/components/ui/sonner"` → `import { Toaster } from "@zemio/ui/components/sonner"`
 
 ### 4.3 Files That DON'T Need Changes
 
-Imports from `@/lib/utils` work unchanged because apps/web/src/lib/utils.ts re-exports from @repo/ui.
+Imports from `@/lib/utils` work unchanged because apps/web/src/lib/utils.ts re-exports from @zemio/ui.
 
 ## Phase 5: Update Turborepo Configuration
 
@@ -302,7 +302,7 @@ CLI should detect monorepo and work correctly.
 9. `packages/ui/src/lib/utils.ts` - Pure utilities
 10. `apps/web/src/lib/utils.ts` - Hybrid utils (re-export + app-specific)
 11. `packages/ui/src/styles/globals.css` - Shared Tailwind theme
-12. `apps/web/src/app/globals.css` - Imports from @repo/ui
+12. `apps/web/src/app/globals.css` - Imports from @zemio/ui
 13. `apps/web/src/app/layout.tsx` - Updated imports
 
 **Example Components:**
@@ -332,8 +332,8 @@ CLI should detect monorepo and work correctly.
 ### Import Strategy
 
 **From apps/web code:**
-- UI components: `@repo/ui/components/*`
-- Shared utils: Can use either `@repo/ui/lib/utils` OR `@/lib/utils` (re-exported)
+- UI components: `@zemio/ui/components/*`
+- Shared utils: Can use either `@zemio/ui/lib/utils` OR `@/lib/utils` (re-exported)
 - App code: `@/*` (unchanged)
 
 ### Backward Compatibility
@@ -350,7 +350,7 @@ The hybrid utils approach ensures all existing imports still work:
 
 ### Issue 2: Hot Module Replacement
 
-**Solution:** Next.js Turbopack (--turbo flag) handles monorepos well. If issues, add `transpilePackages: ["@repo/ui"]` to next.config.js.
+**Solution:** Next.js Turbopack (--turbo flag) handles monorepos well. If issues, add `transpilePackages: ["@zemio/ui"]` to next.config.js.
 
 ### Issue 3: Duplicate React Dependencies
 

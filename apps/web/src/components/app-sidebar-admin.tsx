@@ -6,7 +6,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@repo/ui/components/sidebar";
+} from "@zemio/ui/components/sidebar";
 import { Settings2, ShieldUserIcon } from "lucide-react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/consts";

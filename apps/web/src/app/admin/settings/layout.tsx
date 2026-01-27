@@ -1,5 +1,5 @@
-import { Button } from "@repo/ui/components/button";
-import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
+import { Button } from "@zemio/ui/components/button";
+import { SidebarProvider, SidebarTrigger } from "@zemio/ui/components/sidebar";
 import { ArrowLeftIcon, MenuIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";

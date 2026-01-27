@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@zemio/ui/components/button";
 import { LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";

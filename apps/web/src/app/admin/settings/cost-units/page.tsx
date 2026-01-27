@@ -1,4 +1,4 @@
-import { Skeleton } from "@repo/ui/components/skeleton";
+import { Skeleton } from "@zemio/ui/components/skeleton";
 import { BoxesIcon, PlusIcon } from "lucide-react";
 import { Suspense } from "react";
 import { PageTitle } from "@/components/page-title";

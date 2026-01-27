@@ -3,7 +3,7 @@ import {
 	CardContent,
 	CardDescription,
 	CardTitle,
-} from "@repo/ui/components/card";
+} from "@zemio/ui/components/card";
 import { cn } from "@/lib/utils";
 
 export function StatsCard({

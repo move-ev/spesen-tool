@@ -1,11 +1,11 @@
-import { Button } from "@repo/ui/components/button";
-import { Skeleton } from "@repo/ui/components/skeleton";
+import { Button } from "@zemio/ui/components/button";
+import { Skeleton } from "@zemio/ui/components/skeleton";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/tabs";
+} from "@zemio/ui/components/tabs";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";

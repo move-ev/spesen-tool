@@ -50,7 +50,7 @@
 
    ```bash
    cd infra && docker compose up -d && cd ..
-   pnpm --filter @repo/web db:migrate
+   pnpm --filter @zemio/web db:migrate
    ```
 
 7. Start the development server:

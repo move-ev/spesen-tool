@@ -1,11 +1,11 @@
-// Re-export shared utils from @repo/ui
+// Re-export shared utils from @zemio/ui
 export {
 	cn,
 	formatBytes,
 	formatIban,
 	renameFileWithHash,
 	unformatIban,
-} from "@repo/ui/lib/utils";
+} from "@zemio/ui/lib/utils";
 
 // App-specific utils (Prisma-dependent)
 import {

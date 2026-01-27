@@ -12,8 +12,8 @@
 	},
 	"aliases": {
 		"components": "@/components",
-		"utils": "@repo/ui/lib/utils",
-		"ui": "@repo/ui/components",
+		"utils": "@zemio/ui/lib/utils",
+		"ui": "@zemio/ui/components",
 		"lib": "@/lib",
 		"hooks": "@/hooks"
 	}

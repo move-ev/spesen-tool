@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
-import { ButtonGroup } from "@repo/ui/components/button-group";
+import type { Column, Table } from "@tanstack/react-table";
+import { Button } from "@zemio/ui/components/button";
+import { ButtonGroup } from "@zemio/ui/components/button-group";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -9,8 +10,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSubContent,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
-import type { Column, Table } from "@tanstack/react-table";
+} from "@zemio/ui/components/dropdown-menu";
 import { differenceInDays } from "date-fns";
 import { XIcon } from "lucide-react";
 import type { ReactNode } from "react";

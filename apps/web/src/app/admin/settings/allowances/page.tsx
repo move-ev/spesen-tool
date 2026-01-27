@@ -1,5 +1,5 @@
-import { Separator } from "@repo/ui/components/separator";
-import { Skeleton } from "@repo/ui/components/skeleton";
+import { Separator } from "@zemio/ui/components/separator";
+import { Skeleton } from "@zemio/ui/components/skeleton";
 import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { api, HydrateClient } from "@/trpc/server";

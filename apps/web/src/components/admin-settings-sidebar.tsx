@@ -1,4 +1,4 @@
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@zemio/ui/components/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -8,7 +8,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@repo/ui/components/sidebar";
+} from "@zemio/ui/components/sidebar";
 import {
 	ArrowLeftIcon,
 	EuroIcon,

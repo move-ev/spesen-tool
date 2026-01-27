@@ -6,8 +6,8 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@repo/ui/components/dialog";
-import { Separator } from "@repo/ui/components/separator";
+} from "@zemio/ui/components/dialog";
+import { Separator } from "@zemio/ui/components/separator";
 import { formatDate } from "date-fns";
 import React from "react";
 import type { ClientExpense } from "@/lib/types";

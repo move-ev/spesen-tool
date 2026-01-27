@@ -6,7 +6,7 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@repo/ui/components/empty";
+} from "@zemio/ui/components/empty";
 import { FileSearchCornerIcon } from "lucide-react";
 import type React from "react";
 import { ReportCard, ReportCardField } from "@/components/report-card";

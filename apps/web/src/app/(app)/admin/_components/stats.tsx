@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "@repo/ui/components/skeleton";
+import { Skeleton } from "@zemio/ui/components/skeleton";
 import {
 	StatsCard,
 	StatsCardDescription,

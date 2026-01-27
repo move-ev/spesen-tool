@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import { Toaster } from "@repo/ui/components/sonner";
+import { Toaster } from "@zemio/ui/components/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";

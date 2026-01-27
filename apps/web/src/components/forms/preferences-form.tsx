@@ -1,16 +1,16 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
+import { useForm } from "@tanstack/react-form";
+import { Button } from "@zemio/ui/components/button";
 import {
 	Field,
 	FieldContent,
 	FieldDescription,
 	FieldGroup,
 	FieldLabel,
-} from "@repo/ui/components/field";
-import { Label } from "@repo/ui/components/label";
-import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
-import { useForm } from "@tanstack/react-form";
+} from "@zemio/ui/components/field";
+import { Label } from "@zemio/ui/components/label";
+import { RadioGroup, RadioGroupItem } from "@zemio/ui/components/radio-group";
 import { toast } from "sonner";
 import { NotificationPreference } from "@/generated/prisma/enums";
 import { updatePreferencesSchema } from "@/lib/validators";

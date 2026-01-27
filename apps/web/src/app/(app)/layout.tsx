@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@repo/ui/components/sidebar";
+import { SidebarProvider } from "@zemio/ui/components/sidebar";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";

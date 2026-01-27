@@ -4,8 +4,8 @@ import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/avatar";
-import { Button } from "@repo/ui/components/button";
+} from "@zemio/ui/components/avatar";
+import { Button } from "@zemio/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -17,7 +17,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
+} from "@zemio/ui/components/dropdown-menu";
 import {
 	BookOpenIcon,
 	CheckIcon,

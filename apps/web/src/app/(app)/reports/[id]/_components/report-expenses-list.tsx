@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@zemio/ui/components/button";
 import {
 	Empty,
 	EmptyContent,
@@ -8,7 +8,7 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@repo/ui/components/empty";
+} from "@zemio/ui/components/empty";
 import { FileSearchCornerIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import type React from "react";

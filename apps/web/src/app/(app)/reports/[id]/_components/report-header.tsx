@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
-import { Kbd, KbdGroup } from "@repo/ui/components/kbd";
+import { Button } from "@zemio/ui/components/button";
+import { Kbd, KbdGroup } from "@zemio/ui/components/kbd";
 import { format } from "date-fns";
 import { CheckIcon, ShieldUserIcon } from "lucide-react";
 import React from "react";

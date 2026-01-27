@@ -10,8 +10,8 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@repo/ui/components/alert-dialog";
-import { Button } from "@repo/ui/components/button";
+} from "@zemio/ui/components/alert-dialog";
+import { Button } from "@zemio/ui/components/button";
 import {
 	Card,
 	CardContent,
@@ -19,7 +19,7 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/card";
+} from "@zemio/ui/components/card";
 import {
 	Dialog,
 	DialogContent,
@@ -27,7 +27,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/dialog";
+} from "@zemio/ui/components/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";

@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
-import { Input } from "@repo/ui/components/input";
-import { Textarea } from "@repo/ui/components/textarea";
-import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@zemio/ui/components/button";
+import { Input } from "@zemio/ui/components/input";
+import { Textarea } from "@zemio/ui/components/textarea";
+import { cn } from "@zemio/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 

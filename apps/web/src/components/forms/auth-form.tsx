@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
 import { useForm } from "@tanstack/react-form";
+import { Button } from "@zemio/ui/components/button";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ROUTES } from "@/lib/consts";
