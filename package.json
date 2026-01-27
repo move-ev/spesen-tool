@@ -20,8 +20,5 @@
 		"lint-staged": "^16.2.7",
 		"turbo": "^2.7.6"
 	},
-	"ct3aMetadata": {
-		"initVersion": "7.40.0"
-	},
 	"packageManager": "pnpm@9.15.5"
 }
