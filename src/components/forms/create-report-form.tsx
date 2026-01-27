@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
@@ -174,8 +175,15 @@ export function CreateReportForm({ ...props }: React.ComponentProps<"form">) {
 								</Select>
 
 								<FieldDescription>
-									Wähle die Bankverbindung aus, die für diesen Report verwendet werden
-									soll.
+									Um Zahlungen zu erhalten, muss eine Bankverbindung hinterlegt haben. Du
+									kannst deine Bankverbindung in den{" "}
+									<Link
+										className="font-medium text-primary no-underline"
+										href={"/preferences"}
+									>
+										Einstellungen
+									</Link>{" "}
+									hinterlegen.
 								</FieldDescription>
 								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
