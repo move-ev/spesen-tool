@@ -68,3 +68,6 @@ config.js
 # .agents/
 # .cursor/
 # .github/skills/
+
+**/.next
+**/node_modules

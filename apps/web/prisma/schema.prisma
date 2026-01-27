@@ -1,0 +1,247 @@
+// Prisma schema for Better Auth
+// learn more: https://better-auth.com/docs/concepts/database
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
+// Further reading:
+// https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  tag         Int          @unique @default(autoincrement())
+  title       String
+  description String?
+  status      ReportStatus @default(DRAFT)
+
+  costUnitId String
+  costUnit   CostUnit @relation(fields: [costUnitId], references: [id], onDelete: Cascade)
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
+
+  bankingDetailsId String
+  bankingDetails   BankingDetails @relation(fields: [bankingDetailsId], references: [id], onDelete: Restrict)
+
+  createdAt     DateTime @default(now())
+  lastUpdatedAt DateTime @updatedAt
+
+  expenses Expense[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([costUnitId])
+  @@index([bankingDetailsId])
+  @@map("report")
+}
+
+enum ReportStatus {
+  DRAFT
+  PENDING_APPROVAL
+  NEEDS_REVISION
+  ACCEPTED
+  REJECTED
+}
+
+model Expense {
+  id          String      @id @default(cuid())
+  description String?
+  amount      Decimal
+  startDate   DateTime
+  endDate     DateTime
+  type        ExpenseType
+  meta        Json
+
+  reportId    String
+  report      Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+
+  @@index([reportId])
+  @@map("expense")
+}
+
+enum ExpenseType {
+  RECEIPT
+  TRAVEL
+  FOOD
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expenseId String
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@index([expenseId])
+  @@map("attachment")
+}
+
+model User {
+  id            String    @id
+  name          String //@db.Text - Required by better-auth, we provide fallback in mapProfileToUser
+  email         String
+  emailVerified Boolean   @default(false) // Required by better-auth as boolean, not DateTime
+  image         String? //@db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  ownReports Report[]
+
+  // Role required by better-auth admin plugin
+  role String @default("user")
+
+  // Banning fields required by better-auth admin plugin
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  preferences Preferences?
+
+  bankingDetails BankingDetails[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String? //@db.Text
+  userAgent String? //@db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String //@db.Text
+  providerId            String //@db.Text
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String? //@db.Text
+  refreshToken          String? //@db.Text
+  idToken               String? //@db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String? //@db.Text
+  password              String? //@db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String //@db.Text
+  value      String //@db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model Preferences {
+  id            String                 @id @default(cuid())
+  userId        String                 @unique
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications NotificationPreference @default(ALL)
+
+  @@map("preferences")
+}
+
+enum NotificationPreference {
+  ALL
+  STATUS_CHANGES
+  NONE
+}
+
+model Settings {
+  id              String   @id @default("singleton")
+  kilometerRate   Decimal  @default(0.30) // Rate per kilometer in EUR
+  reviewerEmail   String? // Email of the global reviewer
+  costUnitInfoUrl String?  @map("accountingUnitPdfUrl") // PDF URL for cost unit information
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  dailyFoodAllowance Decimal @default(0.00)
+  breakfastDeduction Decimal @default(0.00)
+  lunchDeduction     Decimal @default(0.00)
+  dinnerDeduction    Decimal @default(0.00)
+
+  @@map("settings")
+}
+
+model CostUnitGroup {
+  id        String     @id @default(cuid())
+  title     String
+  costUnits CostUnit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([title])
+  @@map("cost_unit_group")
+}
+
+model CostUnit {
+  id       String   @id @default(cuid())
+  tag      String
+  title    String
+  examples String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  costUnitGroupId String?
+  costUnitGroup   CostUnitGroup? @relation(fields: [costUnitGroupId], references: [id], onDelete: Cascade)
+
+  reports Report[]
+
+  @@index([tag])
+  @@map("cost_unit")
+}
+
+model BankingDetails {
+  id    String @id @default(cuid())
+  // Used for displaying the banking details in the UI without exposing the iban
+  title String
+
+  iban     String
+  fullName String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reports Report[]
+
+  @@index([userId])
+  @@map("banking_details")
+}
