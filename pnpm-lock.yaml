@@ -245,9 +245,6 @@ importers:
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
-      tailwindcss:
-        specifier: ^4.0.15
-        version: 4.1.18
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
@@ -255,12 +252,18 @@ importers:
       '@better-upload/client':
         specifier: ^3.0.12
         version: 3.0.12(react@19.2.4)
+      '@tailwindcss/postcss':
+        specifier: ^4.0.15
+        version: 4.1.18
       '@types/react':
         specifier: ^19.0.0
         version: 19.2.10
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.2.3(@types/react@19.2.10)
+      tailwindcss:
+        specifier: ^4.0.15
+        version: 4.1.18
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
