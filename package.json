@@ -7,9 +7,13 @@
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"typecheck": "turbo run typecheck",
+		"check": "biome check .",
+		"check:write": "biome check --write .",
+		"check:unsafe": "biome check --write --unsafe .",
 		"prepare": "husky"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.2.5",
 		"@commitlint/cli": "^20.3.1",
 		"@commitlint/config-conventional": "^20.3.1",
 		"husky": "^9.1.7",

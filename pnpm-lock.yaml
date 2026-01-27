@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^2.2.5
+        version: 2.3.13
       '@commitlint/cli':
         specifier: ^20.3.1
         version: 20.3.1(@types/node@20.19.30)(typescript@5.9.3)
@@ -153,15 +156,6 @@ importers:
         specifier: ^4.3.5
         version: 4.3.6
     devDependencies:
-      '@biomejs/biome':
-        specifier: ^2.2.5
-        version: 2.3.13
-      '@commitlint/cli':
-        specifier: ^20.3.1
-        version: 20.3.1(@types/node@20.19.30)(typescript@5.9.3)
-      '@commitlint/config-conventional':
-        specifier: ^20.3.1
-        version: 20.3.1
       '@react-email/preview-server':
         specifier: 5.2.5
         version: 5.2.5(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -192,12 +186,6 @@ importers:
       dotenv-cli:
         specifier: ^11.0.0
         version: 11.0.0
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
-      lint-staged:
-        specifier: ^16.2.7
-        version: 16.2.7
       postcss:
         specifier: ^8.5.3
         version: 8.5.6
@@ -213,9 +201,6 @@ importers:
       tsx:
         specifier: ^4.19.0
         version: 4.21.0
-      turbo:
-        specifier: ^2.7.6
-        version: 2.7.6
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
