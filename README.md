@@ -1,9 +1,11 @@
-# spesen-tool
+![Static Badge](https://img.shields.io/badge/Status-Active_Development-d?style=flat-square&labelColor=%23000000&color=%23ffffff)
+
+# zemio
+
+> `zemio` is the modern way to manage expense claims — simple, fast, and compliant. Expense claims, done right.
 
 > [!IMPORTANT]
-> This project is under active development and is not yet ready for production. Use at your own risk.
-
-The spesen-tool is a tool for managing expenses and reports within your student initiative. While currently in development, it is only available for the Move-Ev student initiative but will be open-source and available for other student initiatives in the future.
+> This project is under heavy active development and is not yet ready for production. Use at your own risk.
 
 ## Contributing
 
