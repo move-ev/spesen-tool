@@ -223,6 +223,8 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
 
+  packages/typescript-config: {}
+
   packages/ui:
     dependencies:
       '@base-ui/react':
