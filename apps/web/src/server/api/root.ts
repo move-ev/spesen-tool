@@ -6,6 +6,7 @@ import { settingsRouter } from "@/server/api/routers/settings";
 import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { bankingDetailsRouter } from "./routers/banking";
+import { organizationRouter } from "./routers/organization";
 import { preferencesRouter } from "./routers/preferences";
 
 /**
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
 	admin: adminRouter,
 	costUnit: costUnitRouter,
 	bankingDetails: bankingDetailsRouter,
+	organization: organizationRouter,
 });
 
 // export type definition of API

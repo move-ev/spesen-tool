@@ -92,3 +92,13 @@ export type Member = Prisma.MemberModel
  * 
  */
 export type Invitation = Prisma.InvitationModel
+/**
+ * Model OrganizationSettings
+ * 
+ */
+export type OrganizationSettings = Prisma.OrganizationSettingsModel
+/**
+ * Model OrganizationDomain
+ * 
+ */
+export type OrganizationDomain = Prisma.OrganizationDomainModel
