@@ -1,0 +1,12 @@
+{
+	"extends": "../typescript-config/react-library.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@zemio/ui/components/*": ["./src/components/*"],
+			"@zemio/ui/hooks/*": ["./src/hooks/*"],
+			"@zemio/ui/lib/*": ["./src/lib/*"]
+		}
+	},
+	"include": ["src/**/*"]
+}

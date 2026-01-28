@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
+# Ensure we run from repo root
+cd "$(dirname "$0")/.." || exit 1
+
 # Run lint-staged on staged files
-pnpm dlx lint-staged
+pnpm exec lint-staged
 
 # Run full lint and format check
 pnpm check

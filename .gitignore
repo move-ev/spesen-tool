@@ -6,20 +6,21 @@
 .pnp.js
 
 # testing
-/coverage
+**/coverage
 
 # database
-/prisma/db.sqlite
-/prisma/db.sqlite-journal
-db.sqlite
+**/prisma/db.sqlite
+**/prisma/db.sqlite-journal
+**/db.sqlite
+**/db.sqlite-journal
 
 # next.js
-/.next/
-/out/
+**/.next/
+**/out/
 next-env.d.ts
 
 # production
-/build
+**/build
 
 # misc
 .DS_Store
@@ -38,8 +39,7 @@ yarn-error.log*
 .env.prod
 
 # config files
-# do not commit config.ts (contains instance-specific settings)
-# config.example.ts is the template and should be committed
+# instance-specific configuration files (if you add any locally)
 config.ts
 config.js
 
@@ -53,7 +53,21 @@ config.js
 .idea
 
 # uploads
-/public/uploads
+**/public/uploads
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Turborepo
+.turbo
+*.tsbuildinfo
+
+# AI Agent Configuration (user-specific)
+.claude/settings.local.json
+# Uncomment below if you don't want to share agent skills with your team
+# .agents/
+# .cursor/
+# .github/skills/
+
+**/.next
+**/node_modules

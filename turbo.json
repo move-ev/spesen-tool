@@ -1,0 +1,64 @@
+{
+	"$schema": "https://turborepo.dev/schema.v2.json",
+	"ui": "stream",
+	"globalEnv": ["NODE_ENV"],
+	"globalDependencies": [".env", ".env.*"],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": [".next/**", "!.next/cache/**"],
+			"env": [
+				"SKIP_ENV_VALIDATION",
+				"DATABASE_URL",
+				"DIRECT_DATABASE_URL",
+				"BETTER_AUTH_SECRET",
+				"BETTER_AUTH_URL",
+				"BETTER_AUTH_TRUSTED_ORIGINS",
+				"AWS_REGION",
+				"AWS_ACCESS_KEY_ID",
+				"AWS_SECRET_ACCESS_KEY",
+				"AWS_S3_BUCKET_NAME",
+				"SENTRY_AUTH_TOKEN",
+				"RESEND_API_KEY",
+				"NEXT_PUBLIC_SENTRY_DSN"
+			]
+		},
+		"dev": {
+			"dependsOn": ["^dev"],
+			"cache": false,
+			"persistent": true
+		},
+		"typecheck": {
+			"dependsOn": ["^typecheck"],
+			"outputs": ["*.tsbuildinfo"]
+		},
+		"db:generate": {
+			"cache": false
+		},
+		"db:migrate": {
+			"cache": false
+		},
+		"db:migrate:prod": {
+			"cache": false
+		},
+		"db:push": {
+			"cache": false
+		},
+		"db:studio": {
+			"cache": false,
+			"persistent": true
+		},
+		"preview": {
+			"dependsOn": ["build"],
+			"cache": false,
+			"persistent": true
+		},
+		"auth:generate": {
+			"cache": false
+		},
+		"email:preview": {
+			"cache": false,
+			"persistent": true
+		}
+	}
+}

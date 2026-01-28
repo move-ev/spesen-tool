@@ -1,0 +1,21 @@
+{
+	"$schema": "https://ui.shadcn.com/schema.json",
+	"style": "base-nova",
+	"rsc": true,
+	"tsx": true,
+	"tailwind": {
+		"config": "",
+		"css": "src/styles/globals.css",
+		"baseColor": "neutral",
+		"cssVariables": true,
+		"prefix": ""
+	},
+	"iconLibrary": "lucide",
+	"aliases": {
+		"components": "@zemio/ui/components",
+		"utils": "@zemio/ui/lib/utils",
+		"ui": "@zemio/ui/components",
+		"lib": "@zemio/ui/lib",
+		"hooks": "@zemio/ui/hooks"
+	}
+}

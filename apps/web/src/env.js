@@ -1,0 +1,202 @@
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
+
+/**
+ * Environment Variables (Secrets Only)
+ *
+ * This file validates environment variables that contain sensitive values (secrets).
+ * For self-hosting documentation, see docs/self-hosting.md
+ */
+export const env = createEnv({
+	/**
+	 * Server-side environment variables schema
+	 *
+	 * These are secrets that should NEVER be committed to version control.
+	 * They are validated at build time to ensure the app isn't built with missing secrets.
+	 */
+	server: {
+		// =================================================================
+		// Authentication Secrets
+		// =================================================================
+
+		/**
+		 * Secret key for signing authentication tokens (JWT)
+		 * Generate with: openssl rand -base64 32
+		 * Required in production, optional in development
+		 */
+		BETTER_AUTH_SECRET:
+			process.env.NODE_ENV === "production" ? z.string() : z.string().optional(),
+
+		/**
+		 * Microsoft OAuth client secret
+		 * Get this from Azure AD App Registration > Certificates & secrets
+		 */
+		MICROSOFT_CLIENT_SECRET: z.string(),
+
+		// =================================================================
+		// Storage Secrets (S3-compatible)
+		// =================================================================
+
+		/**
+		 * S3-compatible storage access key ID
+		 */
+		STORAGE_ACCESS_KEY_ID: z.string(),
+
+		/**
+		 * S3-compatible storage secret access key
+		 */
+		STORAGE_ACCESS_KEY: z.string(),
+
+		/**
+		 * S3-compatible storage secure
+		 */
+		STORAGE_SECURE: z.boolean().default(true),
+
+		/**
+		 * S3-compatible storage force path style
+		 */
+		STORAGE_FORCE_PATH_STYLE: z.boolean().default(false),
+
+		/**
+		 * S3-compatible storage force path style
+		 */
+		// =================================================================
+		// Email Service Secret
+		// =================================================================
+
+		/**
+		 * Resend API key for sending emails
+		 * Get this from https://resend.com/api-keys
+		 */
+		RESEND_API_KEY: z.string(),
+
+		// =================================================================
+		// Runtime Environment
+		// =================================================================
+
+		/**
+		 * Node.js environment
+		 */
+		NODE_ENV: z
+			.enum(["development", "test", "production"])
+			.default("development"),
+
+		// =================================================================
+		// Runtime configuration (env-only)
+		// =================================================================
+
+		/**
+		 * PostgreSQL connection URL
+		 */
+		DATABASE_URL: z.string().url(),
+
+		/**
+		 * Better Auth URL (base URL for callbacks)
+		 */
+		BETTER_AUTH_URL: z.url(),
+
+		/**
+		 * Optional superuser ID (instance-specific)
+		 */
+		SUPERUSER_ID: z.string().optional(),
+
+		/**
+		 * Microsoft tenant ID
+		 */
+		MICROSOFT_TENANT_ID: z.string(),
+
+		/**
+		 * Microsoft client ID
+		 */
+		MICROSOFT_CLIENT_ID: z.string(),
+
+		/**
+		 * Storage host (S3-compatible)
+		 */
+		STORAGE_HOST: z.string(),
+
+		/**
+		 * Storage region
+		 */
+		STORAGE_REGION: z.string(),
+
+		/**
+		 * Storage bucket name
+		 */
+		STORAGE_BUCKET: z.string(),
+
+		/**
+		 * Optional email \"from\" override
+		 */
+		EMAIL_FROM: z.string().email().optional(),
+
+		/**
+		 * Secret key for signing banking details
+		 * Generate with: openssl rand -base64 32
+		 */
+		SECRET_ENCRYPTION_KEY: z.string(),
+
+		/**
+		 * Mail Adapter
+		 */
+		MAIL_ADAPTER: z.enum(["resend", "smtp"]),
+	},
+
+	/**
+	 * Client-side environment variables schema
+	 *
+	 * Variables exposed to the client must be prefixed with NEXT_PUBLIC_
+	 * WARNING: Never expose secrets to the client!
+	 */
+	client: {
+		// Currently no client-side env vars needed
+		// NEXT_PUBLIC_EXAMPLE: z.string(),
+	},
+
+	/**
+	 * Runtime environment variable mapping
+	 *
+	 * Required for Next.js edge runtimes and client-side code
+	 */
+	runtimeEnv: {
+		// Secrets (required)
+		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+		MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
+		STORAGE_ACCESS_KEY_ID: process.env.STORAGE_ACCESS_KEY_ID,
+		STORAGE_ACCESS_KEY: process.env.STORAGE_ACCESS_KEY,
+		STORAGE_SECURE: process.env.STORAGE_SECURE,
+		STORAGE_FORCE_PATH_STYLE: process.env.STORAGE_FORCE_PATH_STYLE,
+		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		SECRET_ENCRYPTION_KEY: process.env.SECRET_ENCRYPTION_KEY,
+
+		// Runtime
+		NODE_ENV: process.env.NODE_ENV,
+
+		// Configuration (may be provided via .env)
+		DATABASE_URL: process.env.DATABASE_URL,
+		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+		SUPERUSER_ID: process.env.SUPERUSER_ID,
+		MICROSOFT_TENANT_ID: process.env.MICROSOFT_TENANT_ID,
+		MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
+		STORAGE_HOST: process.env.STORAGE_HOST,
+		STORAGE_REGION: process.env.STORAGE_REGION,
+		STORAGE_BUCKET: process.env.STORAGE_BUCKET,
+		EMAIL_FROM: process.env.EMAIL_FROM,
+		MAIL_ADAPTER: process.env.MAIL_ADAPTER,
+	},
+
+	/**
+	 * Skip validation during Docker builds
+	 *
+	 * Set SKIP_ENV_VALIDATION=1 to skip validation during build time.
+	 * This is useful for Docker builds where secrets aren't available.
+	 */
+	skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+	/**
+	 * Treat empty strings as undefined
+	 *
+	 * This ensures that SOME_VAR="" is treated as if SOME_VAR wasn't set.
+	 */
+	emptyStringAsUndefined: true,
+});

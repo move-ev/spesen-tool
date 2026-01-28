@@ -2,11 +2,11 @@
 
 ## Getting started
 
-1. Clone the repositor to your local machine
+1. Clone the repository to your local machine
 
    ```bash
-   git clone https://github.com/move-ev/spesen-app.git
-   cd spesen-app
+   git clone https://github.com/move-ev/spesen-tool.git
+   cd spesen-tool
    ```
 
 2. Install Node.js (LTS version recommended)
@@ -34,23 +34,23 @@
    pnpm install
    ```
 
-5. Create a `.env` file by copying the `.env.example` file:
+5. Create a `.env` file by copying the `apps/web/.env.example` file:
    - On Unix-based systems:
 
      ```bash
-     cp -n .env.example .env
+     cp -n apps/web/.env.example apps/web/.env
      ```
 
    - On Windows:
      ```bash
-     copy /Y .env.example .env
+     copy /Y apps/web/.env.example apps/web/.env
      ```
 
 6. Start and migrate the database:
 
    ```bash
-   docker compose up -d
-   pnpm db:migrate
+   cd infra && docker compose up -d && cd ..
+   pnpm --filter @zemio/web db:migrate
    ```
 
 7. Start the development server:
