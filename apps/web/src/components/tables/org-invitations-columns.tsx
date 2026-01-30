@@ -67,7 +67,7 @@ export const organizationInvitationsColumns: ColumnDef<Invitation>[] = [
 	{
 		id: "actions",
 
-		cell: ({ row }) => {
+		cell: () => {
 			return (
 				<div>
 					<Button variant="outline">
