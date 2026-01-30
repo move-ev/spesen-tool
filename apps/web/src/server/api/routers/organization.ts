@@ -94,23 +94,6 @@ export const organizationRouter = createTRPCRouter({
 	listMembers: protectedProcedure
 		.input(z.object({ organizationId: z.string().optional() }))
 		.query(async ({ input, ctx }) => {
-			const hasPermission = await auth.api.hasPermission({
-				headers: ctx.headers,
-				body: {
-					organizationId: "sdfsdf",
-					permission: {
-						member: ["list"],
-					},
-				},
-			});
-
-			if (!hasPermission) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: "You don't have permission to list members",
-				});
-			}
-
 			if (!ctx.session.session.activeOrganizationId && !input.organizationId) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
@@ -125,11 +108,84 @@ export const organizationRouter = createTRPCRouter({
 				orgId = input.organizationId;
 			}
 
-			return await auth.api.listMembers({
+			if (!orgId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "No organization ID provided",
+				});
+			}
+
+			const hasPermission = await auth.api.hasPermission({
 				headers: ctx.headers,
-				query: {
-					organizationId: orgId ?? undefined,
-					limit: 100,
+				body: {
+					organizationId: orgId,
+					permission: {
+						member: ["list"],
+					},
+				},
+			});
+
+			if (!hasPermission) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to list members",
+				});
+			}
+
+			return await ctx.db.member.findMany({
+				where: {
+					organizationId: orgId,
+				},
+				include: {
+					user: true,
+				},
+			});
+		}),
+
+	listInvitations: protectedProcedure
+		.input(z.object({ organizationId: z.string().optional() }))
+		.query(async ({ input, ctx }) => {
+			if (!ctx.session.session.activeOrganizationId && !input.organizationId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"Either you must be in an organization or provide an organizationId to list invitations.",
+				});
+			}
+
+			let orgId = ctx.session.session.activeOrganizationId;
+
+			if (input.organizationId) {
+				orgId = input.organizationId;
+			}
+
+			if (!orgId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "No organization ID provided",
+				});
+			}
+
+			const hasPermission = await auth.api.hasPermission({
+				headers: ctx.headers,
+				body: {
+					organizationId: orgId,
+					permission: {
+						member: ["list"],
+					},
+				},
+			});
+
+			if (!hasPermission) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to list invitations",
+				});
+			}
+
+			return await ctx.db.invitation.findMany({
+				where: {
+					organizationId: orgId,
 				},
 			});
 		}),

@@ -31,7 +31,9 @@ export function OrganizationSwitcher({
 }: React.ComponentProps<typeof Button>) {
 	const [createNewOpen, setCreateNewOpen] = useState(false);
 	const [dropdownOpen, setDropdownOpen] = useState(false);
-	const { replace: replaceOrgSlug } = useOrgSlug();
+	const { replace: _replaceOrgSlug } = useOrgSlug();
+
+	const setActiveOrganization = authClient.organization.setActive;
 
 	const handleCreateNew = () => {
 		// Close dropdown first, then open dialog after a tick
@@ -83,8 +85,12 @@ export function OrganizationSwitcher({
 								<DropdownMenuItem
 									key={org.id}
 									onClick={() => {
-										replaceOrgSlug(org.slug);
-										refetchActiveOrganization();
+										// replaceOrgSlug(org.slug);
+										// refetchActiveOrganization();
+
+										setActiveOrganization({
+											organizationId: org.id,
+										});
 									}}
 								>
 									<span className="flex w-full min-w-0 flex-col items-start justify-center">
