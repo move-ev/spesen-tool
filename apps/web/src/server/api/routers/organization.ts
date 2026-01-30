@@ -6,6 +6,7 @@ import {
 	updateOrganizationSchema,
 } from "@/lib/validators/organization";
 import { auth } from "@/server/better-auth";
+import { listUsersUnified } from "@/server/services/organization.service";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const organizationRouter = createTRPCRouter({
@@ -265,4 +266,63 @@ export const organizationRouter = createTRPCRouter({
 
 		return res;
 	}),
+
+	/**
+	 * Unified endpoint returning both members and invitations with page-based pagination.
+	 *
+	 * Uses database-level offset pagination for predictable page navigation.
+	 * Delegates business logic to the organization service layer.
+	 *
+	 * @see {@link listUsersUnified} for pagination implementation details
+	 */
+	listUsersUnified: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string().optional(),
+				page: z.number().min(1).default(1),
+				pageSize: z.number().min(1).max(100).default(20),
+				emailFilter: z.string().optional(),
+			}),
+		)
+		.query(async ({ input, ctx }) => {
+			const { page, pageSize, emailFilter } = input;
+
+			// Determine organization ID
+			const orgId =
+				input.organizationId ?? ctx.session.session.activeOrganizationId;
+
+			if (!orgId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"Either you must be in an organization or provide an organizationId",
+				});
+			}
+
+			// Permission check
+			const { success: hasPermission } = await auth.api.hasPermission({
+				headers: ctx.headers,
+				body: {
+					organizationId: orgId,
+					permission: {
+						member: ["list"],
+					},
+				},
+			});
+
+			if (!hasPermission) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to list members",
+				});
+			}
+
+			// Delegate to service layer for business logic and pagination
+			return await listUsersUnified(ctx.db, {
+				organizationId: orgId,
+				page,
+				pageSize,
+				emailFilter,
+			});
+		}),
 });

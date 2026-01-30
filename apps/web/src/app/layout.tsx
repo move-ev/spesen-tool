@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "@zemio/ui/components/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Providers } from "@/components/providers";
 import { TRPCReactProvider } from "@/trpc/react";
 
@@ -24,10 +25,12 @@ export default function RootLayout({
 	return (
 		<html className={inter.variable} lang="en" suppressHydrationWarning>
 			<body className="min-h-screen bg-background font-sans antialiased">
-				<Providers>
-					<TRPCReactProvider>{children}</TRPCReactProvider>
-					<Toaster />
-				</Providers>
+				<NuqsAdapter>
+					<Providers>
+						<TRPCReactProvider>{children}</TRPCReactProvider>
+						<Toaster />
+					</Providers>
+				</NuqsAdapter>
 			</body>
 		</html>
 	);

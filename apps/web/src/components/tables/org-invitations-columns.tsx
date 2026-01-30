@@ -11,7 +11,7 @@ export const organizationInvitationsColumns: ColumnDef<Invitation>[] = [
 	{
 		id: "avatar",
 		header: "",
-		cell: ({ row }) => {
+		cell: () => {
 			return <UserCircleIcon className="size-5 text-muted-foreground" />;
 		},
 	},
