@@ -7,6 +7,11 @@ import {
 } from "@/lib/validators/organization";
 import { auth } from "@/server/better-auth";
 import { listUsersUnified } from "@/server/services/organization.service";
+import {
+	getAmountRequestedStats,
+	getReportsCreatedStats,
+	Period,
+} from "@/server/services/stats.service";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const organizationRouter = createTRPCRouter({
@@ -324,5 +329,63 @@ export const organizationRouter = createTRPCRouter({
 				pageSize,
 				emailFilter,
 			});
+		}),
+
+	getStats: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string().optional(),
+				period: z.nativeEnum(Period),
+			}),
+		)
+		.query(async ({ input, ctx }) => {
+			const { period } = input;
+
+			// Determine organization ID
+			const orgId =
+				input.organizationId ?? ctx.session.session.activeOrganizationId;
+
+			if (!orgId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"Either you must be in an organization or provide an organizationId",
+				});
+			}
+
+			// Permission check
+			const { success: hasPermission } = await auth.api.hasPermission({
+				headers: ctx.headers,
+				body: {
+					organizationId: orgId,
+					permission: {
+						stats: ["read"],
+					},
+				},
+			});
+
+			if (!hasPermission) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You don't have permission to read stats",
+				});
+			}
+
+			const [reportsCreatedStats, amountRequestedStats] = await Promise.all([
+				getReportsCreatedStats(ctx.db, {
+					organizationId: orgId,
+					period,
+				}),
+				getAmountRequestedStats(ctx.db, {
+					organizationId: orgId,
+					period,
+				}),
+			]);
+
+			// Delegate to service layer for business logic and pagination
+			return {
+				reportsCreated: reportsCreatedStats,
+				amountRequested: amountRequestedStats,
+			};
 		}),
 });

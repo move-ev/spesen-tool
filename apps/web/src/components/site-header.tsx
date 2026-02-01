@@ -1,9 +1,11 @@
 "use client";
 
+import { Button } from "@zemio/ui/components/button";
 import { SidebarTrigger } from "@zemio/ui/components/sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SettingsIcon } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { SignOut } from "./sign-out";
+import { UserMenu } from "./user-menu";
 
 export function SiteHeader({
 	className,
@@ -11,18 +13,24 @@ export function SiteHeader({
 }: React.ComponentProps<"header">) {
 	return (
 		<header
-			className={cn(
-				"sticky top-0 z-50 border-b bg-background/95 backdrop-blur",
-				className,
-			)}
+			className={cn("bg-background", className)}
 			data-slot="site-header"
 			{...props}
 		>
 			<div className="container py-2">
 				<div className="flex items-center justify-start gap-4">
-					<SidebarTrigger className={"me-auto"} />
-					<ThemeToggle variant={"outline"} />
-					<SignOut />
+					<SidebarTrigger />
+					<Button
+						className={"ml-auto"}
+						render={
+							<Link href={"#"}>
+								<SettingsIcon />
+							</Link>
+						}
+						size={"icon-sm"}
+						variant={"ghost"}
+					/>
+					<UserMenu variant={"small"} />
 				</div>
 			</div>
 		</header>

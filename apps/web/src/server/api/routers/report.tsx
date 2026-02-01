@@ -147,6 +147,15 @@ export const reportRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(createReportSchema)
 		.mutation(async ({ ctx, input }) => {
+			const orgId = ctx.session.session.activeOrganizationId;
+
+			if (!orgId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "You must be in an organization to create a report",
+				});
+			}
+
 			const bankingDetails = await ctx.db.bankingDetails.findUnique({
 				where: {
 					id: input.bankingDetailsId,
@@ -170,6 +179,7 @@ export const reportRouter = createTRPCRouter({
 					...input,
 					ownerId: ctx.session.user.id,
 					status: ReportStatus.DRAFT,
+					organizationId: orgId,
 				},
 				include: {
 					expenses: {

@@ -37,7 +37,12 @@ import { ROUTES } from "@/lib/consts";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/server/better-auth/client";
 
-export function UserMenu() {
+export function UserMenu({
+	variant = "default",
+	...props
+}: React.ComponentProps<typeof DropdownMenu> & {
+	variant?: "small" | "default";
+}) {
 	const router = useRouter();
 	const { theme, setTheme } = useTheme();
 	const { isPending, data: session } = authClient.useSession();
@@ -53,13 +58,13 @@ export function UserMenu() {
 	};
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu {...props}>
 			<DropdownMenuTrigger
 				className={"flex items-center justify-start gap-3"}
 				openOnHover={true}
 				render={
-					<Button variant={"ghost"}>
-						<Avatar className={"size-5"}>
+					<Button size={variant === "small" ? "icon-sm" : "sm"} variant={"ghost"}>
+						<Avatar className={"ms-0.75 size-5"}>
 							<AvatarImage src={user.image ?? undefined} />
 							<AvatarFallback>
 								{user.name
@@ -68,8 +73,12 @@ export function UserMenu() {
 									.join("")}
 							</AvatarFallback>
 						</Avatar>
-						<span className="grow truncate text-left font-medium">{user.name}</span>
-						<ChevronsUpDownIcon />
+						{variant === "small" ? null : (
+							<>
+								<span className="grow truncate text-left font-medium">{user.name}</span>
+								<ChevronsUpDownIcon />
+							</>
+						)}
 					</Button>
 				}
 			/>

@@ -1,7 +1,8 @@
 import { SidebarProvider } from "@zemio/ui/components/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
 
-export default function ReportLayout({
+export default async function ReportLayout({
 	children,
 }: {
 	children: React.ReactNode;
@@ -10,7 +11,10 @@ export default function ReportLayout({
 		<SidebarProvider>
 			<AppSidebar />
 
-			<div className="flex-1">{children}</div>
+			<div className="flex-1">
+				<SiteHeader />
+				{children}
+			</div>
 		</SidebarProvider>
 	);
 }
