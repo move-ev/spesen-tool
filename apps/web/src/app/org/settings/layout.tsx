@@ -7,7 +7,7 @@ export default async function ServerLayout({
 	return (
 		<SidebarProvider>
 			<OrganizationSettingsSidebar />
-			<div className="flex-1">{children}</div>
+			<div className="flex-1 *:data-[slot='shell']:space-y-12">{children}</div>
 		</SidebarProvider>
 	);
 }

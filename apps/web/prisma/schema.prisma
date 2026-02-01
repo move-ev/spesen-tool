@@ -76,16 +76,54 @@ enum ExpenseType {
   FOOD
 }
 
+enum FileVisibility {
+  PRIVATE // Default for expense receipts
+  PUBLIC  // Organization logos, public assets
+}
+
+enum FileStatus {
+  PENDING  // Upload URL generated but not confirmed
+  UPLOADED // Successfully uploaded and verified
+  FAILED   // Upload failed
+  DELETED  // Soft-deleted (audit trail)
+}
+
 model Attachment {
-  id        String   @id @default(cuid())
-  key       String
+  id  String @id @default(cuid())
+  key String // S3 object key
+
+  // Metadata
+  originalName String?        // Original filename
+  contentType  String?        // MIME type
+  size         Int?           // File size in bytes
+  visibility   FileVisibility @default(PRIVATE)
+  status       FileStatus     @default(PENDING)
+
+  // Audit trail
+  uploadedById String?
+  uploadedBy   User?   @relation("UploadedAttachments", fields: [uploadedById], references: [id], onDelete: Restrict)
+  uploadedAt   DateTime @default(now())
+
+  // Soft delete
+  deletedAt   DateTime?
+  deletedById String?
+  deletedBy   User?     @relation("DeletedAttachments", fields: [deletedById], references: [id], onDelete: SetNull)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  expenseId String
-  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  // Relations
+  expenseId String? // Nullable for org logos
+  expense   Expense? @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  organizationId String?       // For org-level files (logos)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([key])
   @@index([expenseId])
+  @@index([organizationId])
+  @@index([uploadedById])
+  @@index([status])
   @@map("attachment")
 }
 
@@ -116,6 +154,9 @@ model User {
 
   members     Member[]
   invitations Invitation[]
+
+  uploadedAttachments Attachment[] @relation("UploadedAttachments")
+  deletedAttachments  Attachment[] @relation("DeletedAttachments")
 
   @@unique([email])
   @@map("user")
@@ -268,6 +309,7 @@ model Organization {
   settings            OrganizationSettings?
   organizationDomains OrganizationDomain[]
   reports             Report[]
+  attachments         Attachment[]
 
   @@unique([slug])
   @@map("organization")

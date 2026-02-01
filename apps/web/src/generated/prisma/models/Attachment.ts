@@ -20,58 +20,136 @@ export type AttachmentModel = runtime.Types.Result.DefaultSelection<Prisma.$Atta
 
 export type AggregateAttachment = {
   _count: AttachmentCountAggregateOutputType | null
+  _avg: AttachmentAvgAggregateOutputType | null
+  _sum: AttachmentSumAggregateOutputType | null
   _min: AttachmentMinAggregateOutputType | null
   _max: AttachmentMaxAggregateOutputType | null
+}
+
+export type AttachmentAvgAggregateOutputType = {
+  size: number | null
+}
+
+export type AttachmentSumAggregateOutputType = {
+  size: number | null
 }
 
 export type AttachmentMinAggregateOutputType = {
   id: string | null
   key: string | null
+  originalName: string | null
+  contentType: string | null
+  size: number | null
+  visibility: $Enums.FileVisibility | null
+  status: $Enums.FileStatus | null
+  uploadedById: string | null
+  uploadedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
   createdAt: Date | null
   updatedAt: Date | null
   expenseId: string | null
+  organizationId: string | null
 }
 
 export type AttachmentMaxAggregateOutputType = {
   id: string | null
   key: string | null
+  originalName: string | null
+  contentType: string | null
+  size: number | null
+  visibility: $Enums.FileVisibility | null
+  status: $Enums.FileStatus | null
+  uploadedById: string | null
+  uploadedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
   createdAt: Date | null
   updatedAt: Date | null
   expenseId: string | null
+  organizationId: string | null
 }
 
 export type AttachmentCountAggregateOutputType = {
   id: number
   key: number
+  originalName: number
+  contentType: number
+  size: number
+  visibility: number
+  status: number
+  uploadedById: number
+  uploadedAt: number
+  deletedAt: number
+  deletedById: number
   createdAt: number
   updatedAt: number
   expenseId: number
+  organizationId: number
   _all: number
 }
 
 
+export type AttachmentAvgAggregateInputType = {
+  size?: true
+}
+
+export type AttachmentSumAggregateInputType = {
+  size?: true
+}
+
 export type AttachmentMinAggregateInputType = {
   id?: true
   key?: true
+  originalName?: true
+  contentType?: true
+  size?: true
+  visibility?: true
+  status?: true
+  uploadedById?: true
+  uploadedAt?: true
+  deletedAt?: true
+  deletedById?: true
   createdAt?: true
   updatedAt?: true
   expenseId?: true
+  organizationId?: true
 }
 
 export type AttachmentMaxAggregateInputType = {
   id?: true
   key?: true
+  originalName?: true
+  contentType?: true
+  size?: true
+  visibility?: true
+  status?: true
+  uploadedById?: true
+  uploadedAt?: true
+  deletedAt?: true
+  deletedById?: true
   createdAt?: true
   updatedAt?: true
   expenseId?: true
+  organizationId?: true
 }
 
 export type AttachmentCountAggregateInputType = {
   id?: true
   key?: true
+  originalName?: true
+  contentType?: true
+  size?: true
+  visibility?: true
+  status?: true
+  uploadedById?: true
+  uploadedAt?: true
+  deletedAt?: true
+  deletedById?: true
   createdAt?: true
   updatedAt?: true
   expenseId?: true
+  organizationId?: true
   _all?: true
 }
 
@@ -113,6 +191,18 @@ export type AttachmentAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: AttachmentAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: AttachmentSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: AttachmentMinAggregateInputType
@@ -143,6 +233,8 @@ export type AttachmentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: AttachmentCountAggregateInputType | true
+  _avg?: AttachmentAvgAggregateInputType
+  _sum?: AttachmentSumAggregateInputType
   _min?: AttachmentMinAggregateInputType
   _max?: AttachmentMaxAggregateInputType
 }
@@ -150,10 +242,22 @@ export type AttachmentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type AttachmentGroupByOutputType = {
   id: string
   key: string
+  originalName: string | null
+  contentType: string | null
+  size: number | null
+  visibility: $Enums.FileVisibility
+  status: $Enums.FileStatus
+  uploadedById: string | null
+  uploadedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   createdAt: Date
   updatedAt: Date
-  expenseId: string
+  expenseId: string | null
+  organizationId: string | null
   _count: AttachmentCountAggregateOutputType | null
+  _avg: AttachmentAvgAggregateOutputType | null
+  _sum: AttachmentSumAggregateOutputType | null
   _min: AttachmentMinAggregateOutputType | null
   _max: AttachmentMaxAggregateOutputType | null
 }
@@ -179,19 +283,45 @@ export type AttachmentWhereInput = {
   NOT?: Prisma.AttachmentWhereInput | Prisma.AttachmentWhereInput[]
   id?: Prisma.StringFilter<"Attachment"> | string
   key?: Prisma.StringFilter<"Attachment"> | string
+  originalName?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  contentType?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  size?: Prisma.IntNullableFilter<"Attachment"> | number | null
+  visibility?: Prisma.EnumFileVisibilityFilter<"Attachment"> | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFilter<"Attachment"> | $Enums.FileStatus
+  uploadedById?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  uploadedAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Attachment"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Attachment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
-  expenseId?: Prisma.StringFilter<"Attachment"> | string
-  expense?: Prisma.XOR<Prisma.ExpenseScalarRelationFilter, Prisma.ExpenseWhereInput>
+  expenseId?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  organizationId?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  uploadedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  deletedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  expense?: Prisma.XOR<Prisma.ExpenseNullableScalarRelationFilter, Prisma.ExpenseWhereInput> | null
+  organization?: Prisma.XOR<Prisma.OrganizationNullableScalarRelationFilter, Prisma.OrganizationWhereInput> | null
 }
 
 export type AttachmentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
+  originalName?: Prisma.SortOrderInput | Prisma.SortOrder
+  contentType?: Prisma.SortOrderInput | Prisma.SortOrder
+  size?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  uploadedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  uploadedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  expenseId?: Prisma.SortOrder
+  expenseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  organizationId?: Prisma.SortOrderInput | Prisma.SortOrder
+  uploadedBy?: Prisma.UserOrderByWithRelationInput
+  deletedBy?: Prisma.UserOrderByWithRelationInput
   expense?: Prisma.ExpenseOrderByWithRelationInput
+  organization?: Prisma.OrganizationOrderByWithRelationInput
 }
 
 export type AttachmentWhereUniqueInput = Prisma.AtLeast<{
@@ -200,21 +330,46 @@ export type AttachmentWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AttachmentWhereInput[]
   NOT?: Prisma.AttachmentWhereInput | Prisma.AttachmentWhereInput[]
   key?: Prisma.StringFilter<"Attachment"> | string
+  originalName?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  contentType?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  size?: Prisma.IntNullableFilter<"Attachment"> | number | null
+  visibility?: Prisma.EnumFileVisibilityFilter<"Attachment"> | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFilter<"Attachment"> | $Enums.FileStatus
+  uploadedById?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  uploadedAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Attachment"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Attachment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
-  expenseId?: Prisma.StringFilter<"Attachment"> | string
-  expense?: Prisma.XOR<Prisma.ExpenseScalarRelationFilter, Prisma.ExpenseWhereInput>
+  expenseId?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  organizationId?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  uploadedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  deletedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  expense?: Prisma.XOR<Prisma.ExpenseNullableScalarRelationFilter, Prisma.ExpenseWhereInput> | null
+  organization?: Prisma.XOR<Prisma.OrganizationNullableScalarRelationFilter, Prisma.OrganizationWhereInput> | null
 }, "id">
 
 export type AttachmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
+  originalName?: Prisma.SortOrderInput | Prisma.SortOrder
+  contentType?: Prisma.SortOrderInput | Prisma.SortOrder
+  size?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  uploadedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  uploadedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  expenseId?: Prisma.SortOrder
+  expenseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  organizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AttachmentCountOrderByAggregateInput
+  _avg?: Prisma.AttachmentAvgOrderByAggregateInput
   _max?: Prisma.AttachmentMaxOrderByAggregateInput
   _min?: Prisma.AttachmentMinOrderByAggregateInput
+  _sum?: Prisma.AttachmentSumOrderByAggregateInput
 }
 
 export type AttachmentScalarWhereWithAggregatesInput = {
@@ -223,54 +378,121 @@ export type AttachmentScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AttachmentScalarWhereWithAggregatesInput | Prisma.AttachmentScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Attachment"> | string
   key?: Prisma.StringWithAggregatesFilter<"Attachment"> | string
+  originalName?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
+  contentType?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
+  size?: Prisma.IntNullableWithAggregatesFilter<"Attachment"> | number | null
+  visibility?: Prisma.EnumFileVisibilityWithAggregatesFilter<"Attachment"> | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusWithAggregatesFilter<"Attachment"> | $Enums.FileStatus
+  uploadedById?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
+  uploadedAt?: Prisma.DateTimeWithAggregatesFilter<"Attachment"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attachment"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Attachment"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Attachment"> | Date | string
-  expenseId?: Prisma.StringWithAggregatesFilter<"Attachment"> | string
+  expenseId?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
+  organizationId?: Prisma.StringNullableWithAggregatesFilter<"Attachment"> | string | null
 }
 
 export type AttachmentCreateInput = {
   id?: string
   key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  expense: Prisma.ExpenseCreateNestedOneWithoutAttachmentsInput
+  uploadedBy?: Prisma.UserCreateNestedOneWithoutUploadedAttachmentsInput
+  deletedBy?: Prisma.UserCreateNestedOneWithoutDeletedAttachmentsInput
+  expense?: Prisma.ExpenseCreateNestedOneWithoutAttachmentsInput
+  organization?: Prisma.OrganizationCreateNestedOneWithoutAttachmentsInput
 }
 
 export type AttachmentUncheckedCreateInput = {
   id?: string
   key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  expenseId: string
+  expenseId?: string | null
+  organizationId?: string | null
 }
 
 export type AttachmentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expense?: Prisma.ExpenseUpdateOneRequiredWithoutAttachmentsNestedInput
+  uploadedBy?: Prisma.UserUpdateOneWithoutUploadedAttachmentsNestedInput
+  deletedBy?: Prisma.UserUpdateOneWithoutDeletedAttachmentsNestedInput
+  expense?: Prisma.ExpenseUpdateOneWithoutAttachmentsNestedInput
+  organization?: Prisma.OrganizationUpdateOneWithoutAttachmentsNestedInput
 }
 
 export type AttachmentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expenseId?: Prisma.StringFieldUpdateOperationsInput | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AttachmentCreateManyInput = {
   id?: string
   key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  expenseId: string
+  expenseId?: string | null
+  organizationId?: string | null
 }
 
 export type AttachmentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -278,9 +500,19 @@ export type AttachmentUpdateManyMutationInput = {
 export type AttachmentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expenseId?: Prisma.StringFieldUpdateOperationsInput | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AttachmentListRelationFilter = {
@@ -296,25 +528,63 @@ export type AttachmentOrderByRelationAggregateInput = {
 export type AttachmentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
+  originalName?: Prisma.SortOrder
+  contentType?: Prisma.SortOrder
+  size?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  uploadedById?: Prisma.SortOrder
+  uploadedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   expenseId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+}
+
+export type AttachmentAvgOrderByAggregateInput = {
+  size?: Prisma.SortOrder
 }
 
 export type AttachmentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
+  originalName?: Prisma.SortOrder
+  contentType?: Prisma.SortOrder
+  size?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  uploadedById?: Prisma.SortOrder
+  uploadedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   expenseId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
 }
 
 export type AttachmentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
+  originalName?: Prisma.SortOrder
+  contentType?: Prisma.SortOrder
+  size?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  uploadedById?: Prisma.SortOrder
+  uploadedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   expenseId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+}
+
+export type AttachmentSumOrderByAggregateInput = {
+  size?: Prisma.SortOrder
 }
 
 export type AttachmentCreateNestedManyWithoutExpenseInput = {
@@ -359,18 +629,184 @@ export type AttachmentUncheckedUpdateManyWithoutExpenseNestedInput = {
   deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type EnumFileVisibilityFieldUpdateOperationsInput = {
+  set?: $Enums.FileVisibility
+}
+
+export type EnumFileStatusFieldUpdateOperationsInput = {
+  set?: $Enums.FileStatus
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type AttachmentCreateNestedManyWithoutUploadedByInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutUploadedByInput, Prisma.AttachmentUncheckedCreateWithoutUploadedByInput> | Prisma.AttachmentCreateWithoutUploadedByInput[] | Prisma.AttachmentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutUploadedByInput | Prisma.AttachmentCreateOrConnectWithoutUploadedByInput[]
+  createMany?: Prisma.AttachmentCreateManyUploadedByInputEnvelope
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+}
+
+export type AttachmentCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutDeletedByInput, Prisma.AttachmentUncheckedCreateWithoutDeletedByInput> | Prisma.AttachmentCreateWithoutDeletedByInput[] | Prisma.AttachmentUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutDeletedByInput | Prisma.AttachmentCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.AttachmentCreateManyDeletedByInputEnvelope
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+}
+
+export type AttachmentUncheckedCreateNestedManyWithoutUploadedByInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutUploadedByInput, Prisma.AttachmentUncheckedCreateWithoutUploadedByInput> | Prisma.AttachmentCreateWithoutUploadedByInput[] | Prisma.AttachmentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutUploadedByInput | Prisma.AttachmentCreateOrConnectWithoutUploadedByInput[]
+  createMany?: Prisma.AttachmentCreateManyUploadedByInputEnvelope
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+}
+
+export type AttachmentUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutDeletedByInput, Prisma.AttachmentUncheckedCreateWithoutDeletedByInput> | Prisma.AttachmentCreateWithoutDeletedByInput[] | Prisma.AttachmentUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutDeletedByInput | Prisma.AttachmentCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.AttachmentCreateManyDeletedByInputEnvelope
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+}
+
+export type AttachmentUpdateManyWithoutUploadedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutUploadedByInput, Prisma.AttachmentUncheckedCreateWithoutUploadedByInput> | Prisma.AttachmentCreateWithoutUploadedByInput[] | Prisma.AttachmentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutUploadedByInput | Prisma.AttachmentCreateOrConnectWithoutUploadedByInput[]
+  upsert?: Prisma.AttachmentUpsertWithWhereUniqueWithoutUploadedByInput | Prisma.AttachmentUpsertWithWhereUniqueWithoutUploadedByInput[]
+  createMany?: Prisma.AttachmentCreateManyUploadedByInputEnvelope
+  set?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  disconnect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  delete?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  update?: Prisma.AttachmentUpdateWithWhereUniqueWithoutUploadedByInput | Prisma.AttachmentUpdateWithWhereUniqueWithoutUploadedByInput[]
+  updateMany?: Prisma.AttachmentUpdateManyWithWhereWithoutUploadedByInput | Prisma.AttachmentUpdateManyWithWhereWithoutUploadedByInput[]
+  deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
+}
+
+export type AttachmentUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutDeletedByInput, Prisma.AttachmentUncheckedCreateWithoutDeletedByInput> | Prisma.AttachmentCreateWithoutDeletedByInput[] | Prisma.AttachmentUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutDeletedByInput | Prisma.AttachmentCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.AttachmentUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.AttachmentUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.AttachmentCreateManyDeletedByInputEnvelope
+  set?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  disconnect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  delete?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  update?: Prisma.AttachmentUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.AttachmentUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.AttachmentUpdateManyWithWhereWithoutDeletedByInput | Prisma.AttachmentUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
+}
+
+export type AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutUploadedByInput, Prisma.AttachmentUncheckedCreateWithoutUploadedByInput> | Prisma.AttachmentCreateWithoutUploadedByInput[] | Prisma.AttachmentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutUploadedByInput | Prisma.AttachmentCreateOrConnectWithoutUploadedByInput[]
+  upsert?: Prisma.AttachmentUpsertWithWhereUniqueWithoutUploadedByInput | Prisma.AttachmentUpsertWithWhereUniqueWithoutUploadedByInput[]
+  createMany?: Prisma.AttachmentCreateManyUploadedByInputEnvelope
+  set?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  disconnect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  delete?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  update?: Prisma.AttachmentUpdateWithWhereUniqueWithoutUploadedByInput | Prisma.AttachmentUpdateWithWhereUniqueWithoutUploadedByInput[]
+  updateMany?: Prisma.AttachmentUpdateManyWithWhereWithoutUploadedByInput | Prisma.AttachmentUpdateManyWithWhereWithoutUploadedByInput[]
+  deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
+}
+
+export type AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutDeletedByInput, Prisma.AttachmentUncheckedCreateWithoutDeletedByInput> | Prisma.AttachmentCreateWithoutDeletedByInput[] | Prisma.AttachmentUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutDeletedByInput | Prisma.AttachmentCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.AttachmentUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.AttachmentUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.AttachmentCreateManyDeletedByInputEnvelope
+  set?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  disconnect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  delete?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  update?: Prisma.AttachmentUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.AttachmentUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.AttachmentUpdateManyWithWhereWithoutDeletedByInput | Prisma.AttachmentUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
+}
+
+export type AttachmentCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutOrganizationInput, Prisma.AttachmentUncheckedCreateWithoutOrganizationInput> | Prisma.AttachmentCreateWithoutOrganizationInput[] | Prisma.AttachmentUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutOrganizationInput | Prisma.AttachmentCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.AttachmentCreateManyOrganizationInputEnvelope
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+}
+
+export type AttachmentUncheckedCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutOrganizationInput, Prisma.AttachmentUncheckedCreateWithoutOrganizationInput> | Prisma.AttachmentCreateWithoutOrganizationInput[] | Prisma.AttachmentUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutOrganizationInput | Prisma.AttachmentCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.AttachmentCreateManyOrganizationInputEnvelope
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+}
+
+export type AttachmentUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutOrganizationInput, Prisma.AttachmentUncheckedCreateWithoutOrganizationInput> | Prisma.AttachmentCreateWithoutOrganizationInput[] | Prisma.AttachmentUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutOrganizationInput | Prisma.AttachmentCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.AttachmentUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.AttachmentUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.AttachmentCreateManyOrganizationInputEnvelope
+  set?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  disconnect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  delete?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  update?: Prisma.AttachmentUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.AttachmentUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.AttachmentUpdateManyWithWhereWithoutOrganizationInput | Prisma.AttachmentUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
+}
+
+export type AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.AttachmentCreateWithoutOrganizationInput, Prisma.AttachmentUncheckedCreateWithoutOrganizationInput> | Prisma.AttachmentCreateWithoutOrganizationInput[] | Prisma.AttachmentUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.AttachmentCreateOrConnectWithoutOrganizationInput | Prisma.AttachmentCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.AttachmentUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.AttachmentUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.AttachmentCreateManyOrganizationInputEnvelope
+  set?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  disconnect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  delete?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  connect?: Prisma.AttachmentWhereUniqueInput | Prisma.AttachmentWhereUniqueInput[]
+  update?: Prisma.AttachmentUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.AttachmentUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.AttachmentUpdateManyWithWhereWithoutOrganizationInput | Prisma.AttachmentUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
+}
+
 export type AttachmentCreateWithoutExpenseInput = {
   id?: string
   key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uploadedBy?: Prisma.UserCreateNestedOneWithoutUploadedAttachmentsInput
+  deletedBy?: Prisma.UserCreateNestedOneWithoutDeletedAttachmentsInput
+  organization?: Prisma.OrganizationCreateNestedOneWithoutAttachmentsInput
 }
 
 export type AttachmentUncheckedCreateWithoutExpenseInput = {
   id?: string
   key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  organizationId?: string | null
 }
 
 export type AttachmentCreateOrConnectWithoutExpenseInput = {
@@ -405,37 +841,471 @@ export type AttachmentScalarWhereInput = {
   NOT?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
   id?: Prisma.StringFilter<"Attachment"> | string
   key?: Prisma.StringFilter<"Attachment"> | string
+  originalName?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  contentType?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  size?: Prisma.IntNullableFilter<"Attachment"> | number | null
+  visibility?: Prisma.EnumFileVisibilityFilter<"Attachment"> | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFilter<"Attachment"> | $Enums.FileStatus
+  uploadedById?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  uploadedAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Attachment"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Attachment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attachment"> | Date | string
-  expenseId?: Prisma.StringFilter<"Attachment"> | string
+  expenseId?: Prisma.StringNullableFilter<"Attachment"> | string | null
+  organizationId?: Prisma.StringNullableFilter<"Attachment"> | string | null
+}
+
+export type AttachmentCreateWithoutUploadedByInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedBy?: Prisma.UserCreateNestedOneWithoutDeletedAttachmentsInput
+  expense?: Prisma.ExpenseCreateNestedOneWithoutAttachmentsInput
+  organization?: Prisma.OrganizationCreateNestedOneWithoutAttachmentsInput
+}
+
+export type AttachmentUncheckedCreateWithoutUploadedByInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expenseId?: string | null
+  organizationId?: string | null
+}
+
+export type AttachmentCreateOrConnectWithoutUploadedByInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttachmentCreateWithoutUploadedByInput, Prisma.AttachmentUncheckedCreateWithoutUploadedByInput>
+}
+
+export type AttachmentCreateManyUploadedByInputEnvelope = {
+  data: Prisma.AttachmentCreateManyUploadedByInput | Prisma.AttachmentCreateManyUploadedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AttachmentCreateWithoutDeletedByInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uploadedBy?: Prisma.UserCreateNestedOneWithoutUploadedAttachmentsInput
+  expense?: Prisma.ExpenseCreateNestedOneWithoutAttachmentsInput
+  organization?: Prisma.OrganizationCreateNestedOneWithoutAttachmentsInput
+}
+
+export type AttachmentUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expenseId?: string | null
+  organizationId?: string | null
+}
+
+export type AttachmentCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttachmentCreateWithoutDeletedByInput, Prisma.AttachmentUncheckedCreateWithoutDeletedByInput>
+}
+
+export type AttachmentCreateManyDeletedByInputEnvelope = {
+  data: Prisma.AttachmentCreateManyDeletedByInput | Prisma.AttachmentCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AttachmentUpsertWithWhereUniqueWithoutUploadedByInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AttachmentUpdateWithoutUploadedByInput, Prisma.AttachmentUncheckedUpdateWithoutUploadedByInput>
+  create: Prisma.XOR<Prisma.AttachmentCreateWithoutUploadedByInput, Prisma.AttachmentUncheckedCreateWithoutUploadedByInput>
+}
+
+export type AttachmentUpdateWithWhereUniqueWithoutUploadedByInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.AttachmentUpdateWithoutUploadedByInput, Prisma.AttachmentUncheckedUpdateWithoutUploadedByInput>
+}
+
+export type AttachmentUpdateManyWithWhereWithoutUploadedByInput = {
+  where: Prisma.AttachmentScalarWhereInput
+  data: Prisma.XOR<Prisma.AttachmentUpdateManyMutationInput, Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByInput>
+}
+
+export type AttachmentUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AttachmentUpdateWithoutDeletedByInput, Prisma.AttachmentUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.AttachmentCreateWithoutDeletedByInput, Prisma.AttachmentUncheckedCreateWithoutDeletedByInput>
+}
+
+export type AttachmentUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.AttachmentUpdateWithoutDeletedByInput, Prisma.AttachmentUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type AttachmentUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.AttachmentScalarWhereInput
+  data: Prisma.XOR<Prisma.AttachmentUpdateManyMutationInput, Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByInput>
+}
+
+export type AttachmentCreateWithoutOrganizationInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uploadedBy?: Prisma.UserCreateNestedOneWithoutUploadedAttachmentsInput
+  deletedBy?: Prisma.UserCreateNestedOneWithoutDeletedAttachmentsInput
+  expense?: Prisma.ExpenseCreateNestedOneWithoutAttachmentsInput
+}
+
+export type AttachmentUncheckedCreateWithoutOrganizationInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expenseId?: string | null
+}
+
+export type AttachmentCreateOrConnectWithoutOrganizationInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttachmentCreateWithoutOrganizationInput, Prisma.AttachmentUncheckedCreateWithoutOrganizationInput>
+}
+
+export type AttachmentCreateManyOrganizationInputEnvelope = {
+  data: Prisma.AttachmentCreateManyOrganizationInput | Prisma.AttachmentCreateManyOrganizationInput[]
+  skipDuplicates?: boolean
+}
+
+export type AttachmentUpsertWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AttachmentUpdateWithoutOrganizationInput, Prisma.AttachmentUncheckedUpdateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.AttachmentCreateWithoutOrganizationInput, Prisma.AttachmentUncheckedCreateWithoutOrganizationInput>
+}
+
+export type AttachmentUpdateWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.AttachmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.AttachmentUpdateWithoutOrganizationInput, Prisma.AttachmentUncheckedUpdateWithoutOrganizationInput>
+}
+
+export type AttachmentUpdateManyWithWhereWithoutOrganizationInput = {
+  where: Prisma.AttachmentScalarWhereInput
+  data: Prisma.XOR<Prisma.AttachmentUpdateManyMutationInput, Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationInput>
 }
 
 export type AttachmentCreateManyExpenseInput = {
   id?: string
   key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  organizationId?: string | null
 }
 
 export type AttachmentUpdateWithoutExpenseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedBy?: Prisma.UserUpdateOneWithoutUploadedAttachmentsNestedInput
+  deletedBy?: Prisma.UserUpdateOneWithoutDeletedAttachmentsNestedInput
+  organization?: Prisma.OrganizationUpdateOneWithoutAttachmentsNestedInput
 }
 
 export type AttachmentUncheckedUpdateWithoutExpenseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AttachmentUncheckedUpdateManyWithoutExpenseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AttachmentCreateManyUploadedByInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expenseId?: string | null
+  organizationId?: string | null
+}
+
+export type AttachmentCreateManyDeletedByInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expenseId?: string | null
+  organizationId?: string | null
+}
+
+export type AttachmentUpdateWithoutUploadedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedBy?: Prisma.UserUpdateOneWithoutDeletedAttachmentsNestedInput
+  expense?: Prisma.ExpenseUpdateOneWithoutAttachmentsNestedInput
+  organization?: Prisma.OrganizationUpdateOneWithoutAttachmentsNestedInput
+}
+
+export type AttachmentUncheckedUpdateWithoutUploadedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AttachmentUncheckedUpdateManyWithoutUploadedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AttachmentUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedBy?: Prisma.UserUpdateOneWithoutUploadedAttachmentsNestedInput
+  expense?: Prisma.ExpenseUpdateOneWithoutAttachmentsNestedInput
+  organization?: Prisma.OrganizationUpdateOneWithoutAttachmentsNestedInput
+}
+
+export type AttachmentUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AttachmentUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AttachmentCreateManyOrganizationInput = {
+  id?: string
+  key: string
+  originalName?: string | null
+  contentType?: string | null
+  size?: number | null
+  visibility?: $Enums.FileVisibility
+  status?: $Enums.FileStatus
+  uploadedById?: string | null
+  uploadedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expenseId?: string | null
+}
+
+export type AttachmentUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uploadedBy?: Prisma.UserUpdateOneWithoutUploadedAttachmentsNestedInput
+  deletedBy?: Prisma.UserUpdateOneWithoutDeletedAttachmentsNestedInput
+  expense?: Prisma.ExpenseUpdateOneWithoutAttachmentsNestedInput
+}
+
+export type AttachmentUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AttachmentUncheckedUpdateManyWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibility?: Prisma.EnumFileVisibilityFieldUpdateOperationsInput | $Enums.FileVisibility
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  uploadedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expenseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -443,60 +1313,131 @@ export type AttachmentUncheckedUpdateManyWithoutExpenseInput = {
 export type AttachmentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   key?: boolean
+  originalName?: boolean
+  contentType?: boolean
+  size?: boolean
+  visibility?: boolean
+  status?: boolean
+  uploadedById?: boolean
+  uploadedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   expenseId?: boolean
-  expense?: boolean | Prisma.ExpenseDefaultArgs<ExtArgs>
+  organizationId?: boolean
+  uploadedBy?: boolean | Prisma.Attachment$uploadedByArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Attachment$deletedByArgs<ExtArgs>
+  expense?: boolean | Prisma.Attachment$expenseArgs<ExtArgs>
+  organization?: boolean | Prisma.Attachment$organizationArgs<ExtArgs>
 }, ExtArgs["result"]["attachment"]>
 
 export type AttachmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   key?: boolean
+  originalName?: boolean
+  contentType?: boolean
+  size?: boolean
+  visibility?: boolean
+  status?: boolean
+  uploadedById?: boolean
+  uploadedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   expenseId?: boolean
-  expense?: boolean | Prisma.ExpenseDefaultArgs<ExtArgs>
+  organizationId?: boolean
+  uploadedBy?: boolean | Prisma.Attachment$uploadedByArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Attachment$deletedByArgs<ExtArgs>
+  expense?: boolean | Prisma.Attachment$expenseArgs<ExtArgs>
+  organization?: boolean | Prisma.Attachment$organizationArgs<ExtArgs>
 }, ExtArgs["result"]["attachment"]>
 
 export type AttachmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   key?: boolean
+  originalName?: boolean
+  contentType?: boolean
+  size?: boolean
+  visibility?: boolean
+  status?: boolean
+  uploadedById?: boolean
+  uploadedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   expenseId?: boolean
-  expense?: boolean | Prisma.ExpenseDefaultArgs<ExtArgs>
+  organizationId?: boolean
+  uploadedBy?: boolean | Prisma.Attachment$uploadedByArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Attachment$deletedByArgs<ExtArgs>
+  expense?: boolean | Prisma.Attachment$expenseArgs<ExtArgs>
+  organization?: boolean | Prisma.Attachment$organizationArgs<ExtArgs>
 }, ExtArgs["result"]["attachment"]>
 
 export type AttachmentSelectScalar = {
   id?: boolean
   key?: boolean
+  originalName?: boolean
+  contentType?: boolean
+  size?: boolean
+  visibility?: boolean
+  status?: boolean
+  uploadedById?: boolean
+  uploadedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   expenseId?: boolean
+  organizationId?: boolean
 }
 
-export type AttachmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "createdAt" | "updatedAt" | "expenseId", ExtArgs["result"]["attachment"]>
+export type AttachmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "originalName" | "contentType" | "size" | "visibility" | "status" | "uploadedById" | "uploadedAt" | "deletedAt" | "deletedById" | "createdAt" | "updatedAt" | "expenseId" | "organizationId", ExtArgs["result"]["attachment"]>
 export type AttachmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  expense?: boolean | Prisma.ExpenseDefaultArgs<ExtArgs>
+  uploadedBy?: boolean | Prisma.Attachment$uploadedByArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Attachment$deletedByArgs<ExtArgs>
+  expense?: boolean | Prisma.Attachment$expenseArgs<ExtArgs>
+  organization?: boolean | Prisma.Attachment$organizationArgs<ExtArgs>
 }
 export type AttachmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  expense?: boolean | Prisma.ExpenseDefaultArgs<ExtArgs>
+  uploadedBy?: boolean | Prisma.Attachment$uploadedByArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Attachment$deletedByArgs<ExtArgs>
+  expense?: boolean | Prisma.Attachment$expenseArgs<ExtArgs>
+  organization?: boolean | Prisma.Attachment$organizationArgs<ExtArgs>
 }
 export type AttachmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  expense?: boolean | Prisma.ExpenseDefaultArgs<ExtArgs>
+  uploadedBy?: boolean | Prisma.Attachment$uploadedByArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Attachment$deletedByArgs<ExtArgs>
+  expense?: boolean | Prisma.Attachment$expenseArgs<ExtArgs>
+  organization?: boolean | Prisma.Attachment$organizationArgs<ExtArgs>
 }
 
 export type $AttachmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Attachment"
   objects: {
-    expense: Prisma.$ExpensePayload<ExtArgs>
+    uploadedBy: Prisma.$UserPayload<ExtArgs> | null
+    deletedBy: Prisma.$UserPayload<ExtArgs> | null
+    expense: Prisma.$ExpensePayload<ExtArgs> | null
+    organization: Prisma.$OrganizationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     key: string
+    originalName: string | null
+    contentType: string | null
+    size: number | null
+    visibility: $Enums.FileVisibility
+    status: $Enums.FileStatus
+    uploadedById: string | null
+    uploadedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
     createdAt: Date
     updatedAt: Date
-    expenseId: string
+    expenseId: string | null
+    organizationId: string | null
   }, ExtArgs["result"]["attachment"]>
   composites: {}
 }
@@ -891,7 +1832,10 @@ readonly fields: AttachmentFieldRefs;
  */
 export interface Prisma__AttachmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  expense<T extends Prisma.ExpenseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ExpenseDefaultArgs<ExtArgs>>): Prisma.Prisma__ExpenseClient<runtime.Types.Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  uploadedBy<T extends Prisma.Attachment$uploadedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attachment$uploadedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deletedBy<T extends Prisma.Attachment$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attachment$deletedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  expense<T extends Prisma.Attachment$expenseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attachment$expenseArgs<ExtArgs>>): Prisma.Prisma__ExpenseClient<runtime.Types.Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  organization<T extends Prisma.Attachment$organizationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Attachment$organizationArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -923,9 +1867,19 @@ export interface Prisma__AttachmentClient<T, Null = never, ExtArgs extends runti
 export interface AttachmentFieldRefs {
   readonly id: Prisma.FieldRef<"Attachment", 'String'>
   readonly key: Prisma.FieldRef<"Attachment", 'String'>
+  readonly originalName: Prisma.FieldRef<"Attachment", 'String'>
+  readonly contentType: Prisma.FieldRef<"Attachment", 'String'>
+  readonly size: Prisma.FieldRef<"Attachment", 'Int'>
+  readonly visibility: Prisma.FieldRef<"Attachment", 'FileVisibility'>
+  readonly status: Prisma.FieldRef<"Attachment", 'FileStatus'>
+  readonly uploadedById: Prisma.FieldRef<"Attachment", 'String'>
+  readonly uploadedAt: Prisma.FieldRef<"Attachment", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Attachment", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"Attachment", 'String'>
   readonly createdAt: Prisma.FieldRef<"Attachment", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Attachment", 'DateTime'>
   readonly expenseId: Prisma.FieldRef<"Attachment", 'String'>
+  readonly organizationId: Prisma.FieldRef<"Attachment", 'String'>
 }
     
 
@@ -1319,6 +2273,82 @@ export type AttachmentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Attachments to delete.
    */
   limit?: number
+}
+
+/**
+ * Attachment.uploadedBy
+ */
+export type Attachment$uploadedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Attachment.deletedBy
+ */
+export type Attachment$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Attachment.expense
+ */
+export type Attachment$expenseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Expense
+   */
+  select?: Prisma.ExpenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Expense
+   */
+  omit?: Prisma.ExpenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ExpenseInclude<ExtArgs> | null
+  where?: Prisma.ExpenseWhereInput
+}
+
+/**
+ * Attachment.organization
+ */
+export type Attachment$organizationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Organization
+   */
+  select?: Prisma.OrganizationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Organization
+   */
+  omit?: Prisma.OrganizationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationInclude<ExtArgs> | null
+  where?: Prisma.OrganizationWhereInput
 }
 
 /**

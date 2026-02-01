@@ -117,22 +117,47 @@ export const expenseRouter = createTRPCRouter({
 				});
 			}
 
+			// Validate attachments exist and are owned by user
+			const attachments = await ctx.db.attachment.findMany({
+				where: {
+					id: { in: input.attachmentIds },
+					uploadedById: ctx.session.user.id,
+					status: "UPLOADED",
+					deletedAt: null,
+				},
+			});
+
+			if (attachments.length !== input.attachmentIds.length) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "One or more attachments are invalid",
+				});
+			}
+
 			// Create the meta data
 			const meta = JSON.stringify({});
 
-			const expense = await ctx.db.expense.create({
-				data: {
-					report: { connect: { id: input.reportId } },
-					type: ExpenseType.RECEIPT,
-					amount: input.amount,
-					startDate: input.startDate,
-					endDate: input.endDate,
-					description: input.description,
-					meta: meta,
-					attachments: {
-						createMany: { data: input.objectKeys.map((key) => ({ key })) },
+			// Create expense and link attachments in transaction
+			const expense = await ctx.db.$transaction(async (tx) => {
+				const newExpense = await tx.expense.create({
+					data: {
+						report: { connect: { id: input.reportId } },
+						type: ExpenseType.RECEIPT,
+						amount: input.amount,
+						startDate: input.startDate,
+						endDate: input.endDate,
+						description: input.description,
+						meta: meta,
 					},
-				},
+				});
+
+				// Link attachments to expense
+				await tx.attachment.updateMany({
+					where: { id: { in: input.attachmentIds } },
+					data: { expenseId: newExpense.id },
+				});
+
+				return newExpense;
 			});
 
 			if (!expense) {

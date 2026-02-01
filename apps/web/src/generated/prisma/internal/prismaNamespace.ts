@@ -1751,9 +1751,19 @@ export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeo
 export const AttachmentScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  originalName: 'originalName',
+  contentType: 'contentType',
+  size: 'size',
+  visibility: 'visibility',
+  status: 'status',
+  uploadedById: 'uploadedById',
+  uploadedAt: 'uploadedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  expenseId: 'expenseId'
+  expenseId: 'expenseId',
+  organizationId: 'organizationId'
 } as const
 
 export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
@@ -2084,6 +2094,34 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'FileVisibility'
+ */
+export type EnumFileVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileVisibility'>
+    
+
+
+/**
+ * Reference to a field of type 'FileVisibility[]'
+ */
+export type ListEnumFileVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileVisibility[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FileStatus'
+ */
+export type EnumFileStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'FileStatus[]'
+ */
+export type ListEnumFileStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FileStatus[]'>
     
 
 

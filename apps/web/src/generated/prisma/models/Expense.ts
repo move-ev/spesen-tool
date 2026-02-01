@@ -428,9 +428,9 @@ export type ExpenseSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
 }
 
-export type ExpenseScalarRelationFilter = {
-  is?: Prisma.ExpenseWhereInput
-  isNot?: Prisma.ExpenseWhereInput
+export type ExpenseNullableScalarRelationFilter = {
+  is?: Prisma.ExpenseWhereInput | null
+  isNot?: Prisma.ExpenseWhereInput | null
 }
 
 export type ExpenseCreateNestedManyWithoutReportInput = {
@@ -493,10 +493,12 @@ export type ExpenseCreateNestedOneWithoutAttachmentsInput = {
   connect?: Prisma.ExpenseWhereUniqueInput
 }
 
-export type ExpenseUpdateOneRequiredWithoutAttachmentsNestedInput = {
+export type ExpenseUpdateOneWithoutAttachmentsNestedInput = {
   create?: Prisma.XOR<Prisma.ExpenseCreateWithoutAttachmentsInput, Prisma.ExpenseUncheckedCreateWithoutAttachmentsInput>
   connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutAttachmentsInput
   upsert?: Prisma.ExpenseUpsertWithoutAttachmentsInput
+  disconnect?: Prisma.ExpenseWhereInput | boolean
+  delete?: Prisma.ExpenseWhereInput | boolean
   connect?: Prisma.ExpenseWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ExpenseUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.ExpenseUpdateWithoutAttachmentsInput>, Prisma.ExpenseUncheckedUpdateWithoutAttachmentsInput>
 }

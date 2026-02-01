@@ -1,7 +1,6 @@
 "use client";
 
 import { NumberField } from "@base-ui/react";
-import { useUploadFiles } from "@better-upload/client";
 import { useForm } from "@tanstack/react-form";
 import { Button } from "@zemio/ui/components/button";
 import {
@@ -24,7 +23,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
 import { DatePicker } from "@/components/date-picker";
-import { formatBytes, renameFileWithHash } from "@/lib/utils";
+import { usePresignedUpload } from "@/hooks/use-presigned-upload";
+import { formatBytes } from "@/lib/utils";
 import { createReceiptExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
@@ -51,6 +51,11 @@ export function CreateReceiptExpenseForm({
 		},
 	});
 
+	const { uploadFiles, isUploading } = usePresignedUpload({
+		reportId,
+		visibility: "PRIVATE",
+	});
+
 	const form = useForm({
 		defaultValues: {
 			description: "",
@@ -59,7 +64,7 @@ export function CreateReceiptExpenseForm({
 			endDate: formatDate(new Date(), "dd.MM.yyyy"),
 			type: "RECEIPT",
 			reportId,
-			objectKeys: [] as string[],
+			attachmentIds: [] as string[],
 			files: [] as File[],
 		},
 		validators: {
@@ -68,32 +73,27 @@ export function CreateReceiptExpenseForm({
 			),
 		},
 		onSubmit: async ({ value }) => {
-			// Rename files with unique hash before upload
-			const timestamp = Date.now();
-			const renamedFiles = await Promise.all(
-				value.files.map((file) => renameFileWithHash(file, reportId, timestamp)),
-			);
+			try {
+				// Upload files first
+				const attachmentIds = await uploadFiles(value.files);
 
-			const { files } = await uploader.upload(renamedFiles);
+				// Create expense with attachment IDs
+				createReceipt.mutate({
+					amount: value.amount,
+					description: value.description,
+					startDate: value.startDate,
+					endDate: value.endDate,
+					type: "RECEIPT",
+					reportId,
+					attachmentIds,
+				});
 
-			createReceipt.mutate({
-				amount: value.amount,
-				description: value.description,
-				startDate: value.startDate,
-				endDate: value.endDate,
-				type: "RECEIPT",
-				reportId,
-				objectKeys: files.map((file) => file.objectInfo.key),
-			});
-
-			// TODO: Invalidate expense list for report
-			// utils.expense.listForReport.invalidate();
-			router.push(`/reports/${reportId}`);
+				router.push(`/reports/${reportId}`);
+			} catch (error) {
+				// Error already toasted by hook
+				console.error("Upload failed:", error);
+			}
 		},
-	});
-
-	const uploader = useUploadFiles({
-		route: "attachments",
 	});
 
 	return (
@@ -222,9 +222,7 @@ export function CreateReceiptExpenseForm({
 				/>
 				<form.Field
 					children={(field) => {
-						const isInvalid =
-							(field.state.meta.isTouched && !field.state.meta.isValid) ||
-							uploader.isError;
+						const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
 						const MAX_FILE_AMOUNT = 5;
 
@@ -232,7 +230,6 @@ export function CreateReceiptExpenseForm({
 							<Field className="md:col-span-2" data-invalid={isInvalid}>
 								<FieldLabel htmlFor={field.name}>Anhänge</FieldLabel>
 								<UploadDropzone
-									control={uploader.control}
 									description={{
 										maxFiles: MAX_FILE_AMOUNT,
 										maxFileSize: "5MB",
@@ -267,15 +264,7 @@ export function CreateReceiptExpenseForm({
 										))}
 									</div>
 								)}
-								{isInvalid && (
-									<FieldError
-										errors={
-											uploader.error
-												? [{ message: uploader.error.message }]
-												: field.state.meta.errors
-										}
-									/>
-								)}
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
 							</Field>
 						);
 					}}
@@ -283,7 +272,7 @@ export function CreateReceiptExpenseForm({
 				/>
 				<Button
 					className={"md:col-span-2"}
-					disabled={createReceipt.isPending || uploader.isPending}
+					disabled={createReceipt.isPending || isUploading}
 					form="form-create-receipt-expense"
 					type="submit"
 				>

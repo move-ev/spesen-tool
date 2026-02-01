@@ -203,6 +203,7 @@ export type OrganizationWhereInput = {
   settings?: Prisma.XOR<Prisma.OrganizationSettingsNullableScalarRelationFilter, Prisma.OrganizationSettingsWhereInput> | null
   organizationDomains?: Prisma.OrganizationDomainListRelationFilter
   reports?: Prisma.ReportListRelationFilter
+  attachments?: Prisma.AttachmentListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -218,6 +219,7 @@ export type OrganizationOrderByWithRelationInput = {
   settings?: Prisma.OrganizationSettingsOrderByWithRelationInput
   organizationDomains?: Prisma.OrganizationDomainOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
+  attachments?: Prisma.AttachmentOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -236,6 +238,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   settings?: Prisma.XOR<Prisma.OrganizationSettingsNullableScalarRelationFilter, Prisma.OrganizationSettingsWhereInput> | null
   organizationDomains?: Prisma.OrganizationDomainListRelationFilter
   reports?: Prisma.ReportListRelationFilter
+  attachments?: Prisma.AttachmentListRelationFilter
 }, "id" | "slug">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -277,6 +280,7 @@ export type OrganizationCreateInput = {
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -292,6 +296,7 @@ export type OrganizationUncheckedCreateInput = {
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -307,6 +312,7 @@ export type OrganizationUpdateInput = {
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -322,6 +328,7 @@ export type OrganizationUncheckedUpdateInput = {
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -359,6 +366,11 @@ export type OrganizationScalarRelationFilter = {
   isNot?: Prisma.OrganizationWhereInput
 }
 
+export type OrganizationNullableScalarRelationFilter = {
+  is?: Prisma.OrganizationWhereInput | null
+  isNot?: Prisma.OrganizationWhereInput | null
+}
+
 export type OrganizationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -389,11 +401,6 @@ export type OrganizationMinOrderByAggregateInput = {
   settingsId?: Prisma.SortOrder
 }
 
-export type OrganizationNullableScalarRelationFilter = {
-  is?: Prisma.OrganizationWhereInput | null
-  isNot?: Prisma.OrganizationWhereInput | null
-}
-
 export type OrganizationCreateNestedOneWithoutReportsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutReportsInput
@@ -406,6 +413,22 @@ export type OrganizationUpdateOneRequiredWithoutReportsNestedInput = {
   upsert?: Prisma.OrganizationUpsertWithoutReportsInput
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutReportsInput, Prisma.OrganizationUpdateWithoutReportsInput>, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAttachmentsInput, Prisma.OrganizationUncheckedCreateWithoutAttachmentsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAttachmentsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneWithoutAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAttachmentsInput, Prisma.OrganizationUncheckedCreateWithoutAttachmentsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAttachmentsInput
+  upsert?: Prisma.OrganizationUpsertWithoutAttachmentsInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.OrganizationUpdateWithoutAttachmentsInput>, Prisma.OrganizationUncheckedUpdateWithoutAttachmentsInput>
 }
 
 export type OrganizationCreateNestedOneWithoutMembersInput = {
@@ -478,6 +501,7 @@ export type OrganizationCreateWithoutReportsInput = {
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutReportsInput = {
@@ -492,6 +516,7 @@ export type OrganizationUncheckedCreateWithoutReportsInput = {
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutReportsInput = {
@@ -522,6 +547,7 @@ export type OrganizationUpdateWithoutReportsInput = {
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutReportsInput = {
@@ -536,6 +562,83 @@ export type OrganizationUncheckedUpdateWithoutReportsInput = {
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutAttachmentsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  createdAt: Date | string
+  metadata?: string | null
+  settingsId?: string | null
+  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  organizationDomains?: Prisma.OrganizationDomainCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutAttachmentsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  createdAt: Date | string
+  metadata?: string | null
+  settingsId?: string | null
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  organizationDomains?: Prisma.OrganizationDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutAttachmentsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAttachmentsInput, Prisma.OrganizationUncheckedCreateWithoutAttachmentsInput>
+}
+
+export type OrganizationUpsertWithoutAttachmentsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutAttachmentsInput, Prisma.OrganizationUncheckedUpdateWithoutAttachmentsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAttachmentsInput, Prisma.OrganizationUncheckedCreateWithoutAttachmentsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutAttachmentsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutAttachmentsInput, Prisma.OrganizationUncheckedUpdateWithoutAttachmentsInput>
+}
+
+export type OrganizationUpdateWithoutAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  settingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  organizationDomains?: Prisma.OrganizationDomainUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  settingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  organizationDomains?: Prisma.OrganizationDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutMembersInput = {
@@ -550,6 +653,7 @@ export type OrganizationCreateWithoutMembersInput = {
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMembersInput = {
@@ -564,6 +668,7 @@ export type OrganizationUncheckedCreateWithoutMembersInput = {
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMembersInput = {
@@ -594,6 +699,7 @@ export type OrganizationUpdateWithoutMembersInput = {
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMembersInput = {
@@ -608,6 +714,7 @@ export type OrganizationUncheckedUpdateWithoutMembersInput = {
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutInvitationsInput = {
@@ -622,6 +729,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutInvitationsInput = {
@@ -636,6 +744,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutInvitationsInput = {
@@ -666,6 +775,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
@@ -680,6 +790,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutSettingsInput = {
@@ -694,6 +805,7 @@ export type OrganizationCreateWithoutSettingsInput = {
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutSettingsInput = {
@@ -708,6 +820,7 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutSettingsInput = {
@@ -738,6 +851,7 @@ export type OrganizationUpdateWithoutSettingsInput = {
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutSettingsInput = {
@@ -752,6 +866,7 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   organizationDomains?: Prisma.OrganizationDomainUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutOrganizationDomainsInput = {
@@ -766,6 +881,7 @@ export type OrganizationCreateWithoutOrganizationDomainsInput = {
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutOrganizationDomainsInput = {
@@ -780,6 +896,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationDomainsInput = {
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutOrganizationDomainsInput = {
@@ -810,6 +927,7 @@ export type OrganizationUpdateWithoutOrganizationDomainsInput = {
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutOrganizationDomainsInput = {
@@ -824,6 +942,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationDomainsInput = {
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -836,6 +955,7 @@ export type OrganizationCountOutputType = {
   invitations: number
   organizationDomains: number
   reports: number
+  attachments: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -843,6 +963,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   invitations?: boolean | OrganizationCountOutputTypeCountInvitationsArgs
   organizationDomains?: boolean | OrganizationCountOutputTypeCountOrganizationDomainsArgs
   reports?: boolean | OrganizationCountOutputTypeCountReportsArgs
+  attachments?: boolean | OrganizationCountOutputTypeCountAttachmentsArgs
 }
 
 /**
@@ -883,6 +1004,13 @@ export type OrganizationCountOutputTypeCountReportsArgs<ExtArgs extends runtime.
   where?: Prisma.ReportWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttachmentWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -897,6 +1025,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   organizationDomains?: boolean | Prisma.Organization$organizationDomainsArgs<ExtArgs>
   reports?: boolean | Prisma.Organization$reportsArgs<ExtArgs>
+  attachments?: boolean | Prisma.Organization$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -937,6 +1066,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   organizationDomains?: boolean | Prisma.Organization$organizationDomainsArgs<ExtArgs>
   reports?: boolean | Prisma.Organization$reportsArgs<ExtArgs>
+  attachments?: boolean | Prisma.Organization$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -950,6 +1080,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     settings: Prisma.$OrganizationSettingsPayload<ExtArgs> | null
     organizationDomains: Prisma.$OrganizationDomainPayload<ExtArgs>[]
     reports: Prisma.$ReportPayload<ExtArgs>[]
+    attachments: Prisma.$AttachmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1358,6 +1489,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   settings<T extends Prisma.Organization$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$settingsArgs<ExtArgs>>): Prisma.Prisma__OrganizationSettingsClient<runtime.Types.Result.GetResult<Prisma.$OrganizationSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   organizationDomains<T extends Prisma.Organization$organizationDomainsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$organizationDomainsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationDomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.Organization$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attachments<T extends Prisma.Organization$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1894,6 +2026,30 @@ export type Organization$reportsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
+}
+
+/**
+ * Organization.attachments
+ */
+export type Organization$attachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Attachment
+   */
+  select?: Prisma.AttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Attachment
+   */
+  omit?: Prisma.AttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttachmentInclude<ExtArgs> | null
+  where?: Prisma.AttachmentWhereInput
+  orderBy?: Prisma.AttachmentOrderByWithRelationInput | Prisma.AttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.AttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttachmentScalarFieldEnum | Prisma.AttachmentScalarFieldEnum[]
 }
 
 /**

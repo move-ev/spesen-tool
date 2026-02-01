@@ -29,6 +29,24 @@ export const ExpenseType = {
 export type ExpenseType = (typeof ExpenseType)[keyof typeof ExpenseType]
 
 
+export const FileVisibility = {
+  PRIVATE: 'PRIVATE',
+  PUBLIC: 'PUBLIC'
+} as const
+
+export type FileVisibility = (typeof FileVisibility)[keyof typeof FileVisibility]
+
+
+export const FileStatus = {
+  PENDING: 'PENDING',
+  UPLOADED: 'UPLOADED',
+  FAILED: 'FAILED',
+  DELETED: 'DELETED'
+} as const
+
+export type FileStatus = (typeof FileStatus)[keyof typeof FileStatus]
+
+
 export const NotificationPreference = {
   ALL: 'ALL',
   STATUS_CHANGES: 'STATUS_CHANGES',

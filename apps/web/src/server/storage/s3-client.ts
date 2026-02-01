@@ -1,4 +1,9 @@
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+	DeleteObjectCommand,
+	GetObjectCommand,
+	HeadObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import { env } from "@/env";
 
 /**
@@ -27,7 +32,7 @@ function createS3Client(): S3Client {
 // Lazy-initialized S3 client
 let s3Client: S3Client | null = null;
 
-function getS3Client(): S3Client {
+export function getS3Client(): S3Client {
 	if (!s3Client) {
 		s3Client = createS3Client();
 	}
@@ -97,4 +102,73 @@ export function isImageFile(key: string): boolean {
  */
 export function isPdfFile(key: string): boolean {
 	return getFileExtension(key) === "pdf";
+}
+
+/**
+ * Verify that a file exists in S3
+ * @param key - The object key to check
+ * @returns true if the file exists, false otherwise
+ */
+export async function verifyFileInS3(key: string): Promise<boolean> {
+	const client = getS3Client();
+	const bucket = env.STORAGE_BUCKET;
+
+	try {
+		await client.send(
+			new HeadObjectCommand({
+				Bucket: bucket,
+				Key: key,
+			}),
+		);
+		console.log(`[S3] File verified: ${key}`);
+		return true;
+	} catch (error) {
+		// Distinguish between different error types
+		if (error instanceof Error) {
+			// NotFound error is expected when file doesn't exist
+			if (error.name === "NotFound" || error.message.includes("NotFound")) {
+				console.log(`[S3] File not found: ${key}`);
+				return false;
+			}
+
+			// Other errors (permissions, network, etc.) should be logged
+			console.error(`[S3] Error verifying file ${key}:`, {
+				name: error.name,
+				message: error.message,
+				stack: error.stack,
+			});
+		} else {
+			console.error(`[S3] Unknown error verifying file ${key}:`, error);
+		}
+
+		return false;
+	}
+}
+
+/**
+ * Delete a file from S3
+ * @param key - The object key to delete
+ * @throws Error if deletion fails
+ */
+export async function deleteFileFromS3(key: string): Promise<void> {
+	const client = getS3Client();
+	const bucket = env.STORAGE_BUCKET;
+
+	try {
+		await client.send(
+			new DeleteObjectCommand({
+				Bucket: bucket,
+				Key: key,
+			}),
+		);
+		console.log(`[S3] File deleted: ${key}`);
+	} catch (error) {
+		const errorMsg = error instanceof Error ? error.message : String(error);
+		console.error(`[S3] Failed to delete file ${key}:`, {
+			error: errorMsg,
+			key,
+			bucket,
+		});
+		throw new Error(`Failed to delete file from S3: ${errorMsg}`);
+	}
 }

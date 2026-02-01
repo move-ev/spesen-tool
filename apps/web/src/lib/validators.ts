@@ -50,7 +50,7 @@ export const baseCreateExpenseSchema = z.object({
 
 export const createReceiptExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		objectKeys: z.string().array(),
+		attachmentIds: z.string().array(),
 	}),
 );
 

@@ -237,6 +237,8 @@ export type UserWhereInput = {
   bankingDetails?: Prisma.BankingDetailsListRelationFilter
   members?: Prisma.MemberListRelationFilter
   invitations?: Prisma.InvitationListRelationFilter
+  uploadedAttachments?: Prisma.AttachmentListRelationFilter
+  deletedAttachments?: Prisma.AttachmentListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -258,6 +260,8 @@ export type UserOrderByWithRelationInput = {
   bankingDetails?: Prisma.BankingDetailsOrderByRelationAggregateInput
   members?: Prisma.MemberOrderByRelationAggregateInput
   invitations?: Prisma.InvitationOrderByRelationAggregateInput
+  uploadedAttachments?: Prisma.AttachmentOrderByRelationAggregateInput
+  deletedAttachments?: Prisma.AttachmentOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -282,6 +286,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   bankingDetails?: Prisma.BankingDetailsListRelationFilter
   members?: Prisma.MemberListRelationFilter
   invitations?: Prisma.InvitationListRelationFilter
+  uploadedAttachments?: Prisma.AttachmentListRelationFilter
+  deletedAttachments?: Prisma.AttachmentListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -337,6 +343,8 @@ export type UserCreateInput = {
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -358,6 +366,8 @@ export type UserUncheckedCreateInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUpdateInput = {
@@ -379,6 +389,8 @@ export type UserUpdateInput = {
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -400,6 +412,8 @@ export type UserUncheckedUpdateInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -447,6 +461,11 @@ export type UserUncheckedUpdateManyInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -505,16 +524,44 @@ export type UserUpdateOneRequiredWithoutOwnReportsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOwnReportsInput, Prisma.UserUpdateWithoutOwnReportsInput>, Prisma.UserUncheckedUpdateWithoutOwnReportsInput>
 }
 
+export type UserCreateNestedOneWithoutUploadedAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadedAttachmentsInput, Prisma.UserUncheckedCreateWithoutUploadedAttachmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadedAttachmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutDeletedAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedAttachmentsInput, Prisma.UserUncheckedCreateWithoutDeletedAttachmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedAttachmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutUploadedAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadedAttachmentsInput, Prisma.UserUncheckedCreateWithoutUploadedAttachmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadedAttachmentsInput
+  upsert?: Prisma.UserUpsertWithoutUploadedAttachmentsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUploadedAttachmentsInput, Prisma.UserUpdateWithoutUploadedAttachmentsInput>, Prisma.UserUncheckedUpdateWithoutUploadedAttachmentsInput>
+}
+
+export type UserUpdateOneWithoutDeletedAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedAttachmentsInput, Prisma.UserUncheckedCreateWithoutDeletedAttachmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedAttachmentsInput
+  upsert?: Prisma.UserUpsertWithoutDeletedAttachmentsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeletedAttachmentsInput, Prisma.UserUpdateWithoutDeletedAttachmentsInput>, Prisma.UserUncheckedUpdateWithoutDeletedAttachmentsInput>
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
 export type NullableBoolFieldUpdateOperationsInput = {
   set?: boolean | null
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
 }
 
 export type UserCreateNestedOneWithoutSessionsInput = {
@@ -619,6 +666,8 @@ export type UserCreateWithoutOwnReportsInput = {
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutOwnReportsInput = {
@@ -639,6 +688,8 @@ export type UserUncheckedCreateWithoutOwnReportsInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutOwnReportsInput = {
@@ -675,6 +726,8 @@ export type UserUpdateWithoutOwnReportsInput = {
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnReportsInput = {
@@ -695,6 +748,216 @@ export type UserUncheckedUpdateWithoutOwnReportsInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserCreateWithoutUploadedAttachmentsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  ownReports?: Prisma.ReportCreateNestedManyWithoutOwnerInput
+  preferences?: Prisma.PreferencesCreateNestedOneWithoutUserInput
+  bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
+  members?: Prisma.MemberCreateNestedManyWithoutUserInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserUncheckedCreateWithoutUploadedAttachmentsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  ownReports?: Prisma.ReportUncheckedCreateNestedManyWithoutOwnerInput
+  preferences?: Prisma.PreferencesUncheckedCreateNestedOneWithoutUserInput
+  bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserCreateOrConnectWithoutUploadedAttachmentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadedAttachmentsInput, Prisma.UserUncheckedCreateWithoutUploadedAttachmentsInput>
+}
+
+export type UserCreateWithoutDeletedAttachmentsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  ownReports?: Prisma.ReportCreateNestedManyWithoutOwnerInput
+  preferences?: Prisma.PreferencesCreateNestedOneWithoutUserInput
+  bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
+  members?: Prisma.MemberCreateNestedManyWithoutUserInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+}
+
+export type UserUncheckedCreateWithoutDeletedAttachmentsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  ownReports?: Prisma.ReportUncheckedCreateNestedManyWithoutOwnerInput
+  preferences?: Prisma.PreferencesUncheckedCreateNestedOneWithoutUserInput
+  bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+}
+
+export type UserCreateOrConnectWithoutDeletedAttachmentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedAttachmentsInput, Prisma.UserUncheckedCreateWithoutDeletedAttachmentsInput>
+}
+
+export type UserUpsertWithoutUploadedAttachmentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUploadedAttachmentsInput, Prisma.UserUncheckedUpdateWithoutUploadedAttachmentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadedAttachmentsInput, Prisma.UserUncheckedCreateWithoutUploadedAttachmentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUploadedAttachmentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUploadedAttachmentsInput, Prisma.UserUncheckedUpdateWithoutUploadedAttachmentsInput>
+}
+
+export type UserUpdateWithoutUploadedAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  ownReports?: Prisma.ReportUpdateManyWithoutOwnerNestedInput
+  preferences?: Prisma.PreferencesUpdateOneWithoutUserNestedInput
+  bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
+  members?: Prisma.MemberUpdateManyWithoutUserNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUploadedAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  ownReports?: Prisma.ReportUncheckedUpdateManyWithoutOwnerNestedInput
+  preferences?: Prisma.PreferencesUncheckedUpdateOneWithoutUserNestedInput
+  bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
+  members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserUpsertWithoutDeletedAttachmentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeletedAttachmentsInput, Prisma.UserUncheckedUpdateWithoutDeletedAttachmentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedAttachmentsInput, Prisma.UserUncheckedCreateWithoutDeletedAttachmentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeletedAttachmentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeletedAttachmentsInput, Prisma.UserUncheckedUpdateWithoutDeletedAttachmentsInput>
+}
+
+export type UserUpdateWithoutDeletedAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  ownReports?: Prisma.ReportUpdateManyWithoutOwnerNestedInput
+  preferences?: Prisma.PreferencesUpdateOneWithoutUserNestedInput
+  bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
+  members?: Prisma.MemberUpdateManyWithoutUserNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeletedAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  ownReports?: Prisma.ReportUncheckedUpdateManyWithoutOwnerNestedInput
+  preferences?: Prisma.PreferencesUncheckedUpdateOneWithoutUserNestedInput
+  bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
+  members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -715,6 +978,8 @@ export type UserCreateWithoutSessionsInput = {
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -735,6 +1000,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -771,6 +1038,8 @@ export type UserUpdateWithoutSessionsInput = {
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -791,6 +1060,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -811,6 +1082,8 @@ export type UserCreateWithoutAccountsInput = {
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -831,6 +1104,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -867,6 +1142,8 @@ export type UserUpdateWithoutAccountsInput = {
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -887,6 +1164,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -907,6 +1186,8 @@ export type UserCreateWithoutPreferencesInput = {
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -927,6 +1208,8 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -963,6 +1246,8 @@ export type UserUpdateWithoutPreferencesInput = {
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -983,6 +1268,8 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutBankingDetailsInput = {
@@ -1003,6 +1290,8 @@ export type UserCreateWithoutBankingDetailsInput = {
   preferences?: Prisma.PreferencesCreateNestedOneWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutBankingDetailsInput = {
@@ -1023,6 +1312,8 @@ export type UserUncheckedCreateWithoutBankingDetailsInput = {
   preferences?: Prisma.PreferencesUncheckedCreateNestedOneWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutBankingDetailsInput = {
@@ -1059,6 +1350,8 @@ export type UserUpdateWithoutBankingDetailsInput = {
   preferences?: Prisma.PreferencesUpdateOneWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBankingDetailsInput = {
@@ -1079,6 +1372,8 @@ export type UserUncheckedUpdateWithoutBankingDetailsInput = {
   preferences?: Prisma.PreferencesUncheckedUpdateOneWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutMembersInput = {
@@ -1099,6 +1394,8 @@ export type UserCreateWithoutMembersInput = {
   preferences?: Prisma.PreferencesCreateNestedOneWithoutUserInput
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutMembersInput = {
@@ -1119,6 +1416,8 @@ export type UserUncheckedCreateWithoutMembersInput = {
   preferences?: Prisma.PreferencesUncheckedCreateNestedOneWithoutUserInput
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutMembersInput = {
@@ -1155,6 +1454,8 @@ export type UserUpdateWithoutMembersInput = {
   preferences?: Prisma.PreferencesUpdateOneWithoutUserNestedInput
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembersInput = {
@@ -1175,6 +1476,8 @@ export type UserUncheckedUpdateWithoutMembersInput = {
   preferences?: Prisma.PreferencesUncheckedUpdateOneWithoutUserNestedInput
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutInvitationsInput = {
@@ -1195,6 +1498,8 @@ export type UserCreateWithoutInvitationsInput = {
   preferences?: Prisma.PreferencesCreateNestedOneWithoutUserInput
   bankingDetails?: Prisma.BankingDetailsCreateNestedManyWithoutUserInput
   members?: Prisma.MemberCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutInvitationsInput = {
@@ -1215,6 +1520,8 @@ export type UserUncheckedCreateWithoutInvitationsInput = {
   preferences?: Prisma.PreferencesUncheckedCreateNestedOneWithoutUserInput
   bankingDetails?: Prisma.BankingDetailsUncheckedCreateNestedManyWithoutUserInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutUserInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  deletedAttachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutInvitationsInput = {
@@ -1251,6 +1558,8 @@ export type UserUpdateWithoutInvitationsInput = {
   preferences?: Prisma.PreferencesUpdateOneWithoutUserNestedInput
   bankingDetails?: Prisma.BankingDetailsUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInvitationsInput = {
@@ -1271,6 +1580,8 @@ export type UserUncheckedUpdateWithoutInvitationsInput = {
   preferences?: Prisma.PreferencesUncheckedUpdateOneWithoutUserNestedInput
   bankingDetails?: Prisma.BankingDetailsUncheckedUpdateManyWithoutUserNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutUserNestedInput
+  uploadedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  deletedAttachments?: Prisma.AttachmentUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 
@@ -1285,6 +1596,8 @@ export type UserCountOutputType = {
   bankingDetails: number
   members: number
   invitations: number
+  uploadedAttachments: number
+  deletedAttachments: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1294,6 +1607,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   bankingDetails?: boolean | UserCountOutputTypeCountBankingDetailsArgs
   members?: boolean | UserCountOutputTypeCountMembersArgs
   invitations?: boolean | UserCountOutputTypeCountInvitationsArgs
+  uploadedAttachments?: boolean | UserCountOutputTypeCountUploadedAttachmentsArgs
+  deletedAttachments?: boolean | UserCountOutputTypeCountDeletedAttachmentsArgs
 }
 
 /**
@@ -1348,6 +1663,20 @@ export type UserCountOutputTypeCountInvitationsArgs<ExtArgs extends runtime.Type
   where?: Prisma.InvitationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUploadedAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttachmentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeletedAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttachmentWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1368,6 +1697,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   bankingDetails?: boolean | Prisma.User$bankingDetailsArgs<ExtArgs>
   members?: boolean | Prisma.User$membersArgs<ExtArgs>
   invitations?: boolean | Prisma.User$invitationsArgs<ExtArgs>
+  uploadedAttachments?: boolean | Prisma.User$uploadedAttachmentsArgs<ExtArgs>
+  deletedAttachments?: boolean | Prisma.User$deletedAttachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1422,6 +1753,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   bankingDetails?: boolean | Prisma.User$bankingDetailsArgs<ExtArgs>
   members?: boolean | Prisma.User$membersArgs<ExtArgs>
   invitations?: boolean | Prisma.User$invitationsArgs<ExtArgs>
+  uploadedAttachments?: boolean | Prisma.User$uploadedAttachmentsArgs<ExtArgs>
+  deletedAttachments?: boolean | Prisma.User$deletedAttachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1437,6 +1770,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     bankingDetails: Prisma.$BankingDetailsPayload<ExtArgs>[]
     members: Prisma.$MemberPayload<ExtArgs>[]
     invitations: Prisma.$InvitationPayload<ExtArgs>[]
+    uploadedAttachments: Prisma.$AttachmentPayload<ExtArgs>[]
+    deletedAttachments: Prisma.$AttachmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1851,6 +2186,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   bankingDetails<T extends Prisma.User$bankingDetailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bankingDetailsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BankingDetailsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   members<T extends Prisma.User$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitations<T extends Prisma.User$invitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  uploadedAttachments<T extends Prisma.User$uploadedAttachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$uploadedAttachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedAttachments<T extends Prisma.User$deletedAttachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedAttachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2439,6 +2776,54 @@ export type User$invitationsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
+}
+
+/**
+ * User.uploadedAttachments
+ */
+export type User$uploadedAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Attachment
+   */
+  select?: Prisma.AttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Attachment
+   */
+  omit?: Prisma.AttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttachmentInclude<ExtArgs> | null
+  where?: Prisma.AttachmentWhereInput
+  orderBy?: Prisma.AttachmentOrderByWithRelationInput | Prisma.AttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.AttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttachmentScalarFieldEnum | Prisma.AttachmentScalarFieldEnum[]
+}
+
+/**
+ * User.deletedAttachments
+ */
+export type User$deletedAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Attachment
+   */
+  select?: Prisma.AttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Attachment
+   */
+  omit?: Prisma.AttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttachmentInclude<ExtArgs> | null
+  where?: Prisma.AttachmentWhereInput
+  orderBy?: Prisma.AttachmentOrderByWithRelationInput | Prisma.AttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.AttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttachmentScalarFieldEnum | Prisma.AttachmentScalarFieldEnum[]
 }
 
 /**

@@ -38,6 +38,11 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 };
 
 /**
+ * Export the Context type for use in middleware
+ */
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
+
+/**
  * 2. INITIALIZATION
  *
  * This is where the tRPC API is initialized, connecting the context and transformer. We also parse

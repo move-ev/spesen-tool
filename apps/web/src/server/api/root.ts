@@ -5,6 +5,7 @@ import { reportRouter } from "@/server/api/routers/report";
 import { settingsRouter } from "@/server/api/routers/settings";
 import { userRouter } from "@/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { attachmentRouter } from "./routers/attachment";
 import { bankingDetailsRouter } from "./routers/banking";
 import { invitationRouter } from "./routers/invitation";
 import { organizationRouter } from "./routers/organization";
@@ -26,6 +27,7 @@ export const appRouter = createTRPCRouter({
 	bankingDetails: bankingDetailsRouter,
 	organization: organizationRouter,
 	invitation: invitationRouter,
+	attachment: attachmentRouter,
 });
 
 // export type definition of API

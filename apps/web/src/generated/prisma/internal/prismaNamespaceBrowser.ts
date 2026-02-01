@@ -120,9 +120,19 @@ export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeo
 export const AttachmentScalarFieldEnum = {
   id: 'id',
   key: 'key',
+  originalName: 'originalName',
+  contentType: 'contentType',
+  size: 'size',
+  visibility: 'visibility',
+  status: 'status',
+  uploadedById: 'uploadedById',
+  uploadedAt: 'uploadedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  expenseId: 'expenseId'
+  expenseId: 'expenseId',
+  organizationId: 'organizationId'
 } as const
 
 export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]

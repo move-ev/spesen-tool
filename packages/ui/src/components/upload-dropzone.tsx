@@ -5,7 +5,7 @@ import { useId } from "react";
 import { type Accept, useDropzone } from "react-dropzone";
 
 type UploadDropzoneProps = {
-	control: UploadHookControl<true>;
+	control?: UploadHookControl<true>;
 	id?: string;
 	accept?: Accept;
 	metadata?: Record<string, unknown>;
@@ -17,14 +17,15 @@ type UploadDropzoneProps = {
 		  }
 		| string;
 	uploadOverride?: (
-		...args: Parameters<UploadHookControl<true>["upload"]>
+		files: File[],
+		options?: { metadata?: Record<string, unknown> },
 	) => void;
 
 	// Add any additional props you need.
 };
 
 export function UploadDropzone({
-	control: { upload, isPending },
+	control,
 	id: _id,
 	accept,
 	metadata,
@@ -33,17 +34,23 @@ export function UploadDropzone({
 }: UploadDropzoneProps) {
 	const id = useId();
 
+	// If control is not provided, we're not using better-upload
+	const isPending = control?.isPending ?? false;
+	const upload = control?.upload;
+
 	const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
 		accept,
 		onDrop: (files) => {
 			if (files.length > 0 && !isPending) {
 				if (uploadOverride) {
 					uploadOverride(files, { metadata });
-				} else {
+				} else if (upload) {
 					upload(files, { metadata });
 				}
 			}
-			inputRef.current.value = "";
+			if (inputRef.current) {
+				inputRef.current.value = "";
+			}
 		},
 		noClick: true,
 	});
