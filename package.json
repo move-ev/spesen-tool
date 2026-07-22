@@ -14,6 +14,7 @@
 		"check:unsafe": "biome check --write --unsafe .",
 		"check:write": "biome check --write .",
 		"typecheck": "turbo run typecheck",
+		"test": "turbo run test",
 		"prepare": "husky",
 		"changeset": "changeset",
 		"ci:version": "changeset version && bun install",

@@ -23,6 +23,7 @@ apps/web/next-env.d.ts
 
 # compiled package output (built by turbo / CI / Docker)
 packages/*/dist
+packages/ui/storybook-static
 
 # turborepo
 .turbo/
