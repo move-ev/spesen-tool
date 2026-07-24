@@ -11,6 +11,7 @@ const buttonVariants = cva(
 		"font-medium text-sm leading-none",
 		"cursor-pointer transition-colors",
 		"select-none disabled:pointer-events-none disabled:opacity-60 data-disabled:opacity-60",
+		"outline-transparent focus-visible:outline-2 focus-visible:outline-accent-500 focus-visible:outline-offset-2",
 	],
 	{
 		variants: {
@@ -21,24 +22,21 @@ const buttonVariants = cva(
 					"text-indigo-50 text-shadow-2xs text-shadow-indigo-800/50",
 					"inset-shadow-[0_-1px_0_0_var(--color-accent-700)]",
 					"hover:bg-accent-700",
-					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2",
 				],
 				outline: [
 					"border border-base-200",
 					"text-base-700 [&_svg:not([class*='text-'])]:text-slate-500",
 					"hover:bg-slate-50",
-					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2",
 				],
 				ghost: [
 					"text-base-700 [&_svg:not([class*='text-'])]:text-slate-500",
-					"hover:bg-slate-50",
-					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2",
+					"hover:bg-slate-100",
 				],
 				destructive: [
 					"border border-base-200",
 					"text-base-700 [&_svg:not([class*='text-'])]:text-red-500",
 					"hover:border-red-200 hover:bg-red-50 hover:text-red-600",
-					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
+					"focus-visible:outline-red-500",
 				],
 			},
 			size: {
