@@ -1,41 +1,92 @@
+"use client";
+
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
-
+import { motion } from "motion/react";
 import { cn } from "../../lib/cn";
 
 const buttonVariants = cva(
-	"inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-ui-md font-semibold text-sm outline-none transition-colors duration-150 ease-out focus-visible:ring-[3px] focus-visible:ring-ui-ring disabled:pointer-events-none disabled:opacity-50",
+	[
+		"inline-flex items-center justify-center",
+		"font-medium text-sm leading-none",
+		"cursor-pointer transition-colors",
+		"select-none disabled:pointer-events-none disabled:opacity-60 data-disabled:opacity-60",
+	],
 	{
 		variants: {
 			variant: {
-				primary: "bg-ui-accent text-ui-accent-foreground hover:bg-ui-accent/90",
-				secondary: "bg-ui-muted text-ui-muted-foreground hover:bg-ui-muted/70",
-				ghost: "text-ui-canvas-foreground hover:bg-ui-muted",
-				danger: "bg-ui-danger text-ui-danger-foreground hover:bg-ui-danger/90",
+				default: [
+					"bg-accent-600 text-accent-50 [&_svg:not([class*='text-'])]:text-accent-200",
+					"border border-accent-600",
+					"text-indigo-50 text-shadow-2xs text-shadow-indigo-800/50",
+					"inset-shadow-[0_-1px_0_0_var(--color-accent-700)]",
+					"hover:bg-accent-700",
+					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2",
+				],
+				outline: [
+					"border border-base-200",
+					"text-base-700 [&_svg:not([class*='text-'])]:text-slate-500",
+					"hover:bg-slate-50",
+					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2",
+				],
+				ghost: [
+					"text-base-700 [&_svg:not([class*='text-'])]:text-slate-500",
+					"hover:bg-slate-50",
+					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2",
+				],
+				destructive: [
+					"border border-base-200",
+					"text-base-700 [&_svg:not([class*='text-'])]:text-red-500",
+					"hover:border-red-200 hover:bg-red-50 hover:text-red-600",
+					"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
+				],
 			},
 			size: {
-				sm: "h-7 px-2.5 text-xs",
-				md: "h-9 px-3.5",
-				lg: "h-10 px-5 text-base",
+				default:
+					"h-8 gap-2 rounded-md px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
+				sm: "h-7 gap-2 rounded-md px-2 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+				lg: "h-9 gap-2 rounded-md px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-4",
+				icon: "",
+				"icon-sm": "",
+				"icon-lg": "",
 			},
 		},
 		defaultVariants: {
-			variant: "primary",
-			size: "md",
+			variant: "default",
+			size: "default",
 		},
 	},
 );
 
-type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>;
-
-function Button({ className, variant, size, ...props }: ButtonProps) {
+function Button({
+	className,
+	variant = "default",
+	size = "default",
+	disableAnimation,
+	...props
+}: ButtonPrimitive.Props &
+	VariantProps<typeof buttonVariants> & {
+		disableAnimation?: boolean;
+	}) {
 	return (
 		<ButtonPrimitive
 			className={cn(buttonVariants({ variant, size, className }))}
 			data-slot="button"
+			render={
+				<motion.button
+					transition={{ duration: 0.1, ease: "easeOut" }}
+					whileTap={{
+						...(disableAnimation
+							? { scale: 1 }
+							: {
+									scale: 0.97,
+								}),
+					}}
+				/>
+			}
 			{...props}
 		/>
 	);
 }
 
-export { Button, type ButtonProps, buttonVariants };
+export { Button, buttonVariants };

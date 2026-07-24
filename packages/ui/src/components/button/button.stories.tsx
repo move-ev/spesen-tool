@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-
+import { CircleDash } from "../placeholder/circle-dash";
 import { Button } from "./button";
 
 const meta = {
@@ -12,15 +12,19 @@ const meta = {
 	argTypes: {
 		variant: {
 			control: "select",
-			options: ["primary", "secondary", "ghost", "danger"],
+			options: ["default", "outline", "ghost", "destructive"],
 		},
 		size: {
 			control: "select",
-			options: ["sm", "md", "lg"],
+			options: ["sm", "default", "lg", "icon-sm", "icon", "icon-lg"],
 		},
 	},
 	args: {
-		children: "Button",
+		children: (
+			<>
+				Button <CircleDash data-icon="inline-end" />
+			</>
+		),
 		disabled: false,
 	},
 } satisfies Meta<typeof Button>;
@@ -28,12 +32,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
-	args: { variant: "primary" },
+export const Default: Story = {
+	args: { variant: "default" },
 };
 
-export const Secondary: Story = {
-	args: { variant: "secondary" },
+export const Outline: Story = {
+	args: { variant: "outline" },
 };
 
 export const Ghost: Story = {
@@ -41,9 +45,9 @@ export const Ghost: Story = {
 };
 
 export const Danger: Story = {
-	args: { variant: "danger" },
+	args: { variant: "destructive" },
 };
 
 export const Disabled: Story = {
-	args: { variant: "primary", disabled: true },
+	args: { variant: "default", disabled: true },
 };
