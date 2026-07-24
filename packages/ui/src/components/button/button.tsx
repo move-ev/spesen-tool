@@ -12,6 +12,7 @@ const buttonVariants = cva(
 		"cursor-pointer transition-colors",
 		"select-none disabled:pointer-events-none disabled:opacity-60 data-disabled:opacity-60",
 		"outline-transparent focus-visible:outline-2 focus-visible:outline-accent-500 focus-visible:outline-offset-2",
+		"[&_svg]:shrink-0",
 	],
 	{
 		variants: {
@@ -44,9 +45,9 @@ const buttonVariants = cva(
 					"h-8 gap-2 rounded-md px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
 				sm: "h-7 gap-2 rounded-md px-2 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
 				lg: "h-9 gap-2 rounded-md px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-4",
-				icon: "",
-				"icon-sm": "",
-				"icon-lg": "",
+				icon: "size-8 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
+				"icon-sm": "size-7 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
+				"icon-lg": "size-9 rounded-md [&_svg:not([class*='size-'])]:size-4",
 			},
 		},
 		defaultVariants: {

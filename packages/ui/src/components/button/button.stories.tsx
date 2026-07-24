@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { CircleDash } from "../placeholder/circle-dash";
+import { CircleDashedIcon } from "lucide-react";
 import { Button } from "./button";
 
 const meta = {
@@ -22,7 +22,7 @@ const meta = {
 	args: {
 		children: (
 			<>
-				Button <CircleDash data-icon="inline-end" />
+				Button <CircleDashedIcon data-icon="inline-end" />
 			</>
 		),
 		disabled: false,
@@ -50,4 +50,31 @@ export const Danger: Story = {
 
 export const Disabled: Story = {
 	args: { variant: "default", disabled: true },
+};
+
+export const IconSmall: Story = {
+	args: { variant: "default", size: "icon-sm" },
+	render: (args) => (
+		<Button {...args}>
+			<CircleDashedIcon />
+		</Button>
+	),
+};
+
+export const Icon: Story = {
+	args: { variant: "default", size: "icon" },
+	render: (args) => (
+		<Button {...args}>
+			<CircleDashedIcon />
+		</Button>
+	),
+};
+
+export const IconLarge: Story = {
+	args: { variant: "default", size: "icon-lg" },
+	render: (args) => (
+		<Button {...args}>
+			<CircleDashedIcon />
+		</Button>
+	),
 };

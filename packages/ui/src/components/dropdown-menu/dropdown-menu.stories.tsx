@@ -37,7 +37,7 @@ const meta = {
 	title: "Components/DropdownMenu",
 	component: DropdownMenu,
 	parameters: {
-		layout: "",
+		layout: "centered",
 	},
 	tags: ["autodocs"],
 	argTypes: {
