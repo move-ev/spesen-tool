@@ -1,4 +1,3 @@
-import { Combobox as ComboboxPrimitive } from "@base-ui/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
 	CreditCardIcon,
