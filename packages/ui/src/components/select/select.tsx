@@ -35,8 +35,22 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
 function SelectTrigger({
 	className,
 	children,
+	render,
 	...props
 }: SelectPrimitive.Trigger.Props) {
+	if (render) {
+		return (
+			<SelectPrimitive.Trigger
+				className={className}
+				data-slot="select-trigger"
+				render={render}
+				{...props}
+			>
+				{children}
+			</SelectPrimitive.Trigger>
+		);
+	}
+
 	return (
 		<SelectPrimitive.Trigger
 			className={cn(
