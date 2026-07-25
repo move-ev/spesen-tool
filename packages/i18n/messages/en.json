@@ -840,7 +840,9 @@
 					"examplesDescription": "Beispiele können Nutzern helfen, besser zu verstehen ob sie die richtige Kostenstelle für Ihren Antrag gewählt haben.",
 					"savedToast": "Kostenstelle wurde erfolgreich erstellt",
 					"saveErrorTitle": "Fehler beim Erstellen der Kostenstelle",
-					"saveErrorFallback": "Ein unbekannter Fehler ist aufgetreten"
+					"saveErrorFallback": "Ein unbekannter Fehler ist aufgetreten",
+					"colorLabel": "Farbe",
+					"colorDescription": "Wähle optional eine Farbe aus, um Kostenstellen schneller visuell zuordnen zu können."
 				},
 				"createGroupSheet": {
 					"title": "Neue Kostenstellengruppe",
@@ -859,6 +861,8 @@
 					"titleLabel": "Titel",
 					"titlePlaceholder": "Sommerfest",
 					"tagTitleDescription": "Wird zur eindeutigen Identifikation der Kostenstelle verwendet.",
+					"colorLabel": "Farbe",
+					"colorDescription": "Wähle optional eine Farbe aus, um Kostenstellen schneller visuell zuordnen zu können.",
 					"statusLabel": "Status",
 					"statusPlaceholder": "Wähle eine Rolle",
 					"statusActive": "Aktiv",
