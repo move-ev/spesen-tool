@@ -21,6 +21,16 @@ export {
 } from "./button-group";
 export { Checkbox } from "./checkbox";
 export {
+	DataGridColumnHeader,
+	Grid,
+	GridBody,
+	GridCell,
+	GridFooter,
+	GridHead,
+	GridHeader,
+	GridRow,
+} from "./data-grid";
+export {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
@@ -42,6 +52,18 @@ export {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "./dropdown-menu";
+export {
+	Field,
+	FieldContent,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+	FieldLegend,
+	FieldSeparator,
+	FieldSet,
+	FieldTitle,
+} from "./field";
 export { Input } from "./input";
 export {
 	InputGroup,
@@ -52,6 +74,14 @@ export {
 	InputGroupTextarea,
 } from "./input-group";
 export { Label } from "./label";
+export {
+	Properties,
+	PropertiesLabel,
+	PropertiesList,
+	Property,
+	PropertyLabel,
+	PropertyValue,
+} from "./properties";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 export {
 	Select,
@@ -77,7 +107,44 @@ export {
 	SheetTitle,
 	SheetTrigger,
 } from "./sheet";
+export {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupAction,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarInput,
+	SidebarInset,
+	SidebarMenu,
+	SidebarMenuAction,
+	SidebarMenuBadge,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarMenuSkeleton,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
+	SidebarProvider,
+	SidebarRail,
+	SidebarSeparator,
+	SidebarTrigger,
+	useSidebar,
+} from "./sidebar";
+export { Skeleton } from "./skeleton";
 export { Switch } from "./switch";
+export {
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "./table";
 export { Textarea } from "./textarea";
 export {
 	Tooltip,
