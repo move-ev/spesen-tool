@@ -50,7 +50,13 @@ const meta = {
 	},
 	render: (args) => (
 		<DropdownMenu {...args}>
-			<DropdownMenuTrigger render={<Button variant="outline">Open</Button>} />
+			<DropdownMenuTrigger
+				render={
+					<Button disableAnimation variant="outline">
+						Open
+					</Button>
+				}
+			/>
 			<DropdownMenuContent align="start" className="w-64">
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>My Account</DropdownMenuLabel>
