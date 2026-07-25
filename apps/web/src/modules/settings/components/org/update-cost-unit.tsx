@@ -3,6 +3,8 @@
 import {
 	AlertDialog as AlertDialogPrimitive,
 	Dialog as DialogPrimitive,
+	Radio,
+	RadioGroup,
 } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { useSuspenseQueries } from "@tanstack/react-query";
@@ -61,6 +63,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { COST_UNIT_COLORS } from "@/lib/colors/cost-units";
 import { NO_COST_UNIT_GROUP } from "@/lib/consts";
 import { cn } from "@/lib/utils";
 import { updateCostUnitSchema } from "@/lib/validators";
@@ -201,7 +204,6 @@ function UpdateCostUnitForm({
 	submitLabel,
 	canDelete,
 	groups,
-
 	onSubmit,
 	onDelete,
 }: UpdateCostUnitFormProps) {
@@ -363,6 +365,44 @@ function UpdateCostUnitForm({
 											</SelectContent>
 										</Select>
 										<FieldDescription>{t("statusDescription")}</FieldDescription>
+									</Field>
+								);
+							}}
+						</form.Field>
+						<form.Field name="color">
+							{({ state, ...field }) => {
+								const isInvalid = state.meta.isTouched && !state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel
+											className="mb-1 font-semibold text-base text-slate-800"
+											htmlFor={field.name}
+										>
+											{t("colorLabel")}
+										</FieldLabel>
+										<RadioGroup
+											className={"grid grid-cols-9 gap-3 md:grid-cols-18"}
+											id={field.name}
+											name={field.name}
+											onValueChange={field.handleChange}
+											value={state.value}
+										>
+											{Object.entries(COST_UNIT_COLORS).map(([key, value]) => {
+												return (
+													<Radio.Root
+														className={"aspect-square w-full rounded-md"}
+														key={key}
+														style={{
+															backgroundColor: value.fill,
+														}}
+														value={key}
+													>
+														<Radio.Indicator className="flex h-full w-full items-center justify-center before:size-3 before:rounded-full before:bg-white data-unchecked:hidden" />
+													</Radio.Root>
+												);
+											})}
+										</RadioGroup>
+										<FieldDescription>{t("colorDescription")}</FieldDescription>
 									</Field>
 								);
 							}}

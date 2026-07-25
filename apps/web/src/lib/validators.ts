@@ -1,4 +1,5 @@
 import {
+	CostUnitColor,
 	CostUnitStatus,
 	ExpenseType,
 	NotificationPreference,
@@ -147,6 +148,7 @@ export const createCostUnitSchema = z.object({
 	title: z.string().min(1),
 	examples: z.string().array(),
 	costUnitGroupId: z.string(),
+	color: z.enum(CostUnitColor),
 });
 
 export const updateCostUnitSchema = z.object({
@@ -156,6 +158,7 @@ export const updateCostUnitSchema = z.object({
 	examples: z.string().array(),
 	costUnitGroupId: z.string(),
 	status: z.enum(CostUnitStatus),
+	color: z.enum(CostUnitColor),
 });
 
 export const deleteCostUnitSchema = z.object({

@@ -53,3 +53,27 @@ export const CostUnitStatus = {
 } as const
 
 export type CostUnitStatus = (typeof CostUnitStatus)[keyof typeof CostUnitStatus]
+
+
+export const CostUnitColor = {
+  RED: 'RED',
+  ORANGE: 'ORANGE',
+  AMBER: 'AMBER',
+  YELLOW: 'YELLOW',
+  LIME: 'LIME',
+  GREEN: 'GREEN',
+  EMERALD: 'EMERALD',
+  TEAL: 'TEAL',
+  CYAN: 'CYAN',
+  SKY: 'SKY',
+  BLUE: 'BLUE',
+  INDIGO: 'INDIGO',
+  VIOLET: 'VIOLET',
+  PURPLE: 'PURPLE',
+  FUCHSIA: 'FUCHSIA',
+  PINK: 'PINK',
+  ROSE: 'ROSE',
+  BASE: 'BASE'
+} as const
+
+export type CostUnitColor = (typeof CostUnitColor)[keyof typeof CostUnitColor]
