@@ -4,7 +4,7 @@ import { mergeProps, useRender } from "@base-ui/react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type React from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 
 function Properties({ className, ...props }: React.ComponentProps<"div">) {
@@ -65,22 +65,26 @@ function PropertyValue<T extends string | number>({
 	value,
 	render,
 	format,
+	type = "button",
 	...props
 }: useRender.ComponentProps<"button", { value: T }> & {
 	value: T;
 	format?: (value: T) => string;
 }) {
 	const [copied, setCopied] = useState(false);
+	const resetTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+	const displayValue = format ? format(value) : value;
 
 	function handleCopy() {
-		const text = format ? format(value) : value;
-
-		navigator.clipboard.writeText(String(text)).then(
+		navigator.clipboard.writeText(String(displayValue)).then(
 			() => {
+				clearTimeout(resetTimeoutRef.current);
 				setCopied(true);
-				setTimeout(() => setCopied(false), 1500);
+				resetTimeoutRef.current = setTimeout(() => setCopied(false), 1500);
 			},
-			() => {},
+			(error) => {
+				console.warn("Failed to copy property value to clipboard.", error);
+			},
 		);
 	}
 
@@ -92,7 +96,7 @@ function PropertyValue<T extends string | number>({
 		),
 		children: (
 			<>
-				{value}
+				{displayValue}
 				<span className="absolute inset-0 top-1/2 left-1/2 -z-10 block h-[calc(100%+0.25rem)] w-[calc(100%+1rem)] -translate-x-1/2 -translate-y-1/2 rounded-xs bg-base-200 opacity-0 transition-all group-hover/property-value:opacity-100" />
 				<AnimatePresence initial={false} mode="wait">
 					{copied ? (
@@ -115,9 +119,13 @@ function PropertyValue<T extends string | number>({
 						</motion.span>
 					)}
 				</AnimatePresence>
+				<span className="sr-only" role="status">
+					{copied ? "Copied" : null}
+				</span>
 			</>
 		),
 		onClick: handleCopy,
+		type,
 	};
 
 	const element = useRender({
