@@ -1,0 +1,11 @@
+{
+	"extends": "@zemio/typescript-config/base.json",
+	"compilerOptions": {
+		"lib": ["dom", "dom.iterable", "ES2022"],
+		"jsx": "react-jsx",
+		"noEmit": true,
+		"types": ["vite/client", "@testing-library/jest-dom"]
+	},
+	"include": ["src", "*.config.ts", ".storybook"],
+	"exclude": ["node_modules", "storybook-static"]
+}
