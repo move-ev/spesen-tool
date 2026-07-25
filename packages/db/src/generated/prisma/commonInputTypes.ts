@@ -368,6 +368,13 @@ export type EnumCostUnitStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumCostUnitStatusFilter<$PrismaModel> | $Enums.CostUnitStatus
 }
 
+export type EnumCostUnitColorFilter<$PrismaModel = never> = {
+  equals?: $Enums.CostUnitColor | Prisma.EnumCostUnitColorFieldRefInput<$PrismaModel>
+  in?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCostUnitColorFilter<$PrismaModel> | $Enums.CostUnitColor
+}
+
 export type EnumCostUnitStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.CostUnitStatus | Prisma.EnumCostUnitStatusFieldRefInput<$PrismaModel>
   in?: $Enums.CostUnitStatus[] | Prisma.ListEnumCostUnitStatusFieldRefInput<$PrismaModel>
@@ -376,6 +383,16 @@ export type EnumCostUnitStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumCostUnitStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumCostUnitStatusFilter<$PrismaModel>
+}
+
+export type EnumCostUnitColorWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CostUnitColor | Prisma.EnumCostUnitColorFieldRefInput<$PrismaModel>
+  in?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCostUnitColorWithAggregatesFilter<$PrismaModel> | $Enums.CostUnitColor
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCostUnitColorFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCostUnitColorFilter<$PrismaModel>
 }
 
 export type JsonNullableFilter<$PrismaModel = never> =
@@ -769,6 +786,13 @@ export type NestedEnumCostUnitStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumCostUnitStatusFilter<$PrismaModel> | $Enums.CostUnitStatus
 }
 
+export type NestedEnumCostUnitColorFilter<$PrismaModel = never> = {
+  equals?: $Enums.CostUnitColor | Prisma.EnumCostUnitColorFieldRefInput<$PrismaModel>
+  in?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCostUnitColorFilter<$PrismaModel> | $Enums.CostUnitColor
+}
+
 export type NestedEnumCostUnitStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.CostUnitStatus | Prisma.EnumCostUnitStatusFieldRefInput<$PrismaModel>
   in?: $Enums.CostUnitStatus[] | Prisma.ListEnumCostUnitStatusFieldRefInput<$PrismaModel>
@@ -777,6 +801,16 @@ export type NestedEnumCostUnitStatusWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumCostUnitStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumCostUnitStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumCostUnitColorWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CostUnitColor | Prisma.EnumCostUnitColorFieldRefInput<$PrismaModel>
+  in?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CostUnitColor[] | Prisma.ListEnumCostUnitColorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCostUnitColorWithAggregatesFilter<$PrismaModel> | $Enums.CostUnitColor
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCostUnitColorFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCostUnitColorFilter<$PrismaModel>
 }
 
 export type NestedJsonNullableFilter<$PrismaModel = never> =
