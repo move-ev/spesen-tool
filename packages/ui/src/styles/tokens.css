@@ -12,6 +12,7 @@
 :root {
 	--ui-color-canvas: oklch(1 0 0);
 	--ui-color-canvas-foreground: oklch(0.21 0.006 285.885);
+	--ui-color-background: oklch(1 0 0);
 
 	--ui-color-accent: oklch(0.541 0.281 293.009);
 	--ui-color-accent-foreground: oklch(1 0 0);
@@ -43,6 +44,8 @@
 
 	--ui-color-border: oklch(1 0 0 / 0.1);
 	--ui-color-ring: oklch(0.673 0.238 293.009 / 0.5);
+
+	--ui-color-background: oklch(0.21 0.006 285.885);
 }
 
 @theme inline {
@@ -84,5 +87,14 @@
 	--color-accent-900: var(--color-indigo-900);
 	--color-accent-950: var(--color-indigo-950);
 
-	--color-background: #ffffff;
+	--color-background: var(--ui-color-background);
+
+	--color-sidebar: var(--ui-color-canvas);
+	--color-sidebar-foreground: var(--ui-color-canvas-foreground);
+	--color-sidebar-primary: var(--ui-color-accent);
+	--color-sidebar-primary-foreground: var(--ui-color-accent-foreground);
+	--color-sidebar-accent: var(--ui-color-muted);
+	--color-sidebar-accent-foreground: var(--ui-color-muted-foreground);
+	--color-sidebar-border: var(--ui-color-border);
+	--color-sidebar-ring: var(--ui-color-ring);
 }
