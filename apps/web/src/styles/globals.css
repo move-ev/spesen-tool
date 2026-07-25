@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@zemio/ui/styles.css";
 /* @import "shadcn/tailwind.css"; */
+
+@source "../../../../packages/ui/src";
 
 @theme {
 	--font-sans:

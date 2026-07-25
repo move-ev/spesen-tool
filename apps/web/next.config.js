@@ -14,6 +14,8 @@ const withNextIntl = createNextIntlPlugin();
 const config = {
 	output: "standalone",
 	serverExternalPackages: ["pdfkit"],
+	// @zemio/ui exports raw .ts/.tsx source rather than a prebuilt dist.
+	transpilePackages: ["@zemio/ui"],
 	// Required for standalone output to correctly trace workspace package files
 	// (packages/db, packages/encryption) in the monorepo.
 	outputFileTracingRoot: path.resolve(import.meta.dirname, "../.."),
