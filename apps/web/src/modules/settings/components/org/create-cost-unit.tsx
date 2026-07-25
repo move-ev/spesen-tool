@@ -4,27 +4,15 @@ import { Dialog as DialogPrimitive, Radio, RadioGroup } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import type { CostUnitGroup } from "@zemio/db";
-import { InfoIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
-import React from "react";
-import { toast } from "sonner";
-import type z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
-import { Button } from "@/components/ui/button";
 import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
-	NativeSelect,
-	NativeSelectOptGroup,
-	NativeSelectOption,
-} from "@/components/ui/native-select";
-import {
+	Button,
+	Input,
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -32,7 +20,20 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
+} from "@zemio/ui";
+import { InfoIcon, LoaderIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import React from "react";
+import { toast } from "sonner";
+import type z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
 import {
 	Tooltip,
 	TooltipContent,
@@ -244,9 +245,19 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 							</FieldDescription>
 						</div>
 						<form.Field name="costUnitGroupId">
-							{(field) => {
-								const isInvalid =
-									field.state.meta.isTouched && !field.state.meta.isValid;
+							{({ state, ...field }) => {
+								const isInvalid = state.meta.isTouched && !state.meta.isValid;
+
+								const items = groups.map((group) => ({
+									label: group.title,
+									value: group.id,
+								}));
+
+								items.push({
+									label: t("noGroupOption"),
+									value: NO_COST_UNIT_GROUP,
+								});
+
 								return (
 									<Field data-invalid={isInvalid}>
 										<FieldLabel
@@ -255,33 +266,41 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 										>
 											{t("groupLabel")}
 										</FieldLabel>
-										<NativeSelect
-											onChange={(e) => field.handleChange(e.target.value)}
-											value={field.state.value}
+										<Select
+											items={items}
+											onValueChange={(value) =>
+												field.handleChange(value ?? NO_COST_UNIT_GROUP)
+											}
+											value={state.value}
 										>
-											<NativeSelectOption value={NO_COST_UNIT_GROUP}>
-												{t("noGroupOption")}
-											</NativeSelectOption>
-											<NativeSelectOptGroup label={t("groupOptGroupLabel")}>
-												{groups.map((group) => (
-													<NativeSelectOption key={group.id} value={group.id}>
-														{group.title}
-													</NativeSelectOption>
-												))}
-											</NativeSelectOptGroup>
-										</NativeSelect>
+											<SelectTrigger>
+												<SelectValue placeholder={t("noGroupOption")} />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectGroup>
+													{groups.map((group) => (
+														<SelectItem key={group.id} value={group.id}>
+															{group.title}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											</SelectContent>
+										</Select>
 										<FieldDescription>{t("groupDescription")}</FieldDescription>
 										<div>
 											<DialogPrimitive.Trigger
 												handle={createGroupHandle}
 												render={
-													<Button className={"w-fit -translate-x-2.5"} variant={"link"}>
+													<Button
+														className={"inline-flex w-fit -translate-x-2.5"}
+														variant={"ghost"}
+													>
 														{t("createGroupButton")}
 													</Button>
 												}
 											/>
 										</div>
-										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+										{isInvalid && <FieldError errors={state.meta.errors} />}
 									</Field>
 								);
 							}}
@@ -314,7 +333,7 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 														}}
 														value={key}
 													>
-														<Radio.Indicator className="flex h-full w-full items-center justify-center before:size-3 before:rounded-full before:bg-white data-unchecked:hidden" />
+														<Radio.Indicator className="flex h-full w-full items-center justify-center before:size-2 before:rounded-full before:bg-white data-unchecked:hidden" />
 													</Radio.Root>
 												);
 											})}
@@ -350,7 +369,7 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 					</FieldGroup>
 				</form>
 			</SheetBody>
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">
@@ -371,7 +390,14 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 							form={FORM_ID}
 							type="submit"
 						>
-							{isSubmitting ? tActions("creating") : tActions("create")}
+							{isSubmitting ? (
+								<>
+									<LoaderIcon className="animate-spin" />
+									{tActions("creating")}
+								</>
+							) : (
+								tActions("create")
+							)}
 						</Button>
 					)}
 				</form.Subscribe>
