@@ -30,6 +30,7 @@ export type CostUnitMinAggregateOutputType = {
   title: string | null
   organizationId: string | null
   status: $Enums.CostUnitStatus | null
+  color: $Enums.CostUnitColor | null
   createdAt: Date | null
   updatedAt: Date | null
   costUnitGroupId: string | null
@@ -41,6 +42,7 @@ export type CostUnitMaxAggregateOutputType = {
   title: string | null
   organizationId: string | null
   status: $Enums.CostUnitStatus | null
+  color: $Enums.CostUnitColor | null
   createdAt: Date | null
   updatedAt: Date | null
   costUnitGroupId: string | null
@@ -53,6 +55,7 @@ export type CostUnitCountAggregateOutputType = {
   examples: number
   organizationId: number
   status: number
+  color: number
   createdAt: number
   updatedAt: number
   costUnitGroupId: number
@@ -66,6 +69,7 @@ export type CostUnitMinAggregateInputType = {
   title?: true
   organizationId?: true
   status?: true
+  color?: true
   createdAt?: true
   updatedAt?: true
   costUnitGroupId?: true
@@ -77,6 +81,7 @@ export type CostUnitMaxAggregateInputType = {
   title?: true
   organizationId?: true
   status?: true
+  color?: true
   createdAt?: true
   updatedAt?: true
   costUnitGroupId?: true
@@ -89,6 +94,7 @@ export type CostUnitCountAggregateInputType = {
   examples?: true
   organizationId?: true
   status?: true
+  color?: true
   createdAt?: true
   updatedAt?: true
   costUnitGroupId?: true
@@ -174,6 +180,7 @@ export type CostUnitGroupByOutputType = {
   examples: string[]
   organizationId: string
   status: $Enums.CostUnitStatus
+  color: $Enums.CostUnitColor
   createdAt: Date
   updatedAt: Date
   costUnitGroupId: string | null
@@ -207,6 +214,7 @@ export type CostUnitWhereInput = {
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   organizationId?: Prisma.StringFilter<"CostUnit"> | string
   status?: Prisma.EnumCostUnitStatusFilter<"CostUnit"> | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFilter<"CostUnit"> | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
@@ -222,6 +230,7 @@ export type CostUnitOrderByWithRelationInput = {
   examples?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -241,6 +250,7 @@ export type CostUnitWhereUniqueInput = Prisma.AtLeast<{
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   organizationId?: Prisma.StringFilter<"CostUnit"> | string
   status?: Prisma.EnumCostUnitStatusFilter<"CostUnit"> | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFilter<"CostUnit"> | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
@@ -256,6 +266,7 @@ export type CostUnitOrderByWithAggregationInput = {
   examples?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -274,6 +285,7 @@ export type CostUnitScalarWhereWithAggregatesInput = {
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   organizationId?: Prisma.StringWithAggregatesFilter<"CostUnit"> | string
   status?: Prisma.EnumCostUnitStatusWithAggregatesFilter<"CostUnit"> | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorWithAggregatesFilter<"CostUnit"> | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CostUnit"> | Date | string
   costUnitGroupId?: Prisma.StringNullableWithAggregatesFilter<"CostUnit"> | string | null
@@ -285,6 +297,7 @@ export type CostUnitCreateInput = {
   title: string
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutCostUnitsInput
@@ -299,6 +312,7 @@ export type CostUnitUncheckedCreateInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   organizationId: string
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroupId?: string | null
@@ -311,6 +325,7 @@ export type CostUnitUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCostUnitsNestedInput
@@ -325,6 +340,7 @@ export type CostUnitUncheckedUpdateInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -338,6 +354,7 @@ export type CostUnitCreateManyInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   organizationId: string
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroupId?: string | null
@@ -349,6 +366,7 @@ export type CostUnitUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -360,6 +378,7 @@ export type CostUnitUncheckedUpdateManyInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -400,6 +419,7 @@ export type CostUnitCountOrderByAggregateInput = {
   examples?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrder
@@ -411,6 +431,7 @@ export type CostUnitMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrder
@@ -422,6 +443,7 @@ export type CostUnitMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   costUnitGroupId?: Prisma.SortOrder
@@ -538,12 +560,17 @@ export type EnumCostUnitStatusFieldUpdateOperationsInput = {
   set?: $Enums.CostUnitStatus
 }
 
+export type EnumCostUnitColorFieldUpdateOperationsInput = {
+  set?: $Enums.CostUnitColor
+}
+
 export type CostUnitCreateWithoutReportsInput = {
   id?: string
   tag: string
   title: string
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutCostUnitsInput
@@ -557,6 +584,7 @@ export type CostUnitUncheckedCreateWithoutReportsInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   organizationId: string
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroupId?: string | null
@@ -584,6 +612,7 @@ export type CostUnitUpdateWithoutReportsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCostUnitsNestedInput
@@ -597,6 +626,7 @@ export type CostUnitUncheckedUpdateWithoutReportsInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -608,6 +638,7 @@ export type CostUnitCreateWithoutOrganizationInput = {
   title: string
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroup?: Prisma.CostUnitGroupCreateNestedOneWithoutCostUnitsInput
@@ -620,6 +651,7 @@ export type CostUnitUncheckedCreateWithoutOrganizationInput = {
   title: string
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroupId?: string | null
@@ -662,6 +694,7 @@ export type CostUnitScalarWhereInput = {
   examples?: Prisma.StringNullableListFilter<"CostUnit">
   organizationId?: Prisma.StringFilter<"CostUnit"> | string
   status?: Prisma.EnumCostUnitStatusFilter<"CostUnit"> | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFilter<"CostUnit"> | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnit"> | Date | string
   costUnitGroupId?: Prisma.StringNullableFilter<"CostUnit"> | string | null
@@ -673,6 +706,7 @@ export type CostUnitCreateWithoutCostUnitGroupInput = {
   title: string
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutCostUnitsInput
@@ -686,6 +720,7 @@ export type CostUnitUncheckedCreateWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   organizationId: string
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutCostUnitInput
@@ -723,6 +758,7 @@ export type CostUnitCreateManyOrganizationInput = {
   title: string
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
   costUnitGroupId?: string | null
@@ -734,6 +770,7 @@ export type CostUnitUpdateWithoutOrganizationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroup?: Prisma.CostUnitGroupUpdateOneWithoutCostUnitsNestedInput
@@ -746,6 +783,7 @@ export type CostUnitUncheckedUpdateWithoutOrganizationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -758,6 +796,7 @@ export type CostUnitUncheckedUpdateManyWithoutOrganizationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   costUnitGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -770,6 +809,7 @@ export type CostUnitCreateManyCostUnitGroupInput = {
   examples?: Prisma.CostUnitCreateexamplesInput | string[]
   organizationId: string
   status?: $Enums.CostUnitStatus
+  color?: $Enums.CostUnitColor
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -780,6 +820,7 @@ export type CostUnitUpdateWithoutCostUnitGroupInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCostUnitsNestedInput
@@ -793,6 +834,7 @@ export type CostUnitUncheckedUpdateWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reports?: Prisma.ReportUncheckedUpdateManyWithoutCostUnitNestedInput
@@ -805,6 +847,7 @@ export type CostUnitUncheckedUpdateManyWithoutCostUnitGroupInput = {
   examples?: Prisma.CostUnitUpdateexamplesInput | string[]
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumCostUnitStatusFieldUpdateOperationsInput | $Enums.CostUnitStatus
+  color?: Prisma.EnumCostUnitColorFieldUpdateOperationsInput | $Enums.CostUnitColor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -847,6 +890,7 @@ export type CostUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   examples?: boolean
   organizationId?: boolean
   status?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
@@ -863,6 +907,7 @@ export type CostUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   examples?: boolean
   organizationId?: boolean
   status?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
@@ -877,6 +922,7 @@ export type CostUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   examples?: boolean
   organizationId?: boolean
   status?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
@@ -891,12 +937,13 @@ export type CostUnitSelectScalar = {
   examples?: boolean
   organizationId?: boolean
   status?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   costUnitGroupId?: boolean
 }
 
-export type CostUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tag" | "title" | "examples" | "organizationId" | "status" | "createdAt" | "updatedAt" | "costUnitGroupId", ExtArgs["result"]["costUnit"]>
+export type CostUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tag" | "title" | "examples" | "organizationId" | "status" | "color" | "createdAt" | "updatedAt" | "costUnitGroupId", ExtArgs["result"]["costUnit"]>
 export type CostUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   costUnitGroup?: boolean | Prisma.CostUnit$costUnitGroupArgs<ExtArgs>
@@ -926,6 +973,7 @@ export type $CostUnitPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     examples: string[]
     organizationId: string
     status: $Enums.CostUnitStatus
+    color: $Enums.CostUnitColor
     createdAt: Date
     updatedAt: Date
     costUnitGroupId: string | null
@@ -1361,6 +1409,7 @@ export interface CostUnitFieldRefs {
   readonly examples: Prisma.FieldRef<"CostUnit", 'String[]'>
   readonly organizationId: Prisma.FieldRef<"CostUnit", 'String'>
   readonly status: Prisma.FieldRef<"CostUnit", 'CostUnitStatus'>
+  readonly color: Prisma.FieldRef<"CostUnit", 'CostUnitColor'>
   readonly createdAt: Prisma.FieldRef<"CostUnit", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CostUnit", 'DateTime'>
   readonly costUnitGroupId: Prisma.FieldRef<"CostUnit", 'String'>

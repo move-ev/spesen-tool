@@ -293,6 +293,7 @@ export const CostUnitScalarFieldEnum = {
   examples: 'examples',
   organizationId: 'organizationId',
   status: 'status',
+  color: 'color',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   costUnitGroupId: 'costUnitGroupId'
