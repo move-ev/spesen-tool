@@ -224,7 +224,7 @@ function Sidebar({
 			/>
 			<div
 				className={cn(
-					"can be written as fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 `data-[side=right]:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) data-[side=left]:group-data-[collapsible=offcanvas]:-left-(--sidebar-width) md:flex",
+					"fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) data-[side=left]:group-data-[collapsible=offcanvas]:-left-(--sidebar-width) md:flex",
 					// Adjust the padding for floating and inset variants.
 					variant === "floating" || variant === "inset"
 						? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
@@ -273,7 +273,11 @@ function SidebarTrigger({
 	);
 }
 
-function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
+function SidebarRail({
+	className,
+	onClick,
+	...props
+}: React.ComponentProps<"button">) {
 	const { toggleSidebar } = useSidebar();
 
 	return (
@@ -290,7 +294,10 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 			)}
 			data-sidebar="rail"
 			data-slot="sidebar-rail"
-			onClick={toggleSidebar}
+			onClick={(event) => {
+				onClick?.(event);
+				toggleSidebar();
+			}}
 			tabIndex={-1}
 			title="Toggle Sidebar"
 			{...props}
