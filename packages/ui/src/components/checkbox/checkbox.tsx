@@ -14,7 +14,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
 				// focus
 				"focus-visible:outline-2 focus-visible:outline-accent-500 focus-visible:outline-solid",
 				// disabled
-				"disabled:cursor-not-allowed disabled:opacity-50 group-has-disabled/field:opacity-50",
+				"group-has-disabled/field:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50",
 				// invalid
 				"aria-invalid:outline-2 aria-invalid:outline-red-500 aria-invalid:outline-solid",
 				// checked

@@ -11,9 +11,9 @@ function Switch({ className, ...props }: SwitchPrimitive.Root.Props) {
 				// after
 				// "after:absolute after:-inset-x-3 after:-inset-y-2",
 				// focus
-				"focus-visible:outline-accent-500 focus-visible:outline-solid",
+				"focus-visible:outline-2 focus-visible:outline-accent-500 focus-visible:outline-solid focus-visible:outline-offset-3",
 				// invalid
-				"aria-invalid:outline-red-500 aria-invalid:outline-solid",
+				"aria-invalid:outline-2 aria-invalid:outline-red-500 aria-invalid:outline-solid aria-invalid:outline-offset-3",
 				// disabled
 				"data-disabled:cursor-not-allowed data-disabled:opacity-50",
 				// checked
