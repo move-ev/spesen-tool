@@ -52,29 +52,23 @@ export const Disabled: Story = {
 	args: { variant: "default", disabled: true },
 };
 
+const renderIconOnly: Story["render"] = (args) => (
+	<Button {...args}>
+		<CircleDashedIcon />
+	</Button>
+);
+
 export const IconSmall: Story = {
 	args: { variant: "default", size: "icon-sm" },
-	render: (args) => (
-		<Button {...args}>
-			<CircleDashedIcon />
-		</Button>
-	),
+	render: renderIconOnly,
 };
 
 export const Icon: Story = {
 	args: { variant: "default", size: "icon" },
-	render: (args) => (
-		<Button {...args}>
-			<CircleDashedIcon />
-		</Button>
-	),
+	render: renderIconOnly,
 };
 
 export const IconLarge: Story = {
 	args: { variant: "default", size: "icon-lg" },
-	render: (args) => (
-		<Button {...args}>
-			<CircleDashedIcon />
-		</Button>
-	),
+	render: renderIconOnly,
 };
