@@ -18,7 +18,7 @@ export const COST_UNIT_COLORS: CostUnitColors = {
 	VIOLET: { fill: "#8b5cf6", text: "#8b5cf6" },
 	PURPLE: { fill: "#a855f7", text: "#a855f7" },
 	FUCHSIA: { fill: "#d946ef", text: "#d946ef" },
-	PINK: { fill: "#d946ef", text: "#d946ef" },
+	PINK: { fill: "#ec4899", text: "#ec4899" },
 	ROSE: { fill: "#f43f5e", text: "#f43f5e" },
 	BASE: { fill: "#64748b", text: "#64748b" },
 };
