@@ -30,10 +30,10 @@ import {
 	SidebarTrigger,
 } from "./sidebar";
 
-export default function DemoPage1() {
+export default function DemoPage1(props: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<SidebarProvider>
-			<AppSidebar />
+			<AppSidebar {...props} />
 			<SidebarInset>
 				<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
 					<SidebarTrigger className="-ml-1" />
@@ -222,9 +222,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	);
 }
 
-export function SearchForm({ ...props }: React.ComponentProps<"form">) {
+export function SearchForm({
+	onSubmit,
+	...props
+}: React.ComponentProps<"form">) {
 	return (
-		<form {...props}>
+		<form
+			onSubmit={(event) => {
+				event.preventDefault();
+				onSubmit?.(event);
+			}}
+			{...props}
+		>
 			<SidebarGroup className="py-0">
 				<SidebarGroupContent className="relative">
 					<Label className="sr-only" htmlFor="search">
@@ -272,10 +281,7 @@ export function VersionSwitcher({
 							</SidebarMenuButton>
 						}
 					/>
-					<DropdownMenuContent
-						align="start"
-						className="w-(--radix-dropdown-menu-trigger-width)"
-					>
+					<DropdownMenuContent align="start" className="w-(--anchor-width)">
 						{versions.map((version) => (
 							<DropdownMenuItem
 								key={version}

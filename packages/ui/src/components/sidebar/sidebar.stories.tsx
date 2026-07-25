@@ -9,7 +9,7 @@ const meta = {
 		layout: "fullscreen",
 	},
 	tags: ["autodocs"],
-	render: () => <DemoPage1 />,
+	render: (args) => <DemoPage1 {...args} />,
 } satisfies Meta<typeof Sidebar>;
 
 export default meta;
