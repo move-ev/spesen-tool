@@ -117,7 +117,7 @@ export const DisabledItems: Story = {
 	),
 };
 
-export const Inavlid: Story = {
+export const Invalid: Story = {
 	render: (args) => (
 		<Select data-invalid {...args}>
 			<SelectTrigger aria-invalid>

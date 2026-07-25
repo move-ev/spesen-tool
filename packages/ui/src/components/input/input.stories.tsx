@@ -27,7 +27,9 @@ export const Default: Story = {
 };
 
 export const Invalid: Story = {
-	render: () => <Input aria-invalid placeholder="Search for something..." />,
+	args: {
+		"aria-invalid": true,
+	},
 };
 
 export const Disabled: Story = {

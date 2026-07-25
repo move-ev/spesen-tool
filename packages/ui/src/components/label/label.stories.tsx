@@ -40,10 +40,10 @@ export const Disabled: Story = {
 export const Invalid: Story = {
 	render: (args) => (
 		<div className="grid gap-2">
-			<Label htmlFor="sample-input-5431" {...args}>
+			<Label htmlFor="sample-input-5432" {...args}>
 				Name
 			</Label>
-			<Input aria-invalid id="sample-input-5431" placeholder="John Schuster" />
+			<Input aria-invalid id="sample-input-5432" placeholder="John Schuster" />
 		</div>
 	),
 };

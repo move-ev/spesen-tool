@@ -102,7 +102,7 @@ export const InputInvalid: Story = {
 		<InputGroup {...args}>
 			<InputGroupInput
 				aria-invalid
-				id="inline-end-input"
+				id="inline-end-input-invalid"
 				placeholder="Enter password"
 			/>
 			<InputGroupAddon align="inline-end">
@@ -117,7 +117,7 @@ export const TextareaInvalid: Story = {
 		<InputGroup {...args}>
 			<InputGroupTextarea
 				aria-invalid
-				id="block-end-textarea"
+				id="block-end-textarea-invalid"
 				placeholder="Write a comment..."
 			/>
 			<InputGroupAddon align="block-end">
@@ -135,7 +135,7 @@ export const InputDisabled: Story = {
 		<InputGroup {...args}>
 			<InputGroupInput
 				disabled
-				id="inline-end-input"
+				id="inline-end-input-disabled"
 				placeholder="Enter password"
 			/>
 			<InputGroupAddon align="inline-end">
@@ -150,7 +150,7 @@ export const TextareaDisabled: Story = {
 		<InputGroup {...args}>
 			<InputGroupTextarea
 				disabled
-				id="block-end-textarea"
+				id="block-end-textarea-disabled"
 				placeholder="Write a comment..."
 			/>
 			<InputGroupAddon align="block-end">

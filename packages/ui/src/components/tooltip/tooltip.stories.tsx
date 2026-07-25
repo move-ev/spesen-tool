@@ -18,7 +18,7 @@ const meta = {
 		},
 		disableArrow: {
 			control: "boolean",
-			description: "Controls wheter the arrow is shown or not",
+			description: "Controls whether the arrow is shown or not",
 		},
 	},
 	args: {
