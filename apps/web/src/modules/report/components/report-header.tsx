@@ -342,13 +342,13 @@ function ReportHeaderCopyAction({
 			id: "iban",
 			icon: CreditCardIcon,
 			title: t("iban"),
-			value: financialSummary.iban,
+			value: financialSummary.iban ?? "—",
 		},
 		{
 			id: "name",
 			icon: UserIcon,
 			title: t("accountName"),
-			value: financialSummary.ownerName,
+			value: financialSummary.ownerName ?? "—",
 		},
 		{
 			id: "sum",

@@ -57,6 +57,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   BankingDetails: 'BankingDetails',
+  ReportBankingSnapshot: 'ReportBankingSnapshot',
   CostUnitGroup: 'CostUnitGroup',
   CostUnit: 'CostUnit',
   LegalAcceptance: 'LegalAcceptance',
@@ -181,6 +182,17 @@ export const BankingDetailsScalarFieldEnum = {
 } as const
 
 export type BankingDetailsScalarFieldEnum = (typeof BankingDetailsScalarFieldEnum)[keyof typeof BankingDetailsScalarFieldEnum]
+
+
+export const ReportBankingSnapshotScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  iban: 'iban',
+  fullName: 'fullName',
+  createdAt: 'createdAt'
+} as const
+
+export type ReportBankingSnapshotScalarFieldEnum = (typeof ReportBankingSnapshotScalarFieldEnum)[keyof typeof ReportBankingSnapshotScalarFieldEnum]
 
 
 export const CostUnitGroupScalarFieldEnum = {

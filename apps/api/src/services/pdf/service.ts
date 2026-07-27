@@ -50,17 +50,26 @@ export async function generateReportPdf(
 			owner: true,
 			costUnit: { select: { tag: true, title: true } },
 			bankingDetails: true,
+			bankingSnapshot: true,
 		},
 	});
 
-	if (!report?.bankingDetails) {
+	// Submitted reports export the snapshot taken at submission; editable
+	// reports (draft/revision) export the live details they would submit.
+	const isEditable =
+		report?.status === "DRAFT" || report?.status === "NEEDS_REVISION";
+	const bankingSource = isEditable
+		? (report?.bankingDetails ?? report?.bankingSnapshot)
+		: (report?.bankingSnapshot ?? report?.bankingDetails);
+
+	if (!report || !bankingSource) {
 		throw Object.assign(new Error("Report or banking details not found"), {
 			status: 404,
 		});
 	}
 
 	const bankingDetails = decryptBankingDetails(
-		report.bankingDetails,
+		bankingSource,
 		getEncryptionKey(),
 	);
 
