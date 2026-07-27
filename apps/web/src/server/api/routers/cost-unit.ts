@@ -18,6 +18,35 @@ import {
 	toCostUnitServiceContext,
 } from "@/server/modules/cost-unit";
 
+/**
+ * CostUnitGroup is a distinct model, so its endpoints are nested rather than
+ * flattened in as createGroup/updateGroup/deleteGroup - the same shape used for
+ * platformAdmin.organizations.
+ */
+const costUnitGroupsRouter = createTRPCRouter({
+	list: orgProcedure.query(({ ctx }) =>
+		costUnitService.listGroups(toCostUnitServiceContext(ctx)),
+	),
+
+	create: orgAdminProcedure
+		.input(createCostUnitGroupSchema)
+		.mutation(({ ctx, input }) =>
+			costUnitService.createGroup(toCostUnitServiceContext(ctx), input),
+		),
+
+	update: orgAdminProcedure
+		.input(updateCostUnitGroupSchema)
+		.mutation(({ ctx, input }) =>
+			costUnitService.updateGroup(toCostUnitServiceContext(ctx), input),
+		),
+
+	delete: orgAdminProcedure
+		.input(deleteCostUnitGroupSchema)
+		.mutation(({ ctx, input }) =>
+			costUnitService.removeGroup(toCostUnitServiceContext(ctx), input),
+		),
+});
+
 export const costUnitRouter = createTRPCRouter({
 	byId: costUnitProcedure.query(({ ctx }) => ctx.costUnit),
 
@@ -29,10 +58,6 @@ export const costUnitRouter = createTRPCRouter({
 
 	listForSelection: orgProcedure.query(({ ctx }) =>
 		costUnitService.listForSelection(toCostUnitServiceContext(ctx)),
-	),
-
-	listGroups: orgProcedure.query(({ ctx }) =>
-		costUnitService.listGroups(toCostUnitServiceContext(ctx)),
 	),
 
 	create: orgAdminProcedure
@@ -51,21 +76,5 @@ export const costUnitRouter = createTRPCRouter({
 		costUnitService.remove(toCostUnitServiceContext(ctx), ctx.costUnit),
 	),
 
-	createGroup: orgAdminProcedure
-		.input(createCostUnitGroupSchema)
-		.mutation(({ ctx, input }) =>
-			costUnitService.createGroup(toCostUnitServiceContext(ctx), input),
-		),
-
-	updateGroup: orgAdminProcedure
-		.input(updateCostUnitGroupSchema)
-		.mutation(({ ctx, input }) =>
-			costUnitService.updateGroup(toCostUnitServiceContext(ctx), input),
-		),
-
-	deleteGroup: orgAdminProcedure
-		.input(deleteCostUnitGroupSchema)
-		.mutation(({ ctx, input }) =>
-			costUnitService.removeGroup(toCostUnitServiceContext(ctx), input),
-		),
+	groups: costUnitGroupsRouter,
 });

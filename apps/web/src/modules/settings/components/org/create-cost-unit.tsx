@@ -109,7 +109,7 @@ function CreateCostUnitFormConnected({ handle }: WithHandle) {
 	const utils = api.useUtils();
 
 	const [{ data: groups }] = useSuspenseQueries({
-		queries: [utils.costUnit.listGroups.queryOptions()],
+		queries: [utils.costUnit.groups.list.queryOptions()],
 	});
 
 	const create = api.costUnit.create.useMutation({

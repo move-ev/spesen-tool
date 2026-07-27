@@ -143,7 +143,7 @@ function UpdateCostUnitFormConnected({
 
 	const [{ data: groups }, { data: costUnit }] = useSuspenseQueries({
 		queries: [
-			utils.costUnit.listGroups.queryOptions(),
+			utils.costUnit.groups.list.queryOptions(),
 			utils.costUnit.byId.queryOptions({ id: costUnitId }),
 		],
 	});
