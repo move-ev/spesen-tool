@@ -33,7 +33,11 @@ import {
 	type ReportRepository,
 	reportRepository,
 } from "./report.repository";
-import { assertAdminTransition, assertSubmittable } from "./report.state";
+import {
+	assertAdminTransition,
+	assertSubmittable,
+	isEditable,
+} from "./report.state";
 import type {
 	transitionReportSchema,
 	updateReportSchema,
@@ -172,12 +176,11 @@ export function createReportService(deps: {
 			);
 
 			// Editable reports show the live details (what the next submission
-			// would snapshot); finalized reports show the submitted snapshot.
-			const isEditable =
-				report.status === ReportStatus.DRAFT ||
-				report.status === ReportStatus.NEEDS_REVISION;
-			const banking = isEditable
-				? (report.bankingDetails ?? report.bankingSnapshot)
+			// would snapshot) — never an old snapshot, which would present stale
+			// account data after the owner deleted the live details. Finalized
+			// reports show the submitted snapshot.
+			const banking = isEditable(report.status)
+				? report.bankingDetails
 				: (report.bankingSnapshot ?? report.bankingDetails);
 
 			return toFinancialSummaryDTO(banking, totalAmount);
@@ -361,7 +364,33 @@ export function createReportService(deps: {
 		): Promise<{ id: string; status: ReportStatus }> {
 			assertAdminTransition(report.status, input.status);
 
+			// Moving an editable report into review is a submission: it must
+			// snapshot the banking details exactly like the owner submit flow,
+			// otherwise the report finalizes without one and reads fall back to
+			// the mutable live details. Re-review transitions (from ACCEPTED /
+			// REJECTED) keep the snapshot taken at the original submission.
+			const requiresSnapshot =
+				input.status === ReportStatus.PENDING_APPROVAL && isEditable(report.status);
+			const missingBankingDetailsError = () =>
+				new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"The banking details of this report were deleted. The owner must select new banking details before it can be submitted.",
+				});
+			if (requiresSnapshot && !report.bankingDetailsId) {
+				throw missingBankingDetailsError();
+			}
+
 			const updated = await transact(ctx.db, async (db) => {
+				if (requiresSnapshot && report.bankingDetailsId) {
+					const snapshotted = await repo.snapshotBankingDetails(db, {
+						reportId: report.id,
+						bankingDetailsId: report.bankingDetailsId,
+					});
+					if (!snapshotted) {
+						throw missingBankingDetailsError();
+					}
+				}
 				const result = await repo.setStatus(db, {
 					id: report.id,
 					status: input.status,
