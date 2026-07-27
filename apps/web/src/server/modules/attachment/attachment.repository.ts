@@ -23,8 +23,27 @@ const attachmentDetailSelect = {
 	},
 } satisfies Prisma.AttachmentSelect;
 
+/**
+ * List projection. Deliberately omits `key`: the storage object key is only
+ * ever needed server-side to presign a URL, and shipping it to the browser
+ * hands out a durable pointer into the bucket for no rendering benefit.
+ * Mirrors the projection the review detail already uses.
+ */
+const attachmentListSelect = {
+	id: true,
+	size: true,
+	originalName: true,
+	createdAt: true,
+	updatedAt: true,
+	expenseId: true,
+} satisfies Prisma.AttachmentSelect;
+
 export type AttachmentDetail = Prisma.AttachmentGetPayload<{
 	select: typeof attachmentDetailSelect;
+}>;
+
+export type AttachmentListRow = Prisma.AttachmentGetPayload<{
+	select: typeof attachmentListSelect;
 }>;
 
 export const attachmentRepository = {
@@ -35,12 +54,18 @@ export const attachmentRepository = {
 		});
 	},
 
-	listForExpense(db: Db, expenseId: string) {
-		return db.attachment.findMany({ where: { expenseId } });
+	listForExpense(db: Db, expenseId: string): Promise<AttachmentListRow[]> {
+		return db.attachment.findMany({
+			where: { expenseId },
+			select: attachmentListSelect,
+		});
 	},
 
-	listForReport(db: Db, reportId: string) {
-		return db.attachment.findMany({ where: { expense: { reportId } } });
+	listForReport(db: Db, reportId: string): Promise<AttachmentListRow[]> {
+		return db.attachment.findMany({
+			where: { expense: { reportId } },
+			select: attachmentListSelect,
+		});
 	},
 
 	findManyByIds(db: Db, args: { ids: string[]; organizationId: string }) {
