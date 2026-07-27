@@ -5,9 +5,16 @@
 -- amounts (distance * kilometerRate), where rounding to cents is the
 -- intended behavior.
 --
--- Pre-deploy check (must return 0 rows; would indicate values that exceed
--- 10 integer digits and would make the ALTER fail):
---   SELECT id, amount FROM expense WHERE amount >= 1e10;
+-- Pre-deploy checks (each must return 0 rows; matches would exceed the 10
+-- integer digits of DECIMAL(12,2) — in either direction — and make the
+-- corresponding ALTER fail):
+--   SELECT id, amount FROM expense WHERE abs(amount) >= 1e10;
+--   SELECT "organizationId" FROM settings
+--     WHERE abs("kilometerRate") >= 1e10
+--        OR abs("dailyFoodAllowance") >= 1e10
+--        OR abs("breakfastDeduction") >= 1e10
+--        OR abs("lunchDeduction") >= 1e10
+--        OR abs("dinnerDeduction") >= 1e10;
 
 -- AlterTable
 ALTER TABLE "expense" ALTER COLUMN "amount" SET DATA TYPE DECIMAL(12,2);
