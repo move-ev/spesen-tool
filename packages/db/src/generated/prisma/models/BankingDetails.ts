@@ -368,9 +368,9 @@ export type BankingDetailsMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type BankingDetailsScalarRelationFilter = {
-  is?: Prisma.BankingDetailsWhereInput
-  isNot?: Prisma.BankingDetailsWhereInput
+export type BankingDetailsNullableScalarRelationFilter = {
+  is?: Prisma.BankingDetailsWhereInput | null
+  isNot?: Prisma.BankingDetailsWhereInput | null
 }
 
 export type BankingDetailsCreateNestedManyWithoutUserInput = {
@@ -421,10 +421,12 @@ export type BankingDetailsCreateNestedOneWithoutReportsInput = {
   connect?: Prisma.BankingDetailsWhereUniqueInput
 }
 
-export type BankingDetailsUpdateOneRequiredWithoutReportsNestedInput = {
+export type BankingDetailsUpdateOneWithoutReportsNestedInput = {
   create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
   connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
   upsert?: Prisma.BankingDetailsUpsertWithoutReportsInput
+  disconnect?: Prisma.BankingDetailsWhereInput | boolean
+  delete?: Prisma.BankingDetailsWhereInput | boolean
   connect?: Prisma.BankingDetailsWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BankingDetailsUpdateToOneWithWhereWithoutReportsInput, Prisma.BankingDetailsUpdateWithoutReportsInput>, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
 }

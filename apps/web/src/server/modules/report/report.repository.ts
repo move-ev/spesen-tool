@@ -48,6 +48,7 @@ const reviewDetailSelect = {
 	createdAt: true,
 	owner: { select: { id: true, name: true, email: true, image: true } },
 	bankingDetails: { select: { iban: true, fullName: true } },
+	bankingSnapshot: { select: { iban: true, fullName: true } },
 	expenses: {
 		select: {
 			id: true,
@@ -153,6 +154,7 @@ export const reportRepository = {
 					ownerId: true,
 					status: true,
 					bankingDetails: { select: { iban: true, fullName: true } },
+					bankingSnapshot: { select: { iban: true, fullName: true } },
 				},
 			}),
 			db.expense.aggregate({
@@ -172,6 +174,30 @@ export const reportRepository = {
 			where: { id: bankingDetailsId },
 			select: { userId: true },
 		});
+	},
+
+	/**
+	 * Copies the encrypted values of the given banking details into the
+	 * report's snapshot (creating or refreshing it). Returns false when the
+	 * banking details no longer exist.
+	 */
+	async snapshotBankingDetails(
+		db: Db,
+		args: { reportId: string; bankingDetailsId: string },
+	): Promise<boolean> {
+		const details = await db.bankingDetails.findUnique({
+			where: { id: args.bankingDetailsId },
+			select: { iban: true, fullName: true },
+		});
+		if (!details) {
+			return false;
+		}
+		await db.reportBankingSnapshot.upsert({
+			where: { reportId: args.reportId },
+			create: { reportId: args.reportId, ...details },
+			update: details,
+		});
+		return true;
 	},
 
 	findCostUnit(db: Db, args: { id: string; organizationId: string }) {
