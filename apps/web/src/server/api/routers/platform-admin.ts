@@ -3,6 +3,7 @@ import { createTRPCRouter, platformAdminProcedure } from "@/server/api/trpc";
 import {
 	createOrganizationSchema,
 	platformOrganizationService,
+	toPlatformOrganizationServiceContext,
 	updateOrganizationProfileSchema,
 } from "@/server/modules/organization";
 
@@ -15,25 +16,35 @@ const organizationIdInput = z.object({ id: z.string().min(1) });
  */
 const organizationsRouter = createTRPCRouter({
 	list: platformAdminProcedure.query(({ ctx }) =>
-		platformOrganizationService.list({ db: ctx.db }),
+		platformOrganizationService.list(toPlatformOrganizationServiceContext(ctx)),
 	),
 
 	byId: platformAdminProcedure
 		.input(organizationIdInput)
 		.query(({ ctx, input }) =>
-			platformOrganizationService.byId({ db: ctx.db }, input),
+			platformOrganizationService.byId(
+				toPlatformOrganizationServiceContext(ctx),
+				input,
+			),
 		),
 
 	create: platformAdminProcedure
 		.input(createOrganizationSchema)
 		.mutation(({ ctx, input }) =>
-			platformOrganizationService.create({ db: ctx.db }, input),
+			platformOrganizationService.create(
+				toPlatformOrganizationServiceContext(ctx),
+				input,
+			),
 		),
 
 	update: platformAdminProcedure
 		.input(organizationIdInput.and(updateOrganizationProfileSchema))
 		.mutation(({ ctx, input }) =>
-			platformOrganizationService.update({ db: ctx.db }, input.id, input),
+			platformOrganizationService.update(
+				toPlatformOrganizationServiceContext(ctx),
+				input.id,
+				input,
+			),
 		),
 });
 

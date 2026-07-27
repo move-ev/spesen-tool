@@ -4,9 +4,9 @@ This document captures the target architecture for zemio's tRPC layer: how route
 structured, where business logic lives, and the conventions that keep the API maintainable and
 scalable as the surface grows.
 
-It is written as the **destination**, not a description of the current code. The current routers
-under `apps/web/src/server/api/routers/` predate these conventions and diverge from them in the ways
-listed in [Known issues in the current implementation](#known-issues-in-the-current-implementation).
+It is written as the **destination**. As of the migration recorded below, every router under
+`apps/web/src/server/api/routers/` has been moved onto these conventions; what remains open is
+listed in [Remaining gaps](#remaining-gaps).
 
 ---
 
@@ -289,51 +289,49 @@ different transport adapter — the contract decision stays reversible per-endpo
 
 ---
 
-## Known issues in the current implementation
+## Remaining gaps
 
-Recorded so the migration has a concrete punch-list. References point at the current code.
+The original punch-list is resolved: every router is a thin adapter over a module in
+`server/modules/`, tenancy is enforced by resource-loader procedures, status transitions funnel
+through the report state machine, side-effects go through the event bus, and Decimal conversion,
+error mapping, pagination and policy all have single shared implementations.
 
-1. **Duplicated read endpoints.** Single report: `report.getById`, `report.getDetails`,
-   `admin.getReportById`, `admin.getReview`. Report lists: `report.listOwn`, `admin.listAll`
-   (`@deprecated` but still wired), `admin.listAllPaginated`, `admin.getAllReports`, `admin.listOpen`,
-   `admin.listRelevant` — three pagination styles among them. Expenses: `listForReport` vs
-   `getByReportId` are equivalent; `getById` is a subset of `get`. Cost units: four overlapping list
-   projections.
-2. **Authorization copy-pasted, two mechanisms.** The "load -> compare `organizationId` -> compare
-   `ownerId`/`isOrganizationAdminRole`" block is repeated in nearly every procedure. `report`/`expense`
-   use `ctx.orgRole`; `attachment` calls `auth.api.hasPermission(...)` for the same question.
-   `attachment` uses `protectedProcedure` and re-derives org from the entity instead of `orgProcedure`
-   + active org.
-3. **No status state machine.** Status changes from four places with four rule sets: `report.submit`
-   (guarded), `report.updateStatus` (any status), `report.update` (owner can set arbitrary status,
-   bypassing `submit`), `admin.updateReportStatus` (any status, no notify/log).
-4. **Side-effects entangled with the request.** `report.update` fires email fire-and-forget;
-   `report.submit` / `report.updateStatus` `await` the mailer and throw `INTERNAL_SERVER_ERROR` on
-   failure *after the DB already committed* — a transient mail failure surfaces a successful status
-   change as an error. Email JSX is rendered inside the router (hence `report.tsx`).
-5. **Manual Decimal handling.** `Number(x.amount)` scattered across reads; list totals summed in JS
-   over over-fetched expense rows instead of DB `_sum`.
-6. **Inefficient queries.** `report.getDetails` does an existence check then a 2-query transaction
-   (3 round-trips); `admin.getAllReports`/`getReportById` use `include: { expenses: true }` with no
-   projection.
-7. **Inconsistent validation, errors, naming.** Some input schemas in `@/lib/validators`, some inline;
-   `platformAdmin` throws bare `Error`; `P2002` handled only in `cost-unit`; no output/DTO schemas.
-8. **Cross-cutting.** Context always runs `member.findFirst` even for non-org procedures;
-   `server/api/utils.ts` is an empty stub; `timingMiddleware` voids its own work in prod; audit
-   `logger.info` calls are ad-hoc and inconsistently present.
+Four items from this document are still outstanding, each a deliberate deferral:
+
+1. **No tenant-scoped Prisma extension** ([§1](#1-tenant-scoping-as-a-prisma-client-extension)).
+   Repositories still take `organizationId` explicitly. The loader procedures make a forgotten
+   filter far less likely than before, but not structurally impossible.
+2. **No transactional outbox** ([§5](#5-side-effects-via-a-domain-event-bus--outbox)). Events are
+   emitted in-process; a crash between commit and handler loses the notification.
+3. **No zod output schemas.** Modules expose DTO *types* and mappers, not the runtime output
+   schemas this document asks for, and no SuperJSON `Decimal` serializer is registered as a
+   backstop.
+4. **Offset-only pagination.** `PageMeta` is one shared contract, but the document's preference for
+   cursor pagination is unmet; `audit` is the only cursor-paginated endpoint and uses its own shape.
+
+Two smaller notes: `orgAdminProcedure` throws `UNAUTHORIZED` where `FORBIDDEN` would be correct
+(the caller is authenticated, just not permitted), and the cost-unit picker's "Ohne Gruppe" label
+is a hardcoded German string in `cost-unit.dto.ts` rather than an i18n key.
 
 ---
 
 ## Migration approach
 
-Migrate **one vertical slice at a time**, starting with the `report` domain, to prove the pattern
-against the current `report.tsx` before committing to a full rewrite:
+Migration proceeded **one vertical slice at a time**, starting with `report` to prove the pattern
+before committing to the rest:
 
-1. Introduce `shared/` primitives (scoped client, policy, pagination, money, errors, event bus).
-2. Build the `report` module (repository, policy, state, dto, service, procedure factory).
-3. Rewrite `reportRouter` as thin adapters over the service; delete the duplicate report endpoints in
-   `admin`.
-4. Move email to event subscribers; introduce the outbox.
-5. Repeat per domain (`expense`, `attachment`, `cost-unit`, ...).
+| Slice | Outcome |
+|---|---|
+| `shared/` primitives | errors, money, pagination (`PageMeta`), event bus, `definePolicy` |
+| `report` | full module; email moved to event subscribers |
+| `expense`, `attachment`, `audit` | modules + loader procedures; router input schemas relocated |
+| `cost-unit` | module; fixed a cross-tenant read and a broken archived-unit filter; four list projections converged to two |
+| `banking` | module; ownership check replaced by a loader + policy; write responses stop returning ciphertext |
+| `settings` | split into `organization`, `settings`, `membership`; fixed a cross-tenant membership read; Decimal conversion moved into the DTO |
+| `platform-admin` | platform use-cases moved into `modules/organization`; bare `Error`s replaced with `CONFLICT`; endpoints nested under `platformAdmin.organizations` |
+| `user`, `preferences` | modules; write-on-read race replaced with an upsert |
+| cross-cutting | `protectedProcedure` now inherits the logging middleware; membership resolved lazily in `orgProcedure` |
+
+The next steps are the four deferrals in [Remaining gaps](#remaining-gaps), in that order of value.
 </content>
 </invoke>
