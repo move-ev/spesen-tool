@@ -42,9 +42,15 @@ ALTER TABLE "travel_expense_detail" ADD CONSTRAINT "travel_expense_detail_expens
 ALTER TABLE "food_expense_detail" ADD CONSTRAINT "food_expense_detail_expenseId_fkey" FOREIGN KEY ("expenseId") REFERENCES "expense"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Backfill: idempotent (ON CONFLICT DO NOTHING), re-runnable to catch up
--- rows written by an old app version during the deploy window. Malformed
--- meta values fall back to the same defaults the old update path used
--- (from/to '', distance 0; days 1, deductions 0).
+-- rows written by an old app version during the deploy window (the app
+-- additionally falls back to reading meta for such rows until the contract
+-- migration runs, see expense.meta.ts). Malformed meta values fall back to
+-- the same defaults the old update path used (from/to '', distance 0;
+-- days 1, deductions 0). "Malformed" explicitly includes syntactically
+-- numeric values that do not fit the target column — distance outside
+-- DECIMAL(8,2), deductions outside DECIMAL(12,2), fractional or oversized
+-- days — so a legacy outlier degrades to the default instead of aborting
+-- the whole migration.
 INSERT INTO "travel_expense_detail" ("id", "expenseId", "from", "to", "distance")
 SELECT
   gen_random_uuid()::text,
@@ -54,7 +60,8 @@ SELECT
   COALESCE(
     CASE
       WHEN e."meta" ->> 'distance' ~ '^-?[0-9]+(\.[0-9]+)?$'
-        THEN (e."meta" ->> 'distance')::numeric
+        AND abs(round((e."meta" ->> 'distance')::numeric, 2)) < 1e6
+        THEN round((e."meta" ->> 'distance')::numeric, 2)
     END,
     0
   )
@@ -66,11 +73,15 @@ INSERT INTO "food_expense_detail" ("id", "expenseId", "days", "breakfastDeductio
 SELECT
   gen_random_uuid()::text,
   e."id",
+  -- days: the old write path only ever produced integers >= 1
+  -- (differenceInDays + 1, int-validated), so fractional or out-of-range
+  -- values are malformed and take the default 1 rather than being rounded.
   GREATEST(
     COALESCE(
       CASE
-        WHEN e."meta" ->> 'days' ~ '^[0-9]+(\.[0-9]+)?$'
-          THEN round((e."meta" ->> 'days')::numeric)::int
+        WHEN e."meta" ->> 'days' ~ '^[0-9]+$'
+          AND (e."meta" ->> 'days')::numeric <= 2147483647
+          THEN (e."meta" ->> 'days')::int
       END,
       1
     ),
@@ -79,21 +90,24 @@ SELECT
   COALESCE(
     CASE
       WHEN e."meta" ->> 'breakfastDeduction' ~ '^-?[0-9]+(\.[0-9]+)?$'
-        THEN (e."meta" ->> 'breakfastDeduction')::numeric
+        AND abs(round((e."meta" ->> 'breakfastDeduction')::numeric, 2)) < 1e10
+        THEN round((e."meta" ->> 'breakfastDeduction')::numeric, 2)
     END,
     0
   ),
   COALESCE(
     CASE
       WHEN e."meta" ->> 'lunchDeduction' ~ '^-?[0-9]+(\.[0-9]+)?$'
-        THEN (e."meta" ->> 'lunchDeduction')::numeric
+        AND abs(round((e."meta" ->> 'lunchDeduction')::numeric, 2)) < 1e10
+        THEN round((e."meta" ->> 'lunchDeduction')::numeric, 2)
     END,
     0
   ),
   COALESCE(
     CASE
       WHEN e."meta" ->> 'dinnerDeduction' ~ '^-?[0-9]+(\.[0-9]+)?$'
-        THEN (e."meta" ->> 'dinnerDeduction')::numeric
+        AND abs(round((e."meta" ->> 'dinnerDeduction')::numeric, 2)) < 1e10
+        THEN round((e."meta" ->> 'dinnerDeduction')::numeric, 2)
     END,
     0
   )
@@ -107,19 +121,20 @@ ON CONFLICT ("expenseId") DO NOTHING;
 --   SELECT count(*) FROM expense e LEFT JOIN food_expense_detail f ON f."expenseId" = e.id
 --     WHERE e.type = 'FOOD' AND f.id IS NULL;
 
--- Rollback (lossless — restores meta for rows created by the new app code
--- before dropping the detail tables):
+-- Rollback (rebuilds meta from the detail tables — the source of truth once
+-- the new write path is live — for every expense that has a detail row, so
+-- updates made through the new path are not lost to stale legacy meta):
 --   UPDATE "expense" e
 --     SET "meta" = jsonb_build_object('from', t."from", 'to', t."to", 'distance', t."distance")
 --     FROM "travel_expense_detail" t
---     WHERE t."expenseId" = e."id" AND e."meta" IS NULL;
+--     WHERE t."expenseId" = e."id";
 --   UPDATE "expense" e
 --     SET "meta" = jsonb_build_object('days', f."days",
 --       'breakfastDeduction', f."breakfastDeduction",
 --       'lunchDeduction', f."lunchDeduction",
 --       'dinnerDeduction', f."dinnerDeduction")
 --     FROM "food_expense_detail" f
---     WHERE f."expenseId" = e."id" AND e."meta" IS NULL;
+--     WHERE f."expenseId" = e."id";
 --   UPDATE "expense" SET "meta" = '{}' WHERE "meta" IS NULL;
 --   ALTER TABLE "expense" ALTER COLUMN "meta" SET NOT NULL;
 --   DROP TABLE "food_expense_detail";
