@@ -8,7 +8,11 @@ import type { createReportSchema } from "@/lib/validators";
 import { type AuditRepository, auditRepository } from "@/server/modules/audit";
 import { mapPrismaError } from "@/server/shared/errors";
 import { nullableDecimalToNumber } from "@/server/shared/money";
-import { offsetPageArgs, pageCount } from "@/server/shared/pagination";
+import {
+	offsetPageArgs,
+	type PageMeta,
+	toPageMeta,
+} from "@/server/shared/pagination";
 import {
 	type FinancialSummaryDTO,
 	type ReportListItemDTO,
@@ -86,7 +90,7 @@ export function createReportService(deps: {
 			input: ReportListInput,
 		): Promise<{
 			reports: ReportListItemDTO[];
-			pagination: { page: number; pageSize: number; pageCount: number };
+			pagination: PageMeta;
 		}> {
 			if (input.scope === "all" && !isOrganizationAdminRole(ctx.orgRole)) {
 				throw new TRPCError({
@@ -124,11 +128,7 @@ export function createReportService(deps: {
 				reports: rows.map((row) =>
 					toReportListItemDTO(row, sumByReportId.get(row.id) ?? 0),
 				),
-				pagination: {
-					page: input.page,
-					pageSize: input.pageSize,
-					pageCount: pageCount(count, input.pageSize),
-				},
+				pagination: toPageMeta(input, count),
 			};
 		},
 
