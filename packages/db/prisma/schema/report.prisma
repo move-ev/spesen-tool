@@ -52,7 +52,13 @@ model Expense {
   startDate   DateTime
   endDate     DateTime
   type        ExpenseType
-  meta        Json
+
+  // Deprecated: replaced by the typed travelDetail/foodDetail relations.
+  // Kept until the contract migration drops it (see docs/schema-audit.md).
+  meta Json?
+
+  travelDetail TravelExpenseDetail?
+  foodDetail   FoodExpenseDetail?
 
   reportId    String
   report      Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
@@ -66,6 +72,33 @@ enum ExpenseType {
   RECEIPT
   TRAVEL
   FOOD
+}
+
+// Type-specific expense data, one row per TRAVEL expense
+model TravelExpenseDetail {
+  id        String  @id @default(cuid())
+  expenseId String  @unique
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  from     String
+  to       String
+  distance Decimal @db.Decimal(8, 2)
+
+  @@map("travel_expense_detail")
+}
+
+// Type-specific expense data, one row per FOOD expense
+model FoodExpenseDetail {
+  id        String  @id @default(cuid())
+  expenseId String  @unique
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  days               Int
+  breakfastDeduction Decimal @db.Decimal(12, 2)
+  lunchDeduction     Decimal @db.Decimal(12, 2)
+  dinnerDeduction    Decimal @db.Decimal(12, 2)
+
+  @@map("food_expense_detail")
 }
 
 model Attachment {

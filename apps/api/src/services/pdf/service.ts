@@ -44,7 +44,9 @@ export async function generateReportPdf(
 	const report = await db.report.findUnique({
 		where: { id: reportId },
 		include: {
-			expenses: { include: { attachments: true } },
+			expenses: {
+				include: { attachments: true, travelDetail: true, foodDetail: true },
+			},
 			owner: true,
 			costUnit: { select: { tag: true, title: true } },
 			bankingDetails: true,

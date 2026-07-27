@@ -11,12 +11,9 @@ import type {
 	createReceiptExpenseSchema,
 	createTravelExpenseSchema,
 } from "@/lib/validators";
-import {
-	foodExpenseMetaSchema,
-	travelExpenseMetaSchema,
-} from "@/lib/validators";
 import { type AuditRepository, auditRepository } from "@/server/modules/audit";
 import { mapPrismaError } from "@/server/shared/errors";
+import { decimalToNumber } from "@/server/shared/money";
 import { deleteFilesFromStorage } from "@/server/storage";
 import {
 	type ExpenseByIdDTO,
@@ -162,7 +159,6 @@ export function createExpenseService(deps: {
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: {},
 					attachments: {
 						createMany: {
 							data: input.attachments.map((a) => ({
@@ -210,7 +206,13 @@ export function createExpenseService(deps: {
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: { from: input.from, to: input.to, distance: input.distance },
+					travelDetail: {
+						create: {
+							from: input.from,
+							to: input.to,
+							distance: input.distance,
+						},
+					},
 				});
 				await audit.append(db, {
 					organizationId: ctx.organizationId,
@@ -241,11 +243,13 @@ export function createExpenseService(deps: {
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: {
-						days: input.days,
-						breakfastDeduction: input.breakfastDeduction,
-						lunchDeduction: input.lunchDeduction,
-						dinnerDeduction: input.dinnerDeduction,
+					foodDetail: {
+						create: {
+							days: input.days,
+							breakfastDeduction: input.breakfastDeduction,
+							lunchDeduction: input.lunchDeduction,
+							dinnerDeduction: input.dinnerDeduction,
+						},
 					},
 				});
 				await audit.append(db, {
@@ -277,21 +281,30 @@ export function createExpenseService(deps: {
 				...baseData
 			} = input;
 
-			// biome-ignore lint/suspicious/noExplicitAny: Prisma.ExpenseUpdateInput meta accepts any JSON-compatible shape
-			const updateData: Record<string, any> = { ...baseData };
+			const updateData: Prisma.ExpenseUpdateInput = { ...baseData };
+
+			const before: Record<string, Prisma.InputJsonValue | null> = {};
+			const after: Record<string, Prisma.InputJsonValue | null> = {};
 
 			if (expense.type === ExpenseType.TRAVEL) {
-				const currentMeta = travelExpenseMetaSchema.safeParse(expense.meta);
-				const currentMetaData = currentMeta.success
-					? currentMeta.data
-					: { from: "", to: "", distance: 0 };
-
 				if (from !== undefined || to !== undefined || distance !== undefined) {
-					updateData.meta = {
-						from: from ?? currentMetaData.from,
-						to: to ?? currentMetaData.to,
-						distance: distance ?? currentMetaData.distance,
+					const current = expense.travelDetail;
+					const next = {
+						from: from ?? current?.from ?? "",
+						to: to ?? current?.to ?? "",
+						distance: distance ?? (current ? decimalToNumber(current.distance) : 0),
 					};
+					// Upsert covers legacy rows whose detail row has not been
+					// backfilled yet (created during the migration deploy window).
+					updateData.travelDetail = { upsert: { create: next, update: next } };
+					before.travelDetail = current
+						? {
+								from: current.from,
+								to: current.to,
+								distance: decimalToNumber(current.distance),
+							}
+						: null;
+					after.travelDetail = next;
 				}
 
 				if (distance !== undefined) {
@@ -302,34 +315,37 @@ export function createExpenseService(deps: {
 			}
 
 			if (expense.type === ExpenseType.FOOD) {
-				const currentMeta = foodExpenseMetaSchema.safeParse(expense.meta);
-				const currentMetaData = currentMeta.success
-					? currentMeta.data
-					: {
-							days: 1,
-							breakfastDeduction: 0,
-							lunchDeduction: 0,
-							dinnerDeduction: 0,
-						};
-
 				if (
 					days !== undefined ||
 					breakfastDeduction !== undefined ||
 					lunchDeduction !== undefined ||
 					dinnerDeduction !== undefined
 				) {
-					updateData.meta = {
-						days: days ?? currentMetaData.days,
+					const current = expense.foodDetail;
+					const next = {
+						days: days ?? current?.days ?? 1,
 						breakfastDeduction:
-							breakfastDeduction ?? currentMetaData.breakfastDeduction,
-						lunchDeduction: lunchDeduction ?? currentMetaData.lunchDeduction,
-						dinnerDeduction: dinnerDeduction ?? currentMetaData.dinnerDeduction,
+							breakfastDeduction ??
+							(current ? decimalToNumber(current.breakfastDeduction) : 0),
+						lunchDeduction:
+							lunchDeduction ??
+							(current ? decimalToNumber(current.lunchDeduction) : 0),
+						dinnerDeduction:
+							dinnerDeduction ??
+							(current ? decimalToNumber(current.dinnerDeduction) : 0),
 					};
+					updateData.foodDetail = { upsert: { create: next, update: next } };
+					before.foodDetail = current
+						? {
+								days: current.days,
+								breakfastDeduction: decimalToNumber(current.breakfastDeduction),
+								lunchDeduction: decimalToNumber(current.lunchDeduction),
+								dinnerDeduction: decimalToNumber(current.dinnerDeduction),
+							}
+						: null;
+					after.foodDetail = next;
 				}
 			}
-
-			const before: Record<string, Prisma.InputJsonValue | null> = {};
-			const after: Record<string, Prisma.InputJsonValue | null> = {};
 
 			if (
 				"description" in updateData &&
@@ -345,10 +361,6 @@ export function createExpenseService(deps: {
 					before.amount = prevAmount;
 					after.amount = nextAmount;
 				}
-			}
-			if ("meta" in updateData) {
-				before.meta = expense.meta as Prisma.InputJsonValue;
-				after.meta = updateData.meta as Prisma.InputJsonValue;
 			}
 
 			if (Object.keys(before).length === 0) {

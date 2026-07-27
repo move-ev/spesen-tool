@@ -4,6 +4,12 @@ import {
 	type EncryptedBankingDetails,
 } from "@/lib/banking/cryptic";
 import {
+	type FoodExpenseDetailDTO,
+	type TravelExpenseDetailDTO,
+	toFoodExpenseDetailDTO,
+	toTravelExpenseDetailDTO,
+} from "@/server/modules/expense/expense.dto";
+import {
 	decimalToNumber,
 	nullableDecimalToNumber,
 } from "@/server/shared/money";
@@ -66,7 +72,8 @@ type ReviewExpenseDTO = {
 	startDate: Date;
 	endDate: Date;
 	type: ExpenseType;
-	meta: Prisma.JsonValue;
+	travelDetail: TravelExpenseDetailDTO | null;
+	foodDetail: FoodExpenseDetailDTO | null;
 	reportId: string;
 };
 
@@ -98,7 +105,8 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 		startDate: expense.startDate,
 		endDate: expense.endDate,
 		type: expense.type,
-		meta: expense.meta,
+		travelDetail: toTravelExpenseDetailDTO(expense.travelDetail),
+		foodDetail: toFoodExpenseDetailDTO(expense.foodDetail),
 		reportId: expense.reportId,
 	}));
 

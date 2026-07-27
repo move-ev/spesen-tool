@@ -65,6 +65,8 @@ export const ModelName = {
   Invitation: 'Invitation',
   Report: 'Report',
   Expense: 'Expense',
+  TravelExpenseDetail: 'TravelExpenseDetail',
+  FoodExpenseDetail: 'FoodExpenseDetail',
   Attachment: 'Attachment',
   Settings: 'Settings',
   Preferences: 'Preferences'
@@ -288,6 +290,29 @@ export const ExpenseScalarFieldEnum = {
 } as const
 
 export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const TravelExpenseDetailScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  from: 'from',
+  to: 'to',
+  distance: 'distance'
+} as const
+
+export type TravelExpenseDetailScalarFieldEnum = (typeof TravelExpenseDetailScalarFieldEnum)[keyof typeof TravelExpenseDetailScalarFieldEnum]
+
+
+export const FoodExpenseDetailScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  days: 'days',
+  breakfastDeduction: 'breakfastDeduction',
+  lunchDeduction: 'lunchDeduction',
+  dinnerDeduction: 'dinnerDeduction'
+} as const
+
+export type FoodExpenseDetailScalarFieldEnum = (typeof FoodExpenseDetailScalarFieldEnum)[keyof typeof FoodExpenseDetailScalarFieldEnum]
 
 
 export const AttachmentScalarFieldEnum = {
