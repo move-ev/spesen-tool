@@ -23,7 +23,7 @@ export type ReportAction =
 	| "submit"
 	| "delete"
 	| "transition"
-	| "review";
+	| "comment";
 
 export const reportPolicy = definePolicy<
 	ReportAction,
@@ -39,7 +39,9 @@ export const reportPolicy = definePolicy<
 		delete: (ctx, report) =>
 			report.ownerId === ctx.userId && isEditable(report.status),
 		transition: (ctx) => ctx.isOrgAdmin,
-		review: (ctx) => ctx.isOrgAdmin,
+		// Commenting is a write, but it is available to anyone who may read the
+		// report: the owner answering a reviewer, or a reviewer asking.
+		comment: (ctx, report) => ctx.isOrgAdmin || report.ownerId === ctx.userId,
 	},
 	"You don't have access to this report.",
 );

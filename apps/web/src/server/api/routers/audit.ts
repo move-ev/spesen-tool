@@ -20,7 +20,7 @@ export const auditRouter = createTRPCRouter({
 			auditService.history(toAuditServiceContext(ctx), ctx.report.id, input),
 		),
 
-	addComment: reportProcedure("read")
+	addComment: reportProcedure("comment")
 		.input(addAuditCommentSchema)
 		.mutation(({ ctx, input }) =>
 			auditService.addComment(

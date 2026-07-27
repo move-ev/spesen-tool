@@ -83,9 +83,7 @@ export const reportRouter = createTRPCRouter({
 			}),
 		),
 
-	exportToPdf: orgProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(({ ctx, input }) =>
-			reportService.exportToPdf(toReportServiceContext(ctx), input),
-		),
+	exportToPdf: reportProcedure("read").mutation(({ ctx }) =>
+		reportService.exportToPdf(toReportServiceContext(ctx), ctx.report),
+	),
 });

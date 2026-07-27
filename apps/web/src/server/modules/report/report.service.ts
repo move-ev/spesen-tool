@@ -391,11 +391,17 @@ export function createReportService(deps: {
 			return updated;
 		},
 
+		/**
+		 * Delegates rendering to the PDF service, which re-checks org and
+		 * ownership itself because its endpoint is independently reachable. The
+		 * report is loaded and authorized here too, so this app never forwards an
+		 * id it has not already validated.
+		 */
 		async exportToPdf(
 			ctx: ReportServiceContext,
-			input: { id: string },
+			report: ReportDetail,
 		): Promise<PdfExportResult> {
-			const response = await fetch(`${env.API_URL}/pdf/report/${input.id}`, {
+			const response = await fetch(`${env.API_URL}/pdf/report/${report.id}`, {
 				method: "POST",
 				headers: {
 					"X-Service-Key": env.INTERNAL_API_SECRET,
