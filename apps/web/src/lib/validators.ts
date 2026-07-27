@@ -120,14 +120,14 @@ export const updatePreferencesServerSchema = z.object({
 });
 
 export const updateMealAllowancesSchema = z.object({
-	dailyFoodAllowance: z.number().min(0),
-	breakfastDeduction: z.number().min(0),
-	lunchDeduction: z.number().min(0),
-	dinnerDeduction: z.number().min(0),
+	dailyFoodAllowance: z.number().min(0).multipleOf(0.01),
+	breakfastDeduction: z.number().min(0).multipleOf(0.01),
+	lunchDeduction: z.number().min(0).multipleOf(0.01),
+	dinnerDeduction: z.number().min(0).multipleOf(0.01),
 });
 
 export const updateTravelAllowancesSchema = z.object({
-	kilometerRate: z.number().min(0),
+	kilometerRate: z.number().min(0).multipleOf(0.01),
 });
 
 export const createCostUnitGroupSchema = z.object({
