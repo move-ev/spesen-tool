@@ -30,6 +30,7 @@ export const attachmentInputSchema = z.object({
 		.number()
 		.int()
 		.nonnegative()
+		.max(MAX_ATTACHMENT_SIZE_BYTES, "Datei überschreitet das 5-MB-Limit")
 		.transform((n) => BigInt(n)),
 	originalName: z.string().min(1),
 });

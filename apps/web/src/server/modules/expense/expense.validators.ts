@@ -1,7 +1,10 @@
 import { ExpenseType } from "@zemio/db/enums";
 import { isValid, parse } from "date-fns";
 import z from "zod";
-import { attachmentInputSchema } from "@/server/modules/attachment";
+import {
+	attachmentInputSchema,
+	MAX_ATTACHMENTS_PER_EXPENSE,
+} from "@/server/modules/attachment";
 
 export const baseCreateExpenseSchema = z.object({
 	description: z.string(),
@@ -34,7 +37,9 @@ export const baseCreateExpenseSchema = z.object({
 
 export const createReceiptExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		attachments: attachmentInputSchema.array(),
+		// Creating a receipt sets the expense's entire attachment set, so the
+		// per-expense total is the binding limit here, not the per-upload batch.
+		attachments: attachmentInputSchema.array().max(MAX_ATTACHMENTS_PER_EXPENSE),
 	}),
 );
 
