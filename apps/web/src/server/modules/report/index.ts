@@ -7,3 +7,4 @@ export * from "./report.query";
 export * from "./report.repository";
 export * from "./report.service";
 export * from "./report.state";
+export * from "./report.validators";

@@ -34,6 +34,10 @@ import {
 	reportRepository,
 } from "./report.repository";
 import { assertAdminTransition, assertSubmittable } from "./report.state";
+import type {
+	transitionReportSchema,
+	updateReportSchema,
+} from "./report.validators";
 
 /** Runs a repository write, mapping Prisma errors (P2002/P2025/…) to typed TRPCErrors. */
 async function runWrite<T>(operation: () => Promise<T>): Promise<T> {
@@ -72,8 +76,8 @@ export type ReportServiceContext = {
 };
 
 type CreateReportInput = z.infer<typeof createReportSchema>;
-type UpdateReportInput = { title?: string; description?: string };
-type TransitionInput = { status: ReportStatus; notify?: boolean };
+type UpdateReportInput = z.infer<typeof updateReportSchema>;
+type TransitionInput = z.infer<typeof transitionReportSchema>;
 
 type PdfExportResult = { url: string; filename: string };
 
