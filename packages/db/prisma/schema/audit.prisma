@@ -14,7 +14,10 @@ model AuditEvent {
   createdAt      DateTime     @default(now())
 
   @@index([organizationId, createdAt])
-  @@index([entityType, entityId, createdAt])
+  // Serves both audit read paths: the report feed filters
+  // (organizationId, entityId IN ...) and the history filters
+  // (organizationId, entityType, entityId) — both lead with organizationId.
+  @@index([organizationId, entityId, createdAt])
   @@index([actorId])
   @@map("audit_event")
 }

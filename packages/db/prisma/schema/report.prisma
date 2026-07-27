@@ -31,7 +31,6 @@ model Report {
 
   expenses Expense[]
 
-  @@index([organizationId])
   @@index([ownerId, organizationId])
   @@index([organizationId, status])
   @@index([costUnitId])

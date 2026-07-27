@@ -12,7 +12,6 @@ model LegalAcceptance {
   // One acceptance row per user/release is intentional. Repeated submissions for
   // the same release are treated as idempotent confirmations, not append-only events.
   @@unique([userId, releaseVersion])
-  @@index([userId])
   @@index([releaseVersion])
   @@map("legal_acceptance")
 }
