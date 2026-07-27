@@ -25,10 +25,9 @@ model Report {
 
   expenses Expense[]
 
-  @@index([ownerId])
   @@index([organizationId])
   @@index([ownerId, organizationId])
-  @@index([status])
+  @@index([organizationId, status])
   @@index([costUnitId])
   @@index([bankingDetailsId])
   @@index([createdAt])
