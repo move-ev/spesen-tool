@@ -5,9 +5,9 @@ import {
 } from "@/lib/banking/cryptic";
 import {
 	type FoodExpenseDetailDTO,
+	resolveFoodDetailDTO,
+	resolveTravelDetailDTO,
 	type TravelExpenseDetailDTO,
-	toFoodExpenseDetailDTO,
-	toTravelExpenseDetailDTO,
 } from "@/server/modules/expense/expense.dto";
 import {
 	decimalToNumber,
@@ -113,8 +113,8 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 		startDate: expense.startDate,
 		endDate: expense.endDate,
 		type: expense.type,
-		travelDetail: toTravelExpenseDetailDTO(expense.travelDetail),
-		foodDetail: toFoodExpenseDetailDTO(expense.foodDetail),
+		travelDetail: resolveTravelDetailDTO(expense),
+		foodDetail: resolveFoodDetailDTO(expense),
 		reportId: expense.reportId,
 	}));
 

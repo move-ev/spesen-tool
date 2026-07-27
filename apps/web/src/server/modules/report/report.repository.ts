@@ -1,4 +1,8 @@
 import type { Prisma, PrismaClient, ReportStatus } from "@zemio/db";
+import {
+	foodDetailSelect,
+	travelDetailSelect,
+} from "@/server/modules/expense/expense.repository";
 
 type Db = PrismaClient;
 
@@ -57,15 +61,9 @@ const reviewDetailSelect = {
 			startDate: true,
 			endDate: true,
 			type: true,
-			travelDetail: { select: { from: true, to: true, distance: true } },
-			foodDetail: {
-				select: {
-					days: true,
-					breakfastDeduction: true,
-					lunchDeduction: true,
-					dinnerDeduction: true,
-				},
-			},
+			meta: true,
+			travelDetail: travelDetailSelect,
+			foodDetail: foodDetailSelect,
 			reportId: true,
 			attachments: {
 				select: {

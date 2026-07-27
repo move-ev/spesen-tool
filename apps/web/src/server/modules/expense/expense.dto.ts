@@ -1,5 +1,6 @@
 import type { ExpenseType, Prisma } from "@zemio/db";
 import { decimalToNumber } from "@/server/shared/money";
+import { foodDetailFromMeta, travelDetailFromMeta } from "./expense.meta";
 import type { ExpenseDetail, ExpenseListItem } from "./expense.repository";
 
 export type TravelExpenseDetailDTO = {
@@ -47,6 +48,41 @@ export function toFoodExpenseDetailDTO(
 	};
 }
 
+type ExpenseDetailSource = {
+	type: ExpenseType;
+	meta: Prisma.JsonValue | null;
+	travelDetail: Parameters<typeof toTravelExpenseDetailDTO>[0];
+	foodDetail: Parameters<typeof toFoodExpenseDetailDTO>[0];
+};
+
+/**
+ * A TRAVEL/FOOD expense written by the pre-normalization app version during
+ * the migration deploy window has no typed detail row yet; fall back to its
+ * legacy `meta` until the contract-phase backfill re-run covers it.
+ */
+export function resolveTravelDetailDTO(
+	expense: ExpenseDetailSource,
+): TravelExpenseDetailDTO | null {
+	if (expense.type !== "TRAVEL") {
+		return null;
+	}
+	return (
+		toTravelExpenseDetailDTO(expense.travelDetail) ??
+		travelDetailFromMeta(expense.meta)
+	);
+}
+
+export function resolveFoodDetailDTO(
+	expense: ExpenseDetailSource,
+): FoodExpenseDetailDTO | null {
+	if (expense.type !== "FOOD") {
+		return null;
+	}
+	return (
+		toFoodExpenseDetailDTO(expense.foodDetail) ?? foodDetailFromMeta(expense.meta)
+	);
+}
+
 export type ExpenseByIdDTO = {
 	id: string;
 	reportId: string;
@@ -68,8 +104,8 @@ export function toExpenseByIdDTO(expense: ExpenseDetail): ExpenseByIdDTO {
 		description: expense.description,
 		startDate: expense.startDate,
 		endDate: expense.endDate,
-		travelDetail: toTravelExpenseDetailDTO(expense.travelDetail),
-		foodDetail: toFoodExpenseDetailDTO(expense.foodDetail),
+		travelDetail: resolveTravelDetailDTO(expense),
+		foodDetail: resolveFoodDetailDTO(expense),
 	};
 }
 
@@ -121,8 +157,8 @@ export function toExpenseListItemDTO(
 		description: expense.description,
 		startDate: expense.startDate,
 		endDate: expense.endDate,
-		travelDetail: toTravelExpenseDetailDTO(expense.travelDetail),
-		foodDetail: toFoodExpenseDetailDTO(expense.foodDetail),
+		travelDetail: resolveTravelDetailDTO(expense),
+		foodDetail: resolveFoodDetailDTO(expense),
 		attachments: expense.attachments.map(toAttachmentListItemDTO),
 	};
 }

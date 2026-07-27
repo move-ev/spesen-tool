@@ -16,6 +16,7 @@ import {
 	toExpenseByIdDTO,
 	toExpenseListItemDTO,
 } from "./expense.dto";
+import { foodDetailFromMeta, travelDetailFromMeta } from "./expense.meta";
 import { type ExpensePolicyContext, expensePolicy } from "./expense.policy";
 import {
 	type ExpenseDetail,
@@ -256,22 +257,24 @@ export function createExpenseService(deps: {
 
 			if (expense.type === ExpenseType.TRAVEL) {
 				if (from !== undefined || to !== undefined || distance !== undefined) {
-					const current = expense.travelDetail;
-					const next = {
-						from: from ?? current?.from ?? "",
-						to: to ?? current?.to ?? "",
-						distance: distance ?? (current ? decimalToNumber(current.distance) : 0),
-					};
-					// Upsert covers legacy rows whose detail row has not been
-					// backfilled yet (created during the migration deploy window).
-					updateData.travelDetail = { upsert: { create: next, update: next } };
-					before.travelDetail = current
+					// Legacy rows created during the migration deploy window have no
+					// detail row yet; their current values live in the deprecated
+					// meta column and must survive a partial update. The upsert then
+					// creates the missing detail row.
+					const current = expense.travelDetail
 						? {
-								from: current.from,
-								to: current.to,
-								distance: decimalToNumber(current.distance),
+								from: expense.travelDetail.from,
+								to: expense.travelDetail.to,
+								distance: decimalToNumber(expense.travelDetail.distance),
 							}
-						: null;
+						: travelDetailFromMeta(expense.meta);
+					const next = {
+						from: from ?? current.from,
+						to: to ?? current.to,
+						distance: distance ?? current.distance,
+					};
+					updateData.travelDetail = { upsert: { create: next, update: next } };
+					before.travelDetail = current;
 					after.travelDetail = next;
 				}
 
@@ -289,28 +292,25 @@ export function createExpenseService(deps: {
 					lunchDeduction !== undefined ||
 					dinnerDeduction !== undefined
 				) {
-					const current = expense.foodDetail;
+					// Same deploy-window fallback as the travel branch above.
+					const current = expense.foodDetail
+						? {
+								days: expense.foodDetail.days,
+								breakfastDeduction: decimalToNumber(
+									expense.foodDetail.breakfastDeduction,
+								),
+								lunchDeduction: decimalToNumber(expense.foodDetail.lunchDeduction),
+								dinnerDeduction: decimalToNumber(expense.foodDetail.dinnerDeduction),
+							}
+						: foodDetailFromMeta(expense.meta);
 					const next = {
-						days: days ?? current?.days ?? 1,
-						breakfastDeduction:
-							breakfastDeduction ??
-							(current ? decimalToNumber(current.breakfastDeduction) : 0),
-						lunchDeduction:
-							lunchDeduction ??
-							(current ? decimalToNumber(current.lunchDeduction) : 0),
-						dinnerDeduction:
-							dinnerDeduction ??
-							(current ? decimalToNumber(current.dinnerDeduction) : 0),
+						days: days ?? current.days,
+						breakfastDeduction: breakfastDeduction ?? current.breakfastDeduction,
+						lunchDeduction: lunchDeduction ?? current.lunchDeduction,
+						dinnerDeduction: dinnerDeduction ?? current.dinnerDeduction,
 					};
 					updateData.foodDetail = { upsert: { create: next, update: next } };
-					before.foodDetail = current
-						? {
-								days: current.days,
-								breakfastDeduction: decimalToNumber(current.breakfastDeduction),
-								lunchDeduction: decimalToNumber(current.lunchDeduction),
-								dinnerDeduction: decimalToNumber(current.dinnerDeduction),
-							}
-						: null;
+					before.foodDetail = current;
 					after.foodDetail = next;
 				}
 			}

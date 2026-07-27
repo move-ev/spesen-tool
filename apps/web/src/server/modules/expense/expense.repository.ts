@@ -2,11 +2,13 @@ import type { Prisma, PrismaClient } from "@zemio/db";
 
 type Db = PrismaClient;
 
-const travelDetailSelect = {
+// Shared with the report module's review projection so both read paths
+// stay one shape (see report.repository.ts).
+export const travelDetailSelect = {
 	select: { from: true, to: true, distance: true },
 } as const;
 
-const foodDetailSelect = {
+export const foodDetailSelect = {
 	select: {
 		days: true,
 		breakfastDeduction: true,
@@ -23,6 +25,9 @@ const expenseDetailSelect = {
 	description: true,
 	startDate: true,
 	endDate: true,
+	// Deprecated fallback source for rows whose typed detail row has not
+	// been backfilled yet (see expense.meta.ts).
+	meta: true,
 	travelDetail: travelDetailSelect,
 	foodDetail: foodDetailSelect,
 	report: {
@@ -42,6 +47,7 @@ const expenseListItemSelect = {
 	description: true,
 	startDate: true,
 	endDate: true,
+	meta: true,
 	travelDetail: travelDetailSelect,
 	foodDetail: foodDetailSelect,
 	attachments: {
