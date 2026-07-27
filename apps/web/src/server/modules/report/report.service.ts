@@ -22,7 +22,7 @@ import {
 	toReviewDTO,
 } from "./report.dto";
 import { type ReportEventEmitter, reportEventBus } from "./report.events";
-import { authorizeReport } from "./report.policy";
+import { reportPolicy } from "./report.policy";
 import {
 	buildReportListOrderBy,
 	buildReportListWhere,
@@ -158,7 +158,7 @@ export function createReportService(deps: {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Report not found" });
 			}
 
-			authorizeReport(
+			reportPolicy.authorize(
 				"read",
 				{
 					userId: ctx.userId,

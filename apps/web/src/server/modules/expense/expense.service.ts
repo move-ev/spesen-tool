@@ -21,7 +21,7 @@ import {
 	toExpenseByIdDTO,
 	toExpenseListItemDTO,
 } from "./expense.dto";
-import { authorizeExpense, type ExpensePolicyContext } from "./expense.policy";
+import { type ExpensePolicyContext, expensePolicy } from "./expense.policy";
 import {
 	type ExpenseDetail,
 	type ExpenseRepository,
@@ -123,7 +123,7 @@ export function createExpenseService(deps: {
 			input: { reportId: string },
 		): Promise<ExpenseListItemDTO[]> {
 			const report = await loadReport(ctx, input.reportId);
-			authorizeExpense("read", toPolicyContext(ctx), { report });
+			expensePolicy.authorize("read", toPolicyContext(ctx), { report });
 			const expenses = await repo.listForReport(ctx.db, input.reportId);
 			return expenses.map(toExpenseListItemDTO);
 		},
