@@ -72,6 +72,11 @@ export type Verification = Prisma.VerificationModel
  */
 export type BankingDetails = Prisma.BankingDetailsModel
 /**
+ * Model ReportBankingSnapshot
+ * 
+ */
+export type ReportBankingSnapshot = Prisma.ReportBankingSnapshotModel
+/**
  * Model CostUnitGroup
  * 
  */

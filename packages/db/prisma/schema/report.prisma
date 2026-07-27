@@ -17,8 +17,14 @@ model Report {
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
 
-  bankingDetailsId String
-  bankingDetails   BankingDetails @relation(fields: [bankingDetailsId], references: [id], onDelete: Restrict)
+  // Live reference used while the report is editable; may become null when
+  // the owner deletes the banking details. Submitting requires it to be set
+  // and copies the values into bankingSnapshot, which finalized reports and
+  // PDF exports read.
+  bankingDetailsId String?
+  bankingDetails   BankingDetails? @relation(fields: [bankingDetailsId], references: [id], onDelete: SetNull)
+
+  bankingSnapshot ReportBankingSnapshot?
 
   createdAt     DateTime @default(now())
   lastUpdatedAt DateTime @updatedAt

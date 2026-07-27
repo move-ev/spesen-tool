@@ -390,6 +390,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   BankingDetails: 'BankingDetails',
+  ReportBankingSnapshot: 'ReportBankingSnapshot',
   CostUnitGroup: 'CostUnitGroup',
   CostUnit: 'CostUnit',
   LegalAcceptance: 'LegalAcceptance',
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auditEvent" | "user" | "session" | "account" | "verification" | "bankingDetails" | "costUnitGroup" | "costUnit" | "legalAcceptance" | "organization" | "member" | "invitation" | "report" | "expense" | "travelExpenseDetail" | "foodExpenseDetail" | "attachment" | "settings" | "preferences"
+    modelProps: "auditEvent" | "user" | "session" | "account" | "verification" | "bankingDetails" | "reportBankingSnapshot" | "costUnitGroup" | "costUnit" | "legalAcceptance" | "organization" | "member" | "invitation" | "report" | "expense" | "travelExpenseDetail" | "foodExpenseDetail" | "attachment" | "settings" | "preferences"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -863,6 +864,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BankingDetailsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BankingDetailsCountAggregateOutputType> | number
+        }
+      }
+    }
+    ReportBankingSnapshot: {
+      payload: Prisma.$ReportBankingSnapshotPayload<ExtArgs>
+      fields: Prisma.ReportBankingSnapshotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReportBankingSnapshotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReportBankingSnapshotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>
+        }
+        findFirst: {
+          args: Prisma.ReportBankingSnapshotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReportBankingSnapshotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>
+        }
+        findMany: {
+          args: Prisma.ReportBankingSnapshotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>[]
+        }
+        create: {
+          args: Prisma.ReportBankingSnapshotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>
+        }
+        createMany: {
+          args: Prisma.ReportBankingSnapshotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReportBankingSnapshotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>[]
+        }
+        delete: {
+          args: Prisma.ReportBankingSnapshotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>
+        }
+        update: {
+          args: Prisma.ReportBankingSnapshotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReportBankingSnapshotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReportBankingSnapshotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReportBankingSnapshotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReportBankingSnapshotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportBankingSnapshotPayload>
+        }
+        aggregate: {
+          args: Prisma.ReportBankingSnapshotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReportBankingSnapshot>
+        }
+        groupBy: {
+          args: Prisma.ReportBankingSnapshotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReportBankingSnapshotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReportBankingSnapshotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReportBankingSnapshotCountAggregateOutputType> | number
         }
       }
     }
@@ -1962,6 +2037,17 @@ export const BankingDetailsScalarFieldEnum = {
 export type BankingDetailsScalarFieldEnum = (typeof BankingDetailsScalarFieldEnum)[keyof typeof BankingDetailsScalarFieldEnum]
 
 
+export const ReportBankingSnapshotScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  iban: 'iban',
+  fullName: 'fullName',
+  createdAt: 'createdAt'
+} as const
+
+export type ReportBankingSnapshotScalarFieldEnum = (typeof ReportBankingSnapshotScalarFieldEnum)[keyof typeof ReportBankingSnapshotScalarFieldEnum]
+
+
 export const CostUnitGroupScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -2492,6 +2578,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
   bankingDetails?: Prisma.BankingDetailsOmit
+  reportBankingSnapshot?: Prisma.ReportBankingSnapshotOmit
   costUnitGroup?: Prisma.CostUnitGroupOmit
   costUnit?: Prisma.CostUnitOmit
   legalAcceptance?: Prisma.LegalAcceptanceOmit
