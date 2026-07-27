@@ -48,7 +48,7 @@ export const createTravelExpenseSchema = baseCreateExpenseSchema.and(
 
 export const createFoodExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		days: z.number().min(1),
+		days: z.number().int().min(1),
 		breakfastDeduction: z.number().min(0).multipleOf(0.01),
 		lunchDeduction: z.number().min(0).multipleOf(0.01),
 		dinnerDeduction: z.number().min(0).multipleOf(0.01),
@@ -63,7 +63,7 @@ export const updateExpenseSchema = z.object({
 	from: z.string().min(1).optional(),
 	to: z.string().min(1).optional(),
 	distance: z.number().min(1).optional(),
-	days: z.number().min(1).optional(),
+	days: z.number().int().min(1).optional(),
 	breakfastDeduction: z.number().min(0).multipleOf(0.01).optional(),
 	lunchDeduction: z.number().min(0).multipleOf(0.01).optional(),
 	dinnerDeduction: z.number().min(0).multipleOf(0.01).optional(),

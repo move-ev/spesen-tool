@@ -56,7 +56,15 @@ const reviewDetailSelect = {
 			startDate: true,
 			endDate: true,
 			type: true,
-			meta: true,
+			travelDetail: { select: { from: true, to: true, distance: true } },
+			foodDetail: {
+				select: {
+					days: true,
+					breakfastDeduction: true,
+					lunchDeduction: true,
+					dinnerDeduction: true,
+				},
+			},
 			reportId: true,
 			attachments: {
 				select: {

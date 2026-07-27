@@ -88,6 +88,16 @@ export type Report = Prisma.ReportModel
  */
 export type Expense = Prisma.ExpenseModel
 /**
+ * Model TravelExpenseDetail
+ * 
+ */
+export type TravelExpenseDetail = Prisma.TravelExpenseDetailModel
+/**
+ * Model FoodExpenseDetail
+ * 
+ */
+export type FoodExpenseDetail = Prisma.FoodExpenseDetailModel
+/**
  * Model Attachment
  * 
  */
