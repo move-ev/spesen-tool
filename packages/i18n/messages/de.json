@@ -1,6 +1,14 @@
 {
 	"common": {
-		"appName": "Zemio"
+		"appName": "Zemio",
+		"saveBar": {
+			"message": "Du hast ungespeicherte Änderungen",
+			"save": "Speichern",
+			"saving": "Wird gespeichert…",
+			"discard": "Verwerfen",
+			"saved": "Gespeichert",
+			"savedMessage": "Alle Änderungen gespeichert"
+		}
 	},
 	"enums": {
 		"reportStatus": {
@@ -713,6 +721,10 @@
 			"allowances": {
 				"title": "Zulagen & Abzüge",
 				"description": "Verwalte die Zulagen und Abzüge für Spesenanträge.",
+				"sections": {
+					"travel": "Reisepauschale",
+					"food": "Verpflegungspauschale"
+				},
 				"kilometerRate": {
 					"label": "Kilometerpauschale",
 					"description": "Dieser Betrag wird pro Kilometer für Reise-Ausgaben berechnet."
@@ -815,6 +827,7 @@
 					"createdAt": "Erstellt",
 					"group": "Gruppe",
 					"noGroup": "Keine Gruppe",
+					"examples": "Beispiele",
 					"status": "Status",
 					"statusActive": "Aktiv",
 					"statusArchived": "Archiviert",
@@ -930,6 +943,7 @@
 				"notifications": {
 					"title": "Benachrichtigungen",
 					"description": "Wähle welche Benachrichtigungen du erhalten möchtest",
+					"sectionNotifications": "Benachrichtigungen",
 					"fieldLabel": "Benachrichtigungen",
 					"fieldDescription": "Wähle welche Benachrichtigungen du erhalten möchtest",
 					"allTitle": "Alle Benachrichtigungen",
