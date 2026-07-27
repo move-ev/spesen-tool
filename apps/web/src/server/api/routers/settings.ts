@@ -97,7 +97,7 @@ export const settingsRouter = createTRPCRouter({
 	update: orgAdminProcedure
 		.input(
 			z.object({
-				kilometerRate: z.number().positive().optional(),
+				kilometerRate: z.number().positive().multipleOf(0.01).optional(),
 				reviewerEmail: z
 					.string()
 					.refine(
