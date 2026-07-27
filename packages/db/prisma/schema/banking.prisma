@@ -1,0 +1,21 @@
+// Banking details; iban and fullName are stored encrypted (AES-256-GCM)
+
+model BankingDetails {
+  id    String @id @default(cuid())
+  // Used for displaying the banking details in the UI without exposing the iban
+  title String
+
+  iban     String
+  fullName String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reports Report[]
+
+  @@index([userId])
+  @@map("banking_details")
+}

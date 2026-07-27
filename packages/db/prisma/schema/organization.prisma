@@ -1,0 +1,55 @@
+// Multi-tenancy models, managed by the better-auth organization plugin
+
+model Organization {
+  id                String   @id
+  name              String
+  slug              String   @unique
+  logo              String?
+  metadata          String?
+  createdAt         DateTime
+  microsoftTenantId String?
+
+  members     Member[]
+  invitations Invitation[]
+
+  reports        Report[]
+  costUnits      CostUnit[]
+  costUnitGroups CostUnitGroup[]
+  settings       Settings?
+  auditEvents    AuditEvent[]
+
+  @@map("organization")
+}
+
+model Member {
+  id             String   @id
+  userId         String
+  organizationId String
+  role           String
+  createdAt      DateTime
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([organizationId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String   @id
+  email          String
+  inviterId      String
+  organizationId String
+  role           String?
+  status         String
+  expiresAt      DateTime
+  createdAt      DateTime
+
+  inviter      User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([organizationId])
+  @@map("invitation")
+}

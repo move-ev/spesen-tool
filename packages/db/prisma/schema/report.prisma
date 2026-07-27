@@ -1,0 +1,85 @@
+// Core expense-report domain: Report → Expense → Attachment
+
+model Report {
+  id          String       @id @default(cuid())
+  tag         Int          @unique @default(autoincrement())
+  title       String
+  description String?
+  status      ReportStatus @default(DRAFT)
+  paidAt      DateTime?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  costUnitId String
+  costUnit   CostUnit @relation(fields: [costUnitId], references: [id], onDelete: Cascade)
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
+
+  bankingDetailsId String
+  bankingDetails   BankingDetails @relation(fields: [bankingDetailsId], references: [id], onDelete: Restrict)
+
+  createdAt     DateTime @default(now())
+  lastUpdatedAt DateTime @updatedAt
+
+  expenses Expense[]
+
+  @@index([ownerId])
+  @@index([organizationId])
+  @@index([ownerId, organizationId])
+  @@index([status])
+  @@index([costUnitId])
+  @@index([bankingDetailsId])
+  @@index([createdAt])
+  @@index([lastUpdatedAt])
+  @@index([paidAt])
+  @@map("report")
+}
+
+enum ReportStatus {
+  DRAFT
+  PENDING_APPROVAL
+  NEEDS_REVISION
+  ACCEPTED
+  REJECTED
+  PAID
+}
+
+model Expense {
+  id          String      @id @default(cuid())
+  description String?
+  amount      Decimal
+  startDate   DateTime
+  endDate     DateTime
+  type        ExpenseType
+  meta        Json
+
+  reportId    String
+  report      Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+
+  @@index([reportId])
+  @@map("expense")
+}
+
+enum ExpenseType {
+  RECEIPT
+  TRAVEL
+  FOOD
+}
+
+model Attachment {
+  id           String   @id @default(cuid())
+  key          String
+  size         BigInt
+  originalName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  expenseId    String
+  expense      Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@index([expenseId])
+  @@map("attachment")
+}

@@ -31,8 +31,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Reports
- * const reports = await prisma.report.findMany()
+ * // Fetch zero or more AuditEvents
+ * const auditEvents = await prisma.auditEvent.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,20 +42,10 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Report
+ * Model AuditEvent
  * 
  */
-export type Report = Prisma.ReportModel
-/**
- * Model Expense
- * 
- */
-export type Expense = Prisma.ExpenseModel
-/**
- * Model Attachment
- * 
- */
-export type Attachment = Prisma.AttachmentModel
+export type AuditEvent = Prisma.AuditEventModel
 /**
  * Model User
  * 
@@ -77,6 +67,26 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model BankingDetails
+ * 
+ */
+export type BankingDetails = Prisma.BankingDetailsModel
+/**
+ * Model CostUnitGroup
+ * 
+ */
+export type CostUnitGroup = Prisma.CostUnitGroupModel
+/**
+ * Model CostUnit
+ * 
+ */
+export type CostUnit = Prisma.CostUnitModel
+/**
+ * Model LegalAcceptance
+ * 
+ */
+export type LegalAcceptance = Prisma.LegalAcceptanceModel
+/**
  * Model Organization
  * 
  */
@@ -92,37 +102,27 @@ export type Member = Prisma.MemberModel
  */
 export type Invitation = Prisma.InvitationModel
 /**
- * Model Preferences
+ * Model Report
  * 
  */
-export type Preferences = Prisma.PreferencesModel
+export type Report = Prisma.ReportModel
 /**
- * Model LegalAcceptance
+ * Model Expense
  * 
  */
-export type LegalAcceptance = Prisma.LegalAcceptanceModel
+export type Expense = Prisma.ExpenseModel
+/**
+ * Model Attachment
+ * 
+ */
+export type Attachment = Prisma.AttachmentModel
 /**
  * Model Settings
  * 
  */
 export type Settings = Prisma.SettingsModel
 /**
- * Model CostUnitGroup
+ * Model Preferences
  * 
  */
-export type CostUnitGroup = Prisma.CostUnitGroupModel
-/**
- * Model CostUnit
- * 
- */
-export type CostUnit = Prisma.CostUnitModel
-/**
- * Model AuditEvent
- * 
- */
-export type AuditEvent = Prisma.AuditEventModel
-/**
- * Model BankingDetails
- * 
- */
-export type BankingDetails = Prisma.BankingDetailsModel
+export type Preferences = Prisma.PreferencesModel
