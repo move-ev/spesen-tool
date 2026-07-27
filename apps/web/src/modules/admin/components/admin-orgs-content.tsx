@@ -40,7 +40,7 @@ function AdminOrgsContent({
 	organizations: Organization[];
 }) {
 	const { data: organizations = initialOrgs } =
-		api.platformAdmin.listOrganizations.useQuery(undefined, {
+		api.platformAdmin.organizations.list.useQuery(undefined, {
 			initialData: initialOrgs,
 		});
 	const t = useTranslations("modules.admin.orgsContent");
@@ -107,11 +107,11 @@ function CreateOrganization() {
 
 	const utils = api.useUtils();
 
-	const createOrg = api.platformAdmin.createOrganization.useMutation({
+	const createOrg = api.platformAdmin.organizations.create.useMutation({
 		onSuccess: async () => {
 			toast.success(t("createSuccess"));
 			setIsDialogOpen(false);
-			await utils.platformAdmin.listOrganizations.invalidate();
+			await utils.platformAdmin.organizations.list.invalidate();
 		},
 		onError: (error) => {
 			toast.error(error.message);
