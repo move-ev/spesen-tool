@@ -69,7 +69,7 @@ function EditBankingDetailsFormContent({
 	onClose: () => void;
 }) {
 	const t = useTranslations("modules.preferences.editBankingDetails");
-	const { data, isPending, isError } = api.bankingDetails.get.useQuery({
+	const { data, isPending, isError } = api.bankingDetails.byId.useQuery({
 		id: detailsId,
 	});
 
@@ -111,7 +111,7 @@ function EditBankingDetailsFormInner({
 		onSuccess: () => {
 			toast.success(t("updateSuccess"));
 			utils.bankingDetails.list.invalidate();
-			utils.bankingDetails.get.invalidate({ id: data.id });
+			utils.bankingDetails.byId.invalidate({ id: data.id });
 			onClose();
 		},
 		onError: (error) => {
