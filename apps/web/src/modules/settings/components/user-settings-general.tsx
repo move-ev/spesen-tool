@@ -45,15 +45,15 @@ function UserSettingsGeneral() {
 function ProfileForm() {
 	const t = useTranslations("modules.settings.preferences.general");
 	const utils = api.useUtils();
-	const [user] = api.user.getOwn.useSuspenseQuery();
+	const [user] = api.user.get.useSuspenseQuery();
 	const [nameInput, setNameInput] = useState(user.name);
 	const debouncedName = useDebounce(nameInput, 600);
 	const isInitialMount = useRef(true);
 
-	const updateName = api.user.updateOwnName.useMutation({
+	const updateName = api.user.updateName.useMutation({
 		onSuccess: () => {
 			toast.success(t("savedToast"));
-			void utils.user.getOwn.invalidate();
+			void utils.user.get.invalidate();
 		},
 		onError: (error) => {
 			toast.error(t("saveErrorTitle"), {

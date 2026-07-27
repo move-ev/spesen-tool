@@ -1,21 +1,15 @@
 import { updateUserNameSchema } from "@/lib/validators";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { toUserServiceContext, userService } from "@/server/modules/user";
 
 export const userRouter = createTRPCRouter({
-	getOwn: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.db.user.findUniqueOrThrow({
-			where: { id: ctx.session.user.id },
-			select: { id: true, name: true, email: true, image: true },
-		});
-	}),
+	get: protectedProcedure.query(({ ctx }) =>
+		userService.get(toUserServiceContext(ctx)),
+	),
 
-	updateOwnName: protectedProcedure
+	updateName: protectedProcedure
 		.input(updateUserNameSchema)
-		.mutation(async ({ ctx, input }) => {
-			return await ctx.db.user.update({
-				where: { id: ctx.session.user.id },
-				data: { name: input.name },
-				select: { id: true, name: true, email: true, image: true },
-			});
-		}),
+		.mutation(({ ctx, input }) =>
+			userService.updateName(toUserServiceContext(ctx), input),
+		),
 });

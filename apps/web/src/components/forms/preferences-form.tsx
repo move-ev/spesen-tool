@@ -21,12 +21,12 @@ export function PreferencesForm() {
 	const t = useTranslations("modules.shared.preferencesForm");
 	const tActions = useTranslations("modules.settings.actions");
 	const utils = api.useUtils();
-	const [preferences] = api.preferences.getOwn.useSuspenseQuery();
+	const [preferences] = api.preferences.get.useSuspenseQuery();
 
-	const updatePreferences = api.preferences.updateOwn.useMutation({
+	const updatePreferences = api.preferences.update.useMutation({
 		onSuccess: () => {
 			toast.success(t("saveSuccess"));
-			utils.preferences.getOwn.invalidate();
+			utils.preferences.get.invalidate();
 		},
 		onError: (error) => {
 			toast.error(t("saveError"), {
