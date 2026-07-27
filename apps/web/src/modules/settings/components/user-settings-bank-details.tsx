@@ -1,10 +1,28 @@
 "use client";
+
+import { Dialog as DialogPrimitive } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
+import {
+	Button,
+	Dialog,
+	DialogBody,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+	Input,
+	Skeleton,
+} from "@zemio/ui";
 import { format } from "date-fns";
-import { PlusIcon } from "lucide-react";
+import { LoaderIcon, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type React from "react";
-import { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 import z from "zod";
 import {
@@ -14,98 +32,87 @@ import {
 	BoxItemDescription,
 	BoxItemTitle,
 } from "@/components/box";
-import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from "@/components/ui/field";
 import { IbanInput } from "@/components/ui/iban-input";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
+import type { WithHandle } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { ibanSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
+import {
+	SettingsCard,
+	SettingsCardContent,
+	SettingsCardLabel,
+} from "./settings-card";
 import { SettingsSubtitle, SettingsTitle } from "./settings-typography";
 
-function UserSettingsBankDetails() {
+function UserSettingsBankDetails({
+	className,
+	...props
+}: React.ComponentProps<"main">) {
 	const t = useTranslations("modules.settings.banking");
 
 	return (
-		<main>
-			<div className="space-y-1">
-				<SettingsTitle>{t("title")}</SettingsTitle>
-				<SettingsSubtitle>{t("description")}</SettingsSubtitle>
+		<main className={cn("py-16", className)} data-slot="component" {...props}>
+			<div className="container flex max-w-4xl flex-wrap items-start justify-between gap-6">
+				<div className="space-y-1">
+					<SettingsTitle>{t("title")}</SettingsTitle>
+					<SettingsSubtitle>{t("description")}</SettingsSubtitle>
+				</div>
+				<UserSettingsBankDetailsActions className="flex items-center justify-center gap-4" />
 			</div>
-			<div className="mt-12">
-				<div className="flex flex-wrap items-center justify-between gap-4">
-					<p className="font-medium text-xs text-zinc-600">{t("listHeading")}</p>
-					<CreateBankingDetails
-						className={"text-blue-500"}
-						size={"sm"}
-						variant={"ghost"}
-					>
-						{t("createButton")} <PlusIcon />
-					</CreateBankingDetails>
-				</div>
-				<div className="mt-1">
-					<DetailsList />
-				</div>
+			<div className="container mt-12 max-w-4xl">
+				<BankDetailsList />
 			</div>
 		</main>
 	);
 }
 
-function DetailsList() {
+function UserSettingsBankDetailsActions({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.banking");
-	const { data: details, isPending } = api.bankingDetails.list.useQuery();
 
-	if (isPending) {
-		return <Skeleton className="min-h-32 w-full" />;
-	}
-
-	if (!details) {
-		return <p>{t("loadErrorFallback")}</p>;
-	}
-
-	if (details.length === 0) {
-		return (
-			<Box>
-				<BoxItem className="min-h-24">
-					<BoxItemContent className="flex w-full flex-col items-center justify-center text-center">
-						<BoxItemTitle>{t("emptyTitle")}</BoxItemTitle>
-						<BoxItemDescription>{t("emptyDescription")}</BoxItemDescription>
-					</BoxItemContent>
-				</BoxItem>
-			</Box>
-		);
-	}
+	const createHandleRef = React.useRef<CreateBankDetailsHandle | null>(null);
+	if (!createHandleRef.current)
+		createHandleRef.current = createBankDetailsCreateHandle();
+	const createHandle = createHandleRef.current;
 
 	return (
-		<Box>
-			{details.map((detail) => (
-				<BoxItem key={detail.id}>
-					<BoxItemContent>
-						<BoxItemTitle>{detail.title}</BoxItemTitle>
-						<BoxItemDescription>
-							{t("createdOn", {
-								date: format(detail.createdAt, "dd.MM.yyyy"),
-								time: format(detail.createdAt, "HH:mm"),
-							})}
-						</BoxItemDescription>
-					</BoxItemContent>
-				</BoxItem>
-			))}
-		</Box>
+		<>
+			<div
+				className={cn("", className)}
+				data-slot="org-settings-cost-units-actions"
+				{...props}
+			>
+				<CreateBankDetailsDialogTrigger handle={createHandle}>
+					{t("createButton")} <PlusIcon />
+				</CreateBankDetailsDialogTrigger>
+			</div>
+			<CreateBankDetails handle={createHandle} />
+		</>
+	);
+}
+
+// ===== CREATE BANK DETAILS =================================================================
+
+type CreateBankDetailsHandle = ReturnType<typeof DialogPrimitive.createHandle>;
+
+const CREATE_BANK_DETAILS_FORM_ID = "create-bank-details-form";
+
+function createBankDetailsCreateHandle(): CreateBankDetailsHandle {
+	return DialogPrimitive.createHandle();
+}
+
+function CreateBankDetailsDialogTrigger({
+	handle,
+	...props
+}: React.ComponentProps<typeof Button> & WithHandle) {
+	return (
+		<DialogPrimitive.Trigger
+			data-slot="create-bank-details-dialog-trigger"
+			handle={handle}
+			render={<Button {...props} />}
+		/>
 	);
 }
 
@@ -115,18 +122,20 @@ const createBankingDetailsSchema = z.object({
 	fullName: z.string().min(1),
 });
 
-export function CreateBankingDetails({
-	...props
-}: React.ComponentProps<typeof Button>) {
+function CreateBankDetails({
+	handle,
+	closeOnSuccess = true,
+}: WithHandle & {
+	closeOnSuccess?: boolean;
+}) {
 	const t = useTranslations("modules.settings.banking.createDialog");
 	const utils = api.useUtils();
-	const [open, setOpen] = useState(false);
 
 	const createBankingDetails = api.bankingDetails.create.useMutation({
 		onSuccess: () => {
-			toast.success(t("savedToast"));
 			utils.bankingDetails.list.invalidate();
-			setOpen(false);
+
+			closeOnSuccess && handle.close();
 			form.reset();
 		},
 		onError: (error) => {
@@ -151,22 +160,21 @@ export function CreateBankingDetails({
 	});
 
 	return (
-		<Dialog onOpenChange={setOpen} open={open}>
-			<DialogTrigger render={<Button {...props} />} />
+		<Dialog data-slot="create-bank-details" handle={handle}>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>{t("title")}</DialogTitle>
 					<DialogDescription>{t("description")}</DialogDescription>
 				</DialogHeader>
-				<div>
+				<DialogBody>
 					<form
-						id="form-create-banking-details"
+						id={CREATE_BANK_DETAILS_FORM_ID}
 						onSubmit={(e) => {
 							e.preventDefault();
 							form.handleSubmit();
 						}}
 					>
-						<FieldGroup className="grid gap-4">
+						<FieldGroup className="grid gap-8">
 							<form.Field name="title">
 								{(field) => {
 									const isInvalid =
@@ -229,18 +237,94 @@ export function CreateBankingDetails({
 									);
 								}}
 							</form.Field>
-							<Button
-								disabled={createBankingDetails.isPending}
-								form="form-create-banking-details"
-								type="submit"
-							>
-								{createBankingDetails.isPending ? t("submitCreating") : t("submitIdle")}
-							</Button>
 						</FieldGroup>
 					</form>
-				</div>
+				</DialogBody>
+				<DialogFooter>
+					<form.Subscribe
+						selector={(s) => ({
+							isDefaultValue: s.isDefaultValue,
+							isSubmitting: s.isSubmitting,
+							canSubmit: s.canSubmit,
+						})}
+					>
+						{({ canSubmit, isDefaultValue, isSubmitting }) => {
+							const loading = createBankingDetails.isPending || isSubmitting;
+							const isSubmittable = !loading && canSubmit && !isDefaultValue;
+
+							return (
+								<Button
+									disabled={!isSubmittable}
+									form={CREATE_BANK_DETAILS_FORM_ID}
+									type="submit"
+								>
+									{createBankingDetails.isPending ? (
+										<>
+											<LoaderIcon className="animate-spin" />
+											{t("submitCreating")}
+										</>
+									) : (
+										t("submitIdle")
+									)}
+								</Button>
+							);
+						}}
+					</form.Subscribe>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+// ===== BANK DETAILS LIST ===================================================================
+
+function BankDetailsList({ className, ...props }: React.ComponentProps<"div">) {
+	const t = useTranslations("modules.settings.banking");
+	const { data: details, isPending } = api.bankingDetails.list.useQuery();
+
+	if (isPending) {
+		return <Skeleton className="min-h-32 w-full" />;
+	}
+
+	if (!details) {
+		return <p>{t("loadErrorFallback")}</p>;
+	}
+
+	if (details.length === 0) {
+		return (
+			<Box>
+				<BoxItem className="min-h-24">
+					<BoxItemContent className="flex w-full flex-col items-center justify-center text-center">
+						<BoxItemTitle>{t("emptyTitle")}</BoxItemTitle>
+						<BoxItemDescription>{t("emptyDescription")}</BoxItemDescription>
+					</BoxItemContent>
+				</BoxItem>
+			</Box>
+		);
+	}
+
+	return (
+		<SettingsCard className={cn("", className)} data-slot="component" {...props}>
+			<SettingsCardLabel>{t("listHeading")}</SettingsCardLabel>
+			<SettingsCardContent className="px-4 py-6">
+				<ul>
+					{details.map((detail) => (
+						<li
+							className="border-base-200 border-b py-4 first:pt-0 last:border-b-0 last:pb-0"
+							key={detail.id}
+						>
+							<p className="font-medium text-base-800 text-sm">{detail.title}</p>
+							<p className="mt-0.5 text-base-500 text-xs">
+								{t("createdOn", {
+									date: format(detail.createdAt, "dd.MM.yyyy"),
+									time: format(detail.createdAt, "HH:mm"),
+								})}
+							</p>
+						</li>
+					))}
+				</ul>
+			</SettingsCardContent>
+		</SettingsCard>
 	);
 }
 

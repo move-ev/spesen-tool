@@ -1,58 +1,55 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useForm } from "@tanstack/react-form";
 import {
-	Box,
-	BoxItem,
-	BoxItemContent,
-	BoxItemDescription,
-	BoxItemTitle,
-} from "@/components/box";
-import { Input } from "@/components/ui/input";
+	Field,
+	FieldContent,
+	FieldDescription,
+	FieldError,
+	FieldLabel,
+	Input,
+} from "@zemio/ui";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { useSaveBar } from "@/components/save-bar";
 import { api } from "@/trpc/react";
+import {
+	SettingsCard,
+	SettingsCardContent,
+	SettingsCardLabel,
+} from "./settings-card";
 import { SettingsSubtitle, SettingsTitle } from "./settings-typography";
-
-function useDebounce<T>(value: T, delay: number): T {
-	const [debounced, setDebounced] = useState(value);
-	useEffect(() => {
-		const timer = setTimeout(() => setDebounced(value), delay);
-		return () => clearTimeout(timer);
-	}, [value, delay]);
-	return debounced;
-}
 
 function UserSettingsGeneral() {
 	const t = useTranslations("modules.settings.preferences.general");
 
 	return (
-		<main>
-			<div className="space-y-1">
+		<main className="py-16">
+			<div className="container max-w-4xl space-y-1">
 				<SettingsTitle>{t("title")}</SettingsTitle>
 				<SettingsSubtitle>{t("description")}</SettingsSubtitle>
 			</div>
-			<div className="mt-12">
-				<div className="mb-3">
-					<p className="font-medium text-xs text-zinc-600">{t("sectionProfile")}</p>
-				</div>
-				<ProfileForm />
+			<div className="container mt-12 max-w-4xl">
+				<SettingsCard>
+					<SettingsCardLabel>{t("sectionProfile")}</SettingsCardLabel>
+					<SettingsCardContent>
+						<ProfileForm />
+					</SettingsCardContent>
+				</SettingsCard>
 			</div>
 		</main>
 	);
 }
 
+const PROFILE_FORM_ID = "profile-form";
+
 function ProfileForm() {
 	const t = useTranslations("modules.settings.preferences.general");
 	const utils = api.useUtils();
 	const [user] = api.user.getOwn.useSuspenseQuery();
-	const [nameInput, setNameInput] = useState(user.name);
-	const debouncedName = useDebounce(nameInput, 600);
-	const isInitialMount = useRef(true);
 
 	const updateName = api.user.updateOwnName.useMutation({
 		onSuccess: () => {
-			toast.success(t("savedToast"));
 			void utils.user.getOwn.invalidate();
 		},
 		onError: (error) => {
@@ -62,44 +59,96 @@ function ProfileForm() {
 		},
 	});
 
-	useEffect(() => {
-		if (isInitialMount.current) {
-			isInitialMount.current = false;
-			return;
-		}
-		const trimmed = debouncedName.trim();
-		if (trimmed && trimmed !== user.name) {
-			updateName.mutate({ name: trimmed });
-		}
-	}, [debouncedName, user.name, updateName.mutate]);
+	const form = useForm({
+		defaultValues: {
+			name: user.name,
+			email: user.email,
+			image: user.image,
+		},
+		onSubmit: async ({ value }) => {
+			const name = value.name.trim();
+			if (!name) {
+				return;
+			}
+			try {
+				await updateName.mutateAsync({ name });
+				form.reset({ ...value, name });
+			} catch {
+				// error toast handled by the mutation's onError; form stays dirty
+			}
+		},
+	});
+
+	useSaveBar(PROFILE_FORM_ID, form);
 
 	return (
-		<Box>
-			<BoxItem variant="grid">
-				<BoxItemContent>
-					<BoxItemTitle>{t("nameLabel")}</BoxItemTitle>
-					<BoxItemDescription>{t("nameDescription")}</BoxItemDescription>
-				</BoxItemContent>
-				<Input
-					aria-label={t("nameAriaLabel")}
-					disabled={updateName.isPending}
-					onChange={(e) => setNameInput(e.target.value)}
-					value={nameInput}
-				/>
-			</BoxItem>
-			<BoxItem variant="grid">
-				<BoxItemContent>
-					<BoxItemTitle>{t("emailLabel")}</BoxItemTitle>
-					<BoxItemDescription>{t("emailDescription")}</BoxItemDescription>
-				</BoxItemContent>
-				<Input
-					aria-label={t("emailAriaLabel")}
-					disabled
-					readOnly
-					value={user.email}
-				/>
-			</BoxItem>
-		</Box>
+		<form
+			id={PROFILE_FORM_ID}
+			onSubmit={(e) => {
+				e.preventDefault();
+				form.handleSubmit();
+			}}
+		>
+			<form.Field name="name">
+				{({ state, ...field }) => {
+					const isInvalid = !state.meta.isValid && state.meta.isTouched;
+
+					return (
+						<Field
+							aria-invalid={isInvalid}
+							className="grid grid-cols-2 gap-8 px-4 py-6"
+						>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>{t("nameAriaLabel")}</FieldLabel>
+								<FieldDescription>{t("nameDescription")}</FieldDescription>
+							</FieldContent>
+							<div>
+								<Input
+									aria-invalid={isInvalid}
+									id={field.name}
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder={t("nameLabel")}
+									value={state.value}
+								/>
+								{isInvalid && <FieldError errors={state.meta.errors} />}
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
+			<form.Field name="email">
+				{({ state, ...field }) => {
+					const isInvalid = !state.meta.isValid && state.meta.isTouched;
+
+					return (
+						<Field
+							aria-invalid={isInvalid}
+							className="grid grid-cols-2 gap-8 px-4 py-6"
+						>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>{t("emailLabel")}</FieldLabel>
+								<FieldDescription>{t("emailDescription")}</FieldDescription>
+							</FieldContent>
+							<div>
+								<Input
+									aria-invalid={isInvalid}
+									disabled
+									id={field.name}
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder={t("emailLabel")}
+									value={state.value}
+								/>
+								{isInvalid && <FieldError errors={state.meta.errors} />}
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
+		</form>
 	);
 }
 

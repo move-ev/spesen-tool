@@ -8,6 +8,7 @@ export {
 export * from "./org-settings-allowances";
 export * from "./org-settings-general";
 export * from "./settings-content";
+export { SettingsLayout } from "./settings-layout";
 export * from "./settings-routes-layout";
 export * from "./user-settings-bank-details";
 export * from "./user-settings-general";

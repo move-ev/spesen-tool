@@ -6,15 +6,31 @@ import {
 	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
+	getSortedRowModel,
 	type PaginationState,
 	useReactTable,
 } from "@tanstack/react-table";
+import {
+	DataGridColumnHeader,
+	Grid,
+	GridBody,
+	GridCell,
+	GridFooter,
+	GridHead,
+	GridHeader,
+	GridRow,
+	getPinningStyles,
+} from "@zemio/ui";
 import { format } from "date-fns";
 import {
+	AtSignIcon,
+	CalendarPlusIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	CircleIcon,
 	EllipsisIcon,
+	IdCardIcon,
+	ShieldIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
@@ -23,26 +39,34 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { SettingsSubtitle, SettingsTitle } from "../settings-typography";
 import {
 	createUpdateMemberHandle,
 	type UpdateMemberHandle,
 	UpdateMemberSheet,
 } from "./update-member";
 
-function OrgSettingsMembers() {
+function OrgSettingsMembers({
+	className,
+	...props
+}: React.ComponentProps<"main">) {
 	const t = useTranslations("modules.settings.members");
 
 	return (
-		<section className="container">
-			<header className="flex flex-wrap items-start justify-between gap-8">
-				<div className="space-y-1">
-					<h1 className="font-bold text-2xl text-zinc-800">{t("title")}</h1>
-					<p className="text-sm text-zinc-700">{t("description")}</p>
-				</div>
-			</header>
+		<main
+			className={cn("py-16", className)}
+			data-slot="org-settings-members"
+			{...props}
+		>
+			<div className="container max-w-4xl space-y-1">
+				<SettingsTitle>{t("title")}</SettingsTitle>
+				<SettingsSubtitle>{t("description")}</SettingsSubtitle>
+			</div>
 
-			<MembersTable className="mt-12" />
-		</section>
+			<div className="mt-12 max-w-full">
+				<MembersGrid />
+			</div>
+		</main>
 	);
 }
 
@@ -58,47 +82,59 @@ type ColumnTranslator = (
 	values?: Record<string, string | number>,
 ) => string;
 
-function createMembersTableColumns(
+function createMembersGridColumns(
 	handle: UpdateMemberHandle,
 	t: ColumnTranslator,
 ): ColumnDef<Member>[] {
 	return [
 		{
-			id: "avatar",
-			cell: ({ row }) => (
-				<Avatar size="sm">
-					<AvatarImage src={row.original.user.image ?? undefined} />
-					<AvatarFallback>
-						{row.original.user.name.charAt(0)?.toUpperCase() ?? "X"}
-					</AvatarFallback>
-				</Avatar>
+			id: "user",
+			accessorFn: (original) => original.user.name,
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={IdCardIcon}
+					title={t("table.name")}
+				/>
 			),
-		},
-		{
-			id: "name",
-			accessorFn: ({ user }) => {
-				return user.name;
-			},
 			cell: ({ row }) => {
 				return (
-					<span className="font-semibold text-slate-800">
+					<span className="flex items-center justify-start gap-2.5 font-semibold text-slate-800">
+						<Avatar size="sm">
+							<AvatarImage src={row.original.user.image ?? undefined} />
+							<AvatarFallback>
+								{row.original.user.name.charAt(0)?.toUpperCase() ?? "X"}
+							</AvatarFallback>
+						</Avatar>
 						{row.original.user.name}
 					</span>
 				);
 			},
-			header: t("table.name"),
 		},
+
 		{
 			id: "email",
 			accessorFn: ({ user }) => {
 				return user.email;
 			},
-			header: t("table.email"),
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={AtSignIcon}
+					title={t("table.email")}
+				/>
+			),
 		},
 		{
 			id: "Rolle",
 			accessorKey: "role",
-			header: t("table.role"),
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={ShieldIcon}
+					title={t("table.role")}
+				/>
+			),
 			cell: ({ row }) => {
 				const roles = row.original.role.split(",");
 
@@ -130,11 +166,17 @@ function createMembersTableColumns(
 		},
 		{
 			id: "createdAt",
-			accessorKey: "",
-			header: t("table.createdAt"),
+			accessorFn: ({ createdAt }) => createdAt,
 			cell: ({ row }) => {
 				return format(row.original.createdAt, "dd.MM.yyyy, HH:mm");
 			},
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={CalendarPlusIcon}
+					title={t("table.createdAt")}
+				/>
+			),
 		},
 		{
 			id: "action",
@@ -161,7 +203,7 @@ function createMembersTableColumns(
 	];
 }
 
-function MembersTable({ className, ...props }: React.ComponentProps<"div">) {
+function MembersGrid({ className, ...props }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.members");
 	const PAGE_SIZE = 20;
 
@@ -176,7 +218,7 @@ function MembersTable({ className, ...props }: React.ComponentProps<"div">) {
 	const updateHandle = updateHandleRef.current;
 
 	const columns = React.useMemo(() => {
-		return createMembersTableColumns(updateHandle, t as ColumnTranslator);
+		return createMembersGridColumns(updateHandle, t as ColumnTranslator);
 	}, [updateHandle, t]);
 
 	const dataQuery = api.settings.listMembers.useQuery(
@@ -199,6 +241,7 @@ function MembersTable({ className, ...props }: React.ComponentProps<"div">) {
 		},
 		getCoreRowModel: getCoreRowModel(),
 		onPaginationChange: setPagination,
+		getSortedRowModel: getSortedRowModel(),
 		manualPagination: true,
 	});
 
@@ -215,41 +258,39 @@ function MembersTable({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div className={cn("", className)} data-slot="cost-units-table" {...props}>
 			<div
-				className="transition-opacity data-[fetching=true]:opacity-50"
+				className="border-base-200 border-t transition-opacity data-[fetching=true]:opacity-50"
 				data-fetching={dataQuery.isFetching}
 			>
-				<table className="w-full">
-					<thead>
+				<Grid className="w-full">
+					<GridHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
-							<tr className="border-b" key={headerGroup.id}>
+							<GridRow className="border-b" key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
 									return (
-										<th
-											className="whitespace-nowrap px-3 py-2 text-left font-semibold text-slate-800 text-xs"
+										<GridHead
+											className="p-0"
 											key={header.id}
+											style={{ ...getPinningStyles(header.column) }}
 										>
 											{header.isPlaceholder
 												? null
 												: flexRender(header.column.columnDef.header, header.getContext())}
-										</th>
+										</GridHead>
 									);
 								})}
-							</tr>
+							</GridRow>
 						))}
-					</thead>
-					<tbody>
+					</GridHeader>
+					<GridBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<tr className="group/row" key={row.id}>
+								<GridRow className="group/row" key={row.id}>
 									{row.getVisibleCells().map((cell) => (
-										<td
-											className="whitespace-nowrap px-3 py-2 text-slate-700 text-sm"
-											key={cell.id}
-										>
+										<GridCell key={cell.id} style={{ ...getPinningStyles(cell.column) }}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</td>
+										</GridCell>
 									))}
-								</tr>
+								</GridRow>
 							))
 						) : (
 							<tr>
@@ -261,37 +302,43 @@ function MembersTable({ className, ...props }: React.ComponentProps<"div">) {
 								</td>
 							</tr>
 						)}
-					</tbody>
-				</table>
-			</div>
-			<div className="mt-8 flex flex-wrap justify-between gap-4 border-slate-200 border-t pt-4">
-				<span className="text-slate-500 text-sm">
-					{t("table.unitsCount", { count: data.total })}
-				</span>
-				<div className="flex items-center justify-center gap-2">
-					<span className="me-2 text-slate-500 text-sm">
-						{t("table.pageIndicator", {
-							current: pagination.pageIndex + 1,
-							total: Math.ceil(data.total / PAGE_SIZE),
-						})}
-					</span>
-					<Button
-						disabled={!table.getCanPreviousPage()}
-						onClick={() => table.previousPage()}
-						size={"icon-xs"}
-						variant={"outline"}
-					>
-						<ChevronLeftIcon />
-					</Button>
-					<Button
-						disabled={!table.getCanNextPage()}
-						onClick={() => table.nextPage()}
-						size={"icon-xs"}
-						variant={"outline"}
-					>
-						<ChevronRightIcon />
-					</Button>
-				</div>
+					</GridBody>
+					<GridFooter>
+						<GridRow>
+							<GridCell colSpan={columns.length}>
+								<div className="flex flex-wrap justify-between gap-4 border-slate-200">
+									<span className="text-slate-500 text-sm">
+										{t("table.unitsCount", { count: data.total })}
+									</span>
+									<div className="flex items-center justify-center gap-2">
+										<span className="me-2 text-slate-500 text-sm">
+											{t("table.pageIndicator", {
+												current: pagination.pageIndex + 1,
+												total: Math.ceil(data.total / PAGE_SIZE),
+											})}
+										</span>
+										<Button
+											disabled={!table.getCanPreviousPage()}
+											onClick={() => table.previousPage()}
+											size={"icon-sm"}
+											variant={"outline"}
+										>
+											<ChevronLeftIcon />
+										</Button>
+										<Button
+											disabled={!table.getCanNextPage()}
+											onClick={() => table.nextPage()}
+											size={"icon-sm"}
+											variant={"outline"}
+										>
+											<ChevronRightIcon />
+										</Button>
+									</div>
+								</div>
+							</GridCell>
+						</GridRow>
+					</GridFooter>
+				</Grid>
 			</div>
 			<UpdateMemberSheet handle={updateHandle} />
 		</div>

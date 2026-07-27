@@ -2,25 +2,18 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
-import { format } from "date-fns";
-import { CircleIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
-import type React from "react";
-import { toast } from "sonner";
-import z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
+	Button,
+	Field,
+	FieldGroup,
+	FieldLabel,
+	Input,
 	Select,
 	SelectContent,
 	SelectGroup,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import {
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -28,7 +21,14 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
+} from "@zemio/ui";
+import { format } from "date-fns";
+import { CircleIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import type React from "react";
+import { toast } from "sonner";
+import z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { SheetFormError, SheetFormSkeleton } from "./sheet-form-state";
@@ -174,12 +174,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("nameLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("nameLabel")}</FieldLabel>
 										<Input
 											disabled
 											id={field.name}
@@ -196,12 +191,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("emailLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("emailLabel")}</FieldLabel>
 										<Input
 											disabled
 											id={field.name}
@@ -218,12 +208,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("createdAtLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("createdAtLabel")}</FieldLabel>
 										<Input
 											disabled
 											id={field.name}
@@ -239,12 +224,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 								const isInvalid = state.meta.isTouched && !state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("roleLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("roleLabel")}</FieldLabel>
 										<Select
 											items={{
 												member: t("roleOptions.member"),
@@ -288,7 +268,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 					</FieldGroup>
 				</form>
 			</SheetBody>
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">

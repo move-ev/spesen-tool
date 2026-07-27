@@ -55,11 +55,11 @@ function SheetContent({
 					// top
 					"data-[side=top]:data-ending-style:-translate-y-10 data-[side=top]:data-starting-style:-translate-y-10 data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:rounded-b-lg",
 					// right
-					"data-[side=right]:data-ending-style:translate-x-10 data-[side=right]:data-starting-style:translate-x-10 data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-[90%] data-[side=right]:rounded-l-lg data-[side=right]:sm:max-w-lg",
+					"data-[side=right]:data-ending-style:translate-x-10 data-[side=right]:data-starting-style:translate-x-10 data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-[90%] data-[side=right]:rounded-l-lg data-[side=right]:sm:max-w-lg data-[side=right]:xl:max-w-2xl",
 					// bottom
 					"data-[side=bottom]:data-ending-style:translate-y-10 data-[side=bottom]:data-starting-style:translate-y-10 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:rounded-t-lg",
 					// left
-					"data-[side=left]:data-ending-style:-translate-x-10 data-[side=left]:data-starting-style:-translate-x-10 data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-[90%] data-[side=left]:rounded-r-lg data-[side=left]:sm:max-w-lg",
+					"data-[side=left]:data-ending-style:-translate-x-10 data-[side=left]:data-starting-style:-translate-x-10 data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-[90%] data-[side=left]:rounded-r-lg data-[side=left]:sm:max-w-lg data-[side=left]:xl:max-w-2xl",
 					className,
 				)}
 				data-side={side}

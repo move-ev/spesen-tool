@@ -4,6 +4,11 @@ import { Dialog as DialogPrimitive } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import {
 	Button,
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
 	Input,
 	type Sheet,
 	SheetBody,
@@ -18,13 +23,6 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import type z from "zod";
 import { AsyncBoundary } from "@/components/async-boundary";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from "@/components/ui/field";
 import type { WithHandle } from "@/lib/types";
 import { createCostUnitGroupSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
@@ -161,12 +159,7 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field className="col-span-2" data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("nameLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("nameLabel")}</FieldLabel>
 										<Input
 											aria-invalid={isInvalid}
 											id={field.name}

@@ -6,23 +6,42 @@ import {
 	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
+	getSortedRowModel,
 	type PaginationState,
 	useReactTable,
 } from "@tanstack/react-table";
-import type { CostUnitStatus } from "@zemio/db";
+import type { CostUnitColor, CostUnitStatus } from "@zemio/db";
+import {
+	Button,
+	DataGridColumnHeader,
+	Grid,
+	GridBody,
+	GridCell,
+	GridFooter,
+	GridHead,
+	GridHeader,
+	GridRow,
+	getPinningStyles,
+} from "@zemio/ui";
 import { format } from "date-fns";
 import {
+	CalendarPlusIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	CircleIcon,
 	EllipsisIcon,
+	ListIcon,
+	LoaderIcon,
+	TagIcon,
+	TextIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { COST_UNIT_COLORS } from "@/lib/colors/cost-units";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { SettingsSubtitle, SettingsTitle } from "../settings-typography";
 import {
 	type CreateCostUnitHandle,
 	CreateCostUnitSheet,
@@ -39,7 +58,36 @@ import {
 	UpdateCostUnitSheet,
 } from "./update-cost-unit";
 
-function OrgSettingsCostUnits() {
+function OrgSettingsCostUnits({
+	className,
+	...props
+}: React.ComponentProps<"main">) {
+	const t = useTranslations("modules.settings.costUnits");
+
+	return (
+		<main
+			className={cn("py-16", className)}
+			data-slot="org-settings-cost-units"
+			{...props}
+		>
+			<div className="container flex max-w-4xl flex-wrap items-start justify-between gap-6">
+				<div className="space-y-1">
+					<SettingsTitle>{t("title")}</SettingsTitle>
+					<SettingsSubtitle>{t("description")}</SettingsSubtitle>
+				</div>
+				<OrgSettingsCostUnitsActions className="flex items-center justify-center gap-4" />
+			</div>
+			<div className="mt-12 max-w-full">
+				<CostUnitsGrid />
+			</div>
+		</main>
+	);
+}
+
+function OrgSettingsCostUnitsActions({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.costUnits");
 	const createHandleRef = React.useRef<CreateCostUnitHandle | null>(null);
 	if (!createHandleRef.current)
@@ -52,54 +100,31 @@ function OrgSettingsCostUnits() {
 	const createGroupHandle = createGroupHandleRef.current;
 
 	return (
-		<section className="container">
-			<header className="flex flex-wrap items-start justify-between gap-8">
-				<div className="space-y-1">
-					<h1 className="font-bold text-2xl text-zinc-800">{t("title")}</h1>
-					<p className="text-sm text-zinc-700">{t("description")}</p>
-				</div>
-				<div className="flex flex-nowrap items-center justify-center gap-4">
-					<CreateCostUnitGroupSheetTrigger
-						handle={createGroupHandle}
-						variant={"outline"}
-					>
-						{t("newGroupButton")}
-					</CreateCostUnitGroupSheetTrigger>
-					<CreateCostUnitSheetTrigger handle={createHandle}>
-						{t("newCostUnitButton")}
-					</CreateCostUnitSheetTrigger>
-				</div>
-			</header>
-
-			<CostUnitsTable className="mt-12" />
-
+		<>
+			<div
+				className={cn("", className)}
+				data-slot="org-settings-cost-units-actions"
+				{...props}
+			>
+				<CreateCostUnitGroupSheetTrigger
+					handle={createGroupHandle}
+					variant={"outline"}
+				>
+					{t("newGroupButton")}
+				</CreateCostUnitGroupSheetTrigger>
+				<CreateCostUnitSheetTrigger handle={createHandle}>
+					{t("newCostUnitButton")}
+				</CreateCostUnitSheetTrigger>
+			</div>
 			<CreateCostUnitSheet handle={createHandle} />
 			<CreateCostUnitGroupSheet closeOnSuccess handle={createGroupHandle} />
-		</section>
+		</>
 	);
 }
 
-// ========= COST UNITS LIST =============================================
+// ========= COST UNITS GRID =============================================
 
-type FetchedCostUnit = {
-	id: string;
-	tag: string;
-	title: string;
-	examples: string[];
-	costUnitGroupId: string | null;
-	costUnitGroup: {
-		title: string;
-	} | null;
-	createdAt: Date;
-	status: CostUnitStatus;
-};
-
-type ColumnTranslator = (
-	key: string,
-	values?: Record<string, string | number>,
-) => string;
-
-function createMembersTableColumns(
+function createCostUnitsGridColumns(
 	handle: UpdateCostUnitHandle,
 	t: ColumnTranslator,
 ): ColumnDef<FetchedCostUnit>[] {
@@ -107,46 +132,51 @@ function createMembersTableColumns(
 		{
 			id: "tag",
 			accessorKey: "tag",
-			header: t("table.tag"),
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={TagIcon}
+					title={t("table.tag")}
+				/>
+			),
 		},
 		{
 			id: "title",
 			accessorKey: "title",
-			header: t("table.title"),
 			cell: ({ row }) => {
 				return (
-					<span className="font-semibold text-slate-800">{row.original.title}</span>
-				);
-			},
-		},
-		{
-			id: "examples",
-			accessorFn: (original) => {
-				return original.examples.length;
-			},
-			cell: ({ row }) => {
-				return (
-					<span>
-						{t("table.examplesCount", { count: row.original.examples.length })}
+					<span className="flex items-center justify-start gap-2 font-semibold text-slate-800">
+						<span
+							className="block size-2 rounded-xs"
+							style={{
+								backgroundColor: COST_UNIT_COLORS[row.original.color]?.fill,
+							}}
+						/>
+						{row.original.title}
 					</span>
 				);
 			},
-			header: undefined,
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={TextIcon}
+					title={t("table.title")}
+				/>
+			),
 		},
-		{
-			id: "createdAt",
-			accessorKey: "",
-			header: t("table.createdAt"),
-			cell: ({ row }) => {
-				return format(row.original.createdAt, "dd.MM.yyyy, HH:mm");
-			},
-		},
+
 		{
 			id: "group",
 			accessorFn: (original) => {
 				return original.costUnitGroup?.title ?? t("table.noGroup");
 			},
-			header: t("table.group"),
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={CalendarPlusIcon}
+					title={t("table.group")}
+				/>
+			),
 			cell: ({ row }) => {
 				return (
 					<Badge variant={"outline"}>
@@ -160,7 +190,13 @@ function createMembersTableColumns(
 			accessorFn: (original) => {
 				return original.status;
 			},
-			header: t("table.status"),
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={LoaderIcon}
+					title={t("table.status")}
+				/>
+			),
 			cell: ({ row }) => {
 				if (row.original.status === "ARCHIVED") {
 					return (
@@ -178,6 +214,42 @@ function createMembersTableColumns(
 					</Badge>
 				);
 			},
+		},
+		{
+			id: "examples",
+			accessorFn: (original) => {
+				return original.examples.length;
+			},
+			cell: ({ row }) => {
+				return (
+					<span>
+						{t("table.examplesCount", { count: row.original.examples.length })}
+					</span>
+				);
+			},
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={ListIcon}
+					title={t("table.examples")}
+				/>
+			),
+		},
+		{
+			id: "createdAt",
+			accessorFn: (original) => {
+				return original.createdAt;
+			},
+			cell: ({ row }) => {
+				return format(row.original.createdAt, "dd.MM.yyyy, HH:mm");
+			},
+			header: ({ column }) => (
+				<DataGridColumnHeader
+					column={column}
+					icon={CalendarPlusIcon}
+					title={t("table.createdAt")}
+				/>
+			),
 		},
 		{
 			id: "action",
@@ -204,7 +276,7 @@ function createMembersTableColumns(
 	];
 }
 
-function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
+function CostUnitsGrid({ className, ...props }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.costUnits");
 	const PAGE_SIZE = 20;
 
@@ -219,7 +291,7 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 	const updateHandle = updateHandleRef.current;
 
 	const columns = React.useMemo(() => {
-		return createMembersTableColumns(updateHandle, t as ColumnTranslator);
+		return createCostUnitsGridColumns(updateHandle, t as ColumnTranslator);
 	}, [updateHandle, t]);
 
 	const dataQuery = api.costUnit.listCostUnits.useQuery(
@@ -239,9 +311,11 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 		columns,
 		state: {
 			pagination,
+			// sorting,
 		},
 		getCoreRowModel: getCoreRowModel(),
 		onPaginationChange: setPagination,
+		getSortedRowModel: getSortedRowModel(),
 		manualPagination: true,
 	});
 
@@ -258,41 +332,39 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div className={cn("", className)} data-slot="cost-units-table" {...props}>
 			<div
-				className="transition-opacity data-[fetching=true]:opacity-50"
+				className="border-base-200 border-t transition-opacity data-[fetching=true]:opacity-50"
 				data-fetching={dataQuery.isFetching}
 			>
-				<table className="w-full">
-					<thead>
+				<Grid className="w-full">
+					<GridHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
-							<tr className="border-b" key={headerGroup.id}>
+							<GridRow className="border-b" key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
 									return (
-										<th
-											className="whitespace-nowrap px-3 py-2 text-left font-semibold text-slate-800 text-xs"
+										<GridHead
+											className="p-0"
 											key={header.id}
+											style={{ ...getPinningStyles(header.column) }}
 										>
 											{header.isPlaceholder
 												? null
 												: flexRender(header.column.columnDef.header, header.getContext())}
-										</th>
+										</GridHead>
 									);
 								})}
-							</tr>
+							</GridRow>
 						))}
-					</thead>
-					<tbody>
+					</GridHeader>
+					<GridBody>
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
-								<tr className="group/row" key={row.id}>
+								<GridRow className="group/row" key={row.id}>
 									{row.getVisibleCells().map((cell) => (
-										<td
-											className="whitespace-nowrap px-3 py-2 text-slate-700 text-sm"
-											key={cell.id}
-										>
+										<GridCell key={cell.id} style={{ ...getPinningStyles(cell.column) }}>
 											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</td>
+										</GridCell>
 									))}
-								</tr>
+								</GridRow>
 							))
 						) : (
 							<tr>
@@ -304,41 +376,66 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 								</td>
 							</tr>
 						)}
-					</tbody>
-				</table>
-			</div>
-			<div className="mt-8 flex flex-wrap justify-between gap-4 border-slate-200 border-t pt-4">
-				<span className="text-slate-500 text-sm">
-					{t("table.unitsCount", { count: data.totalCount })}
-				</span>
-				<div className="flex items-center justify-center gap-2">
-					<span className="me-2 text-slate-500 text-sm">
-						{t("table.pageIndicator", {
-							current: pagination.pageIndex + 1,
-							total: Math.ceil(data.totalCount / PAGE_SIZE),
-						})}
-					</span>
-					<Button
-						disabled={!table.getCanPreviousPage()}
-						onClick={() => table.previousPage()}
-						size={"icon-xs"}
-						variant={"outline"}
-					>
-						<ChevronLeftIcon />
-					</Button>
-					<Button
-						disabled={!table.getCanNextPage()}
-						onClick={() => table.nextPage()}
-						size={"icon-xs"}
-						variant={"outline"}
-					>
-						<ChevronRightIcon />
-					</Button>
-				</div>
+					</GridBody>
+					<GridFooter>
+						<GridRow>
+							<GridCell colSpan={columns.length}>
+								<div className="flex flex-wrap justify-between gap-4 border-slate-200">
+									<span className="text-slate-500 text-sm">
+										{t("table.unitsCount", { count: data.totalCount })}
+									</span>
+									<div className="flex items-center justify-center gap-2">
+										<span className="me-2 text-slate-500 text-sm">
+											{t("table.pageIndicator", {
+												current: pagination.pageIndex + 1,
+												total: Math.ceil(data.totalCount / PAGE_SIZE),
+											})}
+										</span>
+										<Button
+											disabled={!table.getCanPreviousPage()}
+											onClick={() => table.previousPage()}
+											size={"icon-sm"}
+											variant={"outline"}
+										>
+											<ChevronLeftIcon />
+										</Button>
+										<Button
+											disabled={!table.getCanNextPage()}
+											onClick={() => table.nextPage()}
+											size={"icon-sm"}
+											variant={"outline"}
+										>
+											<ChevronRightIcon />
+										</Button>
+									</div>
+								</div>
+							</GridCell>
+						</GridRow>
+					</GridFooter>
+				</Grid>
 			</div>
 			<UpdateCostUnitSheet handle={updateHandle} />
 		</div>
 	);
 }
+
+type FetchedCostUnit = {
+	id: string;
+	tag: string;
+	title: string;
+	examples: string[];
+	costUnitGroupId: string | null;
+	costUnitGroup: {
+		title: string;
+	} | null;
+	color: CostUnitColor;
+	createdAt: Date;
+	status: CostUnitStatus;
+};
+
+type ColumnTranslator = (
+	key: string,
+	values?: Record<string, string | number>,
+) => string;
 
 export { OrgSettingsCostUnits };
