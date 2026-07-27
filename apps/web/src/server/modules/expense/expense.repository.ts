@@ -2,19 +2,6 @@ import type { Prisma, PrismaClient } from "@zemio/db";
 
 type Db = PrismaClient;
 
-const travelDetailSelect = {
-	select: { from: true, to: true, distance: true },
-} as const;
-
-const foodDetailSelect = {
-	select: {
-		days: true,
-		breakfastDeduction: true,
-		lunchDeduction: true,
-		dinnerDeduction: true,
-	},
-} as const;
-
 const expenseDetailSelect = {
 	id: true,
 	reportId: true,
@@ -23,8 +10,7 @@ const expenseDetailSelect = {
 	description: true,
 	startDate: true,
 	endDate: true,
-	travelDetail: travelDetailSelect,
-	foodDetail: foodDetailSelect,
+	meta: true,
 	report: {
 		select: {
 			ownerId: true,
@@ -42,8 +28,7 @@ const expenseListItemSelect = {
 	description: true,
 	startDate: true,
 	endDate: true,
-	travelDetail: travelDetailSelect,
-	foodDetail: foodDetailSelect,
+	meta: true,
 	attachments: {
 		select: {
 			id: true,

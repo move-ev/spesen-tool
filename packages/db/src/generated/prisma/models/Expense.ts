@@ -200,7 +200,7 @@ export type ExpenseGroupByOutputType = {
   startDate: Date
   endDate: Date
   type: $Enums.ExpenseType
-  meta: runtime.JsonValue | null
+  meta: runtime.JsonValue
   reportId: string
   _count: ExpenseCountAggregateOutputType | null
   _avg: ExpenseAvgAggregateOutputType | null
@@ -234,10 +234,8 @@ export type ExpenseWhereInput = {
   startDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   endDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeFilter<"Expense"> | $Enums.ExpenseType
-  meta?: Prisma.JsonNullableFilter<"Expense">
+  meta?: Prisma.JsonFilter<"Expense">
   reportId?: Prisma.StringFilter<"Expense"> | string
-  travelDetail?: Prisma.XOR<Prisma.TravelExpenseDetailNullableScalarRelationFilter, Prisma.TravelExpenseDetailWhereInput> | null
-  foodDetail?: Prisma.XOR<Prisma.FoodExpenseDetailNullableScalarRelationFilter, Prisma.FoodExpenseDetailWhereInput> | null
   report?: Prisma.XOR<Prisma.ReportScalarRelationFilter, Prisma.ReportWhereInput>
   attachments?: Prisma.AttachmentListRelationFilter
 }
@@ -249,10 +247,8 @@ export type ExpenseOrderByWithRelationInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  meta?: Prisma.SortOrderInput | Prisma.SortOrder
+  meta?: Prisma.SortOrder
   reportId?: Prisma.SortOrder
-  travelDetail?: Prisma.TravelExpenseDetailOrderByWithRelationInput
-  foodDetail?: Prisma.FoodExpenseDetailOrderByWithRelationInput
   report?: Prisma.ReportOrderByWithRelationInput
   attachments?: Prisma.AttachmentOrderByRelationAggregateInput
 }
@@ -267,10 +263,8 @@ export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
   startDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   endDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeFilter<"Expense"> | $Enums.ExpenseType
-  meta?: Prisma.JsonNullableFilter<"Expense">
+  meta?: Prisma.JsonFilter<"Expense">
   reportId?: Prisma.StringFilter<"Expense"> | string
-  travelDetail?: Prisma.XOR<Prisma.TravelExpenseDetailNullableScalarRelationFilter, Prisma.TravelExpenseDetailWhereInput> | null
-  foodDetail?: Prisma.XOR<Prisma.FoodExpenseDetailNullableScalarRelationFilter, Prisma.FoodExpenseDetailWhereInput> | null
   report?: Prisma.XOR<Prisma.ReportScalarRelationFilter, Prisma.ReportWhereInput>
   attachments?: Prisma.AttachmentListRelationFilter
 }, "id">
@@ -282,7 +276,7 @@ export type ExpenseOrderByWithAggregationInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   type?: Prisma.SortOrder
-  meta?: Prisma.SortOrderInput | Prisma.SortOrder
+  meta?: Prisma.SortOrder
   reportId?: Prisma.SortOrder
   _count?: Prisma.ExpenseCountOrderByAggregateInput
   _avg?: Prisma.ExpenseAvgOrderByAggregateInput
@@ -301,7 +295,7 @@ export type ExpenseScalarWhereWithAggregatesInput = {
   startDate?: Prisma.DateTimeWithAggregatesFilter<"Expense"> | Date | string
   endDate?: Prisma.DateTimeWithAggregatesFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeWithAggregatesFilter<"Expense"> | $Enums.ExpenseType
-  meta?: Prisma.JsonNullableWithAggregatesFilter<"Expense">
+  meta?: Prisma.JsonWithAggregatesFilter<"Expense">
   reportId?: Prisma.StringWithAggregatesFilter<"Expense"> | string
 }
 
@@ -312,9 +306,7 @@ export type ExpenseCreateInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailCreateNestedOneWithoutExpenseInput
-  foodDetail?: Prisma.FoodExpenseDetailCreateNestedOneWithoutExpenseInput
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   report: Prisma.ReportCreateNestedOneWithoutExpensesInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutExpenseInput
 }
@@ -326,10 +318,8 @@ export type ExpenseUncheckedCreateInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reportId: string
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutExpenseInput
 }
 
@@ -340,9 +330,7 @@ export type ExpenseUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailUpdateOneWithoutExpenseNestedInput
-  foodDetail?: Prisma.FoodExpenseDetailUpdateOneWithoutExpenseNestedInput
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   report?: Prisma.ReportUpdateOneRequiredWithoutExpensesNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutExpenseNestedInput
 }
@@ -354,10 +342,8 @@ export type ExpenseUncheckedUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reportId?: Prisma.StringFieldUpdateOperationsInput | string
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
@@ -368,7 +354,7 @@ export type ExpenseCreateManyInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reportId: string
 }
 
@@ -379,7 +365,7 @@ export type ExpenseUpdateManyMutationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type ExpenseUncheckedUpdateManyInput = {
@@ -389,7 +375,7 @@ export type ExpenseUncheckedUpdateManyInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reportId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -501,34 +487,6 @@ export type EnumExpenseTypeFieldUpdateOperationsInput = {
   set?: $Enums.ExpenseType
 }
 
-export type ExpenseCreateNestedOneWithoutTravelDetailInput = {
-  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutTravelDetailInput, Prisma.ExpenseUncheckedCreateWithoutTravelDetailInput>
-  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutTravelDetailInput
-  connect?: Prisma.ExpenseWhereUniqueInput
-}
-
-export type ExpenseUpdateOneRequiredWithoutTravelDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutTravelDetailInput, Prisma.ExpenseUncheckedCreateWithoutTravelDetailInput>
-  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutTravelDetailInput
-  upsert?: Prisma.ExpenseUpsertWithoutTravelDetailInput
-  connect?: Prisma.ExpenseWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpenseUpdateToOneWithWhereWithoutTravelDetailInput, Prisma.ExpenseUpdateWithoutTravelDetailInput>, Prisma.ExpenseUncheckedUpdateWithoutTravelDetailInput>
-}
-
-export type ExpenseCreateNestedOneWithoutFoodDetailInput = {
-  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutFoodDetailInput, Prisma.ExpenseUncheckedCreateWithoutFoodDetailInput>
-  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutFoodDetailInput
-  connect?: Prisma.ExpenseWhereUniqueInput
-}
-
-export type ExpenseUpdateOneRequiredWithoutFoodDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutFoodDetailInput, Prisma.ExpenseUncheckedCreateWithoutFoodDetailInput>
-  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutFoodDetailInput
-  upsert?: Prisma.ExpenseUpsertWithoutFoodDetailInput
-  connect?: Prisma.ExpenseWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpenseUpdateToOneWithWhereWithoutFoodDetailInput, Prisma.ExpenseUpdateWithoutFoodDetailInput>, Prisma.ExpenseUncheckedUpdateWithoutFoodDetailInput>
-}
-
 export type ExpenseCreateNestedOneWithoutAttachmentsInput = {
   create?: Prisma.XOR<Prisma.ExpenseCreateWithoutAttachmentsInput, Prisma.ExpenseUncheckedCreateWithoutAttachmentsInput>
   connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutAttachmentsInput
@@ -550,9 +508,7 @@ export type ExpenseCreateWithoutReportInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailCreateNestedOneWithoutExpenseInput
-  foodDetail?: Prisma.FoodExpenseDetailCreateNestedOneWithoutExpenseInput
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   attachments?: Prisma.AttachmentCreateNestedManyWithoutExpenseInput
 }
 
@@ -563,9 +519,7 @@ export type ExpenseUncheckedCreateWithoutReportInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutExpenseInput
 }
 
@@ -605,144 +559,8 @@ export type ExpenseScalarWhereInput = {
   startDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   endDate?: Prisma.DateTimeFilter<"Expense"> | Date | string
   type?: Prisma.EnumExpenseTypeFilter<"Expense"> | $Enums.ExpenseType
-  meta?: Prisma.JsonNullableFilter<"Expense">
+  meta?: Prisma.JsonFilter<"Expense">
   reportId?: Prisma.StringFilter<"Expense"> | string
-}
-
-export type ExpenseCreateWithoutTravelDetailInput = {
-  id?: string
-  description?: string | null
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate: Date | string
-  endDate: Date | string
-  type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  foodDetail?: Prisma.FoodExpenseDetailCreateNestedOneWithoutExpenseInput
-  report: Prisma.ReportCreateNestedOneWithoutExpensesInput
-  attachments?: Prisma.AttachmentCreateNestedManyWithoutExpenseInput
-}
-
-export type ExpenseUncheckedCreateWithoutTravelDetailInput = {
-  id?: string
-  description?: string | null
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate: Date | string
-  endDate: Date | string
-  type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  reportId: string
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
-  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutExpenseInput
-}
-
-export type ExpenseCreateOrConnectWithoutTravelDetailInput = {
-  where: Prisma.ExpenseWhereUniqueInput
-  create: Prisma.XOR<Prisma.ExpenseCreateWithoutTravelDetailInput, Prisma.ExpenseUncheckedCreateWithoutTravelDetailInput>
-}
-
-export type ExpenseUpsertWithoutTravelDetailInput = {
-  update: Prisma.XOR<Prisma.ExpenseUpdateWithoutTravelDetailInput, Prisma.ExpenseUncheckedUpdateWithoutTravelDetailInput>
-  create: Prisma.XOR<Prisma.ExpenseCreateWithoutTravelDetailInput, Prisma.ExpenseUncheckedCreateWithoutTravelDetailInput>
-  where?: Prisma.ExpenseWhereInput
-}
-
-export type ExpenseUpdateToOneWithWhereWithoutTravelDetailInput = {
-  where?: Prisma.ExpenseWhereInput
-  data: Prisma.XOR<Prisma.ExpenseUpdateWithoutTravelDetailInput, Prisma.ExpenseUncheckedUpdateWithoutTravelDetailInput>
-}
-
-export type ExpenseUpdateWithoutTravelDetailInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  foodDetail?: Prisma.FoodExpenseDetailUpdateOneWithoutExpenseNestedInput
-  report?: Prisma.ReportUpdateOneRequiredWithoutExpensesNestedInput
-  attachments?: Prisma.AttachmentUpdateManyWithoutExpenseNestedInput
-}
-
-export type ExpenseUncheckedUpdateWithoutTravelDetailInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  reportId?: Prisma.StringFieldUpdateOperationsInput | string
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
-  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutExpenseNestedInput
-}
-
-export type ExpenseCreateWithoutFoodDetailInput = {
-  id?: string
-  description?: string | null
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate: Date | string
-  endDate: Date | string
-  type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailCreateNestedOneWithoutExpenseInput
-  report: Prisma.ReportCreateNestedOneWithoutExpensesInput
-  attachments?: Prisma.AttachmentCreateNestedManyWithoutExpenseInput
-}
-
-export type ExpenseUncheckedCreateWithoutFoodDetailInput = {
-  id?: string
-  description?: string | null
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate: Date | string
-  endDate: Date | string
-  type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  reportId: string
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
-  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutExpenseInput
-}
-
-export type ExpenseCreateOrConnectWithoutFoodDetailInput = {
-  where: Prisma.ExpenseWhereUniqueInput
-  create: Prisma.XOR<Prisma.ExpenseCreateWithoutFoodDetailInput, Prisma.ExpenseUncheckedCreateWithoutFoodDetailInput>
-}
-
-export type ExpenseUpsertWithoutFoodDetailInput = {
-  update: Prisma.XOR<Prisma.ExpenseUpdateWithoutFoodDetailInput, Prisma.ExpenseUncheckedUpdateWithoutFoodDetailInput>
-  create: Prisma.XOR<Prisma.ExpenseCreateWithoutFoodDetailInput, Prisma.ExpenseUncheckedCreateWithoutFoodDetailInput>
-  where?: Prisma.ExpenseWhereInput
-}
-
-export type ExpenseUpdateToOneWithWhereWithoutFoodDetailInput = {
-  where?: Prisma.ExpenseWhereInput
-  data: Prisma.XOR<Prisma.ExpenseUpdateWithoutFoodDetailInput, Prisma.ExpenseUncheckedUpdateWithoutFoodDetailInput>
-}
-
-export type ExpenseUpdateWithoutFoodDetailInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailUpdateOneWithoutExpenseNestedInput
-  report?: Prisma.ReportUpdateOneRequiredWithoutExpensesNestedInput
-  attachments?: Prisma.AttachmentUpdateManyWithoutExpenseNestedInput
-}
-
-export type ExpenseUncheckedUpdateWithoutFoodDetailInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  reportId?: Prisma.StringFieldUpdateOperationsInput | string
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
-  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
 export type ExpenseCreateWithoutAttachmentsInput = {
@@ -752,9 +570,7 @@ export type ExpenseCreateWithoutAttachmentsInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailCreateNestedOneWithoutExpenseInput
-  foodDetail?: Prisma.FoodExpenseDetailCreateNestedOneWithoutExpenseInput
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   report: Prisma.ReportCreateNestedOneWithoutExpensesInput
 }
 
@@ -765,10 +581,8 @@ export type ExpenseUncheckedCreateWithoutAttachmentsInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reportId: string
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedCreateNestedOneWithoutExpenseInput
 }
 
 export type ExpenseCreateOrConnectWithoutAttachmentsInput = {
@@ -794,9 +608,7 @@ export type ExpenseUpdateWithoutAttachmentsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailUpdateOneWithoutExpenseNestedInput
-  foodDetail?: Prisma.FoodExpenseDetailUpdateOneWithoutExpenseNestedInput
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   report?: Prisma.ReportUpdateOneRequiredWithoutExpensesNestedInput
 }
 
@@ -807,10 +619,8 @@ export type ExpenseUncheckedUpdateWithoutAttachmentsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   reportId?: Prisma.StringFieldUpdateOperationsInput | string
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
 }
 
 export type ExpenseCreateManyReportInput = {
@@ -820,7 +630,7 @@ export type ExpenseCreateManyReportInput = {
   startDate: Date | string
   endDate: Date | string
   type: $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type ExpenseUpdateWithoutReportInput = {
@@ -830,9 +640,7 @@ export type ExpenseUpdateWithoutReportInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailUpdateOneWithoutExpenseNestedInput
-  foodDetail?: Prisma.FoodExpenseDetailUpdateOneWithoutExpenseNestedInput
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   attachments?: Prisma.AttachmentUpdateManyWithoutExpenseNestedInput
 }
 
@@ -843,9 +651,7 @@ export type ExpenseUncheckedUpdateWithoutReportInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  travelDetail?: Prisma.TravelExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
-  foodDetail?: Prisma.FoodExpenseDetailUncheckedUpdateOneWithoutExpenseNestedInput
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
@@ -856,7 +662,7 @@ export type ExpenseUncheckedUpdateManyWithoutReportInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   type?: Prisma.EnumExpenseTypeFieldUpdateOperationsInput | $Enums.ExpenseType
-  meta?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  meta?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -899,8 +705,6 @@ export type ExpenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   type?: boolean
   meta?: boolean
   reportId?: boolean
-  travelDetail?: boolean | Prisma.Expense$travelDetailArgs<ExtArgs>
-  foodDetail?: boolean | Prisma.Expense$foodDetailArgs<ExtArgs>
   report?: boolean | Prisma.ReportDefaultArgs<ExtArgs>
   attachments?: boolean | Prisma.Expense$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ExpenseCountOutputTypeDefaultArgs<ExtArgs>
@@ -943,8 +747,6 @@ export type ExpenseSelectScalar = {
 
 export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "description" | "amount" | "startDate" | "endDate" | "type" | "meta" | "reportId", ExtArgs["result"]["expense"]>
 export type ExpenseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  travelDetail?: boolean | Prisma.Expense$travelDetailArgs<ExtArgs>
-  foodDetail?: boolean | Prisma.Expense$foodDetailArgs<ExtArgs>
   report?: boolean | Prisma.ReportDefaultArgs<ExtArgs>
   attachments?: boolean | Prisma.Expense$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ExpenseCountOutputTypeDefaultArgs<ExtArgs>
@@ -959,8 +761,6 @@ export type ExpenseIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Expense"
   objects: {
-    travelDetail: Prisma.$TravelExpenseDetailPayload<ExtArgs> | null
-    foodDetail: Prisma.$FoodExpenseDetailPayload<ExtArgs> | null
     report: Prisma.$ReportPayload<ExtArgs>
     attachments: Prisma.$AttachmentPayload<ExtArgs>[]
   }
@@ -971,7 +771,7 @@ export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     startDate: Date
     endDate: Date
     type: $Enums.ExpenseType
-    meta: runtime.JsonValue | null
+    meta: runtime.JsonValue
     reportId: string
   }, ExtArgs["result"]["expense"]>
   composites: {}
@@ -1367,8 +1167,6 @@ readonly fields: ExpenseFieldRefs;
  */
 export interface Prisma__ExpenseClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  travelDetail<T extends Prisma.Expense$travelDetailArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$travelDetailArgs<ExtArgs>>): Prisma.Prisma__TravelExpenseDetailClient<runtime.Types.Result.GetResult<Prisma.$TravelExpenseDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  foodDetail<T extends Prisma.Expense$foodDetailArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$foodDetailArgs<ExtArgs>>): Prisma.Prisma__FoodExpenseDetailClient<runtime.Types.Result.GetResult<Prisma.$FoodExpenseDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   report<T extends Prisma.ReportDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReportDefaultArgs<ExtArgs>>): Prisma.Prisma__ReportClient<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attachments<T extends Prisma.Expense$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1806,44 +1604,6 @@ export type ExpenseDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Expenses to delete.
    */
   limit?: number
-}
-
-/**
- * Expense.travelDetail
- */
-export type Expense$travelDetailArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TravelExpenseDetail
-   */
-  select?: Prisma.TravelExpenseDetailSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TravelExpenseDetail
-   */
-  omit?: Prisma.TravelExpenseDetailOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TravelExpenseDetailInclude<ExtArgs> | null
-  where?: Prisma.TravelExpenseDetailWhereInput
-}
-
-/**
- * Expense.foodDetail
- */
-export type Expense$foodDetailArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FoodExpenseDetail
-   */
-  select?: Prisma.FoodExpenseDetailSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the FoodExpenseDetail
-   */
-  omit?: Prisma.FoodExpenseDetailOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FoodExpenseDetailInclude<ExtArgs> | null
-  where?: Prisma.FoodExpenseDetailWhereInput
 }
 
 /**

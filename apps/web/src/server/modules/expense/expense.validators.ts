@@ -5,7 +5,7 @@ import { attachmentInputSchema } from "@/server/modules/attachment";
 
 export const baseCreateExpenseSchema = z.object({
 	description: z.string(),
-	amount: z.number().min(0).multipleOf(0.01),
+	amount: z.number().min(0),
 	startDate: z
 		.string()
 		.min(1, "expense.startDateRequired")
@@ -48,23 +48,23 @@ export const createTravelExpenseSchema = baseCreateExpenseSchema.and(
 
 export const createFoodExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		days: z.number().int().min(1),
-		breakfastDeduction: z.number().min(0).multipleOf(0.01),
-		lunchDeduction: z.number().min(0).multipleOf(0.01),
-		dinnerDeduction: z.number().min(0).multipleOf(0.01),
+		days: z.number().min(1),
+		breakfastDeduction: z.number().min(0),
+		lunchDeduction: z.number().min(0),
+		dinnerDeduction: z.number().min(0),
 	}),
 );
 
 export const updateExpenseSchema = z.object({
 	description: z.string().optional(),
-	amount: z.number().min(0).multipleOf(0.01).optional(),
+	amount: z.number().min(0).optional(),
 	startDate: z.date().optional(),
 	endDate: z.date().optional(),
 	from: z.string().min(1).optional(),
 	to: z.string().min(1).optional(),
 	distance: z.number().min(1).optional(),
-	days: z.number().int().min(1).optional(),
-	breakfastDeduction: z.number().min(0).multipleOf(0.01).optional(),
-	lunchDeduction: z.number().min(0).multipleOf(0.01).optional(),
-	dinnerDeduction: z.number().min(0).multipleOf(0.01).optional(),
+	days: z.number().min(1).optional(),
+	breakfastDeduction: z.number().min(0).optional(),
+	lunchDeduction: z.number().min(0).optional(),
+	dinnerDeduction: z.number().min(0).optional(),
 });

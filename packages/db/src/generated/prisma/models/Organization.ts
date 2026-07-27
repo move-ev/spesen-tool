@@ -403,46 +403,18 @@ export type OrganizationMinOrderByAggregateInput = {
   microsoftTenantId?: Prisma.SortOrder
 }
 
-export type OrganizationCreateNestedOneWithoutAuditEventsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAuditEventsInput
+export type OrganizationCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutReportsInput
   connect?: Prisma.OrganizationWhereUniqueInput
 }
 
-export type OrganizationUpdateOneRequiredWithoutAuditEventsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAuditEventsInput
-  upsert?: Prisma.OrganizationUpsertWithoutAuditEventsInput
+export type OrganizationUpdateOneRequiredWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.OrganizationUpsertWithoutReportsInput
   connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutAuditEventsInput, Prisma.OrganizationUpdateWithoutAuditEventsInput>, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
-}
-
-export type OrganizationCreateNestedOneWithoutCostUnitGroupsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitGroupsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutCostUnitGroupsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitGroupsInput
-  upsert?: Prisma.OrganizationUpsertWithoutCostUnitGroupsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCostUnitGroupsInput, Prisma.OrganizationUpdateWithoutCostUnitGroupsInput>, Prisma.OrganizationUncheckedUpdateWithoutCostUnitGroupsInput>
-}
-
-export type OrganizationCreateNestedOneWithoutCostUnitsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutCostUnitsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitsInput
-  upsert?: Prisma.OrganizationUpsertWithoutCostUnitsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCostUnitsInput, Prisma.OrganizationUpdateWithoutCostUnitsInput>, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutReportsInput, Prisma.OrganizationUpdateWithoutReportsInput>, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
 }
 
 export type OrganizationCreateNestedOneWithoutMembersInput = {
@@ -473,20 +445,6 @@ export type OrganizationUpdateOneRequiredWithoutInvitationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutInvitationsInput, Prisma.OrganizationUpdateWithoutInvitationsInput>, Prisma.OrganizationUncheckedUpdateWithoutInvitationsInput>
 }
 
-export type OrganizationCreateNestedOneWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutReportsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutReportsInput
-  upsert?: Prisma.OrganizationUpsertWithoutReportsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutReportsInput, Prisma.OrganizationUpdateWithoutReportsInput>, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
-}
-
 export type OrganizationCreateNestedOneWithoutSettingsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSettingsInput, Prisma.OrganizationUncheckedCreateWithoutSettingsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSettingsInput
@@ -501,7 +459,49 @@ export type OrganizationUpdateOneRequiredWithoutSettingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutSettingsInput, Prisma.OrganizationUpdateWithoutSettingsInput>, Prisma.OrganizationUncheckedUpdateWithoutSettingsInput>
 }
 
-export type OrganizationCreateWithoutAuditEventsInput = {
+export type OrganizationCreateNestedOneWithoutCostUnitGroupsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitGroupsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutCostUnitGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitGroupsInput
+  upsert?: Prisma.OrganizationUpsertWithoutCostUnitGroupsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCostUnitGroupsInput, Prisma.OrganizationUpdateWithoutCostUnitGroupsInput>, Prisma.OrganizationUncheckedUpdateWithoutCostUnitGroupsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutCostUnitsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutCostUnitsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCostUnitsInput
+  upsert?: Prisma.OrganizationUpsertWithoutCostUnitsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCostUnitsInput, Prisma.OrganizationUpdateWithoutCostUnitsInput>, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutAuditEventsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAuditEventsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutAuditEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutAuditEventsInput
+  upsert?: Prisma.OrganizationUpsertWithoutAuditEventsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutAuditEventsInput, Prisma.OrganizationUpdateWithoutAuditEventsInput>, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
+}
+
+export type OrganizationCreateWithoutReportsInput = {
   id: string
   name: string
   slug: string
@@ -511,173 +511,13 @@ export type OrganizationCreateWithoutAuditEventsInput = {
   microsoftTenantId?: string | null
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
-  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
-  costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
-  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
-}
-
-export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
-  id: string
-  name: string
-  slug: string
-  logo?: string | null
-  metadata?: string | null
-  createdAt: Date | string
-  microsoftTenantId?: string | null
-  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
-  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
-  costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
-  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutAuditEventsInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
-}
-
-export type OrganizationUpsertWithoutAuditEventsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutAuditEventsInput, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutAuditEventsInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutAuditEventsInput, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
-}
-
-export type OrganizationUpdateWithoutAuditEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
-  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
-  costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
-  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
-  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
-  costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
-  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutCostUnitGroupsInput = {
-  id: string
-  name: string
-  slug: string
-  logo?: string | null
-  metadata?: string | null
-  createdAt: Date | string
-  microsoftTenantId?: string | null
-  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
-  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
-  costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
-  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
-  auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationUncheckedCreateWithoutCostUnitGroupsInput = {
-  id: string
-  name: string
-  slug: string
-  logo?: string | null
-  metadata?: string | null
-  createdAt: Date | string
-  microsoftTenantId?: string | null
-  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
-  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
-  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutCostUnitGroupsInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
-}
-
-export type OrganizationUpsertWithoutCostUnitGroupsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitGroupsInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutCostUnitGroupsInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitGroupsInput>
-}
-
-export type OrganizationUpdateWithoutCostUnitGroupsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
-  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
-  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
-  auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutCostUnitGroupsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
-  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
-  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutCostUnitsInput = {
-  id: string
-  name: string
-  slug: string
-  logo?: string | null
-  metadata?: string | null
-  createdAt: Date | string
-  microsoftTenantId?: string | null
-  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
-  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
 }
 
-export type OrganizationUncheckedCreateWithoutCostUnitsInput = {
+export type OrganizationUncheckedCreateWithoutReportsInput = {
   id: string
   name: string
   slug: string
@@ -687,29 +527,29 @@ export type OrganizationUncheckedCreateWithoutCostUnitsInput = {
   microsoftTenantId?: string | null
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
-export type OrganizationCreateOrConnectWithoutCostUnitsInput = {
+export type OrganizationCreateOrConnectWithoutReportsInput = {
   where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
 }
 
-export type OrganizationUpsertWithoutCostUnitsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
+export type OrganizationUpsertWithoutReportsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutReportsInput, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
   where?: Prisma.OrganizationWhereInput
 }
 
-export type OrganizationUpdateToOneWithWhereWithoutCostUnitsInput = {
+export type OrganizationUpdateToOneWithWhereWithoutReportsInput = {
   where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutReportsInput, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
 }
 
-export type OrganizationUpdateWithoutCostUnitsInput = {
+export type OrganizationUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -719,13 +559,13 @@ export type OrganizationUpdateWithoutCostUnitsInput = {
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
 }
 
-export type OrganizationUncheckedUpdateWithoutCostUnitsInput = {
+export type OrganizationUncheckedUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -735,7 +575,7 @@ export type OrganizationUncheckedUpdateWithoutCostUnitsInput = {
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -901,86 +741,6 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
-export type OrganizationCreateWithoutReportsInput = {
-  id: string
-  name: string
-  slug: string
-  logo?: string | null
-  metadata?: string | null
-  createdAt: Date | string
-  microsoftTenantId?: string | null
-  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
-  costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
-  costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
-  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
-  auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationUncheckedCreateWithoutReportsInput = {
-  id: string
-  name: string
-  slug: string
-  logo?: string | null
-  metadata?: string | null
-  createdAt: Date | string
-  microsoftTenantId?: string | null
-  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
-  costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
-  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutReportsInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
-}
-
-export type OrganizationUpsertWithoutReportsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutReportsInput, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutReportsInput, Prisma.OrganizationUncheckedCreateWithoutReportsInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutReportsInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutReportsInput, Prisma.OrganizationUncheckedUpdateWithoutReportsInput>
-}
-
-export type OrganizationUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
-  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
-  costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
-  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
-  auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
-  costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
-  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
 export type OrganizationCreateWithoutSettingsInput = {
   id: string
   name: string
@@ -1059,6 +819,246 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutCostUnitGroupsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
+  auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutCostUnitGroupsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutCostUnitGroupsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
+}
+
+export type OrganizationUpsertWithoutCostUnitGroupsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitGroupsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitGroupsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutCostUnitGroupsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitGroupsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitGroupsInput>
+}
+
+export type OrganizationUpdateWithoutCostUnitGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
+  auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutCostUnitGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutCostUnitsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
+  auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutCostUnitsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutCostUnitsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
+}
+
+export type OrganizationUpsertWithoutCostUnitsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCostUnitsInput, Prisma.OrganizationUncheckedCreateWithoutCostUnitsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutCostUnitsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCostUnitsInput, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
+}
+
+export type OrganizationUpdateWithoutCostUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
+  auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutCostUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutAuditEventsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
+  costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutAuditEventsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
+}
+
+export type OrganizationUpsertWithoutAuditEventsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutAuditEventsInput, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutAuditEventsInput, Prisma.OrganizationUncheckedCreateWithoutAuditEventsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutAuditEventsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutAuditEventsInput, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
+}
+
+export type OrganizationUpdateWithoutAuditEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
+  costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 
