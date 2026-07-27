@@ -1,10 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import {
-	ExpenseType,
-	type Prisma,
-	type PrismaClient,
-	ReportStatus,
-} from "@zemio/db";
+import { ExpenseType, type Prisma, type PrismaClient } from "@zemio/db";
 import type { z } from "zod";
 import type {
 	createFoodExpenseSchema,
@@ -93,30 +88,6 @@ export function createExpenseService(deps: {
 		return report;
 	}
 
-	function assertOwner(
-		ctx: ExpenseServiceContext,
-		report: { ownerId: string },
-	): void {
-		if (report.ownerId !== ctx.userId) {
-			throw new TRPCError({
-				code: "FORBIDDEN",
-				message: "You don't have permission to modify this report's expenses",
-			});
-		}
-	}
-
-	function assertEditable(report: { status: ReportStatus }): void {
-		if (
-			report.status !== ReportStatus.DRAFT &&
-			report.status !== ReportStatus.NEEDS_REVISION
-		) {
-			throw new TRPCError({
-				code: "BAD_REQUEST",
-				message: "You can only add expenses to draft or needs revision reports",
-			});
-		}
-	}
-
 	return {
 		async list(
 			ctx: ExpenseServiceContext,
@@ -137,8 +108,7 @@ export function createExpenseService(deps: {
 			input: CreateReceiptInput,
 		): Promise<{ id: string }> {
 			const report = await loadReport(ctx, input.reportId);
-			assertOwner(ctx, report);
-			assertEditable(report);
+			expensePolicy.authorize("create", toPolicyContext(ctx), { report });
 
 			const expectedKeyPrefix = `attachment/${ctx.organizationId}/`;
 			const hasInvalidKey = input.attachments.some(
@@ -187,8 +157,7 @@ export function createExpenseService(deps: {
 			input: CreateTravelInput,
 		): Promise<{ id: string }> {
 			const report = await loadReport(ctx, input.reportId);
-			assertOwner(ctx, report);
-			assertEditable(report);
+			expensePolicy.authorize("create", toPolicyContext(ctx), { report });
 
 			const settings = await repo.findSettings(ctx.db, ctx.organizationId);
 			if (!settings) {
@@ -232,8 +201,7 @@ export function createExpenseService(deps: {
 			input: CreateFoodInput,
 		): Promise<{ id: string }> {
 			const report = await loadReport(ctx, input.reportId);
-			assertOwner(ctx, report);
-			assertEditable(report);
+			expensePolicy.authorize("create", toPolicyContext(ctx), { report });
 
 			return transact(ctx.db, async (db) => {
 				const result = await repo.create(db, {
