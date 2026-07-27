@@ -298,9 +298,12 @@ error mapping, pagination and policy all have single shared implementations.
 
 Four items from this document are still outstanding, each a deliberate deferral:
 
-1. **No tenant-scoped Prisma extension** ([§1](#1-tenant-scoping-as-a-prisma-client-extension)).
-   Repositories still take `organizationId` explicitly. The loader procedures make a forgotten
-   filter far less likely than before, but not structurally impossible.
+1. **No tenant-scoped Prisma extension** ([§1](#1-tenant-scoping-as-a-prisma-client-extension)) —
+   **not planned.** Assessed and declined: `$extends` cannot cover `Expense` or `Attachment` (neither
+   has an `organizationId`), does not intercept nested writes, and would make a scoped client used on
+   a cross-tenant path return wrong rows silently rather than erroring. It would be defence in depth,
+   not the structural guarantee §1 describes. Tenancy is enforced by the resource-loader procedures;
+   Postgres row-level security is the option to revisit if a real guarantee is ever needed.
 2. **No transactional outbox** ([§5](#5-side-effects-via-a-domain-event-bus--outbox)). Events are
    emitted in-process; a crash between commit and handler loses the notification.
 3. **No zod output schemas.** Modules expose DTO *types* and mappers, not the runtime output
@@ -309,9 +312,19 @@ Four items from this document are still outstanding, each a deliberate deferral:
 4. **Offset-only pagination.** `PageMeta` is one shared contract, but the document's preference for
    cursor pagination is unmet; `audit` is the only cursor-paginated endpoint and uses its own shape.
 
-Two smaller notes: `orgAdminProcedure` throws `UNAUTHORIZED` where `FORBIDDEN` would be correct
-(the caller is authenticated, just not permitted), and the cost-unit picker's "Ohne Gruppe" label
-is a hardcoded German string in `cost-unit.dto.ts` rather than an i18n key.
+Smaller notes: `orgAdminProcedure` throws `UNAUTHORIZED` where `FORBIDDEN` would be correct (the
+caller is authenticated, just not permitted); the cost-unit picker's "Ohne Gruppe" label is a
+hardcoded German string in `cost-unit.dto.ts` rather than an i18n key; and `Attachment.size` crosses
+the wire as a `bigint`, so components call `Number(...)` on it — worth normalising in both the
+attachment and review projections at once.
+
+`report.exportToPdf` authorizes locally *and* the PDF service re-checks org and ownership, because
+its endpoint is independently reachable. That duplication is inherent to the split deployment, not
+an oversight — but the two rules have to be changed together.
+
+Finally, `reporting` exposes six reads taking an identical filter input and `dashboard` four, so
+those pages fan out six and four round-trips per render. Each is a genuinely different aggregation,
+which this document permits, but it is worth measuring before the set grows.
 
 ---
 
