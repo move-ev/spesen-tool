@@ -23,6 +23,7 @@ import {
 	InputGroupText,
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
+import { roundToCents } from "@/lib/utils";
 import { createFoodExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
@@ -105,11 +106,12 @@ export function CreateFoodExpenseForm({
 	}, [startDate, endDate, form]);
 
 	React.useEffect(() => {
-		const amount =
+		const amount = roundToCents(
 			settings.dailyFoodAllowance * days -
-			(breakfastDeduction * settings.breakfastDeduction +
-				lunchDeduction * settings.lunchDeduction +
-				dinnerDeduction * settings.dinnerDeduction);
+				(breakfastDeduction * settings.breakfastDeduction +
+					lunchDeduction * settings.lunchDeduction +
+					dinnerDeduction * settings.dinnerDeduction),
+		);
 
 		form.setFieldValue("amount", amount);
 	}, [

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { ExpenseType, type Prisma, type PrismaClient } from "@zemio/db";
 import type { z } from "zod";
+import { roundToCents } from "@/lib/utils";
 import type {
 	createFoodExpenseSchema,
 	createReceiptExpenseSchema,
@@ -172,7 +173,9 @@ export function createExpenseService(deps: {
 				const result = await repo.create(db, {
 					report: { connect: { id: input.reportId } },
 					type: ExpenseType.TRAVEL,
-					amount: Number(input.distance) * Number(settings.kilometerRate),
+					amount: roundToCents(
+						Number(input.distance) * Number(settings.kilometerRate),
+					),
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
@@ -281,7 +284,7 @@ export function createExpenseService(deps: {
 				if (distance !== undefined) {
 					const settings = await repo.findSettings(ctx.db, ctx.organizationId);
 					const kilometerRate = settings?.kilometerRate ?? 0.3;
-					updateData.amount = Number(distance) * Number(kilometerRate);
+					updateData.amount = roundToCents(Number(distance) * Number(kilometerRate));
 				}
 			}
 
