@@ -31,7 +31,10 @@ model Member {
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  // A user can only be a member of an organization once. The session-create
+  // hook's check-then-insert is not transactional; this constraint is the
+  // real guard against duplicates from concurrent logins.
+  @@unique([userId, organizationId])
   @@index([organizationId])
   @@map("member")
 }
