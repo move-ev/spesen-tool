@@ -55,8 +55,10 @@ model CostUnit {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // SetNull: deleting a group must only ungroup its cost units. A cascade
+  // here would delete the units and, transitively, every report tied to them.
   costUnitGroupId String?
-  costUnitGroup   CostUnitGroup? @relation(fields: [costUnitGroupId], references: [id], onDelete: Cascade)
+  costUnitGroup   CostUnitGroup? @relation(fields: [costUnitGroupId], references: [id], onDelete: SetNull)
 
   reports Report[]
 
