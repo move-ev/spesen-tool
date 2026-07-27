@@ -1,4 +1,11 @@
-import type { Attachment, Expense, Report, User } from "@zemio/db";
+import type {
+	Attachment,
+	Expense,
+	FoodExpenseDetail,
+	Report,
+	TravelExpenseDetail,
+	User,
+} from "@zemio/db";
 import { format } from "date-fns";
 import heicConvert from "heic-convert";
 import { PDFDocument as PDFLibDocument } from "pdf-lib";
@@ -20,9 +27,15 @@ const COLUMN_WIDTHS = {
 	AMOUNT: 80,
 } as const;
 
+type PdfExpense = Expense & {
+	attachments: Attachment[];
+	travelDetail: TravelExpenseDetail | null;
+	foodDetail: FoodExpenseDetail | null;
+};
+
 export interface PdfInput {
 	report: Report & {
-		expenses: (Expense & { attachments: Attachment[] })[];
+		expenses: PdfExpense[];
 		owner: User;
 		costUnit: { tag: string; title: string };
 		bankingDetails: { iban: string; fullName: string };
@@ -31,40 +44,17 @@ export interface PdfInput {
 	pdfs: { key: string; buffer: Buffer }[];
 }
 
-const travelMetaSchema = {
-	parse: (
-		meta: unknown,
-	): { from: string; to: string; distance: number } | null => {
-		if (!meta || typeof meta !== "object") return null;
-		const m = meta as Record<string, unknown>;
-		if (
-			typeof m.from !== "string" ||
-			typeof m.to !== "string" ||
-			typeof m.distance !== "number"
-		)
-			return null;
-		return { from: m.from, to: m.to, distance: m.distance };
-	},
-};
-
-const foodMetaSchema = {
-	parse: (meta: unknown): { days: number } | null => {
-		if (!meta || typeof meta !== "object") return null;
-		const m = meta as Record<string, unknown>;
-		if (typeof m.days !== "number") return null;
-		return { days: m.days };
-	},
-};
-
-function formatExpenseMeta(expense: Expense): string {
+function formatExpenseDetails(expense: PdfExpense): string {
 	if (expense.type === "TRAVEL") {
-		const meta = travelMetaSchema.parse(expense.meta);
-		if (meta) return `${meta.from} → ${meta.to} (${meta.distance.toFixed(2)} km)`;
+		const detail = expense.travelDetail;
+		if (detail) {
+			return `${detail.from} → ${detail.to} (${Number(detail.distance).toFixed(2)} km)`;
+		}
 		return "Ungültige Reisedaten";
 	}
 	if (expense.type === "FOOD") {
-		const meta = foodMetaSchema.parse(expense.meta);
-		if (meta) return `${meta.days} Tag(e)`;
+		const detail = expense.foodDetail;
+		if (detail) return `${detail.days} Tag(e)`;
 		return "Ungültige Verpflegungsdaten";
 	}
 	return "";
@@ -266,7 +256,7 @@ export async function generatePdf({
 			const typeStr = translateExpenseType(expense.type);
 			const startDateStr = format(expense.startDate, "dd.MM.yyyy");
 			const endDateStr = format(expense.endDate, "dd.MM.yyyy");
-			const metaStr = formatExpenseMeta(expense);
+			const metaStr = formatExpenseDetails(expense);
 			const descriptionStr = expense.description ?? "";
 			const detailsStr =
 				descriptionStr && metaStr

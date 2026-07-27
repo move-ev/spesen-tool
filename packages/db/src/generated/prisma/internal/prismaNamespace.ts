@@ -398,6 +398,8 @@ export const ModelName = {
   Invitation: 'Invitation',
   Report: 'Report',
   Expense: 'Expense',
+  TravelExpenseDetail: 'TravelExpenseDetail',
+  FoodExpenseDetail: 'FoodExpenseDetail',
   Attachment: 'Attachment',
   Settings: 'Settings',
   Preferences: 'Preferences'
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auditEvent" | "user" | "session" | "account" | "verification" | "bankingDetails" | "costUnitGroup" | "costUnit" | "legalAcceptance" | "organization" | "member" | "invitation" | "report" | "expense" | "attachment" | "settings" | "preferences"
+    modelProps: "auditEvent" | "user" | "session" | "account" | "verification" | "bankingDetails" | "costUnitGroup" | "costUnit" | "legalAcceptance" | "organization" | "member" | "invitation" | "report" | "expense" | "travelExpenseDetail" | "foodExpenseDetail" | "attachment" | "settings" | "preferences"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1456,6 +1458,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TravelExpenseDetail: {
+      payload: Prisma.$TravelExpenseDetailPayload<ExtArgs>
+      fields: Prisma.TravelExpenseDetailFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TravelExpenseDetailFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TravelExpenseDetailFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>
+        }
+        findFirst: {
+          args: Prisma.TravelExpenseDetailFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TravelExpenseDetailFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>
+        }
+        findMany: {
+          args: Prisma.TravelExpenseDetailFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>[]
+        }
+        create: {
+          args: Prisma.TravelExpenseDetailCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>
+        }
+        createMany: {
+          args: Prisma.TravelExpenseDetailCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TravelExpenseDetailCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>[]
+        }
+        delete: {
+          args: Prisma.TravelExpenseDetailDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>
+        }
+        update: {
+          args: Prisma.TravelExpenseDetailUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>
+        }
+        deleteMany: {
+          args: Prisma.TravelExpenseDetailDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TravelExpenseDetailUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TravelExpenseDetailUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>[]
+        }
+        upsert: {
+          args: Prisma.TravelExpenseDetailUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TravelExpenseDetailPayload>
+        }
+        aggregate: {
+          args: Prisma.TravelExpenseDetailAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTravelExpenseDetail>
+        }
+        groupBy: {
+          args: Prisma.TravelExpenseDetailGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TravelExpenseDetailGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TravelExpenseDetailCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TravelExpenseDetailCountAggregateOutputType> | number
+        }
+      }
+    }
+    FoodExpenseDetail: {
+      payload: Prisma.$FoodExpenseDetailPayload<ExtArgs>
+      fields: Prisma.FoodExpenseDetailFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FoodExpenseDetailFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FoodExpenseDetailFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>
+        }
+        findFirst: {
+          args: Prisma.FoodExpenseDetailFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FoodExpenseDetailFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>
+        }
+        findMany: {
+          args: Prisma.FoodExpenseDetailFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>[]
+        }
+        create: {
+          args: Prisma.FoodExpenseDetailCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>
+        }
+        createMany: {
+          args: Prisma.FoodExpenseDetailCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FoodExpenseDetailCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>[]
+        }
+        delete: {
+          args: Prisma.FoodExpenseDetailDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>
+        }
+        update: {
+          args: Prisma.FoodExpenseDetailUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>
+        }
+        deleteMany: {
+          args: Prisma.FoodExpenseDetailDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FoodExpenseDetailUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FoodExpenseDetailUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>[]
+        }
+        upsert: {
+          args: Prisma.FoodExpenseDetailUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FoodExpenseDetailPayload>
+        }
+        aggregate: {
+          args: Prisma.FoodExpenseDetailAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFoodExpenseDetail>
+        }
+        groupBy: {
+          args: Prisma.FoodExpenseDetailGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FoodExpenseDetailGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FoodExpenseDetailCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FoodExpenseDetailCountAggregateOutputType> | number
+        }
+      }
+    }
     Attachment: {
       payload: Prisma.$AttachmentPayload<ExtArgs>
       fields: Prisma.AttachmentFieldRefs
@@ -1921,6 +2071,29 @@ export const ExpenseScalarFieldEnum = {
 export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
 
 
+export const TravelExpenseDetailScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  from: 'from',
+  to: 'to',
+  distance: 'distance'
+} as const
+
+export type TravelExpenseDetailScalarFieldEnum = (typeof TravelExpenseDetailScalarFieldEnum)[keyof typeof TravelExpenseDetailScalarFieldEnum]
+
+
+export const FoodExpenseDetailScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  days: 'days',
+  breakfastDeduction: 'breakfastDeduction',
+  lunchDeduction: 'lunchDeduction',
+  dinnerDeduction: 'dinnerDeduction'
+} as const
+
+export type FoodExpenseDetailScalarFieldEnum = (typeof FoodExpenseDetailScalarFieldEnum)[keyof typeof FoodExpenseDetailScalarFieldEnum]
+
+
 export const AttachmentScalarFieldEnum = {
   id: 'id',
   key: 'key',
@@ -2327,6 +2500,8 @@ export type GlobalOmitConfig = {
   invitation?: Prisma.InvitationOmit
   report?: Prisma.ReportOmit
   expense?: Prisma.ExpenseOmit
+  travelExpenseDetail?: Prisma.TravelExpenseDetailOmit
+  foodExpenseDetail?: Prisma.FoodExpenseDetailOmit
   attachment?: Prisma.AttachmentOmit
   settings?: Prisma.SettingsOmit
   preferences?: Prisma.PreferencesOmit
