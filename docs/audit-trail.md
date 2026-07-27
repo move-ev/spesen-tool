@@ -74,7 +74,7 @@ model AuditEvent {
   createdAt      DateTime     @default(now())
 
   @@index([organizationId, createdAt])
-  @@index([entityType, entityId, createdAt])
+  @@index([organizationId, entityId, createdAt])
   @@index([actorId])
   @@map("audit_event")
 }
@@ -84,6 +84,11 @@ model AuditEvent {
 
 **`entityType` + `entityId`** — polymorphic reference to the affected record. Decouples the
 audit table from any specific Prisma model. New entity types require no schema change.
+
+**`organization` (`onDelete: Cascade`)** — the trail is org-scoped and does not outlive its
+tenant: deleting an organization is full offboarding and removes its audit events together
+with every other org-owned record. "Append-only" refers to the application surface (no
+update/delete interface exists), not to survival beyond tenant deletion.
 
 **`action`** — free-form string using the convention `"<entityType>.<verb>"`. A string (not a DB
 enum) means new actions can be introduced without a migration. Application-layer Zod validators

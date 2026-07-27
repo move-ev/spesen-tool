@@ -23,6 +23,10 @@ docs: [audit-trail.md](./audit-trail.md),
 | 8 | Better Auth managed models use plain `String` roles/statuses (`User.role`, `Member.role`, `Invitation.status`); `Organization.metadata` is stringified JSON | Info | Accepted — shapes are owned by Better Auth |
 | 9 | `Session.legalAcceptedAt` / `legalAcceptedReleaseVersion` duplicate `LegalAcceptance` | Info | Accepted — intentional per-session cache for the legal gate |
 | 10 | `User.microsoftTenantId` duplicates `Organization.microsoftTenantId` | Info | Accepted — this is the auto-mapping mechanism, not accidental denormalization |
+| 11 | Deleting a `CostUnitGroup` cascaded into its cost units and, transitively, every report tied to them — reachable from the ordinary group-delete endpoint | High | **Fixed** — relation relaxed to `SET NULL`; deleting a group now only ungroups its units |
+| 12 | Cross-tenant references are representable at the DB level: `Report.costUnitId` and `CostUnit.costUnitGroupId` are single-column FKs, so a direct write could point at another org's row | Info | Accepted — tenancy is enforced at the write boundaries (loader procedures + service org checks), consistent with the declined scoped-client extension (see trpc-architecture.md); composite FKs would conflict with the `SET NULL` group relation (Postgres nulls *all* referencing columns) and row-level security remains the option if a hard guarantee is ever needed |
+| 13 | The type/detail invariant (`TRAVEL`/`FOOD` ⇔ matching detail row, no mismatched rows) is not DB-enforced | Info | Accepted — cross-table CHECKs need triggers; writes create details atomically via nested writes, the post-deploy checks below verify completeness, and the app falls back to `meta` for deploy-window rows |
+| 14 | Deleting an organization cascades into `audit_event` | Info | Accepted — org deletion is full tenant offboarding; the audit trail is org-scoped and does not outlive its tenant (see audit-trail.md) |
 
 ---
 
@@ -57,22 +61,36 @@ carries a `-- Rollback:` block with the exact inverse SQL.
 
 | Migration | Purpose |
 |---|---|
-| `20260727150000_add_member_unique_constraint` | Dedupe members (keep oldest per user/org), add unique constraint |
+| `20260727150000_add_member_unique_constraint` | Reconcile duplicate members' roles (most privileged wins), dedupe (keep oldest per user/org), add unique constraint |
 | `20260727150100_add_money_column_precision` | Money columns → `DECIMAL(12,2)` |
 | `20260727150200_clean_up_redundant_indexes` | Drop covered indexes, add `report(organizationId, status)` |
-| `20260727150300_add_expense_detail_tables` | Create + backfill typed expense detail tables, `meta` nullable |
+| `20260727150300_add_expense_detail_tables` | Create + backfill typed expense detail tables (out-of-range meta values degrade to defaults), `meta` nullable |
 | `20260727150400_add_report_banking_snapshot` | Create + backfill snapshots, relax `bankingDetailsId` FK |
+| `20260727150500_detach_cost_units_on_group_delete` | Group-delete FK → `SET NULL` (finding 11) |
+| `20260727150600_retarget_covered_and_audit_indexes` | Drop covered indexes on `legal_acceptance`, `report`, `cost_unit_group`; audit entity index → `(organizationId, entityId, createdAt)` |
 
 Both backfills are **idempotent** (`ON CONFLICT DO NOTHING`) and can be
 re-run to catch up rows written by an old app instance during the deploy
-window. Malformed `meta` values fall back to the same defaults the old
-application code used.
+window. Malformed `meta` values — including syntactically numeric values
+that do not fit the target columns — fall back to the same defaults the old
+application code used. Until the contract migration drops `meta`, the app's
+read and update paths additionally fall back to `meta` for deploy-window
+rows whose detail row does not exist yet (`expense.meta.ts`), so nothing is
+lost or overwritten with defaults in the meantime.
 
 ### Pre-deploy checks
 
 ```sql
--- Must return 0: amounts that would overflow DECIMAL(12,2)
-SELECT count(*) FROM expense WHERE amount >= 1e10;
+-- Must return 0: amounts that would overflow DECIMAL(12,2), in either direction
+SELECT count(*) FROM expense WHERE abs(amount) >= 1e10;
+
+-- Must return 0: settings values that would overflow DECIMAL(12,2)
+SELECT count(*) FROM settings
+WHERE abs("kilometerRate") >= 1e10
+   OR abs("dailyFoodAllowance") >= 1e10
+   OR abs("breakfastDeduction") >= 1e10
+   OR abs("lunchDeduction") >= 1e10
+   OR abs("dinnerDeduction") >= 1e10;
 
 -- Informational: duplicate memberships the dedupe will remove
 SELECT "userId", "organizationId", count(*) FROM member
