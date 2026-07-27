@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES } from "@/lib/consts";
+import { SettingsLayout } from "@/modules/settings";
 import { auth } from "@/server/better-auth";
 
 export default async function ServerLayout({
@@ -14,9 +15,10 @@ export default async function ServerLayout({
 		headers: requestHeaders,
 	});
 
-	if (!session?.user) {
-		redirect(ROUTES.AUTH());
+	// When the user is not logged in, redirect to the login page
+	if (!session) {
+		redirect(ROUTES.AUTH);
 	}
 
-	return <div className="container">{children}</div>;
+	return <SettingsLayout>{children}</SettingsLayout>;
 }
