@@ -113,13 +113,17 @@ merge into an opaque blob.
 | `report` | `report.status_changed` | `{ status }` | `{ status }` | `{ notify?: boolean }` |
 | `report` | `report.comment_added` | `null` | `null` | `{ text: string }` |
 | `expense` | `expense.added` | `null` | `null` | `{ expenseId, type, amount }` |
-| `expense` | `expense.updated` | `{ amount?, type?, ... }` | `{ amount?, type?, ... }` | — |
+| `expense` | `expense.updated` | `{ amount?, description?, travelDetail?, foodDetail? }` | `{ amount?, description?, travelDetail?, foodDetail? }` | — |
 | `expense` | `expense.deleted` | `{ expenseId, type, amount }` | `null` | — |
 | `attachment` | `attachment.added` | `null` | `null` | `{ attachmentId, fileName, expenseId }` |
 | `attachment` | `attachment.deleted` | `{ attachmentId, fileName, expenseId }` | `null` | — |
 
 Only changed fields are included in `diff.before` / `diff.after` for update events — not the
 full entity snapshot.
+
+Events written before the expense-meta normalization (see
+[schema-audit.md](./schema-audit.md)) recorded type-specific expense data under a `meta` key;
+newer events record it under `travelDetail` / `foodDetail`.
 
 ---
 
