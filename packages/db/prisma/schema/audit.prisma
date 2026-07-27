@@ -1,0 +1,20 @@
+// Append-only audit trail, see docs/audit-trail.md
+
+model AuditEvent {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actorId        String
+  actor          User         @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  entityType     String
+  entityId       String
+  action         String
+  diff           Json?
+  payload        Json?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId])
+  @@map("audit_event")
+}
