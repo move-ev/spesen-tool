@@ -144,7 +144,7 @@ function UpdateCostUnitFormConnected({
 	const [{ data: groups }, { data: costUnit }] = useSuspenseQueries({
 		queries: [
 			utils.costUnit.listGroups.queryOptions(),
-			utils.costUnit.getById.queryOptions({ id: costUnitId }),
+			utils.costUnit.byId.queryOptions({ id: costUnitId }),
 		],
 	});
 
@@ -153,8 +153,8 @@ function UpdateCostUnitFormConnected({
 			toast.success(t("savedToast"), {
 				description: `${value.tag} • ${value.title}`,
 			});
-			utils.costUnit.listCostUnits.invalidate({});
-			utils.costUnit.getById.invalidate({ id: value.id });
+			utils.costUnit.list.invalidate({});
+			utils.costUnit.byId.invalidate({ id: value.id });
 			handle.close();
 		},
 		onError: (error) => {

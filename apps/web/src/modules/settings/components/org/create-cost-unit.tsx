@@ -117,7 +117,7 @@ function CreateCostUnitFormConnected({ handle }: WithHandle) {
 			toast.success(t("savedToast"), {
 				description: `${value.tag} • ${value.title}`,
 			});
-			utils.costUnit.listCostUnits.invalidate({});
+			utils.costUnit.list.invalidate({});
 			handle.close();
 		},
 		onError: (error) => {
