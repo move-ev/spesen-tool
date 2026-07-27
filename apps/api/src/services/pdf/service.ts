@@ -44,32 +44,21 @@ export async function generateReportPdf(
 	const report = await db.report.findUnique({
 		where: { id: reportId },
 		include: {
-			expenses: {
-				include: { attachments: true, travelDetail: true, foodDetail: true },
-			},
+			expenses: { include: { attachments: true } },
 			owner: true,
 			costUnit: { select: { tag: true, title: true } },
 			bankingDetails: true,
-			bankingSnapshot: true,
 		},
 	});
 
-	// Submitted reports export the snapshot taken at submission; editable
-	// reports (draft/revision) export the live details they would submit.
-	const isEditable =
-		report?.status === "DRAFT" || report?.status === "NEEDS_REVISION";
-	const bankingSource = isEditable
-		? (report?.bankingDetails ?? report?.bankingSnapshot)
-		: (report?.bankingSnapshot ?? report?.bankingDetails);
-
-	if (!report || !bankingSource) {
+	if (!report?.bankingDetails) {
 		throw Object.assign(new Error("Report or banking details not found"), {
 			status: 404,
 		});
 	}
 
 	const bankingDetails = decryptBankingDetails(
-		bankingSource,
+		report.bankingDetails,
 		getEncryptionKey(),
 	);
 

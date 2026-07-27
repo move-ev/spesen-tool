@@ -167,16 +167,7 @@ export function createReportService(deps: {
 				{ ownerId: report.ownerId, status: report.status },
 			);
 
-			// Editable reports show the live details (what the next submission
-			// would snapshot); finalized reports show the submitted snapshot.
-			const isEditable =
-				report.status === ReportStatus.DRAFT ||
-				report.status === ReportStatus.NEEDS_REVISION;
-			const banking = isEditable
-				? (report.bankingDetails ?? report.bankingSnapshot)
-				: (report.bankingSnapshot ?? report.bankingDetails);
-
-			return toFinancialSummaryDTO(banking, totalAmount);
+			return toFinancialSummaryDTO(report.bankingDetails, totalAmount);
 		},
 
 		async create(
@@ -297,27 +288,7 @@ export function createReportService(deps: {
 		): Promise<{ id: string }> {
 			assertSubmittable(report.status);
 
-			const { bankingDetailsId } = report;
-			if (!bankingDetailsId) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message:
-						"The banking details of this report were deleted. Select new banking details before submitting.",
-				});
-			}
-
 			await transact(ctx.db, async (db) => {
-				const snapshotted = await repo.snapshotBankingDetails(db, {
-					reportId: report.id,
-					bankingDetailsId,
-				});
-				if (!snapshotted) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message:
-							"The banking details of this report were deleted. Select new banking details before submitting.",
-					});
-				}
 				await repo.setStatus(db, {
 					id: report.id,
 					status: ReportStatus.PENDING_APPROVAL,

@@ -4,12 +4,6 @@ import {
 	type EncryptedBankingDetails,
 } from "@/lib/banking/cryptic";
 import {
-	type FoodExpenseDetailDTO,
-	type TravelExpenseDetailDTO,
-	toFoodExpenseDetailDTO,
-	toTravelExpenseDetailDTO,
-} from "@/server/modules/expense/expense.dto";
-import {
 	decimalToNumber,
 	nullableDecimalToNumber,
 } from "@/server/shared/money";
@@ -49,22 +43,19 @@ export function toReportListItemDTO(
 
 export type FinancialSummaryDTO = {
 	totalAmount: number;
-	// Null when a draft's banking details were deleted before submission.
-	iban: string | null;
-	ownerName: string | null;
+	iban: string;
+	ownerName: string;
 };
 
 export function toFinancialSummaryDTO(
-	bankingDetails: EncryptedBankingDetails | null,
+	bankingDetails: EncryptedBankingDetails,
 	totalAmount: Prisma.Decimal | null,
 ): FinancialSummaryDTO {
-	const decrypted = bankingDetails
-		? decryptBankingDetails(bankingDetails)
-		: null;
+	const decrypted = decryptBankingDetails(bankingDetails);
 	return {
 		totalAmount: nullableDecimalToNumber(totalAmount),
-		iban: decrypted?.iban ?? null,
-		ownerName: decrypted?.fullName ?? null,
+		iban: decrypted.iban,
+		ownerName: decrypted.fullName,
 	};
 }
 
@@ -75,8 +66,7 @@ type ReviewExpenseDTO = {
 	startDate: Date;
 	endDate: Date;
 	type: ExpenseType;
-	travelDetail: TravelExpenseDetailDTO | null;
-	foodDetail: FoodExpenseDetailDTO | null;
+	meta: Prisma.JsonValue;
 	reportId: string;
 };
 
@@ -92,19 +82,14 @@ export type ReviewDTO = {
 		paidAt: Date | null;
 		owner: ReviewDetail["owner"];
 	};
-	// Null only for anomalous data: a report in review without a snapshot
-	// whose live banking details were deleted.
-	bankingSummary: { iban: string; ownerName: string } | null;
+	bankingSummary: { iban: string; ownerName: string };
 	totalAmount: number;
 	expenses: ReviewExpenseDTO[];
 	attachments: ReviewDetail["expenses"][number]["attachments"];
 };
 
 export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
-	// The snapshot holds what was actually submitted; the live relation only
-	// backs legacy reports that predate snapshots.
-	const bankingSource = detail.bankingSnapshot ?? detail.bankingDetails;
-	const banking = bankingSource ? decryptBankingDetails(bankingSource) : null;
+	const banking = decryptBankingDetails(detail.bankingDetails);
 
 	const expenses: ReviewExpenseDTO[] = detail.expenses.map((expense) => ({
 		id: expense.id,
@@ -113,8 +98,7 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 		startDate: expense.startDate,
 		endDate: expense.endDate,
 		type: expense.type,
-		travelDetail: toTravelExpenseDetailDTO(expense.travelDetail),
-		foodDetail: toFoodExpenseDetailDTO(expense.foodDetail),
+		meta: expense.meta,
 		reportId: expense.reportId,
 	}));
 
@@ -134,9 +118,7 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 			paidAt: detail.paidAt,
 			owner: detail.owner,
 		},
-		bankingSummary: banking
-			? { iban: banking.iban, ownerName: banking.fullName }
-			: null,
+		bankingSummary: { iban: banking.iban, ownerName: banking.fullName },
 		totalAmount,
 		expenses,
 		attachments,

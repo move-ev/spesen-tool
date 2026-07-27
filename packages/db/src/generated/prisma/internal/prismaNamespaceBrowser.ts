@@ -51,26 +51,23 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  AuditEvent: 'AuditEvent',
+  Report: 'Report',
+  Expense: 'Expense',
+  Attachment: 'Attachment',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
-  BankingDetails: 'BankingDetails',
-  ReportBankingSnapshot: 'ReportBankingSnapshot',
-  CostUnitGroup: 'CostUnitGroup',
-  CostUnit: 'CostUnit',
-  LegalAcceptance: 'LegalAcceptance',
   Organization: 'Organization',
   Member: 'Member',
   Invitation: 'Invitation',
-  Report: 'Report',
-  Expense: 'Expense',
-  TravelExpenseDetail: 'TravelExpenseDetail',
-  FoodExpenseDetail: 'FoodExpenseDetail',
-  Attachment: 'Attachment',
+  Preferences: 'Preferences',
+  LegalAcceptance: 'LegalAcceptance',
   Settings: 'Settings',
-  Preferences: 'Preferences'
+  CostUnitGroup: 'CostUnitGroup',
+  CostUnit: 'CostUnit',
+  AuditEvent: 'AuditEvent',
+  BankingDetails: 'BankingDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -89,19 +86,49 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const AuditEventScalarFieldEnum = {
+export const ReportScalarFieldEnum = {
   id: 'id',
+  tag: 'tag',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  paidAt: 'paidAt',
   organizationId: 'organizationId',
-  actorId: 'actorId',
-  entityType: 'entityType',
-  entityId: 'entityId',
-  action: 'action',
-  diff: 'diff',
-  payload: 'payload',
-  createdAt: 'createdAt'
+  costUnitId: 'costUnitId',
+  ownerId: 'ownerId',
+  bankingDetailsId: 'bankingDetailsId',
+  createdAt: 'createdAt',
+  lastUpdatedAt: 'lastUpdatedAt'
 } as const
 
-export type AuditEventScalarFieldEnum = (typeof AuditEventScalarFieldEnum)[keyof typeof AuditEventScalarFieldEnum]
+export type ReportScalarFieldEnum = (typeof ReportScalarFieldEnum)[keyof typeof ReportScalarFieldEnum]
+
+
+export const ExpenseScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  amount: 'amount',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  type: 'type',
+  meta: 'meta',
+  reportId: 'reportId'
+} as const
+
+export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const AttachmentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  size: 'size',
+  originalName: 'originalName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  expenseId: 'expenseId'
+} as const
+
+export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -171,69 +198,6 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
-export const BankingDetailsScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  iban: 'iban',
-  fullName: 'fullName',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BankingDetailsScalarFieldEnum = (typeof BankingDetailsScalarFieldEnum)[keyof typeof BankingDetailsScalarFieldEnum]
-
-
-export const ReportBankingSnapshotScalarFieldEnum = {
-  id: 'id',
-  reportId: 'reportId',
-  iban: 'iban',
-  fullName: 'fullName',
-  createdAt: 'createdAt'
-} as const
-
-export type ReportBankingSnapshotScalarFieldEnum = (typeof ReportBankingSnapshotScalarFieldEnum)[keyof typeof ReportBankingSnapshotScalarFieldEnum]
-
-
-export const CostUnitGroupScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  organizationId: 'organizationId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type CostUnitGroupScalarFieldEnum = (typeof CostUnitGroupScalarFieldEnum)[keyof typeof CostUnitGroupScalarFieldEnum]
-
-
-export const CostUnitScalarFieldEnum = {
-  id: 'id',
-  tag: 'tag',
-  title: 'title',
-  examples: 'examples',
-  organizationId: 'organizationId',
-  status: 'status',
-  color: 'color',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  costUnitGroupId: 'costUnitGroupId'
-} as const
-
-export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typeof CostUnitScalarFieldEnum]
-
-
-export const LegalAcceptanceScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  releaseVersion: 'releaseVersion',
-  acceptanceType: 'acceptanceType',
-  acceptedAt: 'acceptedAt',
-  documentVersions: 'documentVersions'
-} as const
-
-export type LegalAcceptanceScalarFieldEnum = (typeof LegalAcceptanceScalarFieldEnum)[keyof typeof LegalAcceptanceScalarFieldEnum]
-
-
 export const OrganizationScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -272,72 +236,26 @@ export const InvitationScalarFieldEnum = {
 export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
 
 
-export const ReportScalarFieldEnum = {
+export const PreferencesScalarFieldEnum = {
   id: 'id',
-  tag: 'tag',
-  title: 'title',
-  description: 'description',
-  status: 'status',
-  paidAt: 'paidAt',
-  organizationId: 'organizationId',
-  costUnitId: 'costUnitId',
-  ownerId: 'ownerId',
-  bankingDetailsId: 'bankingDetailsId',
-  createdAt: 'createdAt',
-  lastUpdatedAt: 'lastUpdatedAt'
+  userId: 'userId',
+  notifications: 'notifications',
+  locale: 'locale'
 } as const
 
-export type ReportScalarFieldEnum = (typeof ReportScalarFieldEnum)[keyof typeof ReportScalarFieldEnum]
+export type PreferencesScalarFieldEnum = (typeof PreferencesScalarFieldEnum)[keyof typeof PreferencesScalarFieldEnum]
 
 
-export const ExpenseScalarFieldEnum = {
+export const LegalAcceptanceScalarFieldEnum = {
   id: 'id',
-  description: 'description',
-  amount: 'amount',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  type: 'type',
-  meta: 'meta',
-  reportId: 'reportId'
+  userId: 'userId',
+  releaseVersion: 'releaseVersion',
+  acceptanceType: 'acceptanceType',
+  acceptedAt: 'acceptedAt',
+  documentVersions: 'documentVersions'
 } as const
 
-export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
-
-
-export const TravelExpenseDetailScalarFieldEnum = {
-  id: 'id',
-  expenseId: 'expenseId',
-  from: 'from',
-  to: 'to',
-  distance: 'distance'
-} as const
-
-export type TravelExpenseDetailScalarFieldEnum = (typeof TravelExpenseDetailScalarFieldEnum)[keyof typeof TravelExpenseDetailScalarFieldEnum]
-
-
-export const FoodExpenseDetailScalarFieldEnum = {
-  id: 'id',
-  expenseId: 'expenseId',
-  days: 'days',
-  breakfastDeduction: 'breakfastDeduction',
-  lunchDeduction: 'lunchDeduction',
-  dinnerDeduction: 'dinnerDeduction'
-} as const
-
-export type FoodExpenseDetailScalarFieldEnum = (typeof FoodExpenseDetailScalarFieldEnum)[keyof typeof FoodExpenseDetailScalarFieldEnum]
-
-
-export const AttachmentScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  size: 'size',
-  originalName: 'originalName',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  expenseId: 'expenseId'
-} as const
-
-export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
+export type LegalAcceptanceScalarFieldEnum = (typeof LegalAcceptanceScalarFieldEnum)[keyof typeof LegalAcceptanceScalarFieldEnum]
 
 
 export const SettingsScalarFieldEnum = {
@@ -357,14 +275,59 @@ export const SettingsScalarFieldEnum = {
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
 
 
-export const PreferencesScalarFieldEnum = {
+export const CostUnitGroupScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  notifications: 'notifications',
-  locale: 'locale'
+  title: 'title',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
-export type PreferencesScalarFieldEnum = (typeof PreferencesScalarFieldEnum)[keyof typeof PreferencesScalarFieldEnum]
+export type CostUnitGroupScalarFieldEnum = (typeof CostUnitGroupScalarFieldEnum)[keyof typeof CostUnitGroupScalarFieldEnum]
+
+
+export const CostUnitScalarFieldEnum = {
+  id: 'id',
+  tag: 'tag',
+  title: 'title',
+  examples: 'examples',
+  organizationId: 'organizationId',
+  status: 'status',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  costUnitGroupId: 'costUnitGroupId'
+} as const
+
+export type CostUnitScalarFieldEnum = (typeof CostUnitScalarFieldEnum)[keyof typeof CostUnitScalarFieldEnum]
+
+
+export const AuditEventScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  actorId: 'actorId',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  action: 'action',
+  diff: 'diff',
+  payload: 'payload',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditEventScalarFieldEnum = (typeof AuditEventScalarFieldEnum)[keyof typeof AuditEventScalarFieldEnum]
+
+
+export const BankingDetailsScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  iban: 'iban',
+  fullName: 'fullName',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BankingDetailsScalarFieldEnum = (typeof BankingDetailsScalarFieldEnum)[keyof typeof BankingDetailsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -375,19 +338,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -398,6 +361,14 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -405,12 +376,4 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

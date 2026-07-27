@@ -9,6 +9,44 @@
 * 🟢 You can import this file directly.
 */
 
+export const ReportStatus = {
+  DRAFT: 'DRAFT',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  NEEDS_REVISION: 'NEEDS_REVISION',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  PAID: 'PAID'
+} as const
+
+export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
+
+
+export const ExpenseType = {
+  RECEIPT: 'RECEIPT',
+  TRAVEL: 'TRAVEL',
+  FOOD: 'FOOD'
+} as const
+
+export type ExpenseType = (typeof ExpenseType)[keyof typeof ExpenseType]
+
+
+export const NotificationPreference = {
+  ALL: 'ALL',
+  STATUS_CHANGES: 'STATUS_CHANGES',
+  NONE: 'NONE'
+} as const
+
+export type NotificationPreference = (typeof NotificationPreference)[keyof typeof NotificationPreference]
+
+
+export const LegalAcceptanceType = {
+  CHECKBOX_AND_BUTTON: 'CHECKBOX_AND_BUTTON',
+  IMPLICIT_ON_SIGNUP: 'IMPLICIT_ON_SIGNUP'
+} as const
+
+export type LegalAcceptanceType = (typeof LegalAcceptanceType)[keyof typeof LegalAcceptanceType]
+
+
 export const CostUnitStatus = {
   ACTIVE: 'ACTIVE',
   ARCHIVED: 'ARCHIVED'
@@ -39,41 +77,3 @@ export const CostUnitColor = {
 } as const
 
 export type CostUnitColor = (typeof CostUnitColor)[keyof typeof CostUnitColor]
-
-
-export const LegalAcceptanceType = {
-  CHECKBOX_AND_BUTTON: 'CHECKBOX_AND_BUTTON',
-  IMPLICIT_ON_SIGNUP: 'IMPLICIT_ON_SIGNUP'
-} as const
-
-export type LegalAcceptanceType = (typeof LegalAcceptanceType)[keyof typeof LegalAcceptanceType]
-
-
-export const ReportStatus = {
-  DRAFT: 'DRAFT',
-  PENDING_APPROVAL: 'PENDING_APPROVAL',
-  NEEDS_REVISION: 'NEEDS_REVISION',
-  ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED',
-  PAID: 'PAID'
-} as const
-
-export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
-
-
-export const ExpenseType = {
-  RECEIPT: 'RECEIPT',
-  TRAVEL: 'TRAVEL',
-  FOOD: 'FOOD'
-} as const
-
-export type ExpenseType = (typeof ExpenseType)[keyof typeof ExpenseType]
-
-
-export const NotificationPreference = {
-  ALL: 'ALL',
-  STATUS_CHANGES: 'STATUS_CHANGES',
-  NONE: 'NONE'
-} as const
-
-export type NotificationPreference = (typeof NotificationPreference)[keyof typeof NotificationPreference]

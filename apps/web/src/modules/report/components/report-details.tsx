@@ -79,13 +79,13 @@ function ReportDetails({
 				<ReportDetail
 					icon={<LandmarkIcon />}
 					title={t("iban")}
-					value={financialQuery.data.iban ?? "—"}
+					value={financialQuery.data.iban}
 				/>
 
 				<ReportDetail
 					icon={<UserIcon />}
 					title={t("accountName")}
-					value={financialQuery.data.ownerName ?? "—"}
+					value={financialQuery.data.ownerName}
 				/>
 
 				<Separator />

@@ -353,6 +353,16 @@ export type AuditEventUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type AuditEventListRelationFilter = {
+  every?: Prisma.AuditEventWhereInput
+  some?: Prisma.AuditEventWhereInput
+  none?: Prisma.AuditEventWhereInput
+}
+
+export type AuditEventOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type AuditEventCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -383,24 +393,6 @@ export type AuditEventMinOrderByAggregateInput = {
   entityId?: Prisma.SortOrder
   action?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-}
-
-export type AuditEventListRelationFilter = {
-  every?: Prisma.AuditEventWhereInput
-  some?: Prisma.AuditEventWhereInput
-  none?: Prisma.AuditEventWhereInput
-}
-
-export type AuditEventOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
 }
 
 export type AuditEventCreateNestedManyWithoutActorInput = {
