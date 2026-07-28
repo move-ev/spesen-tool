@@ -44,21 +44,35 @@ export async function generateReportPdf(
 	const report = await db.report.findUnique({
 		where: { id: reportId },
 		include: {
-			expenses: { include: { attachments: true } },
+			expenses: {
+				include: { attachments: true, travelDetail: true, foodDetail: true },
+			},
 			owner: true,
 			costUnit: { select: { tag: true, title: true } },
 			bankingDetails: true,
+			bankingSnapshot: true,
 		},
 	});
 
-	if (!report?.bankingDetails) {
+	// Submitted reports export the snapshot taken at submission; editable
+	// reports (draft/revision) export the live details they would submit.
+	// An editable report without live details (the owner deleted them) must
+	// not fall back to an old snapshot — that would export stale account
+	// data the next submission is required to replace, so it 404s below.
+	const isEditable =
+		report?.status === "DRAFT" || report?.status === "NEEDS_REVISION";
+	const bankingSource = isEditable
+		? report?.bankingDetails
+		: (report?.bankingSnapshot ?? report?.bankingDetails);
+
+	if (!report || !bankingSource) {
 		throw Object.assign(new Error("Report or banking details not found"), {
 			status: 404,
 		});
 	}
 
 	const bankingDetails = decryptBankingDetails(
-		report.bankingDetails,
+		bankingSource,
 		getEncryptionKey(),
 	);
 

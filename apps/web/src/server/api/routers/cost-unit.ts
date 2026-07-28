@@ -1,429 +1,80 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { NO_COST_UNIT_GROUP } from "@/lib/consts";
 import {
 	createCostUnitGroupSchema,
 	createCostUnitSchema,
 	deleteCostUnitGroupSchema,
-	deleteCostUnitSchema,
 	updateCostUnitGroupSchema,
 	updateCostUnitSchema,
 } from "@/lib/validators";
-import { createTRPCRouter, orgAdminProcedure, orgProcedure } from "../trpc";
+import {
+	createTRPCRouter,
+	orgAdminProcedure,
+	orgProcedure,
+} from "@/server/api/trpc";
+import {
+	costUnitAdminProcedure,
+	costUnitListInputSchema,
+	costUnitProcedure,
+	costUnitService,
+	toCostUnitServiceContext,
+} from "@/server/modules/cost-unit";
 
 /**
- * Checks if an error is a Prisma unique constraint violation
+ * CostUnitGroup is a distinct model, so its endpoints are nested rather than
+ * flattened in as createGroup/updateGroup/deleteGroup - the same shape used for
+ * platformAdmin.organizations.
  */
-function isPrismaUniqueConstraintError(
-	error: unknown,
-): error is { code: string; meta?: { target?: string[] } } {
-	return (
-		typeof error === "object" &&
-		error !== null &&
-		"code" in error &&
-		(error as { code: string }).code === "P2002"
-	);
-}
+const costUnitGroupsRouter = createTRPCRouter({
+	list: orgProcedure.query(({ ctx }) =>
+		costUnitService.listGroups(toCostUnitServiceContext(ctx)),
+	),
+
+	create: orgAdminProcedure
+		.input(createCostUnitGroupSchema)
+		.mutation(({ ctx, input }) =>
+			costUnitService.createGroup(toCostUnitServiceContext(ctx), input),
+		),
+
+	update: orgAdminProcedure
+		.input(updateCostUnitGroupSchema)
+		.mutation(({ ctx, input }) =>
+			costUnitService.updateGroup(toCostUnitServiceContext(ctx), input),
+		),
+
+	delete: orgAdminProcedure
+		.input(deleteCostUnitGroupSchema)
+		.mutation(({ ctx, input }) =>
+			costUnitService.removeGroup(toCostUnitServiceContext(ctx), input),
+		),
+});
 
 export const costUnitRouter = createTRPCRouter({
-	getById: orgProcedure
-		.input(z.object({ id: z.string() }))
-		.query(async ({ ctx, input }) => {
-			return ctx.db.costUnit.findUniqueOrThrow({
-				where: {
-					id: input.id,
-				},
-				include: {
-					costUnitGroup: true,
-					_count: true,
-				},
-			});
-		}),
-	listCostUnits: orgProcedure
-		.input(
-			z.object({
-				page: z.number().min(1).default(1),
-				pageSize: z.number().min(1).max(200).default(20),
-				search: z.string().optional(),
-			}),
-		)
-		.query(async ({ ctx, input }) => {
-			const { page, pageSize, search } = input;
+	byId: costUnitProcedure.query(({ ctx }) => ctx.costUnit),
 
-			const where = {
-				organizationId: ctx.organizationId,
-				...(search
-					? {
-							OR: [
-								{ title: { contains: search, mode: "insensitive" as const } },
-								{ tag: { contains: search, mode: "insensitive" as const } },
-							],
-						}
-					: {}),
-			};
+	list: orgProcedure
+		.input(costUnitListInputSchema)
+		.query(({ ctx, input }) =>
+			costUnitService.list(toCostUnitServiceContext(ctx), input),
+		),
 
-			const [items, totalCount] = await ctx.db.$transaction([
-				ctx.db.costUnit.findMany({
-					where,
-					skip: (page - 1) * pageSize,
-					take: pageSize,
-					orderBy: { tag: "asc" },
-					select: {
-						id: true,
-						tag: true,
-						title: true,
-						examples: true,
-						color: true,
-						costUnitGroupId: true,
-						createdAt: true,
-						status: true,
-						costUnitGroup: {
-							select: {
-								title: true,
-							},
-						},
-					},
-				}),
-				ctx.db.costUnit.count({ where }),
-			]);
-
-			return { items, totalCount, page, pageSize };
-		}),
-
-	listGroupsWithUnits: orgProcedure.query(async ({ ctx }) => {
-		const [groups, ungroupedCostUnits] = await ctx.db.$transaction([
-			ctx.db.costUnitGroup.findMany({
-				where: {
-					organizationId: ctx.organizationId,
-					costUnits: {
-						every: {
-							status: {
-								not: "ARCHIVED",
-							},
-						},
-					},
-				},
-				select: {
-					id: true,
-					title: true,
-					costUnits: {
-						select: {
-							id: true,
-							title: true,
-							tag: true,
-							examples: true,
-							color: true,
-						},
-						orderBy: { tag: "asc" },
-					},
-				},
-				orderBy: { title: "asc" },
-			}),
-			ctx.db.costUnit.findMany({
-				where: {
-					organizationId: ctx.organizationId,
-					costUnitGroupId: null,
-					status: {
-						not: "ARCHIVED",
-					},
-				},
-
-				select: {
-					id: true,
-					title: true,
-					tag: true,
-					examples: true,
-					color: true,
-				},
-				orderBy: { tag: "asc" },
-			}),
-		]);
-
-		if (ungroupedCostUnits.length > 0) {
-			return [
-				{
-					id: NO_COST_UNIT_GROUP,
-					title: "Ohne Gruppe",
-					costUnits: ungroupedCostUnits,
-				},
-				...groups,
-			];
-		}
-
-		return groups;
-	}),
-	listGrouped: orgProcedure.query(async ({ ctx }) => {
-		const costUnits = await ctx.db.costUnit.findMany({
-			where: {
-				organizationId: ctx.organizationId,
-			},
-			include: {
-				costUnitGroup: true,
-			},
-			orderBy: [{ costUnitGroup: { title: "asc" } }, { tag: "asc" }],
-		});
-
-		// Group cost units by their group
-		const ungrouped: typeof costUnits = [];
-		const grouped = new Map<
-			string,
-			{
-				group: (typeof costUnits)[0]["costUnitGroup"];
-				costUnits: typeof costUnits;
-			}
-		>();
-
-		for (const costUnit of costUnits) {
-			if (!costUnit.costUnitGroup) {
-				ungrouped.push(costUnit);
-			} else {
-				const existing = grouped.get(costUnit.costUnitGroup.id);
-				if (existing) {
-					existing.costUnits.push(costUnit);
-				} else {
-					grouped.set(costUnit.costUnitGroup.id, {
-						group: costUnit.costUnitGroup,
-						costUnits: [costUnit],
-					});
-				}
-			}
-		}
-
-		return {
-			ungrouped,
-			grouped: Array.from(grouped.values()),
-		};
-	}),
-
-	listGroups: orgProcedure.query(async ({ ctx }) => {
-		return await ctx.db.costUnitGroup.findMany({
-			where: {
-				organizationId: ctx.organizationId,
-			},
-			orderBy: { title: "asc" },
-		});
-	}),
+	listForSelection: orgProcedure.query(({ ctx }) =>
+		costUnitService.listForSelection(toCostUnitServiceContext(ctx)),
+	),
 
 	create: orgAdminProcedure
 		.input(createCostUnitSchema)
-		.mutation(async ({ ctx, input }) => {
-			const shouldConnectGroup =
-				input.costUnitGroupId.length > 0 &&
-				input.costUnitGroupId !== NO_COST_UNIT_GROUP;
+		.mutation(({ ctx, input }) =>
+			costUnitService.create(toCostUnitServiceContext(ctx), input),
+		),
 
-			if (shouldConnectGroup) {
-				const costUnitGroup = await ctx.db.costUnitGroup.findFirst({
-					where: {
-						id: input.costUnitGroupId,
-						organizationId: ctx.organizationId,
-					},
-					select: {
-						id: true,
-					},
-				});
-
-				if (!costUnitGroup) {
-					throw new TRPCError({
-						code: "NOT_FOUND",
-						message: "Kostenstellengruppe nicht gefunden.",
-					});
-				}
-			}
-
-			try {
-				return await ctx.db.costUnit.create({
-					data: {
-						tag: input.tag,
-						title: input.title,
-						examples: input.examples,
-						color: input.color,
-						organizationId: ctx.organizationId,
-						costUnitGroupId: shouldConnectGroup ? input.costUnitGroupId : null,
-					},
-				});
-			} catch (error) {
-				if (isPrismaUniqueConstraintError(error)) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message: "Eine Kostenstelle mit diesem Tag existiert bereits.",
-					});
-				}
-				throw error;
-			}
-		}),
-
-	update: orgAdminProcedure
+	update: costUnitAdminProcedure
 		.input(updateCostUnitSchema)
-		.mutation(async ({ ctx, input }) => {
-			const shouldConnectGroup =
-				input.costUnitGroupId.length > 0 &&
-				input.costUnitGroupId !== NO_COST_UNIT_GROUP;
+		.mutation(({ ctx, input }) =>
+			costUnitService.update(toCostUnitServiceContext(ctx), ctx.costUnit, input),
+		),
 
-			const existingCostUnit = await ctx.db.costUnit.findFirst({
-				where: {
-					id: input.id,
-					organizationId: ctx.organizationId,
-				},
-				select: {
-					id: true,
-				},
-			});
+	delete: costUnitAdminProcedure.mutation(({ ctx }) =>
+		costUnitService.remove(toCostUnitServiceContext(ctx), ctx.costUnit),
+	),
 
-			if (!existingCostUnit) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Kostenstelle nicht gefunden.",
-				});
-			}
-
-			if (shouldConnectGroup) {
-				const costUnitGroup = await ctx.db.costUnitGroup.findFirst({
-					where: {
-						id: input.costUnitGroupId,
-						organizationId: ctx.organizationId,
-					},
-					select: {
-						id: true,
-					},
-				});
-
-				if (!costUnitGroup) {
-					throw new TRPCError({
-						code: "NOT_FOUND",
-						message: "Kostenstellengruppe nicht gefunden.",
-					});
-				}
-			}
-
-			try {
-				return await ctx.db.costUnit.update({
-					where: { id: input.id },
-					data: {
-						tag: input.tag,
-						title: input.title,
-						examples: input.examples,
-						color: input.color,
-						costUnitGroupId: shouldConnectGroup ? input.costUnitGroupId : null,
-						status: input.status,
-					},
-				});
-			} catch (error) {
-				if (isPrismaUniqueConstraintError(error)) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message: "Eine Kostenstelle mit diesem Tag existiert bereits.",
-					});
-				}
-				throw error;
-			}
-		}),
-
-	delete: orgAdminProcedure
-		.input(deleteCostUnitSchema)
-		.mutation(async ({ ctx, input }) => {
-			const existingCostUnit = await ctx.db.costUnit.findFirst({
-				where: {
-					id: input.id,
-					organizationId: ctx.organizationId,
-				},
-				select: {
-					id: true,
-				},
-			});
-
-			if (!existingCostUnit) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Kostenstelle nicht gefunden.",
-				});
-			}
-
-			return await ctx.db.costUnit.delete({
-				where: { id: input.id },
-			});
-		}),
-
-	createGroup: orgAdminProcedure
-		.input(createCostUnitGroupSchema)
-		.mutation(async ({ ctx, input }) => {
-			try {
-				return await ctx.db.costUnitGroup.create({
-					data: {
-						title: input.title,
-						organizationId: ctx.organizationId,
-					},
-				});
-			} catch (error) {
-				if (isPrismaUniqueConstraintError(error)) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message: "Eine Kostenstellengruppe mit diesem Titel existiert bereits.",
-					});
-				}
-				throw error;
-			}
-		}),
-
-	updateGroup: orgAdminProcedure
-		.input(updateCostUnitGroupSchema)
-		.mutation(async ({ ctx, input }) => {
-			const existingGroup = await ctx.db.costUnitGroup.findFirst({
-				where: {
-					id: input.id,
-					organizationId: ctx.organizationId,
-				},
-				select: {
-					id: true,
-				},
-			});
-
-			if (!existingGroup) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Kostenstellengruppe nicht gefunden.",
-				});
-			}
-
-			try {
-				return await ctx.db.costUnitGroup.update({
-					where: { id: input.id },
-					data: {
-						title: input.title,
-					},
-				});
-			} catch (error) {
-				if (isPrismaUniqueConstraintError(error)) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message: "Eine Kostenstellengruppe mit diesem Titel existiert bereits.",
-					});
-				}
-				throw error;
-			}
-		}),
-
-	deleteGroup: orgAdminProcedure
-		.input(deleteCostUnitGroupSchema)
-		.mutation(async ({ ctx, input }) => {
-			const existingGroup = await ctx.db.costUnitGroup.findFirst({
-				where: {
-					id: input.id,
-					organizationId: ctx.organizationId,
-				},
-				select: {
-					id: true,
-				},
-			});
-
-			if (!existingGroup) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Kostenstellengruppe nicht gefunden.",
-				});
-			}
-
-			return await ctx.db.costUnitGroup.delete({
-				where: { id: input.id },
-			});
-		}),
+	groups: costUnitGroupsRouter,
 });

@@ -56,15 +56,15 @@ function OrgSettingsGeneral() {
 function GeneralForm() {
 	const t = useTranslations("modules.settings.generalLegacy");
 	const utils = api.useUtils();
-	const [org] = api.settings.getOrg.useSuspenseQuery();
+	const [org] = api.organization.get.useSuspenseQuery();
 	const [nameInput, setNameInput] = useState(org.name);
 	const debouncedName = useDebounce(nameInput, 600);
 	const isInitialMount = useRef(true);
 
-	const updateOrgName = api.settings.updateOrgName.useMutation({
+	const updateOrgName = api.organization.update.useMutation({
 		onSuccess: () => {
 			toast.success(t("orgName.savedToast"));
-			void utils.settings.getOrg.invalidate();
+			void utils.organization.get.invalidate();
 		},
 		onError: (error) => {
 			toast.error(t("saveErrorTitle"), {

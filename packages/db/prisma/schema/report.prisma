@@ -1,0 +1,122 @@
+// Core expense-report domain: Report → Expense → Attachment
+
+model Report {
+  id          String       @id @default(cuid())
+  tag         Int          @unique @default(autoincrement())
+  title       String
+  description String?
+  status      ReportStatus @default(DRAFT)
+  paidAt      DateTime?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  costUnitId String
+  costUnit   CostUnit @relation(fields: [costUnitId], references: [id], onDelete: Cascade)
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
+
+  // Live reference used while the report is editable; may become null when
+  // the owner deletes the banking details. Submitting requires it to be set
+  // and copies the values into bankingSnapshot, which finalized reports and
+  // PDF exports read.
+  bankingDetailsId String?
+  bankingDetails   BankingDetails? @relation(fields: [bankingDetailsId], references: [id], onDelete: SetNull)
+
+  bankingSnapshot ReportBankingSnapshot?
+
+  createdAt     DateTime @default(now())
+  lastUpdatedAt DateTime @updatedAt
+
+  expenses Expense[]
+
+  @@index([ownerId, organizationId])
+  @@index([organizationId, status])
+  @@index([costUnitId])
+  @@index([bankingDetailsId])
+  @@index([createdAt])
+  @@index([lastUpdatedAt])
+  @@index([paidAt])
+  @@map("report")
+}
+
+enum ReportStatus {
+  DRAFT
+  PENDING_APPROVAL
+  NEEDS_REVISION
+  ACCEPTED
+  REJECTED
+  PAID
+}
+
+model Expense {
+  id          String      @id @default(cuid())
+  description String?
+  amount      Decimal     @db.Decimal(12, 2)
+  startDate   DateTime
+  endDate     DateTime
+  type        ExpenseType
+
+  // Deprecated: replaced by the typed travelDetail/foodDetail relations.
+  // Kept until the contract migration drops it (see docs/schema-audit.md).
+  meta Json?
+
+  travelDetail TravelExpenseDetail?
+  foodDetail   FoodExpenseDetail?
+
+  reportId    String
+  report      Report       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+
+  @@index([reportId])
+  @@map("expense")
+}
+
+enum ExpenseType {
+  RECEIPT
+  TRAVEL
+  FOOD
+}
+
+// Type-specific expense data, one row per TRAVEL expense
+model TravelExpenseDetail {
+  id        String  @id @default(cuid())
+  expenseId String  @unique
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  from     String
+  to       String
+  distance Decimal @db.Decimal(8, 2)
+
+  @@map("travel_expense_detail")
+}
+
+// Type-specific expense data, one row per FOOD expense
+model FoodExpenseDetail {
+  id        String  @id @default(cuid())
+  expenseId String  @unique
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  days               Int
+  breakfastDeduction Decimal @db.Decimal(12, 2)
+  lunchDeduction     Decimal @db.Decimal(12, 2)
+  dinnerDeduction    Decimal @db.Decimal(12, 2)
+
+  @@map("food_expense_detail")
+}
+
+model Attachment {
+  id           String   @id @default(cuid())
+  key          String
+  size         BigInt
+  originalName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  expenseId    String
+  expense      Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@index([expenseId])
+  @@map("attachment")
+}

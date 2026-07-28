@@ -135,13 +135,13 @@ function ReportsList({ className, ...props }: React.ComponentProps<"div">) {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [expanded, setExpanded] = useState<ExpandedState>(true);
 
-	const costUnitsQuery = api.costUnit.listCostUnits.useQuery({
+	const costUnitsQuery = api.costUnit.list.useQuery({
 		pageSize: 200,
 	});
 
 	const costUnitOptions = useMemo(
 		() =>
-			(costUnitsQuery.data?.items ?? []).map((cu) => ({
+			(costUnitsQuery.data?.costUnits ?? []).map((cu) => ({
 				label: cu.tag,
 				value: cu.id,
 				data: cu,

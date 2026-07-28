@@ -381,8 +381,8 @@ function ReportPay({
 										<ReportEPCCode
 											config={{
 												amount: financialQuery.data.totalAmount,
-												iban: financialQuery.data.iban,
-												name: financialQuery.data.ownerName,
+												iban: financialQuery.data.iban ?? "",
+												name: financialQuery.data.ownerName ?? "",
 												tag: reportQuery.data.report.tag,
 											}}
 										/>
@@ -456,13 +456,18 @@ function ReportEPCCode({
 			config.name,
 			config.tag,
 		],
-		queryFn: () =>
-			generateEPCCode({
+		queryFn: () => {
+			if (config.iban.trim() === "" || config.name.trim() === "") {
+				return "no-image";
+			}
+
+			return generateEPCCode({
 				...config,
 				tag: config.tag.toString(),
 				validateIban: (iban) =>
 					utils.client.bankingDetails.validateIban.query({ iban }),
-			}),
+			});
+		},
 		staleTime: Number.POSITIVE_INFINITY,
 		retry: 1,
 	});

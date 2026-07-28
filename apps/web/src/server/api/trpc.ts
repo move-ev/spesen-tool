@@ -34,30 +34,9 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 		headers: opts.headers,
 	});
 
-	let activeMember: {
-		id: string;
-		role: string;
-		organizationId: string;
-	} | null = null;
-
-	if (session?.user && session.session.activeOrganizationId) {
-		activeMember = await db.member.findFirst({
-			where: {
-				userId: session.user.id,
-				organizationId: session.session.activeOrganizationId,
-			},
-			select: {
-				id: true,
-				role: true,
-				organizationId: true,
-			},
-		});
-	}
-
 	return {
 		db,
 		session,
-		activeMember,
 		...opts,
 	};
 };
@@ -104,29 +83,21 @@ export const createCallerFactory = t.createCallerFactory;
 export const createTRPCRouter = t.router;
 
 /**
- * Middleware for timing procedure execution and adding an artificial delay in development.
+ * Simulates network latency in development so unwanted client waterfalls show
+ * up locally instead of only in production. No-op outside dev; set
+ * DISABLE_DEV_DELAY=true to switch it off.
  *
- * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
- * network latency that would occur in production but not in local development.
- *
- * Set DISABLE_DEV_DELAY=true in your environment to disable the artificial delay.
+ * Request duration is measured by {@link loggingMiddleware}, not here.
  */
-const timingMiddleware = t.middleware(async ({ next, path }) => {
-	const start = Date.now();
-
+const devDelayMiddleware = t.middleware(async ({ next }) => {
 	const shouldAddDelay =
 		t._config.isDev && process.env.DISABLE_DEV_DELAY !== "true";
 	if (shouldAddDelay) {
-		// artificial delay in dev
 		const waitMs = Math.floor(Math.random() * 400) + 100;
 		await new Promise((resolve) => setTimeout(resolve, waitMs));
 	}
 
-	const result = await next();
-	void path;
-	void start;
-
-	return result;
+	return next();
 });
 
 const loggingMiddleware = t.middleware(async ({ next, path, type, ctx }) => {
@@ -139,7 +110,7 @@ const loggingMiddleware = t.middleware(async ({ next, path, type, ctx }) => {
 		type,
 		durationMs,
 		userId: ctx.session?.user?.id,
-		organizationId: ctx.activeMember?.organizationId,
+		organizationId: ctx.session?.session.activeOrganizationId,
 	};
 
 	if (result.ok) {
@@ -164,7 +135,7 @@ const loggingMiddleware = t.middleware(async ({ next, path, type, ctx }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure
-	.use(timingMiddleware)
+	.use(devDelayMiddleware)
 	.use(loggingMiddleware);
 
 /**
@@ -175,22 +146,37 @@ export const publicProcedure = t.procedure
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure
-	.use(timingMiddleware)
-	.use(({ ctx, next }) => {
-		if (!ctx.session?.user) {
-			throw new TRPCError({ code: "UNAUTHORIZED" });
-		}
-		return next({
-			ctx: {
-				// infers the `session` as non-nullable
-				session: { ...ctx.session, user: ctx.session.user },
-			},
-		});
+export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
+	if (!ctx.session?.user) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
+	return next({
+		ctx: {
+			// infers the `session` as non-nullable
+			session: { ...ctx.session, user: ctx.session.user },
+		},
 	});
+});
 
-export const orgProcedure = protectedProcedure.use(({ ctx, next }) => {
-	if (!ctx.activeMember) {
+/**
+ * Resolves the caller's membership in the active organization.
+ *
+ * The lookup lives here rather than in the context so that requests which never
+ * touch an org — legal, user, banking, preferences — do not pay for a
+ * member.findFirst they will not read.
+ */
+export const orgProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+	const organizationId = ctx.session.session.activeOrganizationId;
+	const activeMember = organizationId
+		? await ctx.db.member.findFirst({
+				where: { userId: ctx.session.user.id, organizationId },
+				select: { id: true, role: true, organizationId: true },
+			})
+		: null;
+
+	// No selected org and a selected org the caller does not belong to are the
+	// same failure from the client's side, and deliberately indistinguishable.
+	if (!activeMember) {
 		throw new TRPCError({
 			code: "FORBIDDEN",
 			message: "No active organization selected.",
@@ -200,8 +186,9 @@ export const orgProcedure = protectedProcedure.use(({ ctx, next }) => {
 	return next({
 		ctx: {
 			...ctx,
-			organizationId: ctx.activeMember.organizationId,
-			orgRole: ctx.activeMember.role,
+			activeMember,
+			organizationId: activeMember.organizationId,
+			orgRole: activeMember.role,
 		},
 	});
 });

@@ -97,12 +97,12 @@ function CreateCostUnitGroupFormConnected({
 	const t = useTranslations("modules.settings.costUnits.createGroupSheet");
 	const utils = api.useUtils();
 
-	const create = api.costUnit.createGroup.useMutation({
+	const create = api.costUnit.groups.create.useMutation({
 		onSuccess: (value) => {
 			toast.success(t("savedToast"), {
 				description: `${value.title}`,
 			});
-			utils.costUnit.listGroups.invalidate();
+			utils.costUnit.groups.list.invalidate();
 
 			closeOnSuccess && handle.close();
 		},

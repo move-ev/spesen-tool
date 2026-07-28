@@ -294,7 +294,7 @@ function CostUnitsGrid({ className, ...props }: React.ComponentProps<"div">) {
 		return createCostUnitsGridColumns(updateHandle, t as ColumnTranslator);
 	}, [updateHandle, t]);
 
-	const dataQuery = api.costUnit.listCostUnits.useQuery(
+	const dataQuery = api.costUnit.list.useQuery(
 		{
 			page: pagination.pageIndex + 1,
 			pageSize: pagination.pageSize,
@@ -306,8 +306,8 @@ function CostUnitsGrid({ className, ...props }: React.ComponentProps<"div">) {
 	);
 
 	const table = useReactTable({
-		data: dataQuery.data?.items ?? [],
-		rowCount: dataQuery.data?.totalCount,
+		data: dataQuery.data?.costUnits ?? [],
+		rowCount: dataQuery.data?.pagination.totalCount,
 		columns,
 		state: {
 			pagination,
@@ -382,13 +382,13 @@ function CostUnitsGrid({ className, ...props }: React.ComponentProps<"div">) {
 							<GridCell colSpan={columns.length}>
 								<div className="flex flex-wrap justify-between gap-4 border-slate-200">
 									<span className="text-slate-500 text-sm">
-										{t("table.unitsCount", { count: data.totalCount })}
+										{t("table.unitsCount", { count: data.pagination.totalCount })}
 									</span>
 									<div className="flex items-center justify-center gap-2">
 										<span className="me-2 text-slate-500 text-sm">
 											{t("table.pageIndicator", {
 												current: pagination.pageIndex + 1,
-												total: Math.ceil(data.totalCount / PAGE_SIZE),
+												total: data.pagination.pageCount,
 											})}
 										</span>
 										<Button

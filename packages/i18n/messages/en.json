@@ -167,7 +167,9 @@
 					"endDate": "Enddatum",
 					"amount": "Betrag",
 					"description": "Beschreibung",
-					"meta": "Metadaten"
+					"meta": "Metadaten",
+					"travelDetails": "{from} → {to} ({distance} km)",
+					"foodDetails": "{days, plural, one {# day} other {# days}}"
 				}
 			},
 			"attachments": {

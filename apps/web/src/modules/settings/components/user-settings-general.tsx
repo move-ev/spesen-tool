@@ -46,11 +46,11 @@ const PROFILE_FORM_ID = "profile-form";
 function ProfileForm() {
 	const t = useTranslations("modules.settings.preferences.general");
 	const utils = api.useUtils();
-	const [user] = api.user.getOwn.useSuspenseQuery();
+	const [user] = api.user.get.useSuspenseQuery();
 
-	const updateName = api.user.updateOwnName.useMutation({
+	const updateName = api.user.updateName.useMutation({
 		onSuccess: () => {
-			void utils.user.getOwn.invalidate();
+			void utils.user.get.invalidate();
 		},
 		onError: (error) => {
 			toast.error(t("saveErrorTitle"), {

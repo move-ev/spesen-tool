@@ -6,9 +6,7 @@ export default async function ServerPage(
 ) {
 	const { id } = await props.params;
 
-	await Promise.all([
-		api.platformAdmin.getOrganizationDetails.prefetch({ organizationId: id }),
-	]);
+	await Promise.all([api.platformAdmin.organizations.byId.prefetch({ id })]);
 
 	return (
 		<HydrateClient>

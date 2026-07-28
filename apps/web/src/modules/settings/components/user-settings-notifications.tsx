@@ -55,11 +55,11 @@ function NotificationsForm({
 }: React.ComponentProps<"form">) {
 	const t = useTranslations("modules.settings.preferences.notifications");
 	const utils = api.useUtils();
-	const [preferences] = api.preferences.getOwn.useSuspenseQuery();
+	const [preferences] = api.preferences.get.useSuspenseQuery();
 
-	const updatePreferences = api.preferences.updateOwn.useMutation({
+	const updatePreferences = api.preferences.update.useMutation({
 		onSuccess: () => {
-			utils.preferences.getOwn.invalidate();
+			utils.preferences.get.invalidate();
 		},
 		onError: (error) => {
 			toast.error(t("saveErrorTitle"), {

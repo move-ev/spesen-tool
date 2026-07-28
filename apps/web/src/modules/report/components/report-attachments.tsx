@@ -1,13 +1,16 @@
 "use client";
 
-import type { Attachment } from "@zemio/db";
 import { DownloadIcon, FileIcon, TrashIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatBytes } from "@/lib/utils";
-import { api } from "@/trpc/react";
+import { api, type RouterOutputs } from "@/trpc/react";
+
+// Derived from the endpoint rather than the Prisma model: the list projection
+// deliberately omits the storage key, and this type should follow it.
+type Attachment = RouterOutputs["attachment"]["listForReport"][number];
 
 function ReportAttachments({
 	className,

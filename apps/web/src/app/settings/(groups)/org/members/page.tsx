@@ -15,7 +15,7 @@ export default async function ServerPage(
 	const params = loadSearchParams(searchParams);
 
 	await Promise.all([
-		api.settings.listMembers.prefetch({
+		api.membership.list.prefetch({
 			page: params.page ?? 1,
 			pageSize: params.pageSize ?? 20,
 			search: params.search ?? "",

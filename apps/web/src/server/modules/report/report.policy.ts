@@ -1,5 +1,5 @@
-import { TRPCError } from "@trpc/server";
 import type { ReportStatus } from "@zemio/db";
+import { definePolicy } from "@/server/shared/authz/policy";
 import { isEditable } from "./report.state";
 
 /**
@@ -23,41 +23,25 @@ export type ReportAction =
 	| "submit"
 	| "delete"
 	| "transition"
-	| "review";
+	| "comment";
 
-const RULES: Record<
+export const reportPolicy = definePolicy<
 	ReportAction,
-	(ctx: ReportPolicyContext, subject: ReportSubject) => boolean
-> = {
-	read: (ctx, report) => ctx.isOrgAdmin || report.ownerId === ctx.userId,
-	update: (ctx, report) =>
-		report.ownerId === ctx.userId && isEditable(report.status),
-	submit: (ctx, report) =>
-		report.ownerId === ctx.userId && isEditable(report.status),
-	delete: (ctx, report) =>
-		report.ownerId === ctx.userId && isEditable(report.status),
-	transition: (ctx) => ctx.isOrgAdmin,
-	review: (ctx) => ctx.isOrgAdmin,
-};
-
-export function canReport(
-	action: ReportAction,
-	ctx: ReportPolicyContext,
-	subject: ReportSubject,
-): boolean {
-	return RULES[action](ctx, subject);
-}
-
-/** Throws a typed `FORBIDDEN` when the action is not permitted. */
-export function authorizeReport(
-	action: ReportAction,
-	ctx: ReportPolicyContext,
-	subject: ReportSubject,
-): void {
-	if (!canReport(action, ctx, subject)) {
-		throw new TRPCError({
-			code: "FORBIDDEN",
-			message: "You don't have access to this report.",
-		});
-	}
-}
+	ReportPolicyContext,
+	ReportSubject
+>(
+	{
+		read: (ctx, report) => ctx.isOrgAdmin || report.ownerId === ctx.userId,
+		update: (ctx, report) =>
+			report.ownerId === ctx.userId && isEditable(report.status),
+		submit: (ctx, report) =>
+			report.ownerId === ctx.userId && isEditable(report.status),
+		delete: (ctx, report) =>
+			report.ownerId === ctx.userId && isEditable(report.status),
+		transition: (ctx) => ctx.isOrgAdmin,
+		// Commenting is a write, but it is available to anyone who may read the
+		// report: the owner answering a reviewer, or a reviewer asking.
+		comment: (ctx, report) => ctx.isOrgAdmin || report.ownerId === ctx.userId,
+	},
+	"You don't have access to this report.",
+);

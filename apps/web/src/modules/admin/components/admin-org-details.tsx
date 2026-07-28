@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { api, type RouterOutputs } from "@/trpc/react";
 
 type OrganizationDetails = NonNullable<
-	RouterOutputs["platformAdmin"]["getOrganizationDetails"]
+	RouterOutputs["platformAdmin"]["organizations"]["byId"]
 >;
 
 const _updateOrganizationSchema = z.object({
@@ -50,8 +50,8 @@ function AdminOrgDetails({
 	const organizationId = initialOrganization.id;
 	const t = useTranslations("modules.admin.orgDetails");
 	const { data: organizationData } =
-		api.platformAdmin.getOrganizationDetails.useQuery(
-			{ organizationId },
+		api.platformAdmin.organizations.byId.useQuery(
+			{ id: organizationId },
 			{ initialData: initialOrganization },
 		);
 	const organization = organizationData ?? initialOrganization;
@@ -406,14 +406,14 @@ function OrganizationDetailsGeneralForm({
 }) {
 	const t = useTranslations("modules.admin.orgDetails.generalForm");
 	const utils = api.useUtils();
-	const updateOrganization = api.platformAdmin.updateOrganization.useMutation({
+	const updateOrganization = api.platformAdmin.organizations.update.useMutation({
 		onSuccess: async () => {
 			toast.success(t("saveSuccess"));
 			await Promise.all([
-				utils.platformAdmin.getOrganizationDetails.invalidate({
-					organizationId: initialData.id,
+				utils.platformAdmin.organizations.byId.invalidate({
+					id: initialData.id,
 				}),
-				utils.platformAdmin.listOrganizations.invalidate(),
+				utils.platformAdmin.organizations.list.invalidate(),
 			]);
 		},
 		onError: (error) => {
@@ -438,7 +438,7 @@ function OrganizationDetailsGeneralForm({
 				logo: emptyToNull(value.logoUrl),
 				microsoftTenantId: value.microsoftTenantId,
 				metadata: initialData.metadata,
-				organizationId: initialData.id,
+				id: initialData.id,
 			}),
 	});
 

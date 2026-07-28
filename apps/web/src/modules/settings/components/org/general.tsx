@@ -64,8 +64,8 @@ const updateOrgReviewerSchema = z.object({
 	reviewerEmail: z
 		.string()
 		.refine(
-			(val) => val === "" || z.url().safeParse(val).success,
-			"Must be a valid URL",
+			(val) => val === "" || z.email().safeParse(val).success,
+			"Must be a valid E-Mail",
 		)
 		.transform((val) => (val === "" ? null : val))
 		.nullable()
@@ -179,15 +179,15 @@ const UPDATE_GENERAL_FORM_ID = "org-update-general-form";
 
 function OrgGeneralForm({ className, ...props }: React.ComponentProps<"form">) {
 	const t = useTranslations("modules.settings.general");
-	const [org] = api.settings.getOrg.useSuspenseQuery();
+	const [org] = api.organization.get.useSuspenseQuery();
 	const utils = api.useUtils();
 
-	const updateMutation = api.settings.updateOrgGeneral.useMutation({
+	const updateMutation = api.organization.update.useMutation({
 		onSuccess: () => {
-			utils.settings.getOrg.invalidate();
+			utils.organization.get.invalidate();
 		},
 		onError: (error) => {
-			toast.error(t("reviewerSaveErrorTitle"), {
+			toast.error(t("saveErrorTitle"), {
 				description: error.message ?? t("saveErrorFallback"),
 			});
 		},

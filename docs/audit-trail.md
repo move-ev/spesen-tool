@@ -74,7 +74,7 @@ model AuditEvent {
   createdAt      DateTime     @default(now())
 
   @@index([organizationId, createdAt])
-  @@index([entityType, entityId, createdAt])
+  @@index([organizationId, entityId, createdAt])
   @@index([actorId])
   @@map("audit_event")
 }
@@ -84,6 +84,11 @@ model AuditEvent {
 
 **`entityType` + `entityId`** — polymorphic reference to the affected record. Decouples the
 audit table from any specific Prisma model. New entity types require no schema change.
+
+**`organization` (`onDelete: Cascade`)** — the trail is org-scoped and does not outlive its
+tenant: deleting an organization is full offboarding and removes its audit events together
+with every other org-owned record. "Append-only" refers to the application surface (no
+update/delete interface exists), not to survival beyond tenant deletion.
 
 **`action`** — free-form string using the convention `"<entityType>.<verb>"`. A string (not a DB
 enum) means new actions can be introduced without a migration. Application-layer Zod validators
@@ -113,13 +118,17 @@ merge into an opaque blob.
 | `report` | `report.status_changed` | `{ status }` | `{ status }` | `{ notify?: boolean }` |
 | `report` | `report.comment_added` | `null` | `null` | `{ text: string }` |
 | `expense` | `expense.added` | `null` | `null` | `{ expenseId, type, amount }` |
-| `expense` | `expense.updated` | `{ amount?, type?, ... }` | `{ amount?, type?, ... }` | — |
+| `expense` | `expense.updated` | `{ amount?, description?, travelDetail?, foodDetail? }` | `{ amount?, description?, travelDetail?, foodDetail? }` | — |
 | `expense` | `expense.deleted` | `{ expenseId, type, amount }` | `null` | — |
 | `attachment` | `attachment.added` | `null` | `null` | `{ attachmentId, fileName, expenseId }` |
 | `attachment` | `attachment.deleted` | `{ attachmentId, fileName, expenseId }` | `null` | — |
 
 Only changed fields are included in `diff.before` / `diff.after` for update events — not the
 full entity snapshot.
+
+Events written before the expense-meta normalization (see
+[schema-audit.md](./schema-audit.md)) recorded type-specific expense data under a `meta` key;
+newer events record it under `travelDetail` / `foodDetail`.
 
 ---
 

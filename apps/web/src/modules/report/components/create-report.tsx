@@ -84,7 +84,7 @@ function CreateReportBody({
 	onPendingChange: (isPending: boolean) => void;
 }) {
 	const t = useTranslations("modules.report.createReport");
-	const costUnitsQuery = api.costUnit.listGroupsWithUnits.useQuery();
+	const costUnitsQuery = api.costUnit.listForSelection.useQuery();
 	const bankingDetailsQuery = api.bankingDetails.list.useQuery();
 
 	if (costUnitsQuery.isPending || bankingDetailsQuery.isPending) {
@@ -219,7 +219,7 @@ function CreateReportForm({
 	onPendingChange,
 	...props
 }: React.ComponentProps<"form"> & {
-	costUnitsGroups: RouterOutputs["costUnit"]["listGroupsWithUnits"];
+	costUnitsGroups: RouterOutputs["costUnit"]["listForSelection"];
 	bankingDetails: RouterOutputs["bankingDetails"]["list"];
 	formId: string;
 	onPendingChange?: (isPending: boolean) => void;

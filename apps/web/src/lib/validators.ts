@@ -81,29 +81,12 @@ export const createTravelExpenseSchema = baseCreateExpenseSchema.and(
 
 export const createFoodExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		days: z.number().min(1),
+		days: z.number().int().min(1),
 		breakfastDeduction: z.number().min(0),
 		lunchDeduction: z.number().min(0),
 		dinnerDeduction: z.number().min(0),
 	}),
 );
-
-// ================================ META FIELDS ================================
-
-export const receiptExpenseMetaSchema = z.object({});
-
-export const travelExpenseMetaSchema = z.object({
-	from: z.string().min(1),
-	to: z.string().min(1),
-	distance: z.number().min(1),
-});
-
-export const foodExpenseMetaSchema = z.object({
-	days: z.number().min(1),
-	breakfastDeduction: z.number().min(0),
-	lunchDeduction: z.number().min(0),
-	dinnerDeduction: z.number().min(0),
-});
 
 export const updateUserNameSchema = z.object({
 	name: z.string().min(1),
@@ -120,14 +103,14 @@ export const updatePreferencesServerSchema = z.object({
 });
 
 export const updateMealAllowancesSchema = z.object({
-	dailyFoodAllowance: z.number().min(0),
-	breakfastDeduction: z.number().min(0),
-	lunchDeduction: z.number().min(0),
-	dinnerDeduction: z.number().min(0),
+	dailyFoodAllowance: z.number().min(0).multipleOf(0.01),
+	breakfastDeduction: z.number().min(0).multipleOf(0.01),
+	lunchDeduction: z.number().min(0).multipleOf(0.01),
+	dinnerDeduction: z.number().min(0).multipleOf(0.01),
 });
 
 export const updateTravelAllowancesSchema = z.object({
-	kilometerRate: z.number().min(0),
+	kilometerRate: z.number().min(0).multipleOf(0.01),
 });
 
 export const createCostUnitGroupSchema = z.object({
