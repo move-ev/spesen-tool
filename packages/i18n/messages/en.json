@@ -169,7 +169,7 @@
 					"description": "Beschreibung",
 					"meta": "Metadaten",
 					"travelDetails": "{from} → {to} ({distance} km)",
-					"foodDetails": "{days, plural, one {# day} other {# days}}"
+					"foodDetails": "{days, plural, one {# Tag} other {# Tage}}"
 				}
 			},
 			"attachments": {
@@ -938,6 +938,9 @@
 					"emailLabel": "E-Mail",
 					"emailAriaLabel": "E-Mail",
 					"emailDescription": "Deine E-Mail-Adresse wird über Microsoft verwaltet und kann hier nicht geändert werden.",
+					"avatarLabel": "Avatar",
+					"avataAriaLabel": "Avatar",
+					"avatarDescription": "Dein Avatar wird über Microsoft verwaltet und kann hier nicht geändert werden.",
 					"savedToast": "Name gespeichert",
 					"saveErrorTitle": "Fehler beim Speichern",
 					"saveErrorFallback": "Ein unerwarteter Fehler ist aufgetreten"

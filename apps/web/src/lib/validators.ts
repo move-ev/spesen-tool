@@ -92,6 +92,12 @@ export const updateUserNameSchema = z.object({
 	name: z.string().min(1),
 });
 
+export const updateUserProfileSchema = z.object({
+	name: z.string().min(1),
+	image: z.string().nullable(),
+	email: z.email(),
+});
+
 // Schema for form validation (formatted IBAN with spaces)
 export const updatePreferencesSchema = z.object({
 	notificationPreference: z.enum(NotificationPreference),

@@ -8,9 +8,11 @@ import {
 	FieldDescription,
 	FieldLegend,
 	Label,
+	Skeleton,
 } from "@zemio/ui";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import type z from "zod";
 import { useSaveBar } from "@/components/save-bar";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
@@ -20,8 +22,9 @@ import {
 	SettingsCard,
 	SettingsCardContent,
 	SettingsCardLabel,
-} from "./settings-card";
-import { SettingsSubtitle, SettingsTitle } from "./settings-typography";
+} from "../settings-card";
+import { SettingsError } from "../settings-error";
+import { SettingsSubtitle, SettingsTitle } from "../settings-typography";
 
 function UserSettingsNotifications({
 	className,
@@ -36,30 +39,74 @@ function UserSettingsNotifications({
 				<SettingsSubtitle>{t("description")}</SettingsSubtitle>
 			</div>
 			<div className="container mt-12 max-w-4xl">
-				<SettingsCard>
-					<SettingsCardLabel>{t("sectionNotifications")}</SettingsCardLabel>
-					<SettingsCardContent>
-						<NotificationsForm />
-					</SettingsCardContent>
-				</SettingsCard>
+				<NotificationsSection />
 			</div>
 		</main>
 	);
 }
 
-const NOTIFICATIONS_FORM_ID = "notifications-form";
+// ======= NOTIFICATIONS ======================================================================
 
-function NotificationsForm({
+function NotificationsSection({
 	className,
 	...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<"div">) {
+	const t = useTranslations("modules.settings.preferences.notifications");
+	const query = api.preferences.get.useQuery();
+
+	if (query.isPending) {
+		return <Skeleton className={cn("h-64 w-full", className)} {...props} />;
+	}
+
+	if (query.error) {
+		const { error } = query;
+
+		return (
+			<SettingsError
+				description={error.data?.code ?? "An unkown error ocurred."}
+				message={error.message}
+			/>
+		);
+	}
+
+	const { data } = query;
+
+	return (
+		<SettingsCard
+			className={cn(className)}
+			data-slot="user-settings-notifications-section"
+			{...props}
+		>
+			<SettingsCardLabel>{t("sectionNotifications")}</SettingsCardLabel>
+			<SettingsCardContent>
+				<NotificationsForm
+					defaultValues={{
+						notificationPreference: data.notifications,
+					}}
+				/>
+			</SettingsCardContent>
+		</SettingsCard>
+	);
+}
+
+const NOTIFICATIONS_FORM_ID = "notifications-form";
+
+type NotificationsFormValues = z.infer<typeof updatePreferencesSchema>;
+interface NotificationsFormProps extends React.ComponentProps<"form"> {
+	defaultValues: NotificationsFormValues;
+}
+
+function NotificationsForm({
+	defaultValues,
+	...props
+}: NotificationsFormProps) {
 	const t = useTranslations("modules.settings.preferences.notifications");
 	const utils = api.useUtils();
-	const [preferences] = api.preferences.get.useSuspenseQuery();
 
 	const updatePreferences = api.preferences.update.useMutation({
-		onSuccess: () => {
-			utils.preferences.get.invalidate();
+		onSuccess: (updated) => {
+			utils.preferences.get.setData(undefined, updated);
+			void utils.preferences.get.invalidate();
 		},
 		onError: (error) => {
 			toast.error(t("saveErrorTitle"), {
@@ -69,25 +116,19 @@ function NotificationsForm({
 	});
 
 	const form = useForm({
-		defaultValues: {
-			notificationPreference: preferences.notifications,
-		},
+		defaultValues,
 		validators: {
 			onSubmit: updatePreferencesSchema,
 		},
 		onSubmit: async ({ value }) => {
-			updatePreferences.mutate({
-				notificationPreference: value.notificationPreference,
-			});
-
-			const preference = value.notificationPreference;
-			if (!preference) {
-				return;
-			}
 			try {
-				await updatePreferences.mutateAsync({ notificationPreference: preference });
-				form.reset({ ...value, notificationPreference: preference });
-			} catch {}
+				const updated = await updatePreferences.mutateAsync({
+					notificationPreference: value.notificationPreference,
+				});
+				form.reset({ notificationPreference: updated.notifications });
+			} catch {
+				// error toast handled by the mutation's onError; form stays dirty
+			}
 		},
 	});
 
@@ -95,7 +136,6 @@ function NotificationsForm({
 
 	return (
 		<form
-			className={cn("", className)}
 			data-slot="notifications-form"
 			id={NOTIFICATIONS_FORM_ID}
 			onSubmit={(e) => {

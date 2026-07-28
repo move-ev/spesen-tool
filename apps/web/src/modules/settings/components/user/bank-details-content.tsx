@@ -41,8 +41,9 @@ import {
 	SettingsCard,
 	SettingsCardContent,
 	SettingsCardLabel,
-} from "./settings-card";
-import { SettingsSubtitle, SettingsTitle } from "./settings-typography";
+} from "../settings-card";
+import { SettingsError } from "../settings-error";
+import { SettingsSubtitle, SettingsTitle } from "../settings-typography";
 
 function UserSettingsBankDetails({
 	className,
@@ -280,14 +281,19 @@ function CreateBankDetails({
 
 function BankDetailsList({ className, ...props }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.banking");
-	const { data: details, isPending } = api.bankingDetails.list.useQuery();
+	const { data: details, isPending, error } = api.bankingDetails.list.useQuery();
 
 	if (isPending) {
 		return <Skeleton className="min-h-32 w-full" />;
 	}
 
-	if (!details) {
-		return <p>{t("loadErrorFallback")}</p>;
+	if (error) {
+		return (
+			<SettingsError
+				description="An unkown error ocurred."
+				message={t("loadErrorFallback")}
+			/>
+		);
 	}
 
 	if (details.length === 0) {
@@ -304,7 +310,11 @@ function BankDetailsList({ className, ...props }: React.ComponentProps<"div">) {
 	}
 
 	return (
-		<SettingsCard className={cn("", className)} data-slot="component" {...props}>
+		<SettingsCard
+			className={cn("", className)}
+			data-slot="bank-details-list"
+			{...props}
+		>
 			<SettingsCardLabel>{t("listHeading")}</SettingsCardLabel>
 			<SettingsCardContent className="px-4 py-6">
 				<ul>
