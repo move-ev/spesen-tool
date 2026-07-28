@@ -1,0 +1,67 @@
+// Cost units and their grouping, unique per organization + tag
+
+model CostUnitGroup {
+  id             String       @id @default(cuid())
+  title          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  costUnits      CostUnit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([organizationId, title])
+  @@map("cost_unit_group")
+}
+
+enum CostUnitStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum CostUnitColor {
+  RED
+  ORANGE
+  AMBER
+  YELLOW
+  LIME
+  GREEN
+  EMERALD
+  TEAL
+  CYAN
+  SKY
+  BLUE
+  INDIGO
+  VIOLET
+  PURPLE
+  FUCHSIA
+  PINK
+  ROSE
+  BASE
+}
+
+model CostUnit {
+  id             String       @id @default(cuid())
+  tag            String
+  title          String
+  examples       String[]
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  status CostUnitStatus @default(ACTIVE)
+  color  CostUnitColor  @default(BASE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // SetNull: deleting a group must only ungroup its cost units. A cascade
+  // here would delete the units and, transitively, every report tied to them.
+  costUnitGroupId String?
+  costUnitGroup   CostUnitGroup? @relation(fields: [costUnitGroupId], references: [id], onDelete: SetNull)
+
+  reports Report[]
+
+  @@unique([organizationId, tag])
+  @@index([tag])
+  @@map("cost_unit")
+}

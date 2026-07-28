@@ -1,0 +1,35 @@
+// Org-scoped settings (upserted on read) and per-user preferences
+
+model Settings {
+  id              String       @id @default(cuid())
+  organizationId  String       @unique
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  kilometerRate   Decimal      @default(0.30) @db.Decimal(12, 2) // Rate per kilometer in EUR
+  reviewerEmail   String? // Email of the global reviewer
+  costUnitInfoUrl String?      @map("accountingUnitPdfUrl") // PDF URL for cost unit information
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  dailyFoodAllowance Decimal @default(0.00) @db.Decimal(12, 2)
+  breakfastDeduction Decimal @default(0.00) @db.Decimal(12, 2)
+  lunchDeduction     Decimal @default(0.00) @db.Decimal(12, 2)
+  dinnerDeduction    Decimal @default(0.00) @db.Decimal(12, 2)
+
+  @@map("settings")
+}
+
+model Preferences {
+  id            String                 @id @default(cuid())
+  userId        String                 @unique
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications NotificationPreference @default(ALL)
+  locale        String                 @default("de")
+
+  @@map("preferences")
+}
+
+enum NotificationPreference {
+  ALL
+  STATUS_CHANGES
+  NONE
+}

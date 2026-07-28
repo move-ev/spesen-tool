@@ -3,7 +3,6 @@
 import { NumberField } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { keepPreviousData } from "@tanstack/react-query";
-import type { Attachment } from "@zemio/db";
 import { formatDate, isValid, parse } from "date-fns";
 import { DownloadIcon, ImageIcon, XIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -36,7 +35,11 @@ import { UploadDropzone } from "@/components/ui/upload-dropzone";
 import { usePresignedUpload } from "@/lib/use-presigned-upload";
 import { cn, formatBytes, renameFileWithHash } from "@/lib/utils";
 import type { ExpenseByIdDTO } from "@/server/modules/expense";
-import { api } from "@/trpc/react";
+import { api, type RouterOutputs } from "@/trpc/react";
+
+// Derived from the endpoint rather than the Prisma model: the list projection
+// deliberately omits the storage key, and this type should follow it.
+type Attachment = RouterOutputs["attachment"]["list"][number];
 
 const MAX_ATTACHMENTS = 5;
 

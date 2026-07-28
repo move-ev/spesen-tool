@@ -15,10 +15,22 @@ function isPrismaKnownError(error: unknown): error is PrismaKnownError {
 }
 
 /**
+ * True for Prisma `P2002` (unique constraint violation).
+ *
+ * {@link mapPrismaError} already turns these into a generic `CONFLICT`. Use this
+ * only where the domain can state *which* constraint was hit — a service that
+ * knows the answer should say so rather than emit the generic message.
+ */
+export function isUniqueConstraintError(error: unknown): boolean {
+	return isPrismaKnownError(error) && error.code === "P2002";
+}
+
+/**
  * Maps a thrown error to a typed {@link TRPCError}.
  *
  * - Existing `TRPCError`s pass through unchanged.
  * - Prisma `P2002` (unique constraint) → `CONFLICT`.
+ * - Prisma `P2003` (foreign key violation) → `CONFLICT`.
  * - Prisma `P2025` (record not found)   → `NOT_FOUND`.
  * - Everything else                     → `INTERNAL_SERVER_ERROR`.
  *
@@ -35,6 +47,11 @@ export function mapPrismaError(error: unknown): TRPCError {
 				return new TRPCError({
 					code: "CONFLICT",
 					message: "A resource with these values already exists.",
+				});
+			case "P2003":
+				return new TRPCError({
+					code: "CONFLICT",
+					message: "This resource is still referenced by other records.",
 				});
 			case "P2025":
 				return new TRPCError({

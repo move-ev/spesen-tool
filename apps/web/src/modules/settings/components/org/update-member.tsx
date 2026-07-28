@@ -100,15 +100,15 @@ function UpdateCostUnitFormConnected({
 	const t = useTranslations("modules.settings.members.updateSheet");
 	const utils = api.useUtils();
 
-	const [membership] = api.settings.getMembershipDetails.useSuspenseQuery({
+	const [membership] = api.membership.byId.useSuspenseQuery({
 		id: memberId,
 	});
 
-	const setRole = api.user.setMemberRole.useMutation({
+	const setRole = api.membership.setRole.useMutation({
 		onSuccess: () => {
 			toast.success(t("savedToast"), {});
-			utils.settings.listMembers.invalidate();
-			utils.settings.getMembershipDetails.invalidate({ id: memberId });
+			utils.membership.list.invalidate();
+			utils.membership.byId.invalidate({ id: memberId });
 			handle.close();
 		},
 		onError: (error) => {
@@ -129,7 +129,7 @@ function UpdateCostUnitFormConnected({
 			}}
 			onSubmit={async (values) => {
 				await setRole.mutateAsync({
-					memberId: values.id,
+					id: values.id,
 					role: values.role,
 				});
 			}}

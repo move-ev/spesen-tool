@@ -4,9 +4,9 @@ import { z } from "zod";
 import { isOrganizationAdminRole } from "@/lib/organization";
 import { orgProcedure } from "@/server/api/trpc";
 import {
-	authorizeReport,
 	type ReportAction,
 	type ReportPolicyContext,
+	reportPolicy,
 } from "./report.policy";
 import { reportRepository } from "./report.repository";
 import type { ReportServiceContext } from "./report.service";
@@ -53,7 +53,7 @@ export function reportProcedure(action: ReportAction) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Report not found" });
 			}
 
-			authorizeReport(action, toReportPolicyContext(ctx), {
+			reportPolicy.authorize(action, toReportPolicyContext(ctx), {
 				ownerId: report.ownerId,
 				status: report.status,
 			});

@@ -6,8 +6,8 @@ export default async function ServerPage({
 	params,
 }: PageProps<"/platform-admin/organizations/[id]">) {
 	const { id } = await params;
-	const organization = await api.platformAdmin.getOrganizationDetails({
-		organizationId: id,
+	const organization = await api.platformAdmin.organizations.byId({
+		id,
 	});
 
 	if (!organization) {

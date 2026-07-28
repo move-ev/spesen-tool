@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
 import { ROUTES } from "@/lib/consts";
+import { roundToCents } from "@/lib/utils";
 import { createTravelExpenseSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
 
@@ -87,7 +88,7 @@ export function CreateTravelExpenseForm({
 	}));
 
 	React.useEffect(() => {
-		const amount = distance * settings.kilometerRate;
+		const amount = roundToCents(distance * settings.kilometerRate);
 		form.setFieldValue("amount", amount);
 	}, [distance, settings.kilometerRate, form]);
 

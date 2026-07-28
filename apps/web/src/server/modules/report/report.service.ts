@@ -8,7 +8,11 @@ import type { createReportSchema } from "@/lib/validators";
 import { type AuditRepository, auditRepository } from "@/server/modules/audit";
 import { mapPrismaError } from "@/server/shared/errors";
 import { nullableDecimalToNumber } from "@/server/shared/money";
-import { offsetPageArgs, pageCount } from "@/server/shared/pagination";
+import {
+	offsetPageArgs,
+	type PageMeta,
+	toPageMeta,
+} from "@/server/shared/pagination";
 import {
 	type FinancialSummaryDTO,
 	type ReportListItemDTO,
@@ -18,7 +22,7 @@ import {
 	toReviewDTO,
 } from "./report.dto";
 import { type ReportEventEmitter, reportEventBus } from "./report.events";
-import { authorizeReport } from "./report.policy";
+import { reportPolicy } from "./report.policy";
 import {
 	buildReportListOrderBy,
 	buildReportListWhere,
@@ -29,7 +33,15 @@ import {
 	type ReportRepository,
 	reportRepository,
 } from "./report.repository";
-import { assertAdminTransition, assertSubmittable } from "./report.state";
+import {
+	assertAdminTransition,
+	assertSubmittable,
+	isEditable,
+} from "./report.state";
+import type {
+	transitionReportSchema,
+	updateReportSchema,
+} from "./report.validators";
 
 /** Runs a repository write, mapping Prisma errors (P2002/P2025/…) to typed TRPCErrors. */
 async function runWrite<T>(operation: () => Promise<T>): Promise<T> {
@@ -68,8 +80,8 @@ export type ReportServiceContext = {
 };
 
 type CreateReportInput = z.infer<typeof createReportSchema>;
-type UpdateReportInput = { title?: string; description?: string };
-type TransitionInput = { status: ReportStatus; notify?: boolean };
+type UpdateReportInput = z.infer<typeof updateReportSchema>;
+type TransitionInput = z.infer<typeof transitionReportSchema>;
 
 type PdfExportResult = { url: string; filename: string };
 
@@ -86,7 +98,7 @@ export function createReportService(deps: {
 			input: ReportListInput,
 		): Promise<{
 			reports: ReportListItemDTO[];
-			pagination: { page: number; pageSize: number; pageCount: number };
+			pagination: PageMeta;
 		}> {
 			if (input.scope === "all" && !isOrganizationAdminRole(ctx.orgRole)) {
 				throw new TRPCError({
@@ -124,11 +136,7 @@ export function createReportService(deps: {
 				reports: rows.map((row) =>
 					toReportListItemDTO(row, sumByReportId.get(row.id) ?? 0),
 				),
-				pagination: {
-					page: input.page,
-					pageSize: input.pageSize,
-					pageCount: pageCount(count, input.pageSize),
-				},
+				pagination: toPageMeta(input, count),
 			};
 		},
 
@@ -158,7 +166,7 @@ export function createReportService(deps: {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Report not found" });
 			}
 
-			authorizeReport(
+			reportPolicy.authorize(
 				"read",
 				{
 					userId: ctx.userId,
@@ -167,7 +175,15 @@ export function createReportService(deps: {
 				{ ownerId: report.ownerId, status: report.status },
 			);
 
-			return toFinancialSummaryDTO(report.bankingDetails, totalAmount);
+			// Editable reports show the live details (what the next submission
+			// would snapshot) — never an old snapshot, which would present stale
+			// account data after the owner deleted the live details. Finalized
+			// reports show the submitted snapshot.
+			const banking = isEditable(report.status)
+				? report.bankingDetails
+				: (report.bankingSnapshot ?? report.bankingDetails);
+
+			return toFinancialSummaryDTO(banking, totalAmount);
 		},
 
 		async create(
@@ -288,7 +304,27 @@ export function createReportService(deps: {
 		): Promise<{ id: string }> {
 			assertSubmittable(report.status);
 
+			const { bankingDetailsId } = report;
+			if (!bankingDetailsId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"The banking details of this report were deleted. Select new banking details before submitting.",
+				});
+			}
+
 			await transact(ctx.db, async (db) => {
+				const snapshotted = await repo.snapshotBankingDetails(db, {
+					reportId: report.id,
+					bankingDetailsId,
+				});
+				if (!snapshotted) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message:
+							"The banking details of this report were deleted. Select new banking details before submitting.",
+					});
+				}
 				await repo.setStatus(db, {
 					id: report.id,
 					status: ReportStatus.PENDING_APPROVAL,
@@ -328,7 +364,33 @@ export function createReportService(deps: {
 		): Promise<{ id: string; status: ReportStatus }> {
 			assertAdminTransition(report.status, input.status);
 
+			// Moving an editable report into review is a submission: it must
+			// snapshot the banking details exactly like the owner submit flow,
+			// otherwise the report finalizes without one and reads fall back to
+			// the mutable live details. Re-review transitions (from ACCEPTED /
+			// REJECTED) keep the snapshot taken at the original submission.
+			const requiresSnapshot =
+				input.status === ReportStatus.PENDING_APPROVAL && isEditable(report.status);
+			const missingBankingDetailsError = () =>
+				new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"The banking details of this report were deleted. The owner must select new banking details before it can be submitted.",
+				});
+			if (requiresSnapshot && !report.bankingDetailsId) {
+				throw missingBankingDetailsError();
+			}
+
 			const updated = await transact(ctx.db, async (db) => {
+				if (requiresSnapshot && report.bankingDetailsId) {
+					const snapshotted = await repo.snapshotBankingDetails(db, {
+						reportId: report.id,
+						bankingDetailsId: report.bankingDetailsId,
+					});
+					if (!snapshotted) {
+						throw missingBankingDetailsError();
+					}
+				}
 				const result = await repo.setStatus(db, {
 					id: report.id,
 					status: input.status,
@@ -362,11 +424,17 @@ export function createReportService(deps: {
 			return updated;
 		},
 
+		/**
+		 * Delegates rendering to the PDF service, which re-checks org and
+		 * ownership itself because its endpoint is independently reachable. The
+		 * report is loaded and authorized here too, so this app never forwards an
+		 * id it has not already validated.
+		 */
 		async exportToPdf(
 			ctx: ReportServiceContext,
-			input: { id: string },
+			report: ReportDetail,
 		): Promise<PdfExportResult> {
-			const response = await fetch(`${env.API_URL}/pdf/report/${input.id}`, {
+			const response = await fetch(`${env.API_URL}/pdf/report/${report.id}`, {
 				method: "POST",
 				headers: {
 					"X-Service-Key": env.INTERNAL_API_SECRET,

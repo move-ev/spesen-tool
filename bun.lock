@@ -221,6 +221,7 @@
         "vitest": "^3.0.4",
       },
       "peerDependencies": {
+        "@tanstack/react-table": "^8.21.3",
         "motion": "^12.42.2",
         "react": "^19",
         "react-dom": "^19",

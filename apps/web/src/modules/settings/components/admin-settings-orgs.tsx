@@ -82,7 +82,7 @@ function OrgsList() {
 		data: organizations,
 		error,
 		isPending,
-	} = api.platformAdmin.listOrganizations.useQuery();
+	} = api.platformAdmin.organizations.list.useQuery();
 
 	if (isPending) {
 		return <Skeleton className="min-h-32 w-full" />;
@@ -138,11 +138,11 @@ function CreateOrganization() {
 
 	const utils = api.useUtils();
 
-	const createOrg = api.platformAdmin.createOrganization.useMutation({
+	const createOrg = api.platformAdmin.organizations.create.useMutation({
 		onSuccess: async () => {
 			toast.success(t("savedToast"));
 			setIsDialogOpen(false);
-			await utils.platformAdmin.listOrganizations.invalidate();
+			await utils.platformAdmin.organizations.list.invalidate();
 		},
 		onError: (error) => {
 			toast.error(error.message);

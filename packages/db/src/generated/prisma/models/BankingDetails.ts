@@ -328,11 +328,6 @@ export type BankingDetailsUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type BankingDetailsScalarRelationFilter = {
-  is?: Prisma.BankingDetailsWhereInput
-  isNot?: Prisma.BankingDetailsWhereInput
-}
-
 export type BankingDetailsListRelationFilter = {
   every?: Prisma.BankingDetailsWhereInput
   some?: Prisma.BankingDetailsWhereInput
@@ -373,18 +368,9 @@ export type BankingDetailsMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type BankingDetailsCreateNestedOneWithoutReportsInput = {
-  create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
-  connect?: Prisma.BankingDetailsWhereUniqueInput
-}
-
-export type BankingDetailsUpdateOneRequiredWithoutReportsNestedInput = {
-  create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
-  connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
-  upsert?: Prisma.BankingDetailsUpsertWithoutReportsInput
-  connect?: Prisma.BankingDetailsWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BankingDetailsUpdateToOneWithWhereWithoutReportsInput, Prisma.BankingDetailsUpdateWithoutReportsInput>, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
+export type BankingDetailsNullableScalarRelationFilter = {
+  is?: Prisma.BankingDetailsWhereInput | null
+  isNot?: Prisma.BankingDetailsWhereInput | null
 }
 
 export type BankingDetailsCreateNestedManyWithoutUserInput = {
@@ -429,60 +415,20 @@ export type BankingDetailsUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.BankingDetailsScalarWhereInput | Prisma.BankingDetailsScalarWhereInput[]
 }
 
-export type BankingDetailsCreateWithoutReportsInput = {
-  id?: string
-  title: string
-  iban: string
-  fullName: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutBankingDetailsInput
+export type BankingDetailsCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
+  connect?: Prisma.BankingDetailsWhereUniqueInput
 }
 
-export type BankingDetailsUncheckedCreateWithoutReportsInput = {
-  id?: string
-  title: string
-  iban: string
-  fullName: string
-  userId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type BankingDetailsCreateOrConnectWithoutReportsInput = {
-  where: Prisma.BankingDetailsWhereUniqueInput
-  create: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
-}
-
-export type BankingDetailsUpsertWithoutReportsInput = {
-  update: Prisma.XOR<Prisma.BankingDetailsUpdateWithoutReportsInput, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
-  create: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
-  where?: Prisma.BankingDetailsWhereInput
-}
-
-export type BankingDetailsUpdateToOneWithWhereWithoutReportsInput = {
-  where?: Prisma.BankingDetailsWhereInput
-  data: Prisma.XOR<Prisma.BankingDetailsUpdateWithoutReportsInput, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
-}
-
-export type BankingDetailsUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  iban?: Prisma.StringFieldUpdateOperationsInput | string
-  fullName?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutBankingDetailsNestedInput
-}
-
-export type BankingDetailsUncheckedUpdateWithoutReportsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  iban?: Prisma.StringFieldUpdateOperationsInput | string
-  fullName?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type BankingDetailsUpdateOneWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.BankingDetailsCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.BankingDetailsUpsertWithoutReportsInput
+  disconnect?: Prisma.BankingDetailsWhereInput | boolean
+  delete?: Prisma.BankingDetailsWhereInput | boolean
+  connect?: Prisma.BankingDetailsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BankingDetailsUpdateToOneWithWhereWithoutReportsInput, Prisma.BankingDetailsUpdateWithoutReportsInput>, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
 }
 
 export type BankingDetailsCreateWithoutUserInput = {
@@ -542,6 +488,62 @@ export type BankingDetailsScalarWhereInput = {
   userId?: Prisma.StringFilter<"BankingDetails"> | string
   createdAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BankingDetails"> | Date | string
+}
+
+export type BankingDetailsCreateWithoutReportsInput = {
+  id?: string
+  title: string
+  iban: string
+  fullName: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutBankingDetailsInput
+}
+
+export type BankingDetailsUncheckedCreateWithoutReportsInput = {
+  id?: string
+  title: string
+  iban: string
+  fullName: string
+  userId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BankingDetailsCreateOrConnectWithoutReportsInput = {
+  where: Prisma.BankingDetailsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+}
+
+export type BankingDetailsUpsertWithoutReportsInput = {
+  update: Prisma.XOR<Prisma.BankingDetailsUpdateWithoutReportsInput, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.BankingDetailsCreateWithoutReportsInput, Prisma.BankingDetailsUncheckedCreateWithoutReportsInput>
+  where?: Prisma.BankingDetailsWhereInput
+}
+
+export type BankingDetailsUpdateToOneWithWhereWithoutReportsInput = {
+  where?: Prisma.BankingDetailsWhereInput
+  data: Prisma.XOR<Prisma.BankingDetailsUpdateWithoutReportsInput, Prisma.BankingDetailsUncheckedUpdateWithoutReportsInput>
+}
+
+export type BankingDetailsUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  iban?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutBankingDetailsNestedInput
+}
+
+export type BankingDetailsUncheckedUpdateWithoutReportsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  iban?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BankingDetailsCreateManyUserInput = {

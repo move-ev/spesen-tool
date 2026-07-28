@@ -1,31 +1,18 @@
 import { updatePreferencesServerSchema } from "@/lib/validators";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+	preferencesService,
+	toPreferencesServiceContext,
+} from "@/server/modules/preferences";
 
 export const preferencesRouter = createTRPCRouter({
-	getOwn: protectedProcedure.query(async ({ ctx }) => {
-		let preferences = await ctx.db.preferences.findUnique({
-			where: { userId: ctx.session.user.id },
-		});
+	get: protectedProcedure.query(({ ctx }) =>
+		preferencesService.get(toPreferencesServiceContext(ctx)),
+	),
 
-		if (!preferences) {
-			preferences = await ctx.db.preferences.create({
-				data: {
-					userId: ctx.session.user.id,
-					notifications: "ALL",
-				},
-			});
-		}
-
-		return preferences;
-	}),
-	updateOwn: protectedProcedure
+	update: protectedProcedure
 		.input(updatePreferencesServerSchema)
-		.mutation(async ({ ctx, input }) => {
-			return await ctx.db.preferences.update({
-				where: { userId: ctx.session.user.id },
-				data: {
-					notifications: input.notificationPreference,
-				},
-			});
-		}),
+		.mutation(({ ctx, input }) =>
+			preferencesService.update(toPreferencesServiceContext(ctx), input),
+		),
 });

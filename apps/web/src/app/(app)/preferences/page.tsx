@@ -10,7 +10,7 @@ import { BankingDetailsList } from "./_components/banking-details-list";
 const t = createAppTranslator({ namespace: "modules.preferences.page" });
 
 export default async function ServerPage() {
-	void api.preferences.getOwn.prefetch();
+	void api.preferences.get.prefetch();
 	void api.bankingDetails.list.prefetch();
 
 	return (

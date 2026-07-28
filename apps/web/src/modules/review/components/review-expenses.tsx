@@ -29,6 +29,23 @@ function escapeCsvValue(value: string | number): string {
 	return `"${stringValue.replaceAll('"', '""')}"`;
 }
 
+function formatExpenseDetails(
+	t: ReturnType<typeof createAppTranslator<"modules.review.expenses.csv">>,
+	expense: ReviewExpense,
+): string {
+	if (expense.travelDetail) {
+		return t("travelDetails", {
+			from: expense.travelDetail.from,
+			to: expense.travelDetail.to,
+			distance: expense.travelDetail.distance.toFixed(2),
+		});
+	}
+	if (expense.foodDetail) {
+		return t("foodDetails", { days: expense.foodDetail.days });
+	}
+	return "";
+}
+
 function buildExpensesCsv(expenses: ReviewExpense[]): string {
 	const t = createAppTranslator({ namespace: "modules.review.expenses.csv" });
 	const headers = [
@@ -45,7 +62,7 @@ function buildExpensesCsv(expenses: ReviewExpense[]): string {
 		format(expense.endDate, "yyyy-MM-dd"),
 		expense.amount.toFixed(2),
 		expense.description ?? "",
-		expense.meta?.toString() ?? "",
+		formatExpenseDetails(t, expense),
 	]);
 
 	return [headers, ...rows]

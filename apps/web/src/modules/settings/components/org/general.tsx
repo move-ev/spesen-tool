@@ -51,7 +51,7 @@ function OrgGeneralContent({
 	...props
 }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.general");
-	const orgQuery = api.settings.getOrg.useQuery();
+	const orgQuery = api.organization.get.useQuery();
 
 	const updateHandleRef = React.useRef<UpdateOrgGeneralHandle | null>(null);
 	if (!updateHandleRef.current)
@@ -179,10 +179,10 @@ function OrgGeneralEdit({
 	const utils = api.useUtils();
 	const [open, setOpen] = React.useState<boolean>(props.defaultOpen ?? false);
 
-	const updateMutation = api.settings.updateOrgGeneral.useMutation({
+	const updateMutation = api.organization.update.useMutation({
 		onSuccess: () => {
 			toast.success(t("savedToast"));
-			utils.settings.getOrg.invalidate();
+			utils.organization.get.invalidate();
 			handleOpenChange(false);
 		},
 		onError: (error) => {

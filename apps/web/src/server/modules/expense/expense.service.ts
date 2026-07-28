@@ -1,22 +1,15 @@
 import { TRPCError } from "@trpc/server";
-import {
-	ExpenseType,
-	type Prisma,
-	type PrismaClient,
-	ReportStatus,
-} from "@zemio/db";
+import { ExpenseType, type Prisma, type PrismaClient } from "@zemio/db";
 import type { z } from "zod";
+import { roundToCents } from "@/lib/utils";
 import type {
 	createFoodExpenseSchema,
 	createReceiptExpenseSchema,
 	createTravelExpenseSchema,
 } from "@/lib/validators";
-import {
-	foodExpenseMetaSchema,
-	travelExpenseMetaSchema,
-} from "@/lib/validators";
 import { type AuditRepository, auditRepository } from "@/server/modules/audit";
 import { mapPrismaError } from "@/server/shared/errors";
+import { decimalToNumber } from "@/server/shared/money";
 import { deleteFilesFromStorage } from "@/server/storage";
 import {
 	type ExpenseByIdDTO,
@@ -24,7 +17,8 @@ import {
 	toExpenseByIdDTO,
 	toExpenseListItemDTO,
 } from "./expense.dto";
-import { authorizeExpense, type ExpensePolicyContext } from "./expense.policy";
+import { foodDetailFromMeta, travelDetailFromMeta } from "./expense.meta";
+import { type ExpensePolicyContext, expensePolicy } from "./expense.policy";
 import {
 	type ExpenseDetail,
 	type ExpenseRepository,
@@ -96,37 +90,13 @@ export function createExpenseService(deps: {
 		return report;
 	}
 
-	function assertOwner(
-		ctx: ExpenseServiceContext,
-		report: { ownerId: string },
-	): void {
-		if (report.ownerId !== ctx.userId) {
-			throw new TRPCError({
-				code: "FORBIDDEN",
-				message: "You don't have permission to modify this report's expenses",
-			});
-		}
-	}
-
-	function assertEditable(report: { status: ReportStatus }): void {
-		if (
-			report.status !== ReportStatus.DRAFT &&
-			report.status !== ReportStatus.NEEDS_REVISION
-		) {
-			throw new TRPCError({
-				code: "BAD_REQUEST",
-				message: "You can only add expenses to draft or needs revision reports",
-			});
-		}
-	}
-
 	return {
 		async list(
 			ctx: ExpenseServiceContext,
 			input: { reportId: string },
 		): Promise<ExpenseListItemDTO[]> {
 			const report = await loadReport(ctx, input.reportId);
-			authorizeExpense("read", toPolicyContext(ctx), { report });
+			expensePolicy.authorize("read", toPolicyContext(ctx), { report });
 			const expenses = await repo.listForReport(ctx.db, input.reportId);
 			return expenses.map(toExpenseListItemDTO);
 		},
@@ -140,8 +110,7 @@ export function createExpenseService(deps: {
 			input: CreateReceiptInput,
 		): Promise<{ id: string }> {
 			const report = await loadReport(ctx, input.reportId);
-			assertOwner(ctx, report);
-			assertEditable(report);
+			expensePolicy.authorize("create", toPolicyContext(ctx), { report });
 
 			const expectedKeyPrefix = `attachment/${ctx.organizationId}/`;
 			const hasInvalidKey = input.attachments.some(
@@ -162,7 +131,6 @@ export function createExpenseService(deps: {
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: {},
 					attachments: {
 						createMany: {
 							data: input.attachments.map((a) => ({
@@ -191,8 +159,7 @@ export function createExpenseService(deps: {
 			input: CreateTravelInput,
 		): Promise<{ id: string }> {
 			const report = await loadReport(ctx, input.reportId);
-			assertOwner(ctx, report);
-			assertEditable(report);
+			expensePolicy.authorize("create", toPolicyContext(ctx), { report });
 
 			const settings = await repo.findSettings(ctx.db, ctx.organizationId);
 			if (!settings) {
@@ -206,11 +173,19 @@ export function createExpenseService(deps: {
 				const result = await repo.create(db, {
 					report: { connect: { id: input.reportId } },
 					type: ExpenseType.TRAVEL,
-					amount: Number(input.distance) * Number(settings.kilometerRate),
+					amount: roundToCents(
+						Number(input.distance) * Number(settings.kilometerRate),
+					),
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: { from: input.from, to: input.to, distance: input.distance },
+					travelDetail: {
+						create: {
+							from: input.from,
+							to: input.to,
+							distance: input.distance,
+						},
+					},
 				});
 				await audit.append(db, {
 					organizationId: ctx.organizationId,
@@ -230,8 +205,7 @@ export function createExpenseService(deps: {
 			input: CreateFoodInput,
 		): Promise<{ id: string }> {
 			const report = await loadReport(ctx, input.reportId);
-			assertOwner(ctx, report);
-			assertEditable(report);
+			expensePolicy.authorize("create", toPolicyContext(ctx), { report });
 
 			return transact(ctx.db, async (db) => {
 				const result = await repo.create(db, {
@@ -241,11 +215,13 @@ export function createExpenseService(deps: {
 					startDate: input.startDate,
 					endDate: input.endDate,
 					description: input.description,
-					meta: {
-						days: input.days,
-						breakfastDeduction: input.breakfastDeduction,
-						lunchDeduction: input.lunchDeduction,
-						dinnerDeduction: input.dinnerDeduction,
+					foodDetail: {
+						create: {
+							days: input.days,
+							breakfastDeduction: input.breakfastDeduction,
+							lunchDeduction: input.lunchDeduction,
+							dinnerDeduction: input.dinnerDeduction,
+						},
 					},
 				});
 				await audit.append(db, {
@@ -277,59 +253,70 @@ export function createExpenseService(deps: {
 				...baseData
 			} = input;
 
-			// biome-ignore lint/suspicious/noExplicitAny: Prisma.ExpenseUpdateInput meta accepts any JSON-compatible shape
-			const updateData: Record<string, any> = { ...baseData };
+			const updateData: Prisma.ExpenseUpdateInput = { ...baseData };
+
+			const before: Record<string, Prisma.InputJsonValue | null> = {};
+			const after: Record<string, Prisma.InputJsonValue | null> = {};
 
 			if (expense.type === ExpenseType.TRAVEL) {
-				const currentMeta = travelExpenseMetaSchema.safeParse(expense.meta);
-				const currentMetaData = currentMeta.success
-					? currentMeta.data
-					: { from: "", to: "", distance: 0 };
-
 				if (from !== undefined || to !== undefined || distance !== undefined) {
-					updateData.meta = {
-						from: from ?? currentMetaData.from,
-						to: to ?? currentMetaData.to,
-						distance: distance ?? currentMetaData.distance,
+					// Legacy rows created during the migration deploy window have no
+					// detail row yet; their current values live in the deprecated
+					// meta column and must survive a partial update. The upsert then
+					// creates the missing detail row.
+					const current = expense.travelDetail
+						? {
+								from: expense.travelDetail.from,
+								to: expense.travelDetail.to,
+								distance: decimalToNumber(expense.travelDetail.distance),
+							}
+						: travelDetailFromMeta(expense.meta);
+					const next = {
+						from: from ?? current.from,
+						to: to ?? current.to,
+						distance: distance ?? current.distance,
 					};
+					updateData.travelDetail = { upsert: { create: next, update: next } };
+					before.travelDetail = current;
+					after.travelDetail = next;
 				}
 
 				if (distance !== undefined) {
 					const settings = await repo.findSettings(ctx.db, ctx.organizationId);
 					const kilometerRate = settings?.kilometerRate ?? 0.3;
-					updateData.amount = Number(distance) * Number(kilometerRate);
+					updateData.amount = roundToCents(Number(distance) * Number(kilometerRate));
 				}
 			}
 
 			if (expense.type === ExpenseType.FOOD) {
-				const currentMeta = foodExpenseMetaSchema.safeParse(expense.meta);
-				const currentMetaData = currentMeta.success
-					? currentMeta.data
-					: {
-							days: 1,
-							breakfastDeduction: 0,
-							lunchDeduction: 0,
-							dinnerDeduction: 0,
-						};
-
 				if (
 					days !== undefined ||
 					breakfastDeduction !== undefined ||
 					lunchDeduction !== undefined ||
 					dinnerDeduction !== undefined
 				) {
-					updateData.meta = {
-						days: days ?? currentMetaData.days,
-						breakfastDeduction:
-							breakfastDeduction ?? currentMetaData.breakfastDeduction,
-						lunchDeduction: lunchDeduction ?? currentMetaData.lunchDeduction,
-						dinnerDeduction: dinnerDeduction ?? currentMetaData.dinnerDeduction,
+					// Same deploy-window fallback as the travel branch above.
+					const current = expense.foodDetail
+						? {
+								days: expense.foodDetail.days,
+								breakfastDeduction: decimalToNumber(
+									expense.foodDetail.breakfastDeduction,
+								),
+								lunchDeduction: decimalToNumber(expense.foodDetail.lunchDeduction),
+								dinnerDeduction: decimalToNumber(expense.foodDetail.dinnerDeduction),
+							}
+						: foodDetailFromMeta(expense.meta);
+					const next = {
+						days: days ?? current.days,
+						breakfastDeduction: breakfastDeduction ?? current.breakfastDeduction,
+						lunchDeduction: lunchDeduction ?? current.lunchDeduction,
+						dinnerDeduction: dinnerDeduction ?? current.dinnerDeduction,
 					};
+					updateData.foodDetail = { upsert: { create: next, update: next } };
+					before.foodDetail = current;
+					after.foodDetail = next;
 				}
 			}
-
-			const before: Record<string, Prisma.InputJsonValue | null> = {};
-			const after: Record<string, Prisma.InputJsonValue | null> = {};
 
 			if (
 				"description" in updateData &&
@@ -345,10 +332,6 @@ export function createExpenseService(deps: {
 					before.amount = prevAmount;
 					after.amount = nextAmount;
 				}
-			}
-			if ("meta" in updateData) {
-				before.meta = expense.meta as Prisma.InputJsonValue;
-				after.meta = updateData.meta as Prisma.InputJsonValue;
 			}
 
 			if (Object.keys(before).length === 0) {

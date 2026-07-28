@@ -291,16 +291,6 @@ export type CostUnitGroupUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type CostUnitGroupListRelationFilter = {
-  every?: Prisma.CostUnitGroupWhereInput
-  some?: Prisma.CostUnitGroupWhereInput
-  none?: Prisma.CostUnitGroupWhereInput
-}
-
-export type CostUnitGroupOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type CostUnitGroupOrganizationIdTitleCompoundUniqueInput = {
   organizationId: string
   title: string
@@ -333,6 +323,32 @@ export type CostUnitGroupMinOrderByAggregateInput = {
 export type CostUnitGroupNullableScalarRelationFilter = {
   is?: Prisma.CostUnitGroupWhereInput | null
   isNot?: Prisma.CostUnitGroupWhereInput | null
+}
+
+export type CostUnitGroupListRelationFilter = {
+  every?: Prisma.CostUnitGroupWhereInput
+  some?: Prisma.CostUnitGroupWhereInput
+  none?: Prisma.CostUnitGroupWhereInput
+}
+
+export type CostUnitGroupOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type CostUnitGroupCreateNestedOneWithoutCostUnitsInput = {
+  create?: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
+  connectOrCreate?: Prisma.CostUnitGroupCreateOrConnectWithoutCostUnitsInput
+  connect?: Prisma.CostUnitGroupWhereUniqueInput
+}
+
+export type CostUnitGroupUpdateOneWithoutCostUnitsNestedInput = {
+  create?: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
+  connectOrCreate?: Prisma.CostUnitGroupCreateOrConnectWithoutCostUnitsInput
+  upsert?: Prisma.CostUnitGroupUpsertWithoutCostUnitsInput
+  disconnect?: Prisma.CostUnitGroupWhereInput | boolean
+  delete?: Prisma.CostUnitGroupWhereInput | boolean
+  connect?: Prisma.CostUnitGroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CostUnitGroupUpdateToOneWithWhereWithoutCostUnitsInput, Prisma.CostUnitGroupUpdateWithoutCostUnitsInput>, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
 }
 
 export type CostUnitGroupCreateNestedManyWithoutOrganizationInput = {
@@ -377,20 +393,52 @@ export type CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.CostUnitGroupScalarWhereInput | Prisma.CostUnitGroupScalarWhereInput[]
 }
 
-export type CostUnitGroupCreateNestedOneWithoutCostUnitsInput = {
-  create?: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
-  connectOrCreate?: Prisma.CostUnitGroupCreateOrConnectWithoutCostUnitsInput
-  connect?: Prisma.CostUnitGroupWhereUniqueInput
+export type CostUnitGroupCreateWithoutCostUnitsInput = {
+  id?: string
+  title: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutCostUnitGroupsInput
 }
 
-export type CostUnitGroupUpdateOneWithoutCostUnitsNestedInput = {
-  create?: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
-  connectOrCreate?: Prisma.CostUnitGroupCreateOrConnectWithoutCostUnitsInput
-  upsert?: Prisma.CostUnitGroupUpsertWithoutCostUnitsInput
-  disconnect?: Prisma.CostUnitGroupWhereInput | boolean
-  delete?: Prisma.CostUnitGroupWhereInput | boolean
-  connect?: Prisma.CostUnitGroupWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CostUnitGroupUpdateToOneWithWhereWithoutCostUnitsInput, Prisma.CostUnitGroupUpdateWithoutCostUnitsInput>, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
+export type CostUnitGroupUncheckedCreateWithoutCostUnitsInput = {
+  id?: string
+  title: string
+  organizationId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CostUnitGroupCreateOrConnectWithoutCostUnitsInput = {
+  where: Prisma.CostUnitGroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
+}
+
+export type CostUnitGroupUpsertWithoutCostUnitsInput = {
+  update: Prisma.XOR<Prisma.CostUnitGroupUpdateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
+  create: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
+  where?: Prisma.CostUnitGroupWhereInput
+}
+
+export type CostUnitGroupUpdateToOneWithWhereWithoutCostUnitsInput = {
+  where?: Prisma.CostUnitGroupWhereInput
+  data: Prisma.XOR<Prisma.CostUnitGroupUpdateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
+}
+
+export type CostUnitGroupUpdateWithoutCostUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutCostUnitGroupsNestedInput
+}
+
+export type CostUnitGroupUncheckedUpdateWithoutCostUnitsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CostUnitGroupCreateWithoutOrganizationInput = {
@@ -444,54 +492,6 @@ export type CostUnitGroupScalarWhereInput = {
   organizationId?: Prisma.StringFilter<"CostUnitGroup"> | string
   createdAt?: Prisma.DateTimeFilter<"CostUnitGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CostUnitGroup"> | Date | string
-}
-
-export type CostUnitGroupCreateWithoutCostUnitsInput = {
-  id?: string
-  title: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutCostUnitGroupsInput
-}
-
-export type CostUnitGroupUncheckedCreateWithoutCostUnitsInput = {
-  id?: string
-  title: string
-  organizationId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type CostUnitGroupCreateOrConnectWithoutCostUnitsInput = {
-  where: Prisma.CostUnitGroupWhereUniqueInput
-  create: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
-}
-
-export type CostUnitGroupUpsertWithoutCostUnitsInput = {
-  update: Prisma.XOR<Prisma.CostUnitGroupUpdateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
-  create: Prisma.XOR<Prisma.CostUnitGroupCreateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedCreateWithoutCostUnitsInput>
-  where?: Prisma.CostUnitGroupWhereInput
-}
-
-export type CostUnitGroupUpdateToOneWithWhereWithoutCostUnitsInput = {
-  where?: Prisma.CostUnitGroupWhereInput
-  data: Prisma.XOR<Prisma.CostUnitGroupUpdateWithoutCostUnitsInput, Prisma.CostUnitGroupUncheckedUpdateWithoutCostUnitsInput>
-}
-
-export type CostUnitGroupUpdateWithoutCostUnitsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutCostUnitGroupsNestedInput
-}
-
-export type CostUnitGroupUncheckedUpdateWithoutCostUnitsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CostUnitGroupCreateManyOrganizationInput = {

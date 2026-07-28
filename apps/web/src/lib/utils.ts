@@ -11,6 +11,16 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+/**
+ * Rounds a computed monetary amount to whole cents. Derived amounts
+ * (distance × rate, allowance × days − deductions) accumulate binary
+ * floating-point noise that would fail the `multipleOf(0.01)` input
+ * validation and exceed the DECIMAL(12,2) column scale.
+ */
+export function roundToCents(amount: number): number {
+	return Math.round(amount * 100) / 100;
+}
+
 export function formatBytes(input: number | bigint, decimals = 2): string {
 	const bytes = Number(input);
 

@@ -222,7 +222,7 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 		return createMembersTableColumns(updateHandle, t as ColumnTranslator);
 	}, [updateHandle, t]);
 
-	const dataQuery = api.costUnit.listCostUnits.useQuery(
+	const dataQuery = api.costUnit.list.useQuery(
 		{
 			page: pagination.pageIndex + 1,
 			pageSize: pagination.pageSize,
@@ -234,8 +234,8 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 	);
 
 	const table = useReactTable({
-		data: dataQuery.data?.items ?? [],
-		rowCount: dataQuery.data?.totalCount,
+		data: dataQuery.data?.costUnits ?? [],
+		rowCount: dataQuery.data?.pagination.totalCount,
 		columns,
 		state: {
 			pagination,
@@ -309,13 +309,13 @@ function CostUnitsTable({ className, ...props }: React.ComponentProps<"div">) {
 			</div>
 			<div className="mt-8 flex flex-wrap justify-between gap-4 border-slate-200 border-t pt-4">
 				<span className="text-slate-500 text-sm">
-					{t("table.unitsCount", { count: data.totalCount })}
+					{t("table.unitsCount", { count: data.pagination.totalCount })}
 				</span>
 				<div className="flex items-center justify-center gap-2">
 					<span className="me-2 text-slate-500 text-sm">
 						{t("table.pageIndicator", {
 							current: pagination.pageIndex + 1,
-							total: Math.ceil(data.totalCount / PAGE_SIZE),
+							total: data.pagination.pageCount,
 						})}
 					</span>
 					<Button
