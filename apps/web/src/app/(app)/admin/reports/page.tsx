@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { PageDescription, PageTitle } from "@/components/page-title";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { AdminReportsContent } from "@/modules/admin";
 import { api, HydrateClient } from "@/trpc/server";
 import { ReportsList } from "./data-display/reports-list";
 
@@ -16,7 +15,6 @@ export default async function ServerPage() {
 
 	return (
 		<>
-			<AdminReportsContent />
 			<HydrateClient>
 				<section
 					className={cn(
