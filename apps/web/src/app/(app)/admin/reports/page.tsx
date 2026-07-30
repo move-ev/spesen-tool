@@ -14,34 +14,32 @@ export default async function ServerPage() {
 	void api.report.list.prefetch({ scope: "all", page: 1, pageSize: 50 });
 
 	return (
-		<>
-			<HydrateClient>
-				<section
-					className={cn(
-						"container mt-12 flex flex-col flex-wrap items-start justify-start gap-4 sm:flex-row",
-					)}
+		<HydrateClient>
+			<section
+				className={cn(
+					"container mt-12 flex flex-col flex-wrap items-start justify-start gap-4 sm:flex-row",
+				)}
+			>
+				<div>
+					<PageTitle>{t("title")}</PageTitle>
+					<PageDescription className="mt-2">{t("description")}</PageDescription>
+				</div>
+			</section>
+			<section className="mt-8">
+				<Suspense
+					fallback={
+						<div className="container space-y-2">
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+						</div>
+					}
 				>
-					<div>
-						<PageTitle>{t("title")}</PageTitle>
-						<PageDescription className="mt-2">{t("description")}</PageDescription>
-					</div>
-				</section>
-				<section className="mt-8">
-					<Suspense
-						fallback={
-							<div className="container space-y-2">
-								<Skeleton className="h-10 w-full" />
-								<Skeleton className="h-10 w-full" />
-								<Skeleton className="h-10 w-full" />
-								<Skeleton className="h-10 w-full" />
-								<Skeleton className="h-10 w-full" />
-							</div>
-						}
-					>
-						<ReportsList />
-					</Suspense>
-				</section>
-			</HydrateClient>
-		</>
+					<ReportsList />
+				</Suspense>
+			</section>
+		</HydrateClient>
 	);
 }
