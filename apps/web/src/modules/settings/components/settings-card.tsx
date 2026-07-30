@@ -34,7 +34,7 @@ function SettingsCardContent({
 		<div
 			className={cn(
 				"rounded-[calc(var(--radius-lg)-2px)] bg-white shadow-md ring-1 ring-base-700/10",
-				"**:data-[slot=field]:grid **:data-[slot=field]:grid-cols-2 **:data-[slot=field]:gap-8 **:data-[slot=field]:px-4 **:data-[slot=field]:py-6",
+				"**:data-[slot=field]:grid **:data-[slot=field]:gap-8 **:data-[slot=field]:px-4 **:data-[slot=field]:py-6 **:data-[slot=field]:md:grid-cols-2",
 				className,
 			)}
 			data-slot="settings-card-content"

@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { CostUnitStatus, Prisma, PrismaClient } from "@zemio/db";
-import { NO_COST_UNIT_GROUP } from "@/lib/consts";
+import { type CostUnitSortField, NO_COST_UNIT_GROUP } from "@/lib/consts";
 import {
 	isUniqueConstraintError,
 	mapPrismaError,
@@ -21,7 +21,11 @@ import {
 	type CostUnitRow,
 	costUnitRepository,
 } from "./cost-unit.repository";
-import type { CostUnitListInput } from "./cost-unit.validators";
+import type {
+	CostUnitListFilterRule,
+	CostUnitListInput,
+	CostUnitListSorting,
+} from "./cost-unit.validators";
 
 export type CostUnitServiceContext = {
 	db: PrismaClient;
@@ -53,20 +57,141 @@ function toCostUnitGroupId(raw: string): string | null {
 	return raw;
 }
 
-function buildListWhere(
-	organizationId: string,
-	search: string | undefined,
-): Prisma.CostUnitWhereInput {
-	if (!search) {
-		return { organizationId };
-	}
+function buildSearchWhere(search: string): Prisma.CostUnitWhereInput {
 	return {
-		organizationId,
 		OR: [
 			{ title: { contains: search, mode: "insensitive" } },
 			{ tag: { contains: search, mode: "insensitive" } },
 		],
 	};
+}
+
+/**
+ * A predicate no row can satisfy. Used as the fail-closed result when a filter
+ * compiles to nothing: an empty `where` would match the entire table, silently
+ * turning a filter the user can still see into a no-op.
+ */
+const MATCHES_NOTHING: Prisma.CostUnitWhereInput = { id: { in: [] } };
+
+function combineWhere(
+	logic: "OR" | "AND",
+	branches: Prisma.CostUnitWhereInput[],
+): Prisma.CostUnitWhereInput {
+	const [only] = branches;
+	if (only === undefined) {
+		return MATCHES_NOTHING;
+	}
+	return branches.length === 1 ? only : { [logic]: branches };
+}
+
+/**
+ * Compiles a group filter. The picker's synthetic "no group" id stands for a
+ * null foreign key, so both operators have to branch on it explicitly.
+ *
+ * The negative case is deliberately not expressed as `NOT { in }`: SQL's
+ * `col NOT IN (…)` is unknown for a null `col`, which would silently drop every
+ * ungrouped row from an "is not <group>" result even though it belongs there.
+ */
+function buildGroupWhere(
+	ids: string[],
+	op: "in" | "notIn",
+): Prisma.CostUnitWhereInput {
+	const groupIds = ids.filter((id) => id !== NO_COST_UNIT_GROUP);
+	const coversUngrouped = ids.length !== groupIds.length;
+
+	if (op === "in") {
+		const branches: Prisma.CostUnitWhereInput[] = [];
+		if (groupIds.length > 0) {
+			branches.push({ costUnitGroupId: { in: groupIds } });
+		}
+		if (coversUngrouped) {
+			branches.push({ costUnitGroupId: null });
+		}
+		return combineWhere("OR", branches);
+	}
+
+	const branches: Prisma.CostUnitWhereInput[] = [];
+	if (groupIds.length > 0) {
+		branches.push({
+			OR: [{ costUnitGroupId: { notIn: groupIds } }, { costUnitGroupId: null }],
+		});
+	}
+	if (coversUngrouped) {
+		branches.push({ costUnitGroupId: { not: null } });
+	}
+	return combineWhere("AND", branches);
+}
+
+function compileFilterRule(
+	rule: CostUnitListFilterRule,
+): Prisma.CostUnitWhereInput {
+	switch (rule.field) {
+		case "status":
+			return rule.op === "in"
+				? { status: { in: rule.value } }
+				: { status: { notIn: rule.value } };
+		case "costUnitGroupId":
+			return buildGroupWhere(rule.value, rule.op);
+	}
+}
+
+function buildListWhere(
+	organizationId: string,
+	input: CostUnitListInput,
+): Prisma.CostUnitWhereInput {
+	const and: Prisma.CostUnitWhereInput[] = [];
+
+	if (input.search) {
+		and.push(buildSearchWhere(input.search));
+	}
+	for (const rule of input.filters ?? []) {
+		and.push(compileFilterRule(rule));
+	}
+
+	return and.length > 0 ? { organizationId, AND: and } : { organizationId };
+}
+
+/**
+ * Maps each sortable column to its Prisma ordering. Spelled out as a `Record`
+ * rather than a computed key (`{ [sort.id]: direction }`): TypeScript widens a
+ * computed key to an index signature and stops checking it against the model,
+ * so a column the schema can't actually order by would compile and fail at
+ * runtime. This form makes adding a field to `COST_UNIT_SORT_FIELDS` a compile
+ * error until it is mapped here.
+ */
+const ORDER_BY_FIELD: Record<
+	CostUnitSortField,
+	(direction: Prisma.SortOrder) => Prisma.CostUnitOrderByWithRelationInput
+> = {
+	tag: (direction) => ({ tag: direction }),
+	title: (direction) => ({ title: direction }),
+	status: (direction) => ({ status: direction }),
+	group: (direction) => ({ costUnitGroup: { title: direction } }),
+	createdAt: (direction) => ({ createdAt: direction }),
+};
+
+const DEFAULT_ORDER_BY: Prisma.CostUnitOrderByWithRelationInput[] = [
+	{ tag: "asc" },
+];
+
+/**
+ * Offset pagination needs a total order: without a unique tiebreaker, rows that
+ * tie on the sort column can repeat or vanish between pages. `tag` is unique
+ * per organization, so appending it makes every ordering deterministic.
+ */
+function buildListOrderBy(
+	sorting: CostUnitListSorting,
+): Prisma.CostUnitOrderByWithRelationInput[] {
+	const sort = sorting?.[0];
+
+	if (!sort) {
+		return DEFAULT_ORDER_BY;
+	}
+
+	const direction: Prisma.SortOrder = sort.desc ? "desc" : "asc";
+	const primary = ORDER_BY_FIELD[sort.id](direction);
+
+	return sort.id === "tag" ? [primary] : [primary, { tag: "asc" }];
 }
 
 export function createCostUnitService(deps: { repo: CostUnitRepository }) {
@@ -105,11 +230,12 @@ export function createCostUnitService(deps: { repo: CostUnitRepository }) {
 			ctx: CostUnitServiceContext,
 			input: CostUnitListInput,
 		): Promise<PaginatedCostUnits> {
-			const where = buildListWhere(ctx.organizationId, input.search);
+			const where = buildListWhere(ctx.organizationId, input);
+			const orderBy = buildListOrderBy(input.sorting);
 			const { skip, take } = offsetPageArgs(input);
 
 			const [costUnits, totalCount] = await Promise.all([
-				repo.listPage(ctx.db, { where, skip, take }),
+				repo.listPage(ctx.db, { where, orderBy, skip, take }),
 				repo.count(ctx.db, where),
 			]);
 

@@ -1,3 +1,5 @@
+import type { CostUnitStatus } from "@zemio/db";
+
 export const ROUTES = {
 	USER_DASHBOARD: "/",
 	AUTH: "/auth",
@@ -23,3 +25,32 @@ export const ADMIN_SETTINGS_MENU = {
  * Value used in select inputs to represent "no group" selection for cost units
  */
 export const NO_COST_UNIT_GROUP = "NO_GROUP" as const;
+
+/**
+ * Cost unit columns the list endpoint can order by. Shared by the tRPC input
+ * schema and the grid so the two can't drift; it lives here rather than in the
+ * server module because importing that module client-side would pull the Prisma
+ * client into the browser bundle.
+ *
+ * `examples` is absent deliberately — it is an array length, which Postgres
+ * cannot order by without a computed column.
+ */
+export const COST_UNIT_SORT_FIELDS = [
+	"tag",
+	"title",
+	"status",
+	"group",
+	"createdAt",
+] as const;
+
+export type CostUnitSortField = (typeof COST_UNIT_SORT_FIELDS)[number];
+
+/**
+ * The `CostUnitStatus` enum spelled out as literals. `satisfies` ties it to the
+ * schema at compile time without importing the enum as a value, which would
+ * also drag Prisma into the client bundle.
+ */
+export const COST_UNIT_STATUSES = [
+	"ACTIVE",
+	"ARCHIVED",
+] as const satisfies readonly CostUnitStatus[];

@@ -78,13 +78,18 @@ export const costUnitRepository = {
 
 	listPage(
 		db: Db,
-		args: { where: Prisma.CostUnitWhereInput; skip: number; take: number },
+		args: {
+			where: Prisma.CostUnitWhereInput;
+			orderBy: Prisma.CostUnitOrderByWithRelationInput[];
+			skip: number;
+			take: number;
+		},
 	): Promise<CostUnitRow[]> {
 		return db.costUnit.findMany({
 			where: args.where,
 			skip: args.skip,
 			take: args.take,
-			orderBy: { tag: "asc" },
+			orderBy: args.orderBy,
 			select: costUnitRowSelect,
 		});
 	},

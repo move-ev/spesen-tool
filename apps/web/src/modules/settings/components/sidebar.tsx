@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, GridIcon } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import React from "react";
@@ -17,17 +17,29 @@ function SettingsSidebar({
 	const t = useTranslations("modules.settings");
 
 	return (
-		<aside className={cn("h-svh w-64 bg-base-50", className)} {...props}>
-			<div className="px-4 py-4">
+		<aside
+			className={cn("h-svh w-64 border-base-200 border-r bg-base-50", className)}
+			{...props}
+		>
+			<div className="px-4 pt-6 pb-2">
 				<Link
-					className="flex w-fit items-center justify-center gap-1.5 font-semibold text-base-500 text-sm"
+					className="group/link flex w-fit items-center justify-center gap-1.5 font-semibold text-base-500 text-sm transition-colors hover:text-accent-600"
 					href={ROUTES.USER_DASHBOARD()}
 				>
-					<ArrowLeftIcon className="size-3.5 shrink-0 text-base-500" />
+					<ChevronLeftIcon className="size-3.5 shrink-0 text-base-500 transition-colors group-hover/link:text-accent-400" />
 					{t("actions.back")}
 				</Link>
 			</div>
 			<div className="mt-4 space-y-6 px-2">
+				<div>
+					<li className="group/item relative flex items-center justify-start gap-2 rounded-sm px-2 py-2 font-medium text-base-700 text-sm leading-none transition-colors hover:bg-base-100">
+						<GridIcon className="size-3.5 shrink-0 text-base-500" />
+						<Link href={ROUTES.SETTINGS()}>
+							Overview
+							<span className="absolute inset-0 h-full w-full" />
+						</Link>
+					</li>
+				</div>
 				{settingsRoutes.map((group) => (
 					<SettingsGroup group={group} key={group.label} />
 				))}

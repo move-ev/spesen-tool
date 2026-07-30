@@ -646,6 +646,9 @@
 				"sidebarAdminHeading": "Admin",
 				"noSession": "Keine aktive Sitzung gefunden"
 			},
+			"overview": {
+				"contactText": "Hast du Probleme oder benötigst Unterstützung? <link>Kontaktiere uns hier</link>."
+			},
 			"shared": {
 				"loadFormErrorTitle": "Das Formular konnte nicht geladen werden"
 			},
@@ -835,7 +838,13 @@
 					"statusArchived": "Archiviert",
 					"noResults": "Keine Ergebnisse.",
 					"unitsCount": "{count} Einheiten",
-					"pageIndicator": "Seite {current} / {total}"
+					"pageIndicator": "Seite {current} / {total}",
+					"loading": "Wird geladen …",
+					"loadError": "Kostenstellen konnten nicht geladen werden.",
+					"searchLabel": "Kostenstellen suchen",
+					"searchPlaceholder": "Nach Tag oder Titel suchen",
+					"retry": "Erneut versuchen",
+					"filterUnsupported": "Ein aktiver Filter wird nicht unterstützt und wurde ignoriert."
 				},
 				"createSheet": {
 					"title": "Neue Kostenstelle",

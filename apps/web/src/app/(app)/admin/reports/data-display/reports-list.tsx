@@ -240,7 +240,7 @@ export function ReportsList() {
 					<FilterMenu
 						className={"group/filter-menu data-[filtered=true]:size-6"}
 						disableAnimation
-						size={"xs"}
+						size={"sm"}
 						table={table}
 						variant={"outline"}
 					>
