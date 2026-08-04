@@ -39,7 +39,7 @@ const reportDetailSelect = {
 const reportListRowSelect = {
 	...reportScalarSelect,
 	owner: { select: { name: true, image: true, email: true } },
-	costUnit: { select: { tag: true } },
+	costUnit: { select: { tag: true, color: true } },
 } satisfies Prisma.ReportSelect;
 
 const reviewDetailSelect = {

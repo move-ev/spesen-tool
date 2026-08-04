@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@zemio/db";
+import type { CostUnitColor, PrismaClient } from "@zemio/db";
 import {
 	type ReportFiltersRepository,
 	reportFiltersRepository,
@@ -21,6 +21,7 @@ export type ReportFilterOptionsDTO = {
 		label: string;
 		value: string;
 		data: { id: string; tag: string; title: string };
+		color: CostUnitColor;
 	}>;
 	owners: Array<{
 		label: string;
@@ -46,6 +47,7 @@ export function createReportFiltersService(deps: {
 					label: costUnit.tag,
 					value: costUnit.id,
 					data: costUnit,
+					color: costUnit.color,
 				})),
 				owners: owners.map((owner) => ({
 					label: owner.name,
