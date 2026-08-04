@@ -170,13 +170,18 @@ function DropdownMenuSubContent({
 	);
 }
 
-function DropdownMenuSubSearch({
+function DropdownMenuSubSearch<
+	Value,
+	Multiple extends boolean | undefined = false,
+>({
 	children,
 	...props
-}: React.ComponentProps<typeof ComboboxPrimitive.Root>) {
+}: React.ComponentProps<typeof ComboboxPrimitive.Root<Value, Multiple>>) {
 	return (
 		<DropdownMenuSubContent data-slot="dropdown-menu-sub-search">
-			<ComboboxPrimitive.Root {...props}>{children}</ComboboxPrimitive.Root>
+			<ComboboxPrimitive.Root<Value, Multiple> {...props}>
+				{children}
+			</ComboboxPrimitive.Root>
 		</DropdownMenuSubContent>
 	);
 }
@@ -255,7 +260,7 @@ function DropdownMenuSubSearchItem({
 	return (
 		<ComboboxPrimitive.Item
 			className={cn(
-				"relative flex cursor-default select-none items-center gap-2 rounded-md py-1 pl-2 text-sm outline-hidden focus:bg-base-100 data-disabled:pointer-events-none data-highlighted:bg-base-100 data-highlighted:text-base-800 data-disabled:opacity-50 data-highlighted:**:text-base-800 [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex cursor-default select-none items-center gap-2 rounded-md py-1 pl-2 font-medium text-sm outline-hidden focus:bg-base-100 data-disabled:pointer-events-none data-highlighted:bg-base-100 data-highlighted:text-base-800 data-disabled:opacity-50 data-highlighted:**:text-base-800 [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				checked !== undefined && "pr-8",
 				className,
 			)}
@@ -285,7 +290,7 @@ function DropdownMenuCheckboxItem({
 		<MenuPrimitive.CheckboxItem
 			checked={checked}
 			className={cn(
-				"relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden data-[disabled]:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[disabled]:opacity-50 data-highlighted:**:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"group/dropdown-menu-item relative flex cursor-default select-none items-center gap-2 whitespace-nowrap rounded-sm px-2 py-1 pr-8 font-medium text-sm outline-hidden data-highlighted:data-[variant=destructive]:bg-red-100 data-highlighted:data-[variant=destructive]:text-red-700 data-disabled:pointer-events-none data-highlighted:bg-base-100 data-inset:pl-8 data-highlighted:text-base-800 data-disabled:opacity-50 not-data-[variant=destructive]:data-highlighted:**:text-base-800 [&_svg:not([class*='size-'])]:size-3.5 [&_svg:not([class*='text-'])]:text-base-500 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:shrink-0 data-[variant=destructive]:[&_svg]:text-red-500 data-[variant=destructive]:*:[svg]:text-red-500",
 				className,
 			)}
 			data-slot="dropdown-menu-checkbox-item"
@@ -296,7 +301,7 @@ function DropdownMenuCheckboxItem({
 				data-slot="dropdown-menu-checkbox-item-indicator"
 			>
 				<MenuPrimitive.CheckboxItemIndicator>
-					<CheckIcon />
+					<CheckIcon className="ml-6" />
 				</MenuPrimitive.CheckboxItemIndicator>
 			</span>
 			{children}
