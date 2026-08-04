@@ -27,6 +27,52 @@
 	},
 	"modules": {
 		"admin": {
+			"navbar": {
+				"breadcrumb": "Admin",
+				"breadcrumbReports": "Anträge",
+				"newReport": "Neuer Antrag"
+			},
+			"toolbar": {
+				"all": "Alle",
+				"pending": "Ausstehend",
+				"processed": "Bearbeitet"
+			},
+			"columns": {
+				"tag": {
+					"label": "Antrags-ID",
+					"placeholder": "Antrags-ID"
+				},
+				"title": {
+					"label": "Titel",
+					"placeholder": "Titel"
+				},
+				"costUnit": {
+					"label": "Kostenstelle",
+					"placeholder": "Kostenstelle"
+				},
+				"status": {
+					"label": "Status",
+					"placeholder": "Status"
+				},
+				"owner": {
+					"label": "Ersteller",
+					"placeholder": "Ersteller"
+				},
+				"createdAt": {
+					"label": "Erstellt am",
+					"placeholder": "Erstellt am"
+				},
+				"lastUpdatedAt": {
+					"label": "Zuletzt aktualisiert",
+					"placeholder": "Zuletzt aktualisiert"
+				},
+				"dateTime": "{date} um {time} Uhr"
+			},
+			"grid": {
+				"noResults": "Keine Ergebnisse.",
+				"reportsCount": "{count} Anträge",
+				"pageIndicator": "Seite {current} / {total}"
+			},
 			"sidebar": {
 				"back": "Zurück",
 				"organizations": "Organisationen"
@@ -309,6 +355,7 @@
 			"createReport": {
 				"sheetTitle": "Neuer Antrag",
 				"submit": "Antrag erstellen",
+				"cancel": "Abbrechen",
 				"errors": {
 					"costUnitsTitle": "Fehler beim Laden der Kostenstellen.",
 					"costUnitsDescription": "Die Kostenstellen konnten nicht geladen werden. Code: {code}",
