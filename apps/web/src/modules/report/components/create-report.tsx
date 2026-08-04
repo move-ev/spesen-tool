@@ -1,22 +1,14 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { PlusIcon } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { type ReactNode, useEffect, useId, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import {
+	Button,
 	Field,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
+	Input,
 	Select,
 	SelectContent,
 	SelectGroup,
@@ -24,17 +16,22 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import {
 	Sheet,
 	SheetBody,
+	SheetClose,
 	SheetContent,
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
+	Skeleton,
+	Textarea,
+} from "@zemio/ui";
+import { PlusIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { type ReactNode, useEffect, useId, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { createReportSchema } from "@/lib/validators";
@@ -58,14 +55,9 @@ function CreateReport({
 					<SheetTitle>{t("sheetTitle")}</SheetTitle>
 				</SheetHeader>
 				<CreateReportBody formId={formId} onPendingChange={setIsFormPending} />
-				<SheetFooter className="flex-row justify-end">
-					<Button
-						className={"w-fit"}
-						disabled={isFormPending}
-						form={formId}
-						size={"sm"}
-						type="submit"
-					>
+				<SheetFooter>
+					<SheetClose render={<Button variant={"outline"}>{t("cancel")}</Button>} />
+					<Button disabled={isFormPending} form={formId} size={"sm"} type="submit">
 						<PlusIcon /> {t("submit")}
 					</Button>
 				</SheetFooter>
@@ -155,12 +147,12 @@ function CreateReportBody({
 				data-slot="create-report-body"
 				{...props}
 			>
-				<div className="flex w-full flex-col items-center justify-center border border-slate-200 border-dashed p-8 px-8 py-10 text-center">
-					<p className="font-medium text-slate-800">{t("noBankingDetails.title")}</p>
-					<p className="mt-1 text-slate-500 text-xs">
+				<div className="flex w-full flex-col items-center justify-center border border-base-200 border-dashed p-8 px-8 py-10 text-center">
+					<p className="font-medium text-base-800">{t("noBankingDetails.title")}</p>
+					<p className="mt-1 text-base-500 text-xs">
 						{t("noBankingDetails.textPrefix")}{" "}
 						<Link
-							className="no-underline! font-semibold text-violet-600 transition-colors hover:text-violet-400"
+							className="no-underline! font-semibold text-accent-600 transition-colors hover:text-accent-400"
 							href={ROUTES.SETTINGS_USER_BANK_DETAILS()}
 						>
 							{t("noBankingDetails.linkText")}
@@ -200,14 +192,14 @@ function CreateReportErrorState({
 	return (
 		<div
 			className={cn(
-				"flex w-full flex-col items-center justify-center border border-slate-200 border-dashed p-8 px-8 py-10 text-center",
+				"flex w-full flex-col items-center justify-center border border-base-200 border-dashed p-8 px-8 py-10 text-center",
 				className,
 			)}
 			data-slot="create-report-error-state"
 			{...props}
 		>
 			<p className="font-medium text-destructive">{title}</p>
-			<p className="mt-1 text-slate-500 text-xs">{description}</p>
+			<p className="mt-1 text-base-500 text-xs">{description}</p>
 		</div>
 	);
 }
@@ -302,7 +294,7 @@ function CreateReportForm({
 						return (
 							<Field data-invalid={isInvalid}>
 								<FieldLabel
-									className="mb-1 font-semibold text-base text-slate-800"
+									className="mb-1 font-semibold text-base text-base-800"
 									htmlFor={field.name}
 								>
 									{t("fields.title")}
@@ -329,7 +321,7 @@ function CreateReportForm({
 						return (
 							<Field data-invalid={isInvalid}>
 								<FieldLabel
-									className="mb-1 font-semibold text-base text-slate-800"
+									className="mb-1 font-semibold text-base text-base-800"
 									htmlFor={field.name}
 								>
 									{t("fields.description")}
@@ -358,7 +350,7 @@ function CreateReportForm({
 						return (
 							<Field data-invalid={isInvalid}>
 								<FieldLabel
-									className="mb-1 font-semibold text-base text-slate-800"
+									className="mb-1 font-semibold text-base text-base-800"
 									htmlFor={field.name}
 								>
 									{t("fields.bankingDetails")}
@@ -382,10 +374,10 @@ function CreateReportForm({
 									</SelectContent>
 								</Select>
 
-								<FieldDescription className="max-w-prose font-normal text-slate-500 text-sm/relaxed">
+								<FieldDescription className="max-w-prose font-normal text-base-500 text-sm/relaxed">
 									{t("fields.bankingDetailsHelperPrefix")}{" "}
 									<Link
-										className="no-underline! font-semibold text-violet-600 transition-colors hover:text-violet-400"
+										className="no-underline! font-semibold text-accent-600 transition-colors hover:text-accent-400"
 										href={ROUTES.SETTINGS_USER_BANK_DETAILS()}
 									>
 										{t("fields.bankingDetailsHelperLink")}
@@ -411,7 +403,7 @@ function CreateReportForm({
 						return (
 							<Field className="gap-3" data-invalid={isInvalid}>
 								<FieldLabel
-									className="font-semibold text-base text-slate-800"
+									className="font-semibold text-base text-base-800"
 									htmlFor={field.name}
 								>
 									{t("fields.costUnit")}
@@ -440,9 +432,9 @@ function CreateReportForm({
 								</Select>
 
 								{costUnitExamples && (
-									<div className="mt-1 rounded-lg border border-slate-300 p-4 text-muted-foreground text-sm">
+									<div className="mt-1 rounded-lg border border-base-300 p-4 text-muted-foreground text-sm">
 										<p className="mb-2">{t("fields.costUnitExamplesTitle")}</p>
-										<ul className="list-inside list-disc font-medium text-slate-800 marker:text-slate-500">
+										<ul className="list-inside list-disc font-medium text-base-800 marker:text-base-500">
 											{costUnitExamples.map((example) => (
 												<li key={example}>{example}</li>
 											))}

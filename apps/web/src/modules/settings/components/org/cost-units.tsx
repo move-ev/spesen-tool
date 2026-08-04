@@ -25,7 +25,9 @@ import {
 	GridHeader,
 	GridRow,
 	getPinningStyles,
-	Input,
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
 } from "@zemio/ui";
 import { format } from "date-fns";
 import {
@@ -717,16 +719,18 @@ function CostUnitsGridToolbar({
 	return (
 		<div className={cn("space-y-3 pb-4", className)} {...props}>
 			<div className="flex items-center justify-between gap-4">
-				<div className="relative w-full max-w-xs">
-					<SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-base-400" />
-					<Input
+				<InputGroup className="w-full max-w-xs">
+					<InputGroupInput
 						aria-label={t("table.searchLabel")}
-						className="pl-9"
 						onChange={(e) => setValue(e.target.value)}
 						placeholder={t("table.searchPlaceholder")}
 						value={value}
 					/>
-				</div>
+					<InputGroupAddon>
+						<SearchIcon />
+					</InputGroupAddon>
+				</InputGroup>
+
 				<FilterMenu size={"icon-sm"} table={table} variant={"outline"}>
 					<ListFilterIcon />
 				</FilterMenu>
