@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ROUTES } from "@/lib/consts";
 import { AppSidebar } from "@/modules/shared";
-import { AppNavbar } from "@/modules/shared/components/app-navbar";
 import { auth } from "@/server/better-auth";
 import { db } from "@/server/db";
 
@@ -32,10 +31,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<div className="min-w-0 flex-1">
-				<AppNavbar className="sticky top-0" />
-				{children}
-			</div>
+			<div className="min-w-0 flex-1">{children}</div>
 		</SidebarProvider>
 	);
 }
