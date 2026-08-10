@@ -48,7 +48,7 @@ function ReviewContent({
 					/>
 					<ReportActivity className="mt-20" reportId={reportId} />
 				</div>
-				<ReviewSidebar className="shrink-0" reportId={reportId} />
+				<ReviewSidebar className="sm:shrink-0" reportId={reportId} />
 			</div>
 		</main>
 	);

@@ -1,14 +1,5 @@
 import { createAppTranslator } from "@zemio/i18n";
 import {
-	ArrowLeftIcon,
-	EuroIcon,
-	FolderTreeIcon,
-	SettingsIcon,
-	UsersIcon,
-} from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
 	Sidebar,
 	SidebarContent,
 	SidebarGroup,
@@ -17,7 +8,16 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@zemio/ui";
+import {
+	ArrowLeftIcon,
+	EuroIcon,
+	FolderTreeIcon,
+	SettingsIcon,
+	UsersIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { ADMIN_SETTINGS_MENU, ROUTES } from "@/lib/consts";
 
 const t = createAppTranslator({

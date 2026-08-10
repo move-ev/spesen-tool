@@ -6,6 +6,7 @@ import { ReportingBanner } from "./reporting-banner";
 import { ReportingByCostUnitCard } from "./reporting-by-cost-unit";
 import { ReportingByMembersCard } from "./reporting-by-member";
 import { ReportingHeader } from "./reporting-header";
+import { ReportingNavbar } from "./reporting-navbar";
 import { ReportingOverviewCard } from "./reporting-overview";
 import { ReportingReportsTimeline } from "./reporting-reports-timeline";
 
@@ -15,6 +16,7 @@ function ReportingContent({
 }: React.ComponentProps<"div">) {
 	return (
 		<div className={cn("", className)} data-slot="reporting-content" {...props}>
+			<ReportingNavbar />
 			<main className="py-12">
 				<div className="container mb-12">
 					<ReportingBanner />

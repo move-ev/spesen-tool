@@ -1,13 +1,19 @@
 "use client";
 
 import type { ReportStatus } from "@zemio/db";
-import { CornerDownRightIcon } from "lucide-react";
+import {
+	BanknoteArrowDownIcon,
+	ChevronDownIcon,
+	CornerDownRightIcon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import type React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusIcons } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { ReviewActions } from "./review-actions";
+import { ReviewPay } from "./review-pay";
 
 function ExpensesHeader({
 	className,
@@ -69,6 +75,24 @@ function ExpensesHeader({
 						)}
 					</p>
 				</div>
+			</div>
+			<div className="mt-8 flex w-full flex-col gap-2 sm:hidden">
+				<ReviewActions disableAnimation report={review.report} size="sm">
+					{tHeader("editAction")}
+					<ChevronDownIcon />
+				</ReviewActions>
+
+				<ReviewPay
+					disableAnimation
+					disabled={
+						review.report.status !== "ACCEPTED" &&
+						review.report.status !== "PENDING_APPROVAL"
+					}
+					reportId={reportId}
+					size="sm"
+				>
+					<BanknoteArrowDownIcon /> {tHeader("payAction")}
+				</ReviewPay>
 			</div>
 		</header>
 	);

@@ -1,7 +1,7 @@
+import { SidebarProvider } from "@zemio/ui";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { ROUTES } from "@/lib/consts";
 import { AppSidebar } from "@/modules/shared";
 import { auth } from "@/server/better-auth";

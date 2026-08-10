@@ -2,6 +2,16 @@
 
 import { createAppTranslator } from "@zemio/i18n";
 import {
+	Sidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from "@zemio/ui";
+import {
 	ChartPieIcon,
 	FileIcon,
 	HomeIcon,
@@ -11,16 +21,6 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarGroup,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "@/components/ui/sidebar";
 import { isOrganizationAdminRole } from "@/lib/organization";
 import { ROUTES } from "@/lib/routes";
 import { authClient } from "@/server/better-auth/client";
@@ -60,7 +60,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<Sidebar {...props}>
-			<SidebarHeader className="h-16 px-4 py-4">
+			<SidebarHeader className="h-16 px-2 py-4">
 				<AppSidebarMenu />
 			</SidebarHeader>
 			<SidebarContent>

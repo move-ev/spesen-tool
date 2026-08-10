@@ -164,7 +164,7 @@ function Sidebar({
 		return (
 			<div
 				className={cn(
-					"flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground",
+					"flex h-full w-(--sidebar-width) flex-col bg-base-50 text-base-500",
 					className,
 				)}
 				data-slot="sidebar"
@@ -179,7 +179,7 @@ function Sidebar({
 		return (
 			<Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
 				<SheetContent
-					className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+					className="w-(--sidebar-width) bg-base-50 p-0 text-sidebar-foreground [&>button]:hidden"
 					data-mobile="true"
 					data-sidebar="sidebar"
 					data-slot="sidebar"
@@ -478,7 +478,10 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-	"peer/menu-button group/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-sidebar-accent data-active:font-medium data-active:text-sidebar-accent-foreground data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0",
+	[
+		"peer/menu-button group/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left font-medium text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&_svg]:size-3.5 [&_svg]:shrink-0 [&_svg]:text-base-500",
+		"active:bg-base-200 data-active:bg-base-100 data-active:text-accent-600 data-active:[&_svg]:text-accent-500",
+	],
 	{
 		variants: {
 			variant: {

@@ -86,11 +86,11 @@ function SidebarMenuTrigger({
 					/>
 				</span>
 			) : (
-				<span className="flex size-6 items-center justify-center rounded-xs bg-slate-100 font-medium text-slate-600 text-xs leading-none">
+				<span className="flex size-6 items-center justify-center rounded-sm border border-base-300 bg-base-200 font-medium text-base-700 text-xs leading-none">
 					{data.name.charAt(0).toUpperCase()}
 				</span>
 			)}
-			<span className="truncate">{data.name}</span>
+			<span className="truncate font-semibold">{data.name}</span>
 			<ChevronDownIcon className="ml-auto size-4 shrink-0 text-slate-500" />
 		</DropdownMenuTrigger>
 	);
