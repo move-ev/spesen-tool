@@ -164,6 +164,7 @@
 				"loadErrorTitle": "Report konnte nicht geladen werden",
 				"createdAgo": "vor {distance}",
 				"createdAt": "Erstellt am {date}",
+				"noDescription": "Der Nutzer hat keine Beschreibung für diesen Antrag angegeben.",
 				"editAction": "Bearbeiten",
 				"changeStatusLabel": "Status ändern",
 				"acceptAction": "Akzeptieren",
@@ -192,6 +193,27 @@
 				"markPaidWarning": "Wenn ein Antrag als ausgezahlt markiert wurde, kann dies nicht rückgängig gemacht werden.",
 				"epcCodeErrorTitle": "QR-Code konnte nicht erstellt werden",
 				"epcCodeErrorDescription": "Das bedeutet meist, dass die angegebene IBAN ungültig ist oder die Validierung fehlgeschlagen ist."
+			},
+			"navbar": {
+				"breadcrumb": "Admin",
+				"breadcrumbReports": "Anträge",
+				"copyIdAction": "ID kopieren",
+				"copyTitleAction": "Titel kopieren",
+				"copyAmountAction": "Summe kopieren",
+				"copyIbanAction": "IBAN kopieren",
+				"copyAccountNameAction": "Kontoname kopieren"
+			},
+			"sidebar": {
+				"propertiesLabel": "Eigenschaften",
+				"statusLabel": "Status",
+				"ownerLabel": "Antragssteller",
+				"costUnitLabel": "Kostenstelle",
+				"createdLabel": "Erstellt",
+				"lastUpdatedLabel": "Zuletzt bearbeitet",
+				"transferLabel": "Überweisung",
+				"ibanLabel": "IBAN",
+				"accountNameLabel": "Kontoname",
+				"amountLabel": "Betrag"
 			},
 			"expenses": {
 				"title": "Kostenaufstellung",
