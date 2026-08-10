@@ -194,6 +194,67 @@ function buildListOrderBy(
 	return sort.id === "tag" ? [primary] : [primary, { tag: "asc" }];
 }
 
+/**
+ * Assembles one page of a group-sorted list, keeping ungrouped rows in their own
+ * bucket after every named group.
+ *
+ * A row without a group renders as a translated "no group" label, which the
+ * database cannot order alphabetically. Left to Postgres, the NULL titles also
+ * swap ends with the direction (last ascending, first descending), so the
+ * ungrouped rows appeared to jump around rather than behave like one bucket.
+ *
+ * Prisma cannot express `NULLS LAST` on a relation ordering — the generated
+ * `CostUnitGroupOrderByWithRelationInput.title` is a bare `SortOrder` — so the
+ * page is stitched from two ordered queries over the *same* `where` instead of
+ * from raw SQL, which would mean restating the filter logic and letting it
+ * drift.
+ */
+async function listUngroupedLastPage(
+	deps: { repo: CostUnitRepository; db: PrismaClient },
+	args: {
+		where: Prisma.CostUnitWhereInput;
+		direction: Prisma.SortOrder;
+		skip: number;
+		take: number;
+	},
+): Promise<CostUnitRow[]> {
+	const { repo, db } = deps;
+	const { where, direction, skip, take } = args;
+
+	const grouped: Prisma.CostUnitWhereInput = {
+		AND: [where, { costUnitGroupId: { not: null } }],
+	};
+	const ungrouped: Prisma.CostUnitWhereInput = {
+		AND: [where, { costUnitGroupId: null }],
+	};
+
+	const groupedCount = await repo.count(db, grouped);
+
+	const rows =
+		skip < groupedCount
+			? await repo.listPage(db, {
+					where: grouped,
+					orderBy: [ORDER_BY_FIELD.group(direction), { tag: "asc" }],
+					skip,
+					take,
+				})
+			: [];
+
+	const remaining = take - rows.length;
+	if (remaining <= 0) {
+		return rows;
+	}
+
+	const tail = await repo.listPage(db, {
+		where: ungrouped,
+		orderBy: [{ tag: "asc" }],
+		skip: Math.max(0, skip - groupedCount),
+		take: remaining,
+	});
+
+	return [...rows, ...tail];
+}
+
 export function createCostUnitService(deps: { repo: CostUnitRepository }) {
 	const { repo } = deps;
 
@@ -231,11 +292,21 @@ export function createCostUnitService(deps: { repo: CostUnitRepository }) {
 			input: CostUnitListInput,
 		): Promise<PaginatedCostUnits> {
 			const where = buildListWhere(ctx.organizationId, input);
-			const orderBy = buildListOrderBy(input.sorting);
 			const { skip, take } = offsetPageArgs(input);
+			const sort = input.sorting?.[0];
 
 			const [costUnits, totalCount] = await Promise.all([
-				repo.listPage(ctx.db, { where, orderBy, skip, take }),
+				sort?.id === "group"
+					? listUngroupedLastPage(
+							{ repo, db: ctx.db },
+							{ where, direction: sort.desc ? "desc" : "asc", skip, take },
+						)
+					: repo.listPage(ctx.db, {
+							where,
+							orderBy: buildListOrderBy(input.sorting),
+							skip,
+							take,
+						}),
 				repo.count(ctx.db, where),
 			]);
 
