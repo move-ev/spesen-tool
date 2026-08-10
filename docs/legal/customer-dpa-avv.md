@@ -10,7 +10,7 @@ Christoph Langer, trading as Zemio
 Averkampstrasse 9-11  
 48151 Muenster  
 Germany  
-Email: christoph.langer@move-ev.de
+Email: christoph.langer@zemio.co
 
 ### 1.2 Controller
 

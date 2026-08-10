@@ -18,20 +18,22 @@
    nvm use
    ```
 
-3. Install pnpm if you haven't already:
+3. Install [Bun](https://bun.sh) if you haven't already. This project pins `bun@1.3.14` via `packageManager` in `package.json`:
 
-   > Note: This project is configured to manage pnpm via corepack. Once installed, upon usage you'll be prompted to install the correct pnpm version
+   ```bash
+   curl -fsSL https://bun.sh/install | bash
+   ```
 
    Alternatively, use npm to install it:
 
    ```bash
-   npm install -g pnpm
+   npm install -g bun
    ```
 
 4. Install dependencies:
 
    ```bash
-   pnpm install
+   bun install
    ```
 
 5. Create a `.env` file by copying the `.env.example` file:
@@ -50,11 +52,11 @@
 
    ```bash
    docker compose up -d
-   pnpm db:migrate
+   cd packages/db && bun run db:migrate
    ```
 
 7. Start the development server:
 
    ```bash
-   pnpm dev
+   bun run dev
    ```
