@@ -1,7 +1,13 @@
-@import "tailwindcss";
-
 /*
  * Design tokens for @zemio/ui.
+ *
+ * This file deliberately does not `@import "tailwindcss"`. It is the
+ * `@zemio/ui/styles.css` export, and every consumer bootstraps Tailwind
+ * itself; importing it here as well emits preflight and the theme layer a
+ * second time. Consumers must import Tailwind *before* this file, because the
+ * `@theme inline` block below resolves against Tailwind's default palette
+ * (`--color-slate-*`, `--color-indigo-*`). Storybook has no host app, so it
+ * bootstraps Tailwind in `.storybook/preview.css` instead.
  *
  * These are intentionally namespaced under `ui-` (both the raw custom
  * properties and the generated Tailwind utilities, e.g. `bg-ui-accent`)
