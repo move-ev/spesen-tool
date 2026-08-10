@@ -4,7 +4,7 @@ import { mergeProps, useRender } from "@base-ui/react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type React from "react";
-import { useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 
 function Properties({ className, ...props }: React.ComponentProps<"div">) {
@@ -60,23 +60,27 @@ function PropertyLabel({ className, ...props }: React.ComponentProps<"p">) {
 	);
 }
 
-function PropertyValue<T extends string | number>({
+function PropertyValue<T extends string | Date | number>({
 	className,
 	value,
 	render,
 	format,
 	type = "button",
 	...props
-}: useRender.ComponentProps<"button", { value: T }> & {
+}: Omit<useRender.ComponentProps<"button", { value: T }>, "value"> & {
 	value: T;
-	format?: (value: T) => string;
+	format?: (value: T) => string | ReactNode;
 }) {
 	const [copied, setCopied] = useState(false);
 	const resetTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 	const displayValue = format ? format(value) : value;
 
 	function handleCopy() {
-		navigator.clipboard.writeText(String(displayValue)).then(
+		const copyValue =
+			typeof displayValue === "string" || typeof displayValue === "number"
+				? displayValue
+				: value;
+		navigator.clipboard.writeText(String(copyValue)).then(
 			() => {
 				clearTimeout(resetTimeoutRef.current);
 				setCopied(true);
