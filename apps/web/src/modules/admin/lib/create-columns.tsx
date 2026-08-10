@@ -132,7 +132,7 @@ function createAdminReportsColumns({
 								backgroundColor: colors.fill,
 							}}
 						/>
-						{row.original.costUnit.tag}
+						{row.original.costUnit.tag} • {row.original.costUnit.title}
 					</span>
 				);
 			},
