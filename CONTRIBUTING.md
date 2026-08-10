@@ -52,7 +52,7 @@
 
    ```bash
    docker compose up -d
-   cd packages/db && bun run db:migrate
+   bun run --cwd packages/db db:migrate
    ```
 
 7. Start the development server:
