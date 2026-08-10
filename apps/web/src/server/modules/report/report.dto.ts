@@ -1,4 +1,4 @@
-import type { ExpenseType, Prisma, ReportStatus } from "@zemio/db";
+import type { CostUnit, ExpenseType, Prisma, ReportStatus } from "@zemio/db";
 import {
 	decryptBankingDetails,
 	type EncryptedBankingDetails,
@@ -89,8 +89,10 @@ export type ReviewDTO = {
 		description: string | null;
 		status: ReportStatus;
 		createdAt: Date;
+		lastUpdatedAt: Date;
 		paidAt: Date | null;
 		owner: ReviewDetail["owner"];
+		costUnit: Pick<CostUnit, "color" | "title" | "tag">;
 	};
 	// Null only for anomalous data: a report in review without a snapshot
 	// whose live banking details were deleted.
@@ -131,8 +133,10 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 			description: detail.description,
 			status: detail.status,
 			createdAt: detail.createdAt,
+			lastUpdatedAt: detail.lastUpdatedAt,
 			paidAt: detail.paidAt,
 			owner: detail.owner,
+			costUnit: detail.costUnit,
 		},
 		bankingSummary: banking
 			? { iban: banking.iban, ownerName: banking.fullName }
