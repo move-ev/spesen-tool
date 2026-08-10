@@ -90,8 +90,8 @@ function ReviewSidebar({
 								<TagIcon /> {t("costUnitLabel")}
 							</PropertyLabel>
 							<PropertyValue
-								render={() => (
-									<span className="flex w-fit items-center justify-center gap-2 text-base-800 text-sm">
+								format={(value) => (
+									<span className="flex items-center justify-center gap-2">
 										<span
 											className="block size-2 rounded-xs"
 											style={{
@@ -99,10 +99,10 @@ function ReviewSidebar({
 													COST_UNIT_COLORS[review.report.costUnit.color].fill,
 											}}
 										/>
-										{review.report.costUnit.tag}: {review.report.costUnit.title}
+										{value}
 									</span>
 								)}
-								value={review.report.costUnit.title}
+								value={`${review.report.costUnit.tag}: ${review.report.costUnit.title}`}
 							/>
 						</Property>
 
