@@ -10,13 +10,9 @@ import { env } from "./src/env.js";
 
 const withNextIntl = createNextIntlPlugin();
 
-// Opt-in cap on Turbopack's dev-server memory use, in MB. Unset by default so it
-// doesn't affect anyone else's machine; set TURBOPACK_MEMORY_LIMIT_MB in your local
-// .env on memory-constrained setups (e.g. a small VPS) to stop dev-server RSS from
-// growing unbounded over a long session.
-const turbopackMemoryLimitMb = process.env.TURBOPACK_MEMORY_LIMIT_MB
-	? Number(process.env.TURBOPACK_MEMORY_LIMIT_MB)
-	: undefined;
+// Opt-in cap on Turbopack's memory use. Parsed and validated by src/env.js, so a
+// malformed value fails the build instead of silently leaving the cap unset.
+const turbopackMemoryLimitMb = env.TURBOPACK_MEMORY_LIMIT_MB;
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -35,7 +31,7 @@ const config = {
 			},
 		],
 	},
-	...(turbopackMemoryLimitMb && {
+	...(turbopackMemoryLimitMb !== undefined && {
 		experimental: {
 			turbopackMemoryLimit: turbopackMemoryLimitMb * 1024 * 1024,
 		},
