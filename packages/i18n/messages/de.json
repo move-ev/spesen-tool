@@ -719,7 +719,8 @@
 				"contactText": "Hast du Probleme oder benötigst Unterstützung? <link>Kontaktiere uns hier</link>."
 			},
 			"shared": {
-				"loadFormErrorTitle": "Das Formular konnte nicht geladen werden"
+				"loadFormErrorTitle": "Das Formular konnte nicht geladen werden",
+				"unknownError": "Ein unbekannter Fehler ist aufgetreten."
 			},
 			"general": {
 				"title": "Organisation",

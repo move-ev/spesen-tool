@@ -281,6 +281,7 @@ function CreateBankDetails({
 
 function BankDetailsList({ className, ...props }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.banking");
+	const tShared = useTranslations("modules.settings.shared");
 	const { data: details, isPending, error } = api.bankingDetails.list.useQuery();
 
 	if (isPending) {
@@ -290,7 +291,7 @@ function BankDetailsList({ className, ...props }: React.ComponentProps<"div">) {
 	if (error) {
 		return (
 			<SettingsError
-				description="An unkown error ocurred."
+				description={tShared("unknownError")}
 				message={t("loadErrorFallback")}
 			/>
 		);

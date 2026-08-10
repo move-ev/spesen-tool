@@ -52,6 +52,7 @@ function NotificationsSection({
 	...props
 }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.preferences.notifications");
+	const tShared = useTranslations("modules.settings.shared");
 	const query = api.preferences.get.useQuery();
 
 	if (query.isPending) {
@@ -63,7 +64,7 @@ function NotificationsSection({
 
 		return (
 			<SettingsError
-				description={error.data?.code ?? "An unkown error ocurred."}
+				description={error.data?.code ?? tShared("unknownError")}
 				message={error.message}
 			/>
 		);

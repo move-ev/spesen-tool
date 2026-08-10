@@ -65,6 +65,7 @@ function TravelAllowancesSection({
 	...props
 }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.allowances");
+	const tShared = useTranslations("modules.settings.shared");
 	const query = api.settings.get.useQuery();
 
 	if (query.isPending) {
@@ -76,7 +77,7 @@ function TravelAllowancesSection({
 
 		return (
 			<SettingsError
-				description={error.data?.code ?? "An unkown error ocurred."}
+				description={error.data?.code ?? tShared("unknownError")}
 				message={error.message}
 			/>
 		);
@@ -219,6 +220,7 @@ function MealAllowancesSection({
 	...props
 }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.allowances");
+	const tShared = useTranslations("modules.settings.shared");
 	const query = api.settings.get.useQuery();
 
 	if (query.isPending) {
@@ -230,7 +232,7 @@ function MealAllowancesSection({
 
 		return (
 			<SettingsError
-				description={error.data?.code ?? "An unkown error ocurred."}
+				description={error.data?.code ?? tShared("unknownError")}
 				message={error.message}
 			/>
 		);

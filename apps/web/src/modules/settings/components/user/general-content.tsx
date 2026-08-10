@@ -50,6 +50,7 @@ function UserSettingsGeneral({
 
 function ProfileSection({ className, ...props }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.preferences.general");
+	const tShared = useTranslations("modules.settings.shared");
 	const query = api.user.get.useQuery();
 
 	if (query.isPending) {
@@ -61,7 +62,7 @@ function ProfileSection({ className, ...props }: React.ComponentProps<"div">) {
 
 		return (
 			<SettingsError
-				description={error.data?.code ?? "An unkown error ocurred."}
+				description={error.data?.code ?? tShared("unknownError")}
 				message={error.message}
 			/>
 		);
