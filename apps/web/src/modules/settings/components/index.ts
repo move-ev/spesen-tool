@@ -1,7 +1,6 @@
 export * from "./admin-settings-org-details";
 export * from "./admin-settings-orgs";
 export {
-	COST_UNITS_PAGE_SIZE,
 	OrgSettingsCostUnits,
 	OrgSettingsGeneral,
 	OrgSettingsMembers,

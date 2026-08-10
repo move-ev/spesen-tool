@@ -27,6 +27,17 @@ export const ADMIN_SETTINGS_MENU = {
 export const NO_COST_UNIT_GROUP = "NO_GROUP" as const;
 
 /**
+ * Page size for the cost units grid. The server page prefetches with it and the
+ * grid queries with it; a mismatch silently misses the cache.
+ *
+ * It lives here rather than next to the grid because the grid module is
+ * `"use client"`, and Next replaces *every* named export of a client module
+ * with a client reference in the server graph — the page would import a
+ * function proxy instead of the number.
+ */
+export const COST_UNITS_PAGE_SIZE = 20;
+
+/**
  * Cost unit columns the list endpoint can order by. Shared by the tRPC input
  * schema and the grid so the two can't drift; it lives here rather than in the
  * server module because importing that module client-side would pull the Prisma

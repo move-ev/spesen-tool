@@ -58,6 +58,7 @@ import { COST_UNIT_COLORS } from "@/lib/colors/cost-units";
 import {
 	COST_UNIT_SORT_FIELDS,
 	COST_UNIT_STATUSES,
+	COST_UNITS_PAGE_SIZE,
 	type CostUnitSortField,
 	NO_COST_UNIT_GROUP,
 } from "@/lib/consts";
@@ -146,9 +147,6 @@ function OrgSettingsCostUnitsActions({
 }
 
 // ========= COST UNITS GRID =============================================
-
-/** Kept in sync with the page's prefetch — a mismatch silently misses the cache. */
-const COST_UNITS_PAGE_SIZE = 20;
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -744,4 +742,4 @@ function CostUnitsGridToolbar({
 	);
 }
 
-export { COST_UNITS_PAGE_SIZE, OrgSettingsCostUnits };
+export { OrgSettingsCostUnits };

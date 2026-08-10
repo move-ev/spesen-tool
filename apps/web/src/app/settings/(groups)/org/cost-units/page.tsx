@@ -1,5 +1,6 @@
 import { createLoader, parseAsString } from "nuqs/server";
-import { COST_UNITS_PAGE_SIZE, OrgSettingsCostUnits } from "@/modules/settings";
+import { COST_UNITS_PAGE_SIZE } from "@/lib/consts";
+import { OrgSettingsCostUnits } from "@/modules/settings";
 import { api, HydrateClient } from "@/trpc/server";
 
 const loadSearchParams = createLoader({
