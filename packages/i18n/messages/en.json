@@ -201,7 +201,9 @@
 				"copyTitleAction": "Titel kopieren",
 				"copyAmountAction": "Summe kopieren",
 				"copyIbanAction": "IBAN kopieren",
-				"copyAccountNameAction": "Kontoname kopieren"
+				"copyAccountNameAction": "Kontoname kopieren",
+				"copiedToClipboard": "{title} — copied to the clipboard",
+				"copyFailed": "Could not copy to the clipboard."
 			},
 			"sidebar": {
 				"propertiesLabel": "Eigenschaften",

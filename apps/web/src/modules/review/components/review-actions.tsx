@@ -15,8 +15,21 @@ import { FileIcon, SheetIcon, TrashIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { StatusIcons } from "@/lib/icons";
+import { canAdminTransition } from "@/lib/report-transitions";
 import { api } from "@/trpc/react";
 import type { ReviewReport } from "./review-types";
+
+/**
+ * Status overrides offered by the actions menu, in display order. Whether each
+ * one is reachable comes from `canAdminTransition`, so the menu never offers a
+ * change the server would reject — a PAID report has no valid target at all.
+ */
+const STATUS_ACTIONS = [
+	{ status: "ACCEPTED", labelKey: "acceptAction" },
+	{ status: "REJECTED", labelKey: "rejectAction" },
+	{ status: "NEEDS_REVISION", labelKey: "needsRevisionAction" },
+	{ status: "PENDING_APPROVAL", labelKey: "pendingApprovalAction" },
+] as const satisfies readonly { status: ReportStatus; labelKey: string }[];
 
 function ReviewActions({
 	report,
@@ -34,6 +47,9 @@ function ReviewActions({
 		onSuccess: () => {
 			toast.success(tHeader("statusUpdated"));
 			void utils.report.review.invalidate({ id: report.id });
+			// The transition appends a report.status_changed audit row, so the
+			// activity feed stays stale until this is refetched.
+			void utils.audit.history.invalidate({ id: report.id });
 		},
 		onError: () => {
 			toast.error(tHeader("statusUpdateError"));
@@ -76,38 +92,21 @@ function ReviewActions({
 			<DropdownMenuContent align="end" className={"w-64"}>
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>{tHeader("changeStatusLabel")}</DropdownMenuLabel>
-					<DropdownMenuItem
-						disabled={report.status === "ACCEPTED"}
-						onClick={() => {
-							updateStatus("ACCEPTED");
-						}}
-					>
-						<StatusIcons.ACCEPTED /> {tHeader("acceptAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "REJECTED"}
-						onClick={() => {
-							updateStatus("REJECTED");
-						}}
-					>
-						<StatusIcons.REJECTED /> {tHeader("rejectAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "NEEDS_REVISION"}
-						onClick={() => {
-							updateStatus("NEEDS_REVISION");
-						}}
-					>
-						<StatusIcons.NEEDS_REVISION /> {tHeader("needsRevisionAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "PENDING_APPROVAL"}
-						onClick={() => {
-							updateStatus("PENDING_APPROVAL");
-						}}
-					>
-						<StatusIcons.PENDING_APPROVAL /> {tHeader("pendingApprovalAction")}
-					</DropdownMenuItem>
+					{STATUS_ACTIONS.map(({ status, labelKey }) => {
+						const Icon = StatusIcons[status];
+
+						return (
+							<DropdownMenuItem
+								disabled={!canAdminTransition(report.status, status)}
+								key={status}
+								onClick={() => {
+									updateStatus(status);
+								}}
+							>
+								<Icon /> {tHeader(labelKey)}
+							</DropdownMenuItem>
+						);
+					})}
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>

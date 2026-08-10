@@ -49,6 +49,9 @@ function ReviewPay({
 				toast.success(tHeader("statusUpdated"));
 				void utils.report.review.invalidate({ id: reportId });
 				void utils.report.financialSummary.invalidate({ id: reportId });
+				// The transition appends a report.status_changed audit row, so the
+				// activity feed stays stale until this is refetched.
+				void utils.audit.history.invalidate({ id: reportId });
 			},
 			onError: () => {
 				toast.error(tHeader("statusUpdateError"));
@@ -120,6 +123,9 @@ function ReviewPay({
 						{tHeader("markPaidAction")}
 						<StatusIcons.PAID />
 					</Button>
+					<p className="text-muted-foreground text-xs">
+						{tHeader("markPaidWarning")}
+					</p>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
@@ -149,8 +155,11 @@ function ReportEPCCode({
 			config.tag,
 		],
 		queryFn: () => {
+			// Throw rather than return a sentinel: a placeholder string would reach
+			// next/image as a src and render a broken image, where an error surfaces
+			// the ReportEPCCodeError fallback the boundary above already provides.
 			if (config.iban.trim() === "" || config.name.trim() === "") {
-				return "no-image";
+				throw new Error("Missing payout details for the EPC QR code");
 			}
 
 			return generateEPCCode({

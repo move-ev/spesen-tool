@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Navbar } from "@/components/navbar";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -155,6 +156,21 @@ function CopyMenu({
 }: React.ComponentProps<typeof Button> & {
 	options: { icon: LucideIcon; title: string; value: string }[];
 }) {
+	const t = useTranslations("modules.review.navbar");
+
+	const copy = (title: string, value: string) => {
+		navigator.clipboard.writeText(value).then(
+			() => {
+				toast.success(t("copiedToClipboard", { title }));
+			},
+			() => {
+				// Rejects when the Clipboard API is unavailable (a non-secure context)
+				// or permission is denied. Silence would look like a successful copy.
+				toast.error(t("copyFailed"));
+			},
+		);
+	};
+
 	return (
 		<DropdownMenu data-slot="copy-menu">
 			<DropdownMenuTrigger
@@ -167,10 +183,13 @@ function CopyMenu({
 			<DropdownMenuContent className={"min-w-fit"}>
 				<DropdownMenuGroup>
 					{options.map(({ icon: Icon, ...option }) => (
+						// Nothing to put on the clipboard when the report carries no
+						// banking snapshot, and reporting success would be a lie.
 						<DropdownMenuItem
+							disabled={option.value === ""}
 							key={option.title}
 							onClick={() => {
-								navigator.clipboard.writeText(option.value);
+								copy(option.title, option.value);
 							}}
 						>
 							<Icon />

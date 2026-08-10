@@ -201,7 +201,9 @@
 				"copyTitleAction": "Titel kopieren",
 				"copyAmountAction": "Summe kopieren",
 				"copyIbanAction": "IBAN kopieren",
-				"copyAccountNameAction": "Kontoname kopieren"
+				"copyAccountNameAction": "Kontoname kopieren",
+				"copiedToClipboard": "{title} — in die Zwischenablage kopiert",
+				"copyFailed": "Kopieren in die Zwischenablage fehlgeschlagen."
 			},
 			"sidebar": {
 				"propertiesLabel": "Eigenschaften",
