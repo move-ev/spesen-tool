@@ -36,16 +36,16 @@
    bun install
    ```
 
-5. Create a `.env` file by copying the `.env.example` file:
+5. Create a `.env` file in each of `apps/web`, `apps/api`, and `packages/db` by copying that directory's `.env.example` file, then fill in the values:
    - On Unix-based systems:
 
      ```bash
-     cp -n .env.example .env
+     for dir in apps/web apps/api packages/db; do cp -n "$dir/.env.example" "$dir/.env"; done
      ```
 
    - On Windows:
      ```bash
-     copy /Y .env.example .env
+     for %d in (apps\web apps\api packages\db) do copy /Y %d\.env.example %d\.env
      ```
 
 6. Start and migrate the database:
