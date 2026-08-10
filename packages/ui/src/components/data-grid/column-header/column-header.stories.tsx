@@ -1,7 +1,6 @@
 import { faker } from "@faker-js/faker";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
-	type Column,
 	type ColumnDef,
 	flexRender,
 	getCoreRowModel,
@@ -15,7 +14,7 @@ import {
 	TagIcon,
 	UsersIcon,
 } from "lucide-react";
-import React, { type CSSProperties, useMemo } from "react";
+import React, { useMemo } from "react";
 import { cn } from "../../../lib/cn";
 import { TableRow } from "../../table";
 import {
@@ -26,6 +25,7 @@ import {
 	GridHeader,
 	GridRow,
 } from "../grid/grid";
+import { getPinningStyles } from "../utils";
 import { DataGridColumnHeader } from "./column-header";
 
 const meta = {
@@ -213,16 +213,3 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {};
-
-function getPinningStyles<TData, TValue>(
-	column: Column<TData, TValue>,
-): CSSProperties {
-	const isPinned = column.getIsPinned();
-	if (!isPinned) return {};
-	return {
-		position: "sticky",
-		zIndex: 1,
-		left: isPinned === "left" ? column.getStart("left") : undefined,
-		right: isPinned === "right" ? column.getAfter("right") : undefined,
-	};
-}
