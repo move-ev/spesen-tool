@@ -149,7 +149,7 @@ function ProfileForm({ defaultValues, ...props }: ProfileFormProps) {
 			{...props}
 		>
 			<form.Field name="image">
-				{({ state, ...field }) => {
+				{({ state }) => {
 					const isInvalid = !state.meta.isValid && state.meta.isTouched;
 
 					return (
@@ -158,13 +158,21 @@ function ProfileForm({ defaultValues, ...props }: ProfileFormProps) {
 							className="grid grid-cols-2 gap-8 px-4 py-6"
 						>
 							<FieldContent>
-								<FieldLabel htmlFor={field.name}>{t("avatarLabel")}</FieldLabel>
+								{/* No htmlFor: the avatar is read-only here (it is managed via
+								    Microsoft), so there is no control to associate the label with. */}
+								<FieldLabel>{t("avatarLabel")}</FieldLabel>
 								<FieldDescription>{t("avatarDescription")}</FieldDescription>
 							</FieldContent>
 							<div className="space-y-2">
 								<Avatar className={"size-12 after:rounded-md"}>
-									<AvatarImage className={"rounded-md"} src={state.value ?? undefined} />
-									<AvatarFallback></AvatarFallback>
+									<AvatarImage
+										alt={t("avatarAriaLabel")}
+										className={"rounded-md"}
+										src={state.value ?? undefined}
+									/>
+									<AvatarFallback>
+										{defaultValues.name.charAt(0).toUpperCase()}
+									</AvatarFallback>
 								</Avatar>
 								{isInvalid && <FieldError errors={state.meta.errors} />}
 							</div>
