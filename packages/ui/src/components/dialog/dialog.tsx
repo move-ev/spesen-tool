@@ -7,15 +7,15 @@ import { Button } from "../button";
 import { ScrollArea } from "../scroll-area";
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
-	return <DialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+	return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
 function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
-	return <DialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
+	return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-	return <DialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />;
+	return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
 
 function DialogOverlay({
@@ -28,7 +28,7 @@ function DialogOverlay({
 				"data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-base-900/20 duration-100 data-closed:animate-out data-open:animate-in",
 				className,
 			)}
-			data-slot="alert-dialog-overlay"
+			data-slot="dialog-overlay"
 			{...props}
 		/>
 	);
@@ -46,15 +46,15 @@ function DialogContent({
 			<DialogOverlay />
 			<DialogPrimitive.Viewport
 				className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-6"
-				data-slot="alert-dialog-viewport"
+				data-slot="dialog-viewport"
 			>
 				<DialogPrimitive.Popup
 					className={cn(
-						"group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 relative flex max-h-full min-h-0 w-full flex-col rounded-lg bg-background text-base-600 shadow-lg outline-none ring-1 ring-base-700/10 duration-100 data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-closed:animate-out data-open:animate-in data-[size=default]:sm:max-w-md",
+						"group/dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 relative flex max-h-full min-h-0 w-full flex-col rounded-lg bg-background text-base-600 shadow-lg outline-none ring-1 ring-base-700/10 duration-100 data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-closed:animate-out data-open:animate-in data-[size=default]:sm:max-w-md",
 						className,
 					)}
 					data-size={size}
-					data-slot="alert-dialog-content"
+					data-slot="dialog-content"
 					{...props}
 				/>
 			</DialogPrimitive.Viewport>
@@ -66,7 +66,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
 			className={cn("grid shrink-0 gap-2 px-6 py-5", className)}
-			data-slot="alert-dialog-header"
+			data-slot="dialog-header"
 			{...props}
 		/>
 	);
@@ -76,7 +76,7 @@ function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<ScrollArea
 			className="min-h-0 flex-auto border-base-200 border-t"
-			data-slot="alert-dialog-body"
+			data-slot="dialog-body"
 		>
 			<div className={cn("px-6 py-8", className)} {...props} />
 		</ScrollArea>
@@ -90,7 +90,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 				"flex shrink-0 flex-col-reverse gap-2 rounded-b-xl border-base-300 border-t bg-base-50 px-6 py-5 sm:flex-row sm:justify-end",
 				className,
 			)}
-			data-slot="alert-dialog-footer"
+			data-slot="dialog-footer"
 			{...props}
 		/>
 	);
@@ -103,7 +103,7 @@ function DialogTitle({
 	return (
 		<DialogPrimitive.Title
 			className={cn("font-semibold text-base-800 text-lg/6", className)}
-			data-slot="alert-dialog-title"
+			data-slot="dialog-title"
 			{...props}
 		/>
 	);
@@ -119,7 +119,7 @@ function DialogDescription({
 				"text-balance text-base-500 text-sm/5 md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
 				className,
 			)}
-			data-slot="alert-dialog-description"
+			data-slot="dialog-description"
 			{...props}
 		/>
 	);
@@ -130,11 +130,7 @@ function DialogAction({
 	...props
 }: React.ComponentProps<typeof Button>) {
 	return (
-		<Button
-			className={cn(className)}
-			data-slot="alert-dialog-action"
-			{...props}
-		/>
+		<Button className={cn(className)} data-slot="dialog-action" {...props} />
 	);
 }
 
@@ -148,7 +144,7 @@ function DialogCancel({
 	return (
 		<DialogPrimitive.Close
 			className={cn(className)}
-			data-slot="alert-dialog-cancel"
+			data-slot="dialog-cancel"
 			render={<Button size={size} variant={variant} />}
 			{...props}
 		/>
