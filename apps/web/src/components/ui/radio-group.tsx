@@ -30,7 +30,8 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
 				className="flex size-4 items-center justify-center text-accent-600 group-aria-invalid/radio-group-item:text-destructive"
 				data-slot="radio-group-indicator"
 			>
-				<span className="absolute top-1/2 left-1/2 block size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-600" />
+				{/* bg-current keeps the dot on the indicator's colour, including its aria-invalid flip. */}
+				<span className="absolute top-1/2 left-1/2 block size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current" />
 			</RadioPrimitive.Indicator>
 		</RadioPrimitive.Root>
 	);
