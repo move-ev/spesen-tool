@@ -5,8 +5,8 @@
 1. Clone the repositor to your local machine
 
    ```bash
-   git clone https://github.com/move-ev/spesen-app.git
-   cd spesen-app
+   git clone https://github.com/zemio-co/zemio.git
+   cd zemio
    ```
 
 2. Install Node.js (LTS version recommended)
