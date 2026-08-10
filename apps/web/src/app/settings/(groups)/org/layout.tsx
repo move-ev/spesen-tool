@@ -1,15 +1,13 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/server/better-auth";
+import { auth, getCurrentSession } from "@/server/better-auth";
 
 export default async function ServerLayout(
 	props: LayoutProps<"/settings/org">,
 ) {
 	const { children } = props;
 
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
+	const session = await getCurrentSession();
 
 	if (!session?.user) {
 		redirect("/auth");
