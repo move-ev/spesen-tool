@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import { ReportActivity } from "@/modules/report/components/report-activity";
 import { api } from "@/trpc/react";
 import { ReviewAttachments } from "./review-attachments";
-import { ReviewDetails } from "./review-details";
 import { ReviewExpenses } from "./review-expenses";
 import { ExpensesHeader } from "./review-header";
+import { ReviewNavbar } from "./review-navbar";
 import { ReviewPaidNotice } from "./review-paid-notice";
-import { ReviewReasoning } from "./review-reasoning";
+import { ReviewSidebar } from "./review-sidebar";
 
 function ReviewContent({
 	className,
@@ -27,41 +27,28 @@ function ReviewContent({
 
 	return (
 		<main className={cn("pb-32", className)} {...props}>
-			<section className="mt-20">
-				<div className="mx-auto w-full max-w-5xl px-8">
+			<ReviewNavbar reportId={reportId} />
+			<div className="flex flex-col xl:flex-row">
+				<div className="mx-auto mt-12 w-full max-w-5xl grow px-8">
 					<ReviewPaidNotice className="mb-8" reportId={reportId} />
 					<ExpensesHeader reportId={reportId} />
 
-					<ReviewDetails
-						bankingSummary={review?.bankingSummary}
-						className="mt-10 lg:grid-cols-3"
+					<ReviewExpenses
+						className="mt-20"
 						errorMessage={errorMessage}
+						expenses={review?.expenses}
 						loading={isPending}
 						totalAmount={review?.totalAmount}
 					/>
+					<ReviewAttachments
+						attachments={review?.attachments}
+						className="mt-20"
+						errorMessage={errorMessage}
+						loading={isPending}
+					/>
+					<ReportActivity className="mt-20" reportId={reportId} />
 				</div>
-			</section>
-			<div className="mx-auto mt-20 w-full max-w-5xl px-8">
-				<ReviewReasoning
-					className="mt-20"
-					errorMessage={errorMessage}
-					loading={isPending}
-					report={review?.report}
-				/>
-				<ReviewExpenses
-					className="mt-20"
-					errorMessage={errorMessage}
-					expenses={review?.expenses}
-					loading={isPending}
-					totalAmount={review?.totalAmount}
-				/>
-				<ReviewAttachments
-					attachments={review?.attachments}
-					className="mt-20"
-					errorMessage={errorMessage}
-					loading={isPending}
-				/>
-				<ReportActivity className="mt-20" reportId={reportId} />
+				<ReviewSidebar className="sm:shrink-0" reportId={reportId} />
 			</div>
 		</main>
 	);

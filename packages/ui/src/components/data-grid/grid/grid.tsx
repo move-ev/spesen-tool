@@ -100,7 +100,7 @@ function GridHead({ className, ...props }: React.ComponentProps<"th">) {
 	return (
 		<th
 			className={cn(
-				"items-center whitespace-nowrap border-base-200 border-r px-(--grid-cell-px) py-(--grid-cell-py) font-normal text-base-500 text-sm [&_svg:not([class*='size-'])]:size-3.5 [&_svg:not([class*='text-'])]:text-base-400",
+				"items-center whitespace-nowrap border-base-200 border-r bg-background px-(--grid-cell-px) py-(--grid-cell-py) font-normal text-base-500 text-sm [&_svg:not([class*='size-'])]:size-3.5 [&_svg:not([class*='text-'])]:text-base-400",
 				"**:data-content:flex **:data-content:items-center **:data-content:justify-start **:data-content:gap-2",
 				className,
 			)}
@@ -125,7 +125,7 @@ function GridCell({
 	return (
 		<td
 			className={cn(
-				"whitespace-nowrap border-base-200 border-r align-middle text-base-500 last:border-r-0",
+				"whitespace-nowrap border-base-200 border-r bg-background align-middle text-base-500 last:border-r-0",
 				className,
 			)}
 			data-slot="table-cell"

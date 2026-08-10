@@ -7,7 +7,7 @@ import { cn } from "../../lib/cn";
 
 const buttonVariants = cva(
 	[
-		"inline-flex items-center justify-center",
+		"inline-flex shrink-0 items-center justify-center",
 		"font-medium text-sm leading-none",
 		"cursor-pointer transition-colors",
 		"select-none disabled:pointer-events-none disabled:opacity-60 data-disabled:opacity-60",
@@ -25,7 +25,7 @@ const buttonVariants = cva(
 					"hover:bg-accent-700",
 				],
 				outline: [
-					"border border-base-200",
+					"border border-base-200 bg-background",
 					"text-base-700 [&_svg:not([class*='text-'])]:text-slate-500",
 					"hover:bg-slate-50",
 				],
@@ -41,10 +41,12 @@ const buttonVariants = cva(
 				],
 			},
 			size: {
+				xs: "h-6 gap-2 rounded-md px-1.5 has-data-[icon=inline-end]:pr-1 has-data-[icon=inline-start]:pl-1 [&_svg:not([class*='size-'])]:size-3",
 				default:
 					"h-8 gap-2 rounded-md px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
 				sm: "h-7 gap-2 rounded-md px-2 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
 				lg: "h-9 gap-2 rounded-md px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-4",
+				"icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
 				icon: "size-8 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
 				"icon-sm": "size-7 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
 				"icon-lg": "size-9 rounded-md [&_svg:not([class*='size-'])]:size-4",

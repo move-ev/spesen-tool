@@ -27,7 +27,7 @@ Christoph Langer, trading as Zemio
 Averkampstrasse 9-11  
 48151 Muenster  
 Germany  
-Email: christoph.langer@move-ev.de
+Email: christoph.langer@zemio.co
 
 Unless stated otherwise in this Privacy Policy, the controller for the processing described here is Christoph Langer, trading as Zemio.
 
@@ -259,4 +259,4 @@ Material updates may be presented through the service and may require renewed ac
 
 Questions relating to privacy or data protection may be sent to:
 
-christoph.langer@move-ev.de
+christoph.langer@zemio.co

@@ -9,12 +9,6 @@ import {
 import { useForm } from "@tanstack/react-form";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import type { CostUnitGroup, CostUnitStatus } from "@zemio/db";
-import { CircleIcon, InfoIcon, TrashIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
-import React from "react";
-import { toast } from "sonner";
-import type z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -25,31 +19,20 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import {
+	Button,
 	Field,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-	NativeSelect,
-	NativeSelectOptGroup,
-	NativeSelectOption,
-} from "@/components/ui/native-select";
-import {
+	Input,
+	Label,
 	Select,
 	SelectContent,
 	SelectGroup,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import {
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -57,12 +40,21 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
-import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@zemio/ui";
+import { CircleIcon, InfoIcon, TrashIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import React from "react";
+import { toast } from "sonner";
+import type z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
+import {
+	NativeSelect,
+	NativeSelectOptGroup,
+	NativeSelectOption,
+} from "@/components/ui/native-select";
 import { COST_UNIT_COLORS } from "@/lib/colors/cost-units";
 import { NO_COST_UNIT_GROUP } from "@/lib/consts";
 import { cn } from "@/lib/utils";
@@ -245,10 +237,7 @@ function UpdateCostUnitForm({
 										field.state.meta.isTouched && !field.state.meta.isValid;
 									return (
 										<Field data-invalid={isInvalid}>
-											<FieldLabel
-												className="mb-1 font-semibold text-base text-slate-800"
-												htmlFor={field.name}
-											>
+											<FieldLabel htmlFor={field.name}>
 												{t("tagLabel")}
 												<Tooltip>
 													<TooltipTrigger
@@ -277,12 +266,7 @@ function UpdateCostUnitForm({
 										field.state.meta.isTouched && !field.state.meta.isValid;
 									return (
 										<Field className="col-span-2" data-invalid={isInvalid}>
-											<FieldLabel
-												className="mb-1 font-semibold text-base text-slate-800"
-												htmlFor={field.name}
-											>
-												{t("titleLabel")}
-											</FieldLabel>
+											<FieldLabel htmlFor={field.name}>{t("titleLabel")}</FieldLabel>
 											<Input
 												aria-invalid={isInvalid}
 												id={field.name}
@@ -306,12 +290,7 @@ function UpdateCostUnitForm({
 								const isInvalid = state.meta.isTouched && !state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("statusLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("statusLabel")}</FieldLabel>
 										<Select
 											items={{
 												ACTIVE: t("statusActive"),
@@ -374,12 +353,7 @@ function UpdateCostUnitForm({
 								const isInvalid = state.meta.isTouched && !state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("colorLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("colorLabel")}</FieldLabel>
 										<RadioGroup
 											className={"grid grid-cols-9 gap-3 md:grid-cols-18"}
 											id={field.name}
@@ -413,12 +387,7 @@ function UpdateCostUnitForm({
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("groupLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("groupLabel")}</FieldLabel>
 										<NativeSelect
 											onChange={(e) => field.handleChange(e.target.value)}
 											value={field.state.value}
@@ -446,12 +415,7 @@ function UpdateCostUnitForm({
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("examplesLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("examplesLabel")}</FieldLabel>
 										<ExamplesInput
 											onChange={field.handleChange}
 											placeholder={t("examplesPlaceholder")}
@@ -466,11 +430,8 @@ function UpdateCostUnitForm({
 					</FieldGroup>
 				</form>
 				<div className="mt-12 flex flex-nowrap items-start justify-between gap-8">
-					<div>
-						<Label
-							className="mb-1 font-semibold text-base text-red-600"
-							htmlFor={"delete-cost-unit"}
-						>
+					<div className="space-y-2">
+						<Label className="text-red-600" htmlFor={"delete-cost-unit"}>
 							{t("deleteSectionLabel")}
 						</Label>
 						<FieldDescription>
@@ -492,7 +453,7 @@ function UpdateCostUnitForm({
 				</div>
 			</SheetBody>
 
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">

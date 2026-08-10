@@ -2,20 +2,14 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
-import { useTranslations } from "next-intl";
-import { toast } from "sonner";
-import type z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
-import { Button } from "@/components/ui/button";
 import {
+	Button,
 	Field,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
+	Input,
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -23,7 +17,12 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
+} from "@zemio/ui";
+import { LoaderIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import type z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
 import type { WithHandle } from "@/lib/types";
 import { createCostUnitGroupSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
@@ -160,12 +159,7 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field className="col-span-2" data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											{t("nameLabel")}
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("nameLabel")}</FieldLabel>
 										<Input
 											aria-invalid={isInvalid}
 											id={field.name}
@@ -187,7 +181,7 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 				</form>
 			</SheetBody>
 
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">
@@ -208,7 +202,14 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 							form={FORM_ID}
 							type="submit"
 						>
-							{isSubmitting ? tActions("creating") : tActions("create")}
+							{isSubmitting ? (
+								<>
+									<LoaderIcon className="animate-spin" />
+									{tActions("creating")}
+								</>
+							) : (
+								tActions("create")
+							)}
 						</Button>
 					)}
 				</form.Subscribe>

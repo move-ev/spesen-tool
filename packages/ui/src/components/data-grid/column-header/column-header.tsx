@@ -70,6 +70,12 @@ export function DataGridColumnHeader<TData, TValue>({
 							<ArrowDown />
 							Sort descending
 						</DropdownMenuItem>
+						{column.getIsSorted() && (
+							<DropdownMenuItem onClick={() => column.clearSorting()}>
+								<ChevronsUpDown />
+								Clear sort
+							</DropdownMenuItem>
+						)}
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>

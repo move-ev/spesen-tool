@@ -1,11 +1,11 @@
 "use client";
 
 import type { Table } from "@tanstack/react-table";
+import { Button } from "@zemio/ui";
 import { XIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
 import { FilterChip } from "./filter-chip";
 
 export type FilterListProps<TData> = React.ComponentProps<"div"> & {

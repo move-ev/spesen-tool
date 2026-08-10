@@ -1,53 +1,19 @@
 "use client";
 
-import { useQueries, useSuspenseQuery } from "@tanstack/react-query";
 import type { ReportStatus } from "@zemio/db";
-import { format, formatDistanceToNow } from "date-fns";
-import { de } from "date-fns/locale";
 import {
-	FileIcon,
-	SheetIcon,
-	TrashIcon,
-	TriangleAlertIcon,
+	BanknoteArrowDownIcon,
+	ChevronDownIcon,
+	CornerDownRightIcon,
 } from "lucide-react";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type React from "react";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { reportStatusKeys } from "@/lib/i18n-labels";
 import { StatusIcons } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { generateEPCCode } from "../lib/epc-code";
-import type { ReviewReport } from "./review-types";
+import { ReviewActions } from "./review-actions";
+import { ReviewPay } from "./review-pay";
 
 function ExpensesHeader({
 	className,
@@ -56,7 +22,6 @@ function ExpensesHeader({
 }: React.ComponentProps<"header"> & {
 	reportId: string;
 }) {
-	const tStatus = useTranslations("enums.reportStatus");
 	const tHeader = useTranslations("modules.review.header");
 	const {
 		data: review,
@@ -92,87 +57,71 @@ function ExpensesHeader({
 		return null;
 	}
 
-	const StatusIcon = StatusIcons[report.status];
-
 	return (
-		<header
-			className={cn(
-				"flex flex-col flex-wrap items-start justify-start gap-5 sm:flex-row",
-				className,
-			)}
-			data-slot="expenses-header"
-			{...props}
-		>
-			<div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-zinc-800 sm:mt-0.75 md:size-10">
-				<FileIcon className="size-4 text-white md:size-5" />
-			</div>
-			<div className="mr-auto">
-				<h1 className="font-semibold text-2xl text-zinc-800">
-					<span className="me-2 text-zinc-500">#{report.tag}</span>
+		<header className={cn("", className)} data-slot="review-header" {...props}>
+			<HeaderStatusIcon status={report.status} />
+			<div className="mt-8">
+				<h1 className="font-semibold text-2xl text-base-800">
+					<span className="me-2 text-base-500">#{report.tag} </span>
 					{report.title}
 				</h1>
-				<div className="mt-2 flex flex-col flex-wrap items-start justify-start gap-2 sm:flex-row sm:items-center sm:gap-3">
-					<Tooltip>
-						<TooltipTrigger>
-							<p className="font-medium text-sm text-zinc-600">
-								{tHeader("createdAgo", {
-									distance: formatDistanceToNow(report.createdAt, { locale: de }),
-								})}
-							</p>
-						</TooltipTrigger>
-						<TooltipContent>
-							{tHeader("createdAt", {
-								date: format(report.createdAt, "dd MMMM yyyy, HH:mm", { locale: de }),
-							})}
-						</TooltipContent>
-					</Tooltip>
-					<p className="hidden text-sm text-zinc-500 sm:block">•</p>
-					<p
-						className={cn(
-							"flex items-center justify-center gap-1.5 font-medium text-sm text-zinc-600",
-							report.status === "ACCEPTED" && "text-green-600",
-							report.status === "PAID" && "text-green-600",
-							report.status === "REJECTED" && "text-red-600",
-							report.status === "NEEDS_REVISION" && "text-orange-600",
-							report.status === "PENDING_APPROVAL" && "text-yellow-600",
+				<div className="mt-2 flex items-start justify-start gap-2">
+					<CornerDownRightIcon className="mt-0.5 size-3.5 shrink-0 text-base-400" />
+					<p className="max-w-prose text-base-500 text-sm">
+						{report.description ? (
+							report.description
+						) : (
+							<span className="italic">{tHeader("noDescription")}</span>
 						)}
-					>
-						{tStatus(reportStatusKeys[report.status])}
-						<StatusIcon className="size-3.5" />
-					</p>
-					<p className="hidden text-sm text-zinc-500 sm:block">•</p>
-					<p className="flex items-center justify-center gap-1.5 font-medium text-sm text-zinc-600">
-						<Avatar className={"size-4"}>
-							<AvatarImage src={report.owner.image ?? undefined} />
-							<AvatarFallback>
-								{report.owner.name.charAt(0)?.toUpperCase()}
-							</AvatarFallback>
-						</Avatar>
-						{report.owner.name}
 					</p>
 				</div>
 			</div>
-			<div className="mt-0.75 flex flex-nowrap gap-4">
-				<ButtonGroup>
-					<ReportActions
-						disableAnimation
-						disabled={report.status === "DRAFT" || report.status === "PAID"}
-						report={report}
-					>
-						{tHeader("editAction")}
-					</ReportActions>
-					<ExportReport disableAnimation reportId={report.id} variant={"outline"} />
-				</ButtonGroup>
-				<ReportPay
+			<div className="mt-8 flex w-full flex-col gap-2 sm:hidden">
+				<ReviewActions disableAnimation report={review.report} size="sm">
+					{tHeader("editAction")}
+					<ChevronDownIcon />
+				</ReviewActions>
+
+				<ReviewPay
+					disableAnimation
 					disabled={
-						report.status !== "ACCEPTED" && report.status !== "PENDING_APPROVAL"
+						review.report.status !== "ACCEPTED" &&
+						review.report.status !== "PENDING_APPROVAL"
 					}
-					reportId={report.id}
+					reportId={reportId}
+					size="sm"
 				>
-					{tHeader("payAction")}
-				</ReportPay>
+					<BanknoteArrowDownIcon /> {tHeader("payAction")}
+				</ReviewPay>
 			</div>
 		</header>
+	);
+}
+
+function HeaderStatusIcon({
+	className,
+	status,
+	...props
+}: React.ComponentProps<"div"> & { status: ReportStatus }) {
+	const StatusIcon = StatusIcons[status];
+
+	return (
+		<div
+			className={cn(
+				"flex size-10 items-center justify-center rounded-sm",
+				status === "DRAFT" && "bg-base-500",
+				status === "PENDING_APPROVAL" && "bg-yellow-500 text-yellow-50",
+				status === "NEEDS_REVISION" && "bg-orange-500 text-orange-50",
+				status === "REJECTED" && "bg-red-500 text-red-50",
+				status === "ACCEPTED" && "bg-green-500 text-green-50",
+				status === "PAID" && "bg-lime-500 text-lime-50",
+				className,
+			)}
+			data-slot="component"
+			{...props}
+		>
+			<StatusIcon className="size-5" />
+		</div>
 	);
 }
 
@@ -193,335 +142,6 @@ function HeaderLoading({
 			</div>
 			<Skeleton className="h-8 w-32" />
 		</header>
-	);
-}
-
-function ReportActions({
-	report,
-	...props
-}: React.ComponentProps<typeof Button> & {
-	report: Pick<ReviewReport, "id" | "status">;
-}) {
-	const tHeader = useTranslations("modules.review.header");
-	const utils = api.useUtils();
-
-	const { mutate: setStatus } = api.report.transition.useMutation({
-		onMutate: () => {
-			toast.info(tHeader("statusUpdating"));
-		},
-		onSuccess: () => {
-			toast.success(tHeader("statusUpdated"));
-			void utils.report.review.invalidate({ id: report.id });
-		},
-		onError: () => {
-			toast.error(tHeader("statusUpdateError"));
-		},
-	});
-
-	const updateStatus = (status: ReportStatus) => {
-		setStatus({
-			id: report.id,
-			status,
-			notify:
-				status === "NEEDS_REVISION" ||
-				status === "ACCEPTED" ||
-				status === "REJECTED",
-		});
-	};
-
-	return (
-		<DropdownMenu data-slot="report-actions">
-			<DropdownMenuTrigger render={<Button variant={"outline"} {...props} />} />
-			<DropdownMenuContent align="end" className={"w-64"}>
-				<DropdownMenuGroup>
-					<DropdownMenuLabel>{tHeader("changeStatusLabel")}</DropdownMenuLabel>
-					<DropdownMenuItem
-						disabled={report.status === "ACCEPTED"}
-						onClick={() => {
-							updateStatus("ACCEPTED");
-						}}
-					>
-						<StatusIcons.ACCEPTED /> {tHeader("acceptAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "REJECTED"}
-						onClick={() => {
-							updateStatus("REJECTED");
-						}}
-					>
-						<StatusIcons.REJECTED /> {tHeader("rejectAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "NEEDS_REVISION"}
-						onClick={() => {
-							updateStatus("NEEDS_REVISION");
-						}}
-					>
-						<StatusIcons.NEEDS_REVISION /> {tHeader("needsRevisionAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "PENDING_APPROVAL"}
-						onClick={() => {
-							updateStatus("PENDING_APPROVAL");
-						}}
-					>
-						<StatusIcons.PENDING_APPROVAL /> {tHeader("pendingApprovalAction")}
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem disabled variant="destructive">
-						<TrashIcon /> {tHeader("deleteReportAction")}
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-}
-
-function ExportReport({
-	reportId,
-	...props
-}: React.ComponentProps<typeof Button> & { reportId: string }) {
-	const tHeader = useTranslations("modules.review.header");
-	const createSummaryPdf = api.report.exportToPdf.useMutation({
-		onMutate: () => {
-			toast.info(tHeader("pdfGeneratingTitle"), {
-				description: tHeader("pdfGeneratingDescription"),
-			});
-		},
-		onSuccess: (data) => {
-			window.open(data.url, "_blank");
-			toast.success(tHeader("pdfGeneratedTitle"), {
-				description: tHeader("pdfGeneratedDescription"),
-			});
-		},
-		onError: ({ message }) => {
-			toast.error(tHeader("pdfGenerationErrorTitle"), {
-				description: message ?? tHeader("unexpectedError"),
-			});
-		},
-	});
-
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
-				render={<Button {...props}>{tHeader("exportAction")}</Button>}
-			/>
-			<DropdownMenuContent align="end" className={"w-52"}>
-				<DropdownMenuGroup>
-					<DropdownMenuItem
-						onClick={() => createSummaryPdf.mutate({ id: reportId })}
-					>
-						<FileIcon /> {tHeader("exportPdfAction")}
-					</DropdownMenuItem>
-					<DropdownMenuItem disabled>
-						<SheetIcon /> {tHeader("exportCsvAction")}
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-}
-
-function ReportPay({
-	reportId,
-	...props
-}: React.ComponentProps<typeof Button> & {
-	reportId: string;
-}) {
-	const tHeader = useTranslations("modules.review.header");
-	const utils = api.useUtils();
-
-	const [financialQuery, reportQuery] = useQueries({
-		queries: [
-			utils.report.financialSummary.queryOptions({ id: reportId }),
-			utils.report.review.queryOptions({ id: reportId }),
-		],
-	});
-
-	const { mutate: setStatus, isPending: isUpdatingStatus } =
-		api.report.transition.useMutation({
-			onMutate: () => {
-				toast.info(tHeader("statusUpdating"));
-			},
-			onSuccess: () => {
-				toast.success(tHeader("statusUpdated"));
-				void utils.report.review.invalidate({ id: reportId });
-				void utils.report.financialSummary.invalidate({ id: reportId });
-			},
-			onError: () => {
-				toast.error(tHeader("statusUpdateError"));
-			},
-		});
-
-	if (financialQuery.isPending || reportQuery.isPending) {
-		return <Button {...props} disabled />;
-	}
-
-	return (
-		<Dialog data-slot="report-pay">
-			<DialogTrigger render={<Button {...props} />} />
-			<DialogContent className={"sm:max-w-lg"}>
-				<DialogHeader>
-					<DialogTitle>{tHeader("payDialogTitle")}</DialogTitle>
-					<DialogDescription>{tHeader("payDialogDescription")}</DialogDescription>
-				</DialogHeader>
-				<div>
-					{financialQuery.error || reportQuery.error ? (
-						<ReportEPCCodeError />
-					) : (
-						<Suspense fallback={<ReportEPCCodeLoading />}>
-							<ErrorBoundary fallbackRender={(_error) => <ReportEPCCodeError />}>
-								<div>
-									<p className="mb-2 font-semibold text-slate-800">
-										{tHeader("giroCodeLabel")}
-									</p>
-									<div className="w-full max-w-32">
-										<ReportEPCCode
-											config={{
-												amount: financialQuery.data.totalAmount,
-												iban: financialQuery.data.iban ?? "",
-												name: financialQuery.data.ownerName ?? "",
-												tag: reportQuery.data.report.tag,
-											}}
-										/>
-									</div>
-									<p className="mt-2 text-muted-foreground text-xs">
-										{tHeader("giroCodeHint")}
-									</p>
-								</div>
-							</ErrorBoundary>
-						</Suspense>
-					)}
-				</div>
-				<div className="mt-6">
-					<div className="grid grid-cols-2 gap-2">
-						<Button
-							className={"w-full"}
-							disabled={
-								isUpdatingStatus ||
-								!reportQuery.data ||
-								reportQuery.data.report.status === "ACCEPTED"
-							}
-							onClick={() => {
-								setStatus({ id: reportId, status: "ACCEPTED", notify: true });
-							}}
-							variant={"outline"}
-						>
-							{tHeader("markAcceptedAction")}
-							<StatusIcons.ACCEPTED />
-						</Button>
-						<Button
-							className={"w-full"}
-							disabled={isUpdatingStatus || !reportQuery.data}
-							onClick={() => {
-								setStatus({ id: reportId, status: "PAID", notify: true });
-							}}
-						>
-							{tHeader("markPaidAction")}
-							<StatusIcons.PAID />
-						</Button>
-					</div>
-					<div className="mt-2">
-						<span className="block text-muted-foreground text-xs">
-							{tHeader("markPaidWarning")}
-						</span>
-					</div>
-				</div>
-			</DialogContent>
-		</Dialog>
-	);
-}
-
-function ReportEPCCode({
-	config,
-	className,
-	...props
-}: React.ComponentProps<"div"> & {
-	config: {
-		iban: string;
-		amount: number;
-		name: string;
-		tag: number;
-	};
-}) {
-	const utils = api.useUtils();
-
-	const { data: epcCode } = useSuspenseQuery({
-		queryKey: [
-			"report-epc-code",
-			config.iban,
-			config.amount,
-			config.name,
-			config.tag,
-		],
-		queryFn: () => {
-			if (config.iban.trim() === "" || config.name.trim() === "") {
-				return "no-image";
-			}
-
-			return generateEPCCode({
-				...config,
-				tag: config.tag.toString(),
-				validateIban: (iban) =>
-					utils.client.bankingDetails.validateIban.query({ iban }),
-			});
-		},
-		staleTime: Number.POSITIVE_INFINITY,
-		retry: 1,
-	});
-
-	if (!epcCode || epcCode === "") {
-		throw new Error("Unable to generate EPC QRCode");
-	}
-
-	return (
-		<div className={cn("", className)} data-slot="report-epc-code" {...props}>
-			<Image alt="EPC QR Code" height={1024} src={epcCode} width={1024} />
-		</div>
-	);
-}
-
-function ReportEPCCodeLoading({
-	className,
-	...props
-}: React.ComponentProps<typeof Skeleton>) {
-	return (
-		<Skeleton
-			className={cn("aspect-square w-full", className)}
-			data-slot="epc-code-loading"
-			{...props}
-		/>
-	);
-}
-
-function ReportEPCCodeError({
-	className,
-	message,
-	...props
-}: React.ComponentProps<"div"> & {
-	message?: string;
-}) {
-	const tHeader = useTranslations("modules.review.header");
-
-	return (
-		<div
-			className={cn(
-				"flex flex-col items-center justify-center rounded-sm bg-zinc-50 px-4 py-6",
-				className,
-			)}
-			data-slot="epc-code-error"
-			{...props}
-		>
-			<TriangleAlertIcon className="mb-4 size-5 text-amber-500" />
-			<p className="text-center font-medium text-sm text-zinc-800">
-				{tHeader("epcCodeErrorTitle")}
-			</p>
-			<p className="mt-0.5 text-center text-muted-foreground text-xs">
-				{tHeader("epcCodeErrorDescription")}
-			</p>
-		</div>
 	);
 }
 

@@ -1,11 +1,10 @@
 import type { Table } from "@tanstack/react-table";
+import { Button, Label } from "@zemio/ui";
 import { ArrowDownNarrowWideIcon, ArrowUpNarrowWideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { ListLayout } from "../list";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import { NativeSelect, NativeSelectOption } from "../ui/native-select";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";

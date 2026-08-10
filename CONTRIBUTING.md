@@ -5,8 +5,8 @@
 1. Clone the repositor to your local machine
 
    ```bash
-   git clone https://github.com/move-ev/spesen-app.git
-   cd spesen-app
+   git clone https://github.com/zemio-co/zemio.git
+   cd zemio
    ```
 
 2. Install Node.js (LTS version recommended)
@@ -18,43 +18,45 @@
    nvm use
    ```
 
-3. Install pnpm if you haven't already:
+3. Install [Bun](https://bun.sh) if you haven't already. This project pins `bun@1.3.14` via `packageManager` in `package.json`:
 
-   > Note: This project is configured to manage pnpm via corepack. Once installed, upon usage you'll be prompted to install the correct pnpm version
+   ```bash
+   curl -fsSL https://bun.sh/install | bash
+   ```
 
    Alternatively, use npm to install it:
 
    ```bash
-   npm install -g pnpm
+   npm install -g bun
    ```
 
 4. Install dependencies:
 
    ```bash
-   pnpm install
+   bun install
    ```
 
-5. Create a `.env` file by copying the `.env.example` file:
+5. Create a `.env` file in each of `apps/web`, `apps/api`, and `packages/db` by copying that directory's `.env.example` file, then fill in the values:
    - On Unix-based systems:
 
      ```bash
-     cp -n .env.example .env
+     for dir in apps/web apps/api packages/db; do cp -n "$dir/.env.example" "$dir/.env"; done
      ```
 
    - On Windows:
      ```bash
-     copy /Y .env.example .env
+     for %d in (apps\web apps\api packages\db) do copy /Y %d\.env.example %d\.env
      ```
 
 6. Start and migrate the database:
 
    ```bash
    docker compose up -d
-   pnpm db:migrate
+   bun run --cwd packages/db db:migrate
    ```
 
 7. Start the development server:
 
    ```bash
-   pnpm dev
+   bun run dev
    ```

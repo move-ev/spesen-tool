@@ -1,6 +1,14 @@
 {
 	"common": {
-		"appName": "Zemio"
+		"appName": "Zemio",
+		"saveBar": {
+			"message": "Du hast ungespeicherte Änderungen",
+			"save": "Speichern",
+			"saving": "Wird gespeichert…",
+			"discard": "Verwerfen",
+			"saved": "Gespeichert",
+			"savedMessage": "Alle Änderungen gespeichert"
+		}
 	},
 	"enums": {
 		"reportStatus": {
@@ -19,6 +27,52 @@
 	},
 	"modules": {
 		"admin": {
+			"navbar": {
+				"breadcrumb": "Admin",
+				"breadcrumbReports": "Anträge",
+				"newReport": "Neuer Antrag"
+			},
+			"toolbar": {
+				"all": "Alle",
+				"pending": "Ausstehend",
+				"processed": "Bearbeitet"
+			},
+			"columns": {
+				"tag": {
+					"label": "Antrags-ID",
+					"placeholder": "Antrags-ID"
+				},
+				"title": {
+					"label": "Titel",
+					"placeholder": "Titel"
+				},
+				"costUnit": {
+					"label": "Kostenstelle",
+					"placeholder": "Kostenstelle"
+				},
+				"status": {
+					"label": "Status",
+					"placeholder": "Status"
+				},
+				"owner": {
+					"label": "Ersteller",
+					"placeholder": "Ersteller"
+				},
+				"createdAt": {
+					"label": "Erstellt am",
+					"placeholder": "Erstellt am"
+				},
+				"lastUpdatedAt": {
+					"label": "Zuletzt aktualisiert",
+					"placeholder": "Zuletzt aktualisiert"
+				},
+				"dateTime": "{date} um {time} Uhr"
+			},
+			"grid": {
+				"noResults": "Keine Ergebnisse.",
+				"reportsCount": "{count} Anträge",
+				"pageIndicator": "Seite {current} / {total}"
+			},
 			"sidebar": {
 				"back": "Zurück",
 				"organizations": "Organisationen"
@@ -110,6 +164,7 @@
 				"loadErrorTitle": "Report konnte nicht geladen werden",
 				"createdAgo": "vor {distance}",
 				"createdAt": "Erstellt am {date}",
+				"noDescription": "Der Nutzer hat keine Beschreibung für diesen Antrag angegeben.",
 				"editAction": "Bearbeiten",
 				"changeStatusLabel": "Status ändern",
 				"acceptAction": "Akzeptieren",
@@ -139,6 +194,29 @@
 				"epcCodeErrorTitle": "QR-Code konnte nicht erstellt werden",
 				"epcCodeErrorDescription": "Das bedeutet meist, dass die angegebene IBAN ungültig ist oder die Validierung fehlgeschlagen ist."
 			},
+			"navbar": {
+				"breadcrumb": "Admin",
+				"breadcrumbReports": "Anträge",
+				"copyIdAction": "ID kopieren",
+				"copyTitleAction": "Titel kopieren",
+				"copyAmountAction": "Summe kopieren",
+				"copyIbanAction": "IBAN kopieren",
+				"copyAccountNameAction": "Kontoname kopieren",
+				"copiedToClipboard": "{title} — copied to the clipboard",
+				"copyFailed": "Could not copy to the clipboard."
+			},
+			"sidebar": {
+				"propertiesLabel": "Eigenschaften",
+				"statusLabel": "Status",
+				"ownerLabel": "Antragssteller",
+				"costUnitLabel": "Kostenstelle",
+				"createdLabel": "Erstellt",
+				"lastUpdatedLabel": "Zuletzt bearbeitet",
+				"transferLabel": "Überweisung",
+				"ibanLabel": "IBAN",
+				"accountNameLabel": "Kontoname",
+				"amountLabel": "Betrag"
+			},
 			"expenses": {
 				"title": "Kostenaufstellung",
 				"exportAction": "Exportieren",
@@ -161,7 +239,7 @@
 					"description": "Beschreibung",
 					"meta": "Metadaten",
 					"travelDetails": "{from} → {to} ({distance} km)",
-					"foodDetails": "{days, plural, one {# day} other {# days}}"
+					"foodDetails": "{days, plural, one {# Tag} other {# Tage}}"
 				}
 			},
 			"attachments": {
@@ -301,6 +379,7 @@
 			"createReport": {
 				"sheetTitle": "Neuer Antrag",
 				"submit": "Antrag erstellen",
+				"cancel": "Abbrechen",
 				"errors": {
 					"costUnitsTitle": "Fehler beim Laden der Kostenstellen.",
 					"costUnitsDescription": "Die Kostenstellen konnten nicht geladen werden. Code: {code}",
@@ -638,8 +717,12 @@
 				"sidebarAdminHeading": "Admin",
 				"noSession": "Keine aktive Sitzung gefunden"
 			},
+			"overview": {
+				"contactText": "Hast du Probleme oder benötigst Unterstützung? <link>Kontaktiere uns hier</link>."
+			},
 			"shared": {
-				"loadFormErrorTitle": "Das Formular konnte nicht geladen werden"
+				"loadFormErrorTitle": "Das Formular konnte nicht geladen werden",
+				"unknownError": "An unknown error occurred."
 			},
 			"general": {
 				"title": "Organisation",
@@ -715,6 +798,10 @@
 			"allowances": {
 				"title": "Zulagen & Abzüge",
 				"description": "Verwalte die Zulagen und Abzüge für Spesenanträge.",
+				"sections": {
+					"travel": "Reisepauschale",
+					"food": "Verpflegungspauschale"
+				},
 				"kilometerRate": {
 					"label": "Kilometerpauschale",
 					"description": "Dieser Betrag wird pro Kilometer für Reise-Ausgaben berechnet."
@@ -817,12 +904,19 @@
 					"createdAt": "Erstellt",
 					"group": "Gruppe",
 					"noGroup": "Keine Gruppe",
+					"examples": "Beispiele",
 					"status": "Status",
 					"statusActive": "Aktiv",
 					"statusArchived": "Archiviert",
 					"noResults": "Keine Ergebnisse.",
 					"unitsCount": "{count} Einheiten",
-					"pageIndicator": "Seite {current} / {total}"
+					"pageIndicator": "Seite {current} / {total}",
+					"loading": "Wird geladen …",
+					"loadError": "Kostenstellen konnten nicht geladen werden.",
+					"searchLabel": "Kostenstellen suchen",
+					"searchPlaceholder": "Nach Tag oder Titel suchen",
+					"retry": "Erneut versuchen",
+					"filterUnsupported": "Ein aktiver Filter wird nicht unterstützt und wurde ignoriert."
 				},
 				"createSheet": {
 					"title": "Neue Kostenstelle",
@@ -925,6 +1019,9 @@
 					"emailLabel": "E-Mail",
 					"emailAriaLabel": "E-Mail",
 					"emailDescription": "Deine E-Mail-Adresse wird über Microsoft verwaltet und kann hier nicht geändert werden.",
+					"avatarLabel": "Avatar",
+					"avatarAriaLabel": "Avatar",
+					"avatarDescription": "Dein Avatar wird über Microsoft verwaltet und kann hier nicht geändert werden.",
 					"savedToast": "Name gespeichert",
 					"saveErrorTitle": "Fehler beim Speichern",
 					"saveErrorFallback": "Ein unerwarteter Fehler ist aufgetreten"
@@ -932,6 +1029,7 @@
 				"notifications": {
 					"title": "Benachrichtigungen",
 					"description": "Wähle welche Benachrichtigungen du erhalten möchtest",
+					"sectionNotifications": "Benachrichtigungen",
 					"fieldLabel": "Benachrichtigungen",
 					"fieldDescription": "Wähle welche Benachrichtigungen du erhalten möchtest",
 					"allTitle": "Alle Benachrichtigungen",

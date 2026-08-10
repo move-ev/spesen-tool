@@ -12,6 +12,15 @@ export {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "./alert-dialog";
+export {
+	Breadcrumb,
+	BreadcrumbEllipsis,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "./breadcrumb";
 export { Button, buttonVariants } from "./button";
 export {
 	ButtonGroup,
@@ -29,7 +38,22 @@ export {
 	GridHead,
 	GridHeader,
 	GridRow,
+	getPinningStyles,
 } from "./data-grid";
+export {
+	Dialog,
+	DialogAction,
+	DialogBody,
+	DialogCancel,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogOverlay,
+	DialogPortal,
+	DialogTitle,
+	DialogTrigger,
+} from "./dialog";
 export {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,

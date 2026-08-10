@@ -39,7 +39,7 @@ const reportDetailSelect = {
 const reportListRowSelect = {
 	...reportScalarSelect,
 	owner: { select: { name: true, image: true, email: true } },
-	costUnit: { select: { tag: true } },
+	costUnit: { select: { tag: true, color: true, title: true } },
 } satisfies Prisma.ReportSelect;
 
 const reviewDetailSelect = {
@@ -50,9 +50,11 @@ const reviewDetailSelect = {
 	status: true,
 	paidAt: true,
 	createdAt: true,
+	lastUpdatedAt: true,
 	owner: { select: { id: true, name: true, email: true, image: true } },
 	bankingDetails: { select: { iban: true, fullName: true } },
 	bankingSnapshot: { select: { iban: true, fullName: true } },
+	costUnit: { select: { color: true, title: true, tag: true } },
 	expenses: {
 		select: {
 			id: true,
