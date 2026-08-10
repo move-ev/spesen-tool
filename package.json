@@ -8,7 +8,7 @@
 	],
 	"scripts": {
 		"build": "turbo run build",
-		"dev": "turbo run dev",
+		"dev": "turbo run dev --filter=./apps/*",
 		"start": "turbo run start",
 		"check": "turbo run check",
 		"check:unsafe": "biome check --write --unsafe .",
