@@ -60,6 +60,22 @@ function PropertyLabel({ className, ...props }: React.ComponentProps<"p">) {
 	);
 }
 
+/**
+ * Resolves the node rendered inside a `PropertyValue`.
+ *
+ * A `Date` is not a valid React child, so an unformatted one is rendered in its
+ * ISO form. ISO is deliberate over `toString()`: it carries no timezone or
+ * locale, so it stays identical across server and client rendering. Callers
+ * wanting human-readable output pass `format`.
+ */
+function toDisplayValue<T extends string | Date | number>(
+	value: T,
+	format?: (value: T) => string | ReactNode,
+): ReactNode {
+	if (format) return format(value);
+	return value instanceof Date ? value.toISOString() : value;
+}
+
 function PropertyValue<T extends string | Date | number>({
 	className,
 	value,
@@ -73,7 +89,7 @@ function PropertyValue<T extends string | Date | number>({
 }) {
 	const [copied, setCopied] = useState(false);
 	const resetTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-	const displayValue = format ? format(value) : value;
+	const displayValue = toDisplayValue(value, format);
 
 	function handleCopy() {
 		const copyValue =
