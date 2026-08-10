@@ -1,10 +1,10 @@
 import type { Table } from "@tanstack/react-table";
+import { Button, Label } from "@zemio/ui";
 import { ArrowDownNarrowWideIcon, ArrowUpNarrowWideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import React from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { ListLayout } from "../list";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import { NativeSelect, NativeSelectOption } from "../ui/native-select";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
@@ -24,6 +24,8 @@ export function DisplayOptions<TData>({
 	grouping?: boolean;
 	sorting?: boolean;
 }) {
+	const t = useTranslations("modules.shared.dataDisplay");
+
 	return (
 		<Popover>
 			<PopoverTrigger render={<Button {...props} />} />
@@ -31,12 +33,12 @@ export function DisplayOptions<TData>({
 				<div className="grid gap-4 p-4">
 					{layout && onLayoutChange && (
 						<div className="grid gap-2">
-							<Label htmlFor="layout">Layout</Label>
+							<Label htmlFor="layout">{t("layout")}</Label>
 							<Tabs onValueChange={onLayoutChange} value={layout}>
 								<TabsList className="w-full">
-									<TabsTrigger value="compact">Compact</TabsTrigger>
-									<TabsTrigger value="default">Default</TabsTrigger>
-									<TabsTrigger value="loose">Loose</TabsTrigger>
+									<TabsTrigger value="compact">{t("layoutCompact")}</TabsTrigger>
+									<TabsTrigger value="default">{t("layoutDefault")}</TabsTrigger>
+									<TabsTrigger value="loose">{t("layoutLoose")}</TabsTrigger>
 								</TabsList>
 							</Tabs>
 						</div>
@@ -45,7 +47,7 @@ export function DisplayOptions<TData>({
 					{grouping && (
 						<div className="grid grid-cols-5 gap-2">
 							<Label className="col-span-2" htmlFor="grouping">
-								Grouping
+								{t("grouping")}
 							</Label>
 							<div className="col-span-3">
 								<DataDisplayGrouping display={display} id="grouping" />
@@ -55,7 +57,7 @@ export function DisplayOptions<TData>({
 					{sorting && (
 						<div className="grid grid-cols-5 gap-2">
 							<Label className="col-span-2" htmlFor="sorting">
-								Sorting
+								{t("sorting")}
 							</Label>
 							<div className="col-span-3">
 								<DataDisplaySorting display={display} id="sorting" />
@@ -65,7 +67,7 @@ export function DisplayOptions<TData>({
 				</div>
 				<Separator />
 				<div className="grid gap-2 p-4">
-					<Label>Column Visibility</Label>
+					<Label>{t("columnVisibility")}</Label>
 					<DataDisplayColumnVisibility display={display} />
 				</div>
 			</PopoverContent>
@@ -79,6 +81,7 @@ function DataDisplayGrouping<TData>({
 }: React.ComponentProps<typeof NativeSelect> & {
 	display: Table<TData>;
 }) {
+	const t = useTranslations("modules.shared.dataDisplay");
 	const grouping = display.getState().grouping;
 
 	const groupableColumns = React.useMemo(() => {
@@ -106,7 +109,7 @@ function DataDisplayGrouping<TData>({
 			value={grouping[0] ?? undefined}
 			{...props}
 		>
-			<NativeSelectOption value="">No Grouping</NativeSelectOption>
+			<NativeSelectOption value="">{t("noGrouping")}</NativeSelectOption>
 
 			{groupableColumns.map((column) => {
 				return (
@@ -125,6 +128,7 @@ function DataDisplaySorting<TData>({
 }: React.ComponentProps<typeof NativeSelect> & {
 	display: Table<TData>;
 }) {
+	const t = useTranslations("modules.shared.dataDisplay");
 	const sorting = display.getState().sorting;
 
 	const sortableColumns = React.useMemo(() => {
@@ -172,7 +176,7 @@ function DataDisplaySorting<TData>({
 				value={sorting[0]?.id ?? ""}
 				{...props}
 			>
-				<NativeSelectOption value="">No Sorting</NativeSelectOption>
+				<NativeSelectOption value="">{t("noSorting")}</NativeSelectOption>
 
 				{sortableColumns.map((column) => {
 					return (

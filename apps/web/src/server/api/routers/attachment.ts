@@ -1,12 +1,15 @@
-import { z } from "zod";
 import {
 	createTRPCRouter,
 	orgAdminProcedure,
 	orgProcedure,
 } from "@/server/api/trpc";
 import {
+	addAttachmentsToExpenseSchema,
 	attachmentProcedure,
 	attachmentService,
+	deletePendingUploadsSchema,
+	getBatchDownloadUrlsSchema,
+	getUploadUrlsSchema,
 	toAttachmentServiceContext,
 } from "@/server/modules/attachment/";
 import { expenseProcedure } from "@/server/modules/expense";
@@ -29,17 +32,7 @@ export const attachmentRouter = createTRPCRouter({
 	),
 
 	getBatchDownloadUrls: orgAdminProcedure
-		.input(
-			z.object({
-				ids: z
-					.array(z.string().min(1))
-					.min(1)
-					.max(100)
-					.refine((ids) => new Set(ids).size === ids.length, {
-						message: "Attachment ids must be unique",
-					}),
-			}),
-		)
+		.input(getBatchDownloadUrlsSchema)
 		.mutation(({ ctx, input }) =>
 			attachmentService.getBatchDownloadUrls(
 				toAttachmentServiceContext(ctx),
@@ -48,49 +41,13 @@ export const attachmentRouter = createTRPCRouter({
 		),
 
 	getUploadUrls: orgProcedure
-		.input(
-			z.object({
-				files: z
-					.array(
-						z.object({
-							name: z.string().min(1),
-							contentType: z.string().min(1),
-							size: z
-								.number()
-								.int()
-								.nonnegative()
-								.max(5 * 1024 * 1024, "File exceeds the 5 MB size limit"),
-						}),
-					)
-					.min(1)
-					.max(5),
-			}),
-		)
+		.input(getUploadUrlsSchema)
 		.mutation(({ ctx, input }) =>
 			attachmentService.getUploadUrls(toAttachmentServiceContext(ctx), input),
 		),
 
 	addToExpense: expenseProcedure("addAttachment")
-		.input(
-			z.object({
-				attachments: z
-					.array(
-						z.object({
-							key: z
-								.string()
-								.regex(/^attachment\/[^/]+\/[^/]+$/, "Invalid attachment key format"),
-							size: z
-								.number()
-								.int()
-								.nonnegative()
-								.max(5 * 1024 * 1024),
-							originalName: z.string().min(1),
-						}),
-					)
-					.min(1)
-					.max(5),
-			}),
-		)
+		.input(addAttachmentsToExpenseSchema)
 		.mutation(({ ctx, input }) =>
 			attachmentService.addToExpense(
 				toAttachmentServiceContext(ctx),
@@ -104,17 +61,7 @@ export const attachmentRouter = createTRPCRouter({
 	),
 
 	deletePendingUploads: orgProcedure
-		.input(
-			z.object({
-				keys: z
-					.array(
-						z
-							.string()
-							.regex(/^attachment\/[^/]+\/[^/]+$/, "Invalid attachment key format"),
-					)
-					.max(5),
-			}),
-		)
+		.input(deletePendingUploadsSchema)
 		.mutation(({ ctx, input }) =>
 			attachmentService.deletePendingUploads(
 				toAttachmentServiceContext(ctx),

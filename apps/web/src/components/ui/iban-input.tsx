@@ -1,8 +1,8 @@
 "use client";
 
+import { Input } from "@zemio/ui";
 import type * as React from "react";
 import { formatIban } from "@/lib/utils";
-import { Input } from "./input";
 
 export interface IbanInputProps
 	extends Omit<

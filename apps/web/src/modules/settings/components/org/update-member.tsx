@@ -2,24 +2,18 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
-import { format } from "date-fns";
-import { CircleIcon } from "lucide-react";
-import type React from "react";
-import { toast } from "sonner";
-import z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
+	Button,
+	Field,
+	FieldGroup,
+	FieldLabel,
+	Input,
 	Select,
 	SelectContent,
 	SelectGroup,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import {
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -27,7 +21,14 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
+} from "@zemio/ui";
+import { format } from "date-fns";
+import { CircleIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import type React from "react";
+import { toast } from "sonner";
+import z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { SheetFormError, SheetFormSkeleton } from "./sheet-form-state";
@@ -59,12 +60,14 @@ function UpdateMemberSheet({
 }: Omit<React.ComponentProps<typeof Sheet>, "handle"> & {
 	handle: UpdateMemberHandle;
 }) {
+	const t = useTranslations("modules.settings.members.updateSheet");
+
 	return (
 		<DialogPrimitive.Root {...props} handle={handle}>
 			{({ payload }) => (
 				<SheetContent className={"data-nested-dialog-open:blur-xs"}>
 					<SheetHeader>
-						<SheetTitle>Edit Member</SheetTitle>
+						<SheetTitle>{t("title")}</SheetTitle>
 					</SheetHeader>
 
 					{payload ? (
@@ -94,22 +97,23 @@ function UpdateCostUnitFormConnected({
 	memberId: string;
 	handle: UpdateMemberHandle;
 }) {
+	const t = useTranslations("modules.settings.members.updateSheet");
 	const utils = api.useUtils();
 
-	const [membership] = api.settings.getMembershipDetails.useSuspenseQuery({
+	const [membership] = api.membership.byId.useSuspenseQuery({
 		id: memberId,
 	});
 
-	const setRole = api.user.setMemberRole.useMutation({
+	const setRole = api.membership.setRole.useMutation({
 		onSuccess: () => {
-			toast.success("Rolle wurde erfolgreich aktualisiert", {});
-			utils.settings.listMembers.invalidate();
-			utils.settings.getMembershipDetails.invalidate({ id: memberId });
+			toast.success(t("savedToast"), {});
+			utils.membership.list.invalidate();
+			utils.membership.byId.invalidate({ id: memberId });
 			handle.close();
 		},
 		onError: (error) => {
-			toast.error("Fehler beim Aktualisieren der Rolle", {
-				description: error.message ?? "Ein unbekannter Fehler ist aufgetreten",
+			toast.error(t("saveErrorTitle"), {
+				description: error.message ?? t("saveErrorFallback"),
 			});
 		},
 	});
@@ -125,7 +129,7 @@ function UpdateCostUnitFormConnected({
 			}}
 			onSubmit={async (values) => {
 				await setRole.mutateAsync({
-					memberId: values.id,
+					id: values.id,
 					role: values.role,
 				});
 			}}
@@ -140,6 +144,8 @@ type UpdateMemberFormProps = {
 };
 
 function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
+	const t = useTranslations("modules.settings.members.updateSheet");
+	const tActions = useTranslations("modules.settings.actions");
 	const form = useForm({
 		defaultValues,
 		validators: {
@@ -168,16 +174,11 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											Name
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("nameLabel")}</FieldLabel>
 										<Input
 											disabled
 											id={field.name}
-											placeholder="Name"
+											placeholder={t("nameLabel")}
 											value={field.state.value}
 										/>
 									</Field>
@@ -190,16 +191,11 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											E-Mail
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("emailLabel")}</FieldLabel>
 										<Input
 											disabled
 											id={field.name}
-											placeholder="E-Mail"
+											placeholder={t("emailLabel")}
 											value={field.state.value}
 										/>
 									</Field>
@@ -212,16 +208,11 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											Beigetreten
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("createdAtLabel")}</FieldLabel>
 										<Input
 											disabled
 											id={field.name}
-											placeholder="E-Mail"
+											placeholder={t("createdAtLabel")}
 											value={field.state.value}
 										/>
 									</Field>
@@ -233,22 +224,17 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 								const isInvalid = state.meta.isTouched && !state.meta.isValid;
 								return (
 									<Field data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											Rolle
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("roleLabel")}</FieldLabel>
 										<Select
 											items={{
-												member: "Mitglied",
-												admin: "Administrator",
+												member: t("roleOptions.member"),
+												admin: t("roleOptions.admin"),
 											}}
 											onValueChange={(value) => field.handleChange(value ?? "member")}
 											value={state.value}
 										>
 											<SelectTrigger>
-												<SelectValue placeholder="Wähle eine Rolle" />
+												<SelectValue placeholder={t("rolePlaceholder")} />
 											</SelectTrigger>
 											<SelectContent>
 												<SelectGroup>
@@ -260,7 +246,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 														value={"admin"}
 													>
 														<CircleIcon className="size-2.5 text-white **:fill-blue-500 group-focus/item:**:text-slate-100!" />
-														Admin
+														{t("roleOptions.admin")}
 													</SelectItem>
 													<SelectItem
 														className={cn(
@@ -270,7 +256,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 														value={"member"}
 													>
 														<CircleIcon className="size-2.5 text-white **:fill-orange-500 group-focus/item:**:text-slate-100!" />
-														Mitglied
+														{t("roleOptions.member")}
 													</SelectItem>
 												</SelectGroup>
 											</SelectContent>
@@ -282,11 +268,11 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 					</FieldGroup>
 				</form>
 			</SheetBody>
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">
-							Cancel
+							{tActions("cancel")}
 						</Button>
 					}
 				/>
@@ -304,7 +290,7 @@ function UpdateMemberForm({ defaultValues, onSubmit }: UpdateMemberFormProps) {
 							form={FORM_ID}
 							type="submit"
 						>
-							{isSubmitting ? "Saving…" : "Aktualisieren"}
+							{isSubmitting ? tActions("updating") : tActions("update")}
 						</Button>
 					)}
 				</form.Subscribe>

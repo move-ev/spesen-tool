@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { CostUnit, ReportStatus, User } from "@zemio/db";
+import { createAppTranslator } from "@zemio/i18n";
 import { format } from "date-fns";
 import {
 	ALargeSmallIcon,
@@ -20,9 +21,10 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { reportStatusLabel } from "@/lib/i18n-labels";
 import { StatusIcons } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
-import { cn, formatTimeElapsed, translateReportStatus } from "@/lib/utils";
+import { cn, formatTimeElapsed } from "@/lib/utils";
 import type { ListReport } from "./types";
 
 export type CostUnitOption = FilterOption<
@@ -32,6 +34,8 @@ export type CostUnitOption = FilterOption<
 export type OwnerOption = FilterOption<
 	Pick<User, "id" | "name" | "email" | "image">
 >;
+
+const t = createAppTranslator({ namespace: "modules.reports.columns" });
 
 const actionsColumn: ColumnDef<ListReport> = {
 	id: "actions",
@@ -50,9 +54,9 @@ const actionsColumn: ColumnDef<ListReport> = {
 		);
 	},
 	meta: {
-		label: "Actions",
+		label: t("actions.label"),
 		icon: FlameIcon,
-		placeholder: "Aktion",
+		placeholder: t("actions.placeholder"),
 		filterType: "none",
 	},
 };
@@ -71,6 +75,7 @@ const statusColumn: ColumnDef<ListReport> = {
 			"NEEDS_REVISION",
 			"ACCEPTED",
 			"REJECTED",
+			"PAID",
 		] satisfies ReportStatus[];
 
 		return (
@@ -79,7 +84,7 @@ const statusColumn: ColumnDef<ListReport> = {
 	},
 	cell: ({ row }) => {
 		const Icon = StatusIcons[row.original.status];
-		const translatedStatus = translateReportStatus(row.original.status);
+		const translatedStatus = reportStatusLabel(row.original.status);
 		return (
 			<Tooltip>
 				<TooltipTrigger
@@ -93,6 +98,7 @@ const statusColumn: ColumnDef<ListReport> = {
 									row.original.status === "PENDING_APPROVAL" && "text-yellow-500",
 									row.original.status === "NEEDS_REVISION" && "text-orange-500",
 									row.original.status === "ACCEPTED" && "text-green-500",
+									row.original.status === "PAID" && "text-green-500",
 									row.original.status === "REJECTED" && "text-red-500",
 								)}
 							/>
@@ -105,7 +111,7 @@ const statusColumn: ColumnDef<ListReport> = {
 		);
 	},
 	meta: {
-		label: "Status",
+		label: t("status.label"),
 		icon: CircleDotDashedIcon,
 		options: (
 			[
@@ -114,13 +120,14 @@ const statusColumn: ColumnDef<ListReport> = {
 				"NEEDS_REVISION",
 				"ACCEPTED",
 				"REJECTED",
+				"PAID",
 			] as const
 		).map((status) => ({
-			label: translateReportStatus(status),
+			label: reportStatusLabel(status),
 			value: status,
 			icon: StatusIcons[status],
 		})),
-		placeholder: "Status",
+		placeholder: t("status.placeholder"),
 		filterType: "multiselect",
 	},
 };
@@ -140,9 +147,9 @@ const tagColumn: ColumnDef<ListReport> = {
 		);
 	},
 	meta: {
-		label: "Report ID",
+		label: t("reportId.label"),
 		icon: TagIcon,
-		placeholder: "Report ID",
+		placeholder: t("reportId.placeholder"),
 		filterType: "none",
 	},
 };
@@ -167,9 +174,9 @@ const titleColumn: ColumnDef<ListReport> = {
 		);
 	},
 	meta: {
-		label: "Titel",
+		label: t("title.label"),
 		icon: ALargeSmallIcon,
-		placeholder: "Titel",
+		placeholder: t("title.placeholder"),
 		filterType: "text",
 	},
 };
@@ -198,10 +205,10 @@ const createOwnerColumn = (options: OwnerOption[]): ColumnDef<ListReport> => ({
 		);
 	},
 	meta: {
-		label: "Ersteller",
+		label: t("owner.label"),
 		icon: UserCircleIcon,
 		options,
-		placeholder: "Ersteller",
+		placeholder: t("owner.placeholder"),
 		filterType: "none",
 	},
 });
@@ -224,9 +231,9 @@ const lastUpdatedAtColumn: ColumnDef<ListReport> = {
 		);
 	},
 	meta: {
-		label: "Zuletzt aktualisiert",
+		label: t("lastUpdatedAt.label"),
 		icon: TagIcon,
-		placeholder: "Zuletzt aktualisiert",
+		placeholder: t("lastUpdatedAt.placeholder"),
 		filterType: "none",
 		hideOnMobile: true,
 	},
@@ -250,10 +257,10 @@ const createCostUnitColumn = (
 		);
 	},
 	meta: {
-		label: "Kostenstelle",
+		label: t("costUnit.label"),
 		icon: TagIcon,
 		options,
-		placeholder: "Kostenstelle",
+		placeholder: t("costUnit.placeholder"),
 		filterType: "multiselect",
 		hideOnMobile: true,
 	},
@@ -274,17 +281,19 @@ const createdAtColumn: ColumnDef<ListReport> = {
 				</TooltipTrigger>
 				<TooltipContent>
 					<p>
-						Erstellt am {format(row.original.createdAt, "dd.MM.yyyy")} um{" "}
-						{format(row.original.createdAt, "HH:mm")} Uhr
+						{t("createdAt.tooltip", {
+							date: format(row.original.createdAt, "dd.MM.yyyy"),
+							time: format(row.original.createdAt, "HH:mm"),
+						})}
 					</p>
 				</TooltipContent>
 			</Tooltip>
 		);
 	},
 	meta: {
-		label: "Erstellt am",
+		label: t("createdAt.label"),
 		icon: CalendarPlusIcon,
-		placeholder: "Erstellt am",
+		placeholder: t("createdAt.placeholder"),
 		filterType: "date-past",
 	},
 };

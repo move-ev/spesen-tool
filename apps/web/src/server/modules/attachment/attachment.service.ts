@@ -15,6 +15,7 @@ import type {
 	AttachmentRepository,
 } from "./attachment.repository";
 import { attachmentRepository } from "./attachment.repository";
+import { MAX_ATTACHMENTS_PER_EXPENSE } from "./attachment.validators";
 
 async function transact<T>(
 	db: PrismaClient,
@@ -147,10 +148,10 @@ export function createAttachmentService(deps: {
 
 			const currentCount = await repo.countForExpense(ctx.db, expense.id);
 			const newTotal = currentCount + input.attachments.length;
-			if (newTotal > 5) {
+			if (newTotal > MAX_ATTACHMENTS_PER_EXPENSE) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: `Adding these attachments would exceed the 5-attachment limit (currently ${currentCount})`,
+					message: `Adding these attachments would exceed the ${MAX_ATTACHMENTS_PER_EXPENSE}-attachment limit (currently ${currentCount})`,
 				});
 			}
 

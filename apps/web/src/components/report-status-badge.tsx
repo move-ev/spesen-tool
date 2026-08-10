@@ -1,13 +1,18 @@
+"use client";
+
 import type { ReportStatus } from "@zemio/db";
 import { CircleIcon } from "lucide-react";
 import type React from "react";
-import { cn, translateReportStatus } from "@/lib/utils";
+import { useReportStatusLabel } from "@/lib/i18n-labels";
+import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 
 export function ReportStatusBadge({
 	status,
 	...props
 }: React.ComponentProps<typeof Badge> & { status: ReportStatus }) {
+	const statusLabel = useReportStatusLabel(status);
+
 	return (
 		<Badge variant={"outline"} {...props}>
 			<CircleIcon
@@ -17,10 +22,11 @@ export function ReportStatusBadge({
 					status === "PENDING_APPROVAL" && "fill-yellow-500 text-yellow-500",
 					status === "NEEDS_REVISION" && "fill-orange-500 text-orange-500",
 					status === "ACCEPTED" && "fill-green-500 text-green-500",
+					status === "PAID" && "fill-green-500 text-green-500",
 					status === "REJECTED" && "fill-red-500 text-red-500",
 				)}
 			/>
-			{translateReportStatus(status)}
+			{statusLabel}
 		</Badge>
 	);
 }

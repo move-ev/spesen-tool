@@ -2,19 +2,14 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
-import type z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
-import { Button } from "@/components/ui/button";
 import {
+	Button,
 	Field,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
+	Input,
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -22,7 +17,12 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
+} from "@zemio/ui";
+import { LoaderIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import type z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
 import type { WithHandle } from "@/lib/types";
 import { createCostUnitGroupSchema } from "@/lib/validators";
 import { api } from "@/trpc/react";
@@ -61,11 +61,13 @@ function CreateCostUnitGroupSheet({
 	WithHandle & {
 		closeOnSuccess?: boolean;
 	}) {
+	const t = useTranslations("modules.settings.costUnits.createGroupSheet");
+
 	return (
 		<DialogPrimitive.Root handle={handle} {...props}>
 			<SheetContent>
 				<SheetHeader>
-					<SheetTitle>Neue Kostenstellengruppe</SheetTitle>
+					<SheetTitle>{t("title")}</SheetTitle>
 				</SheetHeader>
 
 				<AsyncBoundary
@@ -92,20 +94,21 @@ function CreateCostUnitGroupFormConnected({
 }: WithHandle & {
 	closeOnSuccess?: boolean;
 }) {
+	const t = useTranslations("modules.settings.costUnits.createGroupSheet");
 	const utils = api.useUtils();
 
-	const create = api.costUnit.createGroup.useMutation({
+	const create = api.costUnit.groups.create.useMutation({
 		onSuccess: (value) => {
-			toast.success("Kostenstellengruppe wurde erfolgreich erstellt", {
+			toast.success(t("savedToast"), {
 				description: `${value.title}`,
 			});
-			utils.costUnit.listGroups.invalidate();
+			utils.costUnit.groups.list.invalidate();
 
 			closeOnSuccess && handle.close();
 		},
 		onError: (error) => {
-			toast.error("Fehler beim Erstellen der Kostenstellengruppe", {
-				description: error.message ?? "Ein unbekannter Fehler ist aufgetreten",
+			toast.error(t("saveErrorTitle"), {
+				description: error.message ?? t("saveErrorFallback"),
 			});
 		},
 	});
@@ -124,6 +127,8 @@ type CreateCostUnitGroupFormProps = {
 };
 
 function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
+	const t = useTranslations("modules.settings.costUnits.createGroupSheet");
+	const tActions = useTranslations("modules.settings.actions");
 	const form = useForm({
 		defaultValues: {
 			title: "",
@@ -154,19 +159,14 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 									field.state.meta.isTouched && !field.state.meta.isValid;
 								return (
 									<Field className="col-span-2" data-invalid={isInvalid}>
-										<FieldLabel
-											className="mb-1 font-semibold text-base text-slate-800"
-											htmlFor={field.name}
-										>
-											Gruppenname
-										</FieldLabel>
+										<FieldLabel htmlFor={field.name}>{t("nameLabel")}</FieldLabel>
 										<Input
 											aria-invalid={isInvalid}
 											id={field.name}
 											name={field.name}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
-											placeholder="Projekte, Werbung, Sonstiges..."
+											placeholder={t("namePlaceholder")}
 											value={field.state.value}
 										/>
 										{isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -175,18 +175,17 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 							}}
 						</form.Field>
 						<FieldDescription className="col-span-2">
-							Hilfe deinen Nutzern schneller eine passende Kostenstelle zu finden,
-							indem du sie in Gruppen sortierst. Titel ist öffentlich sichtbar.
+							{t("description")}
 						</FieldDescription>
 					</FieldGroup>
 				</form>
 			</SheetBody>
 
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">
-							Cancel
+							{tActions("cancel")}
 						</Button>
 					}
 				/>
@@ -203,7 +202,14 @@ function CreateCostUnitGroupForm({ onSubmit }: CreateCostUnitGroupFormProps) {
 							form={FORM_ID}
 							type="submit"
 						>
-							{isSubmitting ? "Saving…" : "Erstellen"}
+							{isSubmitting ? (
+								<>
+									<LoaderIcon className="animate-spin" />
+									{tActions("creating")}
+								</>
+							) : (
+								tActions("create")
+							)}
 						</Button>
 					)}
 				</form.Subscribe>

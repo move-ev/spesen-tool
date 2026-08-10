@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-table";
 import type { ReportStatus } from "@zemio/db";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { DataListGroupHeader } from "@/components/data/data-list";
 import {
@@ -125,6 +126,7 @@ function buildReportListFilters(
 }
 
 function ReportsList({ className, ...props }: React.ComponentProps<"div">) {
+	const t = useTranslations("modules.reports.pagination");
 	const [page, setPage] = useState<number>(1);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [grouping, setGrouping] = useState<string[]>([]);
@@ -133,13 +135,13 @@ function ReportsList({ className, ...props }: React.ComponentProps<"div">) {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [expanded, setExpanded] = useState<ExpandedState>(true);
 
-	const costUnitsQuery = api.costUnit.listCostUnits.useQuery({
+	const costUnitsQuery = api.costUnit.list.useQuery({
 		pageSize: 200,
 	});
 
 	const costUnitOptions = useMemo(
 		() =>
-			(costUnitsQuery.data?.items ?? []).map((cu) => ({
+			(costUnitsQuery.data?.costUnits ?? []).map((cu) => ({
 				label: cu.tag,
 				value: cu.id,
 				data: cu,
@@ -284,7 +286,10 @@ function ReportsList({ className, ...props }: React.ComponentProps<"div">) {
 			{reportsQuery.data && reportsQuery.data.pagination.pageCount > 1 && (
 				<div className="container flex max-w-none items-center justify-end gap-2 py-4">
 					<span className="text-xs text-zinc-500">
-						Seite {page} von {reportsQuery.data.pagination.pageCount}
+						{t("indicator", {
+							page,
+							pageCount: reportsQuery.data.pagination.pageCount,
+						})}
 					</span>
 					<Button
 						disabled={page <= 1}

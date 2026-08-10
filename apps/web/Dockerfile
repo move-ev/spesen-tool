@@ -19,8 +19,11 @@ WORKDIR /app
 
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/bun.lock ./bun.lock
-# The @zemio/db postinstall runs `prisma generate`, which needs the schema.
+# The @zemio/db postinstall runs `prisma generate`, which needs the schema
+# and prisma.config.js (schema now lives under prisma/schema/, not the
+# default prisma/schema.prisma Prisma falls back to without it).
 COPY --from=pruner /app/out/full/packages/db/prisma/ ./packages/db/prisma/
+COPY --from=pruner /app/out/full/packages/db/prisma.config.js ./packages/db/prisma.config.js
 
 RUN bun install --frozen-lockfile
 

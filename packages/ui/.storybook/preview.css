@@ -1,0 +1,11 @@
+/*
+ * Storybook-only stylesheet.
+ *
+ * Stories render without a host app, so Tailwind is bootstrapped here rather
+ * than in `src/styles/tokens.css` (the `@zemio/ui/styles.css` export), which
+ * consuming apps import after their own `@import "tailwindcss"`.
+ */
+@import "tailwindcss";
+@import "../src/styles/tokens.css";
+
+@source "../src";

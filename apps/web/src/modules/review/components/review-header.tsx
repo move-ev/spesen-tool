@@ -1,32 +1,19 @@
 "use client";
 
 import type { ReportStatus } from "@zemio/db";
-import { format, formatDistanceToNow } from "date-fns";
-import { de } from "date-fns/locale";
-import { ChevronDownIcon, FileIcon, SheetIcon, TrashIcon } from "lucide-react";
-import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+	BanknoteArrowDownIcon,
+	ChevronDownIcon,
+	CornerDownRightIcon,
+} from "lucide-react";
+import { useTranslations } from "next-intl";
+import type React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { StatusIcons } from "@/lib/icons";
-import { cn, translateReportStatus } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import type { ReviewReport } from "./review-types";
+import { ReviewActions } from "./review-actions";
+import { ReviewPay } from "./review-pay";
 
 function ExpensesHeader({
 	className,
@@ -35,6 +22,7 @@ function ExpensesHeader({
 }: React.ComponentProps<"header"> & {
 	reportId: string;
 }) {
+	const tHeader = useTranslations("modules.review.header");
 	const {
 		data: review,
 		error,
@@ -58,7 +46,7 @@ function ExpensesHeader({
 				{...props}
 			>
 				<p className="font-medium text-destructive text-sm">
-					Report konnte nicht geladen werden
+					{tHeader("loadErrorTitle")}
 				</p>
 				<p className="text-muted-foreground text-xs">{errorMessage}</p>
 			</header>
@@ -69,64 +57,71 @@ function ExpensesHeader({
 		return null;
 	}
 
-	const StatusIcon = StatusIcons[report.status];
-
 	return (
-		<header
-			className={cn(
-				"flex flex-col flex-wrap items-start justify-start gap-5 sm:flex-row",
-				className,
-			)}
-			data-slot="expenses-header"
-			{...props}
-		>
-			<div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-zinc-800 sm:mt-0.75 md:size-10">
-				<FileIcon className="size-4 text-white md:size-5" />
-			</div>
-			<div className="mr-auto">
-				<h1 className="font-semibold text-2xl text-zinc-800">{report.title}</h1>
-				<div className="mt-2 flex flex-col flex-wrap items-start justify-start gap-2 sm:flex-row sm:items-center sm:gap-3">
-					<Tooltip>
-						<TooltipTrigger>
-							<p className="font-medium text-sm text-zinc-600">
-								vor {formatDistanceToNow(report.createdAt, { locale: de })} Uhr
-							</p>
-						</TooltipTrigger>
-						<TooltipContent>
-							Erstellt am{" "}
-							{format(report.createdAt, "dd MMMM yyyy, HH:mm", { locale: de })} Uhr
-						</TooltipContent>
-					</Tooltip>
-					<p className="hidden text-sm text-zinc-500 sm:block">•</p>
-					<p
-						className={cn(
-							"flex items-center justify-center gap-1.5 font-medium text-sm text-zinc-600",
-							report.status === "ACCEPTED" && "text-green-600",
-							report.status === "REJECTED" && "text-red-600",
-							report.status === "NEEDS_REVISION" && "text-orange-600",
-							report.status === "PENDING_APPROVAL" && "text-yellow-600",
+		<header className={cn("", className)} data-slot="review-header" {...props}>
+			<HeaderStatusIcon status={report.status} />
+			<div className="mt-8">
+				<h1 className="font-semibold text-2xl text-base-800">
+					<span className="me-2 text-base-500">#{report.tag} </span>
+					{report.title}
+				</h1>
+				<div className="mt-2 flex items-start justify-start gap-2">
+					<CornerDownRightIcon className="mt-0.5 size-3.5 shrink-0 text-base-400" />
+					<p className="max-w-prose text-base-500 text-sm">
+						{report.description ? (
+							report.description
+						) : (
+							<span className="italic">{tHeader("noDescription")}</span>
 						)}
-					>
-						{translateReportStatus(report.status)}
-						<StatusIcon className="size-3.5" />
-					</p>
-					<p className="hidden text-sm text-zinc-500 sm:block">•</p>
-					<p className="flex items-center justify-center gap-1.5 font-medium text-sm text-zinc-600">
-						<Avatar className={"size-4"}>
-							<AvatarImage src={report.owner.image ?? undefined} />
-							<AvatarFallback>
-								{report.owner.name.charAt(0)?.toUpperCase()}
-							</AvatarFallback>
-						</Avatar>
-						{report.owner.name}
 					</p>
 				</div>
 			</div>
-			<div className="mt-0.75 flex flex-nowrap gap-4">
-				<ReportActions report={report}>Bearbeiten</ReportActions>
-				<ExportReport reportId={report.id} />
+			<div className="mt-8 flex w-full flex-col gap-2 sm:hidden">
+				<ReviewActions disableAnimation report={review.report} size="sm">
+					{tHeader("editAction")}
+					<ChevronDownIcon />
+				</ReviewActions>
+
+				<ReviewPay
+					disableAnimation
+					disabled={
+						review.report.status !== "ACCEPTED" &&
+						review.report.status !== "PENDING_APPROVAL"
+					}
+					reportId={reportId}
+					size="sm"
+				>
+					<BanknoteArrowDownIcon /> {tHeader("payAction")}
+				</ReviewPay>
 			</div>
 		</header>
+	);
+}
+
+function HeaderStatusIcon({
+	className,
+	status,
+	...props
+}: React.ComponentProps<"div"> & { status: ReportStatus }) {
+	const StatusIcon = StatusIcons[status];
+
+	return (
+		<div
+			className={cn(
+				"flex size-10 items-center justify-center rounded-sm",
+				status === "DRAFT" && "bg-base-500",
+				status === "PENDING_APPROVAL" && "bg-yellow-500 text-yellow-50",
+				status === "NEEDS_REVISION" && "bg-orange-500 text-orange-50",
+				status === "REJECTED" && "bg-red-500 text-red-50",
+				status === "ACCEPTED" && "bg-green-500 text-green-50",
+				status === "PAID" && "bg-lime-500 text-lime-50",
+				className,
+			)}
+			data-slot="component"
+			{...props}
+		>
+			<StatusIcon className="size-5" />
+		</div>
 	);
 }
 
@@ -147,142 +142,6 @@ function HeaderLoading({
 			</div>
 			<Skeleton className="h-8 w-32" />
 		</header>
-	);
-}
-
-function ReportActions({
-	report,
-	...props
-}: React.ComponentProps<typeof Button> & {
-	report: Pick<ReviewReport, "id" | "status">;
-}) {
-	const utils = api.useUtils();
-
-	const { mutate: setStatus } = api.report.transition.useMutation({
-		onMutate: () => {
-			toast.info("Status wird aktualisiert");
-		},
-		onSuccess: () => {
-			toast.success("Status erfolgreich aktualisiert");
-			void utils.report.review.invalidate({ id: report.id });
-		},
-		onError: () => {
-			toast.error("Fehler beim Aktualisieren des Reports");
-		},
-	});
-
-	const updateStatus = (status: ReportStatus) => {
-		setStatus({
-			id: report.id,
-			status,
-			notify:
-				status === "NEEDS_REVISION" ||
-				status === "ACCEPTED" ||
-				status === "REJECTED",
-		});
-	};
-
-	return (
-		<DropdownMenu data-slot="report-actions">
-			<DropdownMenuTrigger render={<Button variant={"outline"} {...props} />} />
-			<DropdownMenuContent align="end" className={"w-64"}>
-				<DropdownMenuGroup>
-					<DropdownMenuLabel>Status ändern</DropdownMenuLabel>
-					<DropdownMenuItem
-						disabled={report.status === "ACCEPTED"}
-						onClick={() => {
-							updateStatus("ACCEPTED");
-						}}
-					>
-						<StatusIcons.ACCEPTED /> Akzeptieren
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "REJECTED"}
-						onClick={() => {
-							updateStatus("REJECTED");
-						}}
-					>
-						<StatusIcons.REJECTED /> Ablehnen
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "NEEDS_REVISION"}
-						onClick={() => {
-							updateStatus("NEEDS_REVISION");
-						}}
-					>
-						<StatusIcons.NEEDS_REVISION /> Benötigt Revision
-					</DropdownMenuItem>
-					<DropdownMenuItem
-						disabled={report.status === "PENDING_APPROVAL"}
-						onClick={() => {
-							updateStatus("PENDING_APPROVAL");
-						}}
-					>
-						<StatusIcons.PENDING_APPROVAL /> In Bearbeitung
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem disabled variant="destructive">
-						<TrashIcon /> Antrag löschen
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-}
-
-function ExportReport({
-	className,
-	reportId,
-	...props
-}: React.ComponentProps<typeof ButtonGroup> & { reportId: string }) {
-	const createSummaryPdf = api.report.exportToPdf.useMutation({
-		onMutate: () => {
-			toast.info("PDF wird erstellt", {
-				description: "Dies kann einige Sekunden dauern",
-			});
-		},
-		onSuccess: (data) => {
-			window.open(data.url, "_blank");
-			toast.success("PDF Zusammenfassung erstellt", {
-				description: "Datei wird heruntergeladen",
-			});
-		},
-		onError: ({ message }) => {
-			toast.error("Fehler beim Erstellen der PDF Zusammenfassung", {
-				description: message ?? "Ein unerwarteter Fehler ist aufgetreten",
-			});
-		},
-	});
-
-	return (
-		<ButtonGroup className={cn("", className)} data-slot="component" {...props}>
-			<Button onClick={() => createSummaryPdf.mutate({ id: reportId })}>
-				Exportieren
-			</Button>
-			<DropdownMenu>
-				<DropdownMenuTrigger
-					render={
-						<Button size={"icon"}>
-							<ChevronDownIcon />
-						</Button>
-					}
-				/>
-				<DropdownMenuContent align="end" className={"w-52"}>
-					<DropdownMenuGroup>
-						<DropdownMenuItem
-							onClick={() => createSummaryPdf.mutate({ id: reportId })}
-						>
-							<FileIcon /> PDF exportieren
-						</DropdownMenuItem>
-						<DropdownMenuItem disabled>
-							<SheetIcon /> CSV exportieren
-						</DropdownMenuItem>
-					</DropdownMenuGroup>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</ButtonGroup>
 	);
 }
 

@@ -1,4 +1,5 @@
 import {
+	CostUnitColor,
 	CostUnitStatus,
 	ExpenseType,
 	NotificationPreference,
@@ -7,20 +8,20 @@ import {
 import { isValid, parse } from "date-fns";
 import z from "zod";
 export const createReportSchema = z.object({
-	title: z.string().min(1, "Bitte gib einen Titel ein."),
+	title: z.string().min(1, "report.titleRequired"),
 	description: z.string(),
-	costUnitId: z.string().min(1, "Bitte wähle eine Kostenstelle aus."),
-	bankingDetailsId: z.string().min(1, "Bitte wähle eine Bankverbindung aus."),
+	costUnitId: z.string().min(1, "report.costUnitRequired"),
+	bankingDetailsId: z.string().min(1, "report.bankingDetailsRequired"),
 });
 
 export const ibanSchema = z
 	.string()
 	.regex(/^DE\d{2} \d{4} \d{4} \d{4} \d{4} \d{2}$/, {
-		message: "Ungültige IBAN",
+		message: "banking.invalidIban",
 	});
 
 export const unformattedIbanSchema = z.string().regex(/^DE\d{20}$/, {
-	message: "Ungültige IBAN",
+	message: "banking.invalidIban",
 });
 
 export const baseCreateExpenseSchema = z.object({
@@ -28,24 +29,24 @@ export const baseCreateExpenseSchema = z.object({
 	amount: z.number().min(0),
 	startDate: z
 		.string()
-		.min(1, "Startdatum ist erforderlich")
+		.min(1, "expense.startDateRequired")
 		.refine(
 			(val) => {
 				const date = parse(val, "dd.MM.yyyy", new Date());
 				return isValid(date);
 			},
-			{ message: "Ungültiges Startdatum" },
+			{ message: "expense.invalidStartDate" },
 		)
 		.transform((val) => parse(val, "dd.MM.yyyy", new Date())),
 	endDate: z
 		.string()
-		.min(1, "Enddatum ist erforderlich")
+		.min(1, "expense.endDateRequired")
 		.refine(
 			(val) => {
 				const date = parse(val, "dd.MM.yyyy", new Date());
 				return isValid(date);
 			},
-			{ message: "Ungültiges Enddatum" },
+			{ message: "expense.invalidEndDate" },
 		)
 		.transform((val) => parse(val, "dd.MM.yyyy", new Date())),
 	type: z.enum(ExpenseType),
@@ -55,7 +56,7 @@ export const baseCreateExpenseSchema = z.object({
 export const attachmentInputSchema = z.object({
 	key: z
 		.string()
-		.regex(/^attachment\/[^/]+\/[^/]+$/, "Invalid attachment key format"),
+		.regex(/^attachment\/[^/]+\/[^/]+$/, "Ungültiges Anhang-Schlüsselformat"),
 	size: z
 		.number()
 		.int()
@@ -80,32 +81,21 @@ export const createTravelExpenseSchema = baseCreateExpenseSchema.and(
 
 export const createFoodExpenseSchema = baseCreateExpenseSchema.and(
 	z.object({
-		days: z.number().min(1),
+		days: z.number().int().min(1),
 		breakfastDeduction: z.number().min(0),
 		lunchDeduction: z.number().min(0),
 		dinnerDeduction: z.number().min(0),
 	}),
 );
 
-// ================================ META FIELDS ================================
-
-export const receiptExpenseMetaSchema = z.object({});
-
-export const travelExpenseMetaSchema = z.object({
-	from: z.string().min(1),
-	to: z.string().min(1),
-	distance: z.number().min(1),
-});
-
-export const foodExpenseMetaSchema = z.object({
-	days: z.number().min(1),
-	breakfastDeduction: z.number().min(0),
-	lunchDeduction: z.number().min(0),
-	dinnerDeduction: z.number().min(0),
-});
-
 export const updateUserNameSchema = z.object({
 	name: z.string().min(1),
+});
+
+export const updateUserProfileSchema = z.object({
+	name: z.string().min(1),
+	image: z.string().nullable(),
+	email: z.email(),
 });
 
 // Schema for form validation (formatted IBAN with spaces)
@@ -119,14 +109,14 @@ export const updatePreferencesServerSchema = z.object({
 });
 
 export const updateMealAllowancesSchema = z.object({
-	dailyFoodAllowance: z.number().min(0),
-	breakfastDeduction: z.number().min(0),
-	lunchDeduction: z.number().min(0),
-	dinnerDeduction: z.number().min(0),
+	dailyFoodAllowance: z.number().min(0).multipleOf(0.01),
+	breakfastDeduction: z.number().min(0).multipleOf(0.01),
+	lunchDeduction: z.number().min(0).multipleOf(0.01),
+	dinnerDeduction: z.number().min(0).multipleOf(0.01),
 });
 
 export const updateTravelAllowancesSchema = z.object({
-	kilometerRate: z.number().min(0),
+	kilometerRate: z.number().min(0).multipleOf(0.01),
 });
 
 export const createCostUnitGroupSchema = z.object({
@@ -147,6 +137,7 @@ export const createCostUnitSchema = z.object({
 	title: z.string().min(1),
 	examples: z.string().array(),
 	costUnitGroupId: z.string(),
+	color: z.enum(CostUnitColor),
 });
 
 export const updateCostUnitSchema = z.object({
@@ -156,6 +147,7 @@ export const updateCostUnitSchema = z.object({
 	examples: z.string().array(),
 	costUnitGroupId: z.string(),
 	status: z.enum(CostUnitStatus),
+	color: z.enum(CostUnitColor),
 });
 
 export const deleteCostUnitSchema = z.object({

@@ -1,29 +1,18 @@
 "use client";
 
-import { Dialog as DialogPrimitive } from "@base-ui/react";
+import { Dialog as DialogPrimitive, Radio, RadioGroup } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import type { CostUnitGroup } from "@zemio/db";
-import { InfoIcon } from "lucide-react";
-import React from "react";
-import { toast } from "sonner";
-import type z from "zod";
-import { AsyncBoundary } from "@/components/async-boundary";
-import { Button } from "@/components/ui/button";
 import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
-	NativeSelect,
-	NativeSelectOptGroup,
-	NativeSelectOption,
-} from "@/components/ui/native-select";
-import {
+	Button,
+	Input,
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 	type Sheet,
 	SheetBody,
 	SheetClose,
@@ -31,12 +20,26 @@ import {
 	SheetFooter,
 	SheetHeader,
 	SheetTitle,
-} from "@/components/ui/sheet";
+} from "@zemio/ui";
+import { InfoIcon, LoaderIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import React from "react";
+import { toast } from "sonner";
+import type z from "zod";
+import { AsyncBoundary } from "@/components/async-boundary";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@/components/ui/field";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { COST_UNIT_COLORS } from "@/lib/colors/cost-units";
 import { NO_COST_UNIT_GROUP } from "@/lib/consts";
 import type { WithHandle } from "@/lib/types";
 import { createCostUnitSchema } from "@/lib/validators";
@@ -76,6 +79,8 @@ function CreateCostUnitSheet({
 	handle,
 	...props
 }: Omit<React.ComponentProps<typeof Sheet>, "handle"> & WithHandle) {
+	const t = useTranslations("modules.settings.costUnits.createSheet");
+
 	return (
 		<DialogPrimitive.Root handle={handle} {...props}>
 			<SheetContent
@@ -84,7 +89,7 @@ function CreateCostUnitSheet({
 				}
 			>
 				<SheetHeader>
-					<SheetTitle>Neue Kostenstelle</SheetTitle>
+					<SheetTitle>{t("title")}</SheetTitle>
 				</SheetHeader>
 
 				<AsyncBoundary
@@ -101,23 +106,24 @@ function CreateCostUnitSheet({
 }
 
 function CreateCostUnitFormConnected({ handle }: WithHandle) {
+	const t = useTranslations("modules.settings.costUnits.createSheet");
 	const utils = api.useUtils();
 
 	const [{ data: groups }] = useSuspenseQueries({
-		queries: [utils.costUnit.listGroups.queryOptions()],
+		queries: [utils.costUnit.groups.list.queryOptions()],
 	});
 
 	const create = api.costUnit.create.useMutation({
 		onSuccess: (value) => {
-			toast.success("Kostenstelle wurde erfolgreich erstellt", {
+			toast.success(t("savedToast"), {
 				description: `${value.tag} • ${value.title}`,
 			});
-			utils.costUnit.listCostUnits.invalidate({});
+			utils.costUnit.list.invalidate({});
 			handle.close();
 		},
 		onError: (error) => {
-			toast.error("Fehler beim Erstellen der Kostenstelle", {
-				description: error.message ?? "Ein unbekannter Fehler ist aufgetreten",
+			toast.error(t("saveErrorTitle"), {
+				description: error.message ?? t("saveErrorFallback"),
 			});
 		},
 	});
@@ -138,6 +144,8 @@ type CreateCostUnitFormProps = {
 };
 
 function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
+	const t = useTranslations("modules.settings.costUnits.createSheet");
+	const tActions = useTranslations("modules.settings.actions");
 	const createGroupHandleRef = React.useRef<CreateCostUnitGroupHandle | null>(
 		null,
 	);
@@ -151,6 +159,7 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 			title: "",
 			examples: [],
 			costUnitGroupId: NO_COST_UNIT_GROUP,
+			color: "BASE",
 		} as CreateCostUnitFormValues,
 		validators: {
 			onSubmit: createCostUnitSchema,
@@ -183,15 +192,12 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 												className="mb-1 font-semibold text-base text-slate-800"
 												htmlFor={field.name}
 											>
-												Tag
+												{t("tagLabel")}
 												<Tooltip>
 													<TooltipTrigger
 														render={<InfoIcon className="size-3.5 text-slate-500" />}
 													/>
-													<TooltipContent>
-														Jede Kostenstelle besteht aus einer Kombination eines
-														einzigartigen Tags und einem Titel
-													</TooltipContent>
+													<TooltipContent>{t("tagTooltip")}</TooltipContent>
 												</Tooltip>
 											</FieldLabel>
 											<Input
@@ -200,7 +206,7 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 												name={field.name}
 												onBlur={field.handleBlur}
 												onChange={(e) => field.handleChange(e.target.value)}
-												placeholder="KS123"
+												placeholder={t("tagPlaceholder")}
 												value={field.state.value}
 											/>
 											{isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -218,7 +224,7 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 												className="mb-1 font-semibold text-base text-slate-800"
 												htmlFor={field.name}
 											>
-												Titel
+												{t("titleLabel")}
 											</FieldLabel>
 											<Input
 												aria-invalid={isInvalid}
@@ -226,7 +232,7 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 												name={field.name}
 												onBlur={field.handleBlur}
 												onChange={(e) => field.handleChange(e.target.value)}
-												placeholder="Sommerfest"
+												placeholder={t("titlePlaceholder")}
 												value={field.state.value}
 											/>
 											{isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -235,51 +241,104 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 								}}
 							</form.Field>
 							<FieldDescription className="col-span-2">
-								Wird zur eindeutigen Identifikation der Kostenstelle verwendet.
+								{t("tagTitleDescription")}
 							</FieldDescription>
 						</div>
 						<form.Field name="costUnitGroupId">
-							{(field) => {
-								const isInvalid =
-									field.state.meta.isTouched && !field.state.meta.isValid;
+							{({ state, ...field }) => {
+								const isInvalid = state.meta.isTouched && !state.meta.isValid;
+
+								const items = groups.map((group) => ({
+									label: group.title,
+									value: group.id,
+								}));
+
+								items.push({
+									label: t("noGroupOption"),
+									value: NO_COST_UNIT_GROUP,
+								});
+
 								return (
 									<Field data-invalid={isInvalid}>
 										<FieldLabel
 											className="mb-1 font-semibold text-base text-slate-800"
 											htmlFor={field.name}
 										>
-											Gruppe
+											{t("groupLabel")}
 										</FieldLabel>
-										<NativeSelect
-											onChange={(e) => field.handleChange(e.target.value)}
-											value={field.state.value}
+										<Select
+											items={items}
+											onValueChange={(value) =>
+												field.handleChange(value ?? NO_COST_UNIT_GROUP)
+											}
+											value={state.value}
 										>
-											<NativeSelectOption value={NO_COST_UNIT_GROUP}>
-												Keine Gruppe
-											</NativeSelectOption>
-											<NativeSelectOptGroup label="Gruppen">
-												{groups.map((group) => (
-													<NativeSelectOption key={group.id} value={group.id}>
-														{group.title}
-													</NativeSelectOption>
-												))}
-											</NativeSelectOptGroup>
-										</NativeSelect>
-										<FieldDescription>
-											Hilfe deinen Nutzern schneller eine passende Kostenstelle zu finden,
-											indem du sie in Gruppen sortierst.
-										</FieldDescription>
+											<SelectTrigger>
+												<SelectValue placeholder={t("noGroupOption")} />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectGroup>
+													{groups.map((group) => (
+														<SelectItem key={group.id} value={group.id}>
+															{group.title}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											</SelectContent>
+										</Select>
+										<FieldDescription>{t("groupDescription")}</FieldDescription>
 										<div>
 											<DialogPrimitive.Trigger
 												handle={createGroupHandle}
 												render={
-													<Button className={"w-fit -translate-x-2.5"} variant={"link"}>
-														Neue Gruppe erstellen
+													<Button
+														className={"inline-flex w-fit -translate-x-2.5"}
+														variant={"ghost"}
+													>
+														{t("createGroupButton")}
 													</Button>
 												}
 											/>
 										</div>
-										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+										{isInvalid && <FieldError errors={state.meta.errors} />}
+									</Field>
+								);
+							}}
+						</form.Field>
+						<form.Field name="color">
+							{({ state, ...field }) => {
+								const isInvalid = state.meta.isTouched && !state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel
+											className="mb-1 font-semibold text-base text-slate-800"
+											htmlFor={field.name}
+										>
+											{t("colorLabel")}
+										</FieldLabel>
+										<RadioGroup
+											className={"grid grid-cols-9 gap-3 md:grid-cols-18"}
+											id={field.name}
+											name={field.name}
+											onValueChange={field.handleChange}
+											value={state.value}
+										>
+											{Object.entries(COST_UNIT_COLORS).map(([key, value]) => {
+												return (
+													<Radio.Root
+														className={"aspect-square w-full rounded-md"}
+														key={key}
+														style={{
+															backgroundColor: value.fill,
+														}}
+														value={key}
+													>
+														<Radio.Indicator className="flex h-full w-full items-center justify-center before:size-2 before:rounded-full before:bg-white data-unchecked:hidden" />
+													</Radio.Root>
+												);
+											})}
+										</RadioGroup>
+										<FieldDescription>{t("colorDescription")}</FieldDescription>
 									</Field>
 								);
 							}}
@@ -294,17 +353,14 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 											className="mb-1 font-semibold text-base text-slate-800"
 											htmlFor={field.name}
 										>
-											Beispiele
+											{t("examplesLabel")}
 										</FieldLabel>
 										<ExamplesInput
 											onChange={field.handleChange}
-											placeholder="z.B. Getränke "
+											placeholder={t("examplesPlaceholder")}
 											value={field.state.value}
 										/>
-										<FieldDescription>
-											Beispiele können Nutzern helfen, besser zu verstehen ob sie die
-											richtige Kostenstelle für Ihren Antrag gewählt haben.
-										</FieldDescription>
+										<FieldDescription>{t("examplesDescription")}</FieldDescription>
 										{isInvalid && <FieldError errors={field.state.meta.errors} />}
 									</Field>
 								);
@@ -313,11 +369,11 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 					</FieldGroup>
 				</form>
 			</SheetBody>
-			<SheetFooter className="flex flex-row items-center justify-end gap-4">
+			<SheetFooter>
 				<SheetClose
 					render={
 						<Button type="button" variant="outline">
-							Cancel
+							{tActions("cancel")}
 						</Button>
 					}
 				/>
@@ -334,7 +390,14 @@ function CreateCostUnitForm({ onSubmit, groups }: CreateCostUnitFormProps) {
 							form={FORM_ID}
 							type="submit"
 						>
-							{isSubmitting ? "Saving…" : "Erstellen"}
+							{isSubmitting ? (
+								<>
+									<LoaderIcon className="animate-spin" />
+									{tActions("creating")}
+								</>
+							) : (
+								tActions("create")
+							)}
 						</Button>
 					)}
 				</form.Subscribe>

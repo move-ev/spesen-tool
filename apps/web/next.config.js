@@ -5,12 +5,21 @@
 
 import path from "node:path";
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "./src/env.js";
+
+const withNextIntl = createNextIntlPlugin();
+
+// Opt-in cap on Turbopack's memory use. Parsed and validated by src/env.js, so a
+// malformed value fails the build instead of silently leaving the cap unset.
+const turbopackMemoryLimitMb = env.TURBOPACK_MEMORY_LIMIT_MB;
 
 /** @type {import("next").NextConfig} */
 const config = {
 	output: "standalone",
 	serverExternalPackages: ["pdfkit"],
+	// @zemio/ui exports raw .ts/.tsx source rather than a prebuilt dist.
+	transpilePackages: ["@zemio/ui"],
 	// Required for standalone output to correctly trace workspace package files
 	// (packages/db, packages/encryption) in the monorepo.
 	outputFileTracingRoot: path.resolve(import.meta.dirname, "../.."),
@@ -22,6 +31,11 @@ const config = {
 			},
 		],
 	},
+	...(turbopackMemoryLimitMb !== undefined && {
+		experimental: {
+			turbopackMemoryLimit: turbopackMemoryLimitMb * 1024 * 1024,
+		},
+	}),
 };
 
 const sourceMapUploadConfig =
@@ -34,7 +48,7 @@ const sourceMapUploadConfig =
 			}
 		: {};
 
-export default withSentryConfig(config, {
+export default withSentryConfig(withNextIntl(config), {
 	tunnelRoute: "/monitoring",
 	// Be verbose precisely when we are actually uploading source maps (i.e. when
 	// the Sentry credentials are present — the CI image build). Stay quiet locally

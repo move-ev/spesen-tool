@@ -1,4 +1,8 @@
 import type { Prisma, PrismaClient, ReportStatus } from "@zemio/db";
+import {
+	foodDetailSelect,
+	travelDetailSelect,
+} from "@/server/modules/expense/expense.repository";
 
 type Db = PrismaClient;
 
@@ -9,6 +13,7 @@ const reportScalarSelect = {
 	title: true,
 	description: true,
 	status: true,
+	paidAt: true,
 	organizationId: true,
 	costUnitId: true,
 	ownerId: true,
@@ -34,7 +39,7 @@ const reportDetailSelect = {
 const reportListRowSelect = {
 	...reportScalarSelect,
 	owner: { select: { name: true, image: true, email: true } },
-	costUnit: { select: { tag: true } },
+	costUnit: { select: { tag: true, color: true, title: true } },
 } satisfies Prisma.ReportSelect;
 
 const reviewDetailSelect = {
@@ -43,9 +48,13 @@ const reviewDetailSelect = {
 	title: true,
 	description: true,
 	status: true,
+	paidAt: true,
 	createdAt: true,
+	lastUpdatedAt: true,
 	owner: { select: { id: true, name: true, email: true, image: true } },
 	bankingDetails: { select: { iban: true, fullName: true } },
+	bankingSnapshot: { select: { iban: true, fullName: true } },
+	costUnit: { select: { color: true, title: true, tag: true } },
 	expenses: {
 		select: {
 			id: true,
@@ -55,6 +64,8 @@ const reviewDetailSelect = {
 			endDate: true,
 			type: true,
 			meta: true,
+			travelDetail: travelDetailSelect,
+			foodDetail: foodDetailSelect,
 			reportId: true,
 			attachments: {
 				select: {
@@ -143,6 +154,7 @@ export const reportRepository = {
 					ownerId: true,
 					status: true,
 					bankingDetails: { select: { iban: true, fullName: true } },
+					bankingSnapshot: { select: { iban: true, fullName: true } },
 				},
 			}),
 			db.expense.aggregate({
@@ -162,6 +174,30 @@ export const reportRepository = {
 			where: { id: bankingDetailsId },
 			select: { userId: true },
 		});
+	},
+
+	/**
+	 * Copies the encrypted values of the given banking details into the
+	 * report's snapshot (creating or refreshing it). Returns false when the
+	 * banking details no longer exist.
+	 */
+	async snapshotBankingDetails(
+		db: Db,
+		args: { reportId: string; bankingDetailsId: string },
+	): Promise<boolean> {
+		const details = await db.bankingDetails.findUnique({
+			where: { id: args.bankingDetailsId },
+			select: { iban: true, fullName: true },
+		});
+		if (!details) {
+			return false;
+		}
+		await db.reportBankingSnapshot.upsert({
+			where: { reportId: args.reportId },
+			create: { reportId: args.reportId, ...details },
+			update: details,
+		});
+		return true;
 	},
 
 	findCostUnit(db: Db, args: { id: string; organizationId: string }) {
@@ -193,10 +229,10 @@ export const reportRepository = {
 		});
 	},
 
-	setStatus(db: Db, args: { id: string; status: ReportStatus }) {
+	setStatus(db: Db, args: { id: string; status: ReportStatus; paidAt?: Date }) {
 		return db.report.update({
 			where: { id: args.id },
-			data: { status: args.status },
+			data: { status: args.status, paidAt: args.paidAt },
 			select: { id: true, status: true },
 		});
 	},

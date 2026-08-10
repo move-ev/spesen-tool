@@ -1,8 +1,14 @@
-import type { ExpenseType, Prisma, ReportStatus } from "@zemio/db";
+import type { CostUnit, ExpenseType, Prisma, ReportStatus } from "@zemio/db";
 import {
 	decryptBankingDetails,
 	type EncryptedBankingDetails,
 } from "@/lib/banking/cryptic";
+import {
+	type FoodExpenseDetailDTO,
+	resolveFoodDetailDTO,
+	resolveTravelDetailDTO,
+	type TravelExpenseDetailDTO,
+} from "@/server/modules/expense/expense.dto";
 import {
 	decimalToNumber,
 	nullableDecimalToNumber,
@@ -43,19 +49,22 @@ export function toReportListItemDTO(
 
 export type FinancialSummaryDTO = {
 	totalAmount: number;
-	iban: string;
-	ownerName: string;
+	// Null when a draft's banking details were deleted before submission.
+	iban: string | null;
+	ownerName: string | null;
 };
 
 export function toFinancialSummaryDTO(
-	bankingDetails: EncryptedBankingDetails,
+	bankingDetails: EncryptedBankingDetails | null,
 	totalAmount: Prisma.Decimal | null,
 ): FinancialSummaryDTO {
-	const decrypted = decryptBankingDetails(bankingDetails);
+	const decrypted = bankingDetails
+		? decryptBankingDetails(bankingDetails)
+		: null;
 	return {
 		totalAmount: nullableDecimalToNumber(totalAmount),
-		iban: decrypted.iban,
-		ownerName: decrypted.fullName,
+		iban: decrypted?.iban ?? null,
+		ownerName: decrypted?.fullName ?? null,
 	};
 }
 
@@ -66,7 +75,8 @@ type ReviewExpenseDTO = {
 	startDate: Date;
 	endDate: Date;
 	type: ExpenseType;
-	meta: Prisma.JsonValue;
+	travelDetail: TravelExpenseDetailDTO | null;
+	foodDetail: FoodExpenseDetailDTO | null;
 	reportId: string;
 };
 
@@ -79,16 +89,24 @@ export type ReviewDTO = {
 		description: string | null;
 		status: ReportStatus;
 		createdAt: Date;
+		lastUpdatedAt: Date;
+		paidAt: Date | null;
 		owner: ReviewDetail["owner"];
+		costUnit: Pick<CostUnit, "color" | "title" | "tag">;
 	};
-	bankingSummary: { iban: string; ownerName: string };
+	// Null only for anomalous data: a report in review without a snapshot
+	// whose live banking details were deleted.
+	bankingSummary: { iban: string; ownerName: string } | null;
 	totalAmount: number;
 	expenses: ReviewExpenseDTO[];
 	attachments: ReviewDetail["expenses"][number]["attachments"];
 };
 
 export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
-	const banking = decryptBankingDetails(detail.bankingDetails);
+	// The snapshot holds what was actually submitted; the live relation only
+	// backs legacy reports that predate snapshots.
+	const bankingSource = detail.bankingSnapshot ?? detail.bankingDetails;
+	const banking = bankingSource ? decryptBankingDetails(bankingSource) : null;
 
 	const expenses: ReviewExpenseDTO[] = detail.expenses.map((expense) => ({
 		id: expense.id,
@@ -97,7 +115,8 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 		startDate: expense.startDate,
 		endDate: expense.endDate,
 		type: expense.type,
-		meta: expense.meta,
+		travelDetail: resolveTravelDetailDTO(expense),
+		foodDetail: resolveFoodDetailDTO(expense),
 		reportId: expense.reportId,
 	}));
 
@@ -114,9 +133,14 @@ export function toReviewDTO(detail: ReviewDetail): ReviewDTO {
 			description: detail.description,
 			status: detail.status,
 			createdAt: detail.createdAt,
+			lastUpdatedAt: detail.lastUpdatedAt,
+			paidAt: detail.paidAt,
 			owner: detail.owner,
+			costUnit: detail.costUnit,
 		},
-		bankingSummary: { iban: banking.iban, ownerName: banking.fullName },
+		bankingSummary: banking
+			? { iban: banking.iban, ownerName: banking.fullName }
+			: null,
 		totalAmount,
 		expenses,
 		attachments,

@@ -2,23 +2,27 @@
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react";
 import type { Column, Table } from "@tanstack/react-table";
-import { differenceInDays } from "date-fns";
-import { XIcon } from "lucide-react";
-import type { ReactNode } from "react";
-import { Button } from "../ui/button";
-import { ButtonGroup } from "../ui/button-group";
 import {
+	Button,
+	ButtonGroup,
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuPortal,
 	DropdownMenuSubContent,
+	DropdownMenuSubSearch,
 	DropdownMenuSubSearchEmpty,
 	DropdownMenuSubSearchInput,
 	DropdownMenuSubSearchItem,
 	DropdownMenuSubSearchList,
 	DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@zemio/ui";
+import { differenceInDays } from "date-fns";
+import { XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import {
 	type ColumnFilterType,
 	DATE_FUTURE_PRESETS,
@@ -105,11 +109,13 @@ function DateRangeMenuContent<TData, TValue>({
 
 	return (
 		<DropdownMenuSubContent>
-			{presets.map((preset) => (
-				<DropdownMenuItem key={preset.label} onClick={() => handleSelect(preset)}>
-					{preset.label}
-				</DropdownMenuItem>
-			))}
+			<DropdownMenuGroup>
+				{presets.map((preset) => (
+					<DropdownMenuItem key={preset.label} onClick={() => handleSelect(preset)}>
+						{preset.label}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuGroup>
 		</DropdownMenuSubContent>
 	);
 }
@@ -129,13 +135,14 @@ function DateRangeChipContent<TData, TValue>({
 	presets,
 	direction,
 }: DateRangeChipContentProps<TData, TValue>) {
+	const t = useTranslations("modules.shared.filterRegistry");
 	const meta = column.columnDef.meta;
 
 	if (!isDateRangeFilter(value)) return null;
 
 	const days = differenceInDays(value.end, value.start);
-	const daysLabel = days === 1 ? "1 Tag" : `${days} Tage`;
-	const directionLabel = direction === "past" ? "vor" : "in";
+	const daysLabel = t("days", { count: days });
+	const directionLabel = direction === "past" ? t("daysAgo") : t("daysIn");
 
 	const handlePresetChange = (preset: DateRangePreset) => {
 		const range = preset.getRange();
@@ -151,7 +158,7 @@ function DateRangeChipContent<TData, TValue>({
 	return (
 		<ButtonGroup>
 			<Button
-				className="disabled:opacity-100"
+				className="disabled:opacity-100 data-disabled:opacity-100"
 				disabled
 				size="xs"
 				variant="outline"
@@ -162,7 +169,7 @@ function DateRangeChipContent<TData, TValue>({
 
 			{/* Direction indicator */}
 			<Button
-				className="disabled:opacity-100"
+				className="disabled:opacity-100 data-disabled:opacity-100"
 				disabled
 				size="xs"
 				variant="outline"
@@ -180,20 +187,22 @@ function DateRangeChipContent<TData, TValue>({
 					}
 				/>
 				<DropdownMenuContent className="min-w-48">
-					{presets.map((preset) => (
-						<DropdownMenuItem
-							key={preset.label}
-							onClick={() => handlePresetChange(preset)}
-						>
-							{preset.label}
-						</DropdownMenuItem>
-					))}
+					<DropdownMenuGroup>
+						{presets.map((preset) => (
+							<DropdownMenuItem
+								key={preset.label}
+								onClick={() => handlePresetChange(preset)}
+							>
+								{preset.label}
+							</DropdownMenuItem>
+						))}
+					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
 			<Button disableAnimation onClick={onRemove} size="icon-xs" variant="outline">
 				<XIcon />
-				<span className="sr-only">Filter entfernen</span>
+				<span className="sr-only">{t("removeFilter")}</span>
 			</Button>
 		</ButtonGroup>
 	);
@@ -207,6 +216,7 @@ function SelectMenuContent<TData, TValue>({
 	column,
 	closeMenu,
 }: FilterMenuContentProps<TData, TValue>) {
+	const t = useTranslations("modules.shared.filterRegistry");
 	const meta = column.columnDef.meta;
 	const options = meta?.options ?? [];
 	const filterOption = useOptionFilter();
@@ -222,10 +232,12 @@ function SelectMenuContent<TData, TValue>({
 
 	if (meta?.searchable) {
 		return (
-			<DropdownMenuSubContent className="flex max-h-72 w-64 flex-col overflow-hidden">
-				<ComboboxPrimitive.Root filter={filterOption} inline items={options} open>
-					<DropdownMenuSubSearchInput placeholder="Suchen…" />
-					<DropdownMenuSubSearchEmpty>Keine Treffer</DropdownMenuSubSearchEmpty>
+			<DropdownMenuPortal>
+				<DropdownMenuSubSearch filter={filterOption} inline items={options} open>
+					<DropdownMenuSubSearchInput placeholder={t("search")} />
+					<DropdownMenuSubSearchEmpty>
+						<div>{t("noResults")}</div>
+					</DropdownMenuSubSearchEmpty>
 					<DropdownMenuSubSearchList>
 						{(option: FilterOption) => (
 							<DropdownMenuSubSearchItem
@@ -240,21 +252,23 @@ function SelectMenuContent<TData, TValue>({
 							</DropdownMenuSubSearchItem>
 						)}
 					</DropdownMenuSubSearchList>
-				</ComboboxPrimitive.Root>
-			</DropdownMenuSubContent>
+				</DropdownMenuSubSearch>
+			</DropdownMenuPortal>
 		);
 	}
 
 	return (
 		<DropdownMenuSubContent className="min-w-48">
-			{options.map((option) => (
-				<DropdownMenuItem
-					key={option.value}
-					onClick={() => handleSelect(option.value, "is")}
-				>
-					{renderOptionContent(option)}
-				</DropdownMenuItem>
-			))}
+			<DropdownMenuGroup>
+				{options.map((option) => (
+					<DropdownMenuItem
+						key={option.value}
+						onClick={() => handleSelect(option.value, "is")}
+					>
+						{renderOptionContent(option)}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuGroup>
 		</DropdownMenuSubContent>
 	);
 }
@@ -264,6 +278,7 @@ function SelectChipContent<TData, TValue>({
 	value,
 	onRemove,
 }: FilterChipProps<TData, TValue>) {
+	const t = useTranslations("modules.shared.filterRegistry");
 	const meta = column.columnDef.meta;
 
 	if (!isSelectFilter(value)) return null;
@@ -292,7 +307,7 @@ function SelectChipContent<TData, TValue>({
 	return (
 		<ButtonGroup>
 			<Button
-				className="disabled:opacity-100"
+				className="disabled:opacity-100 data-disabled:opacity-100"
 				disabled
 				size="xs"
 				variant="outline"
@@ -306,17 +321,19 @@ function SelectChipContent<TData, TValue>({
 				<DropdownMenuTrigger
 					render={
 						<Button disableAnimation size="xs" variant="outline">
-							{value.operator === "is" ? "ist" : "ist nicht"}
+							{value.operator === "is" ? t("is") : t("isNot")}
 						</Button>
 					}
 				/>
 				<DropdownMenuContent>
-					<DropdownMenuItem onClick={() => handleOperatorChange("is")}>
-						ist
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => handleOperatorChange("is-not")}>
-						ist nicht
-					</DropdownMenuItem>
+					<DropdownMenuGroup>
+						<DropdownMenuItem onClick={() => handleOperatorChange("is")}>
+							{t("is")}
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => handleOperatorChange("is-not")}>
+							{t("isNot")}
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
@@ -333,20 +350,22 @@ function SelectChipContent<TData, TValue>({
 					}
 				/>
 				<DropdownMenuContent className="min-w-48">
-					{options.map((option) => (
-						<DropdownMenuItem
-							key={option.value}
-							onClick={() => handleValueChange(option.value)}
-						>
-							{renderOptionContent(option)}
-						</DropdownMenuItem>
-					))}
+					<DropdownMenuGroup>
+						{options.map((option) => (
+							<DropdownMenuItem
+								key={option.value}
+								onClick={() => handleValueChange(option.value)}
+							>
+								{renderOptionContent(option)}
+							</DropdownMenuItem>
+						))}
+					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
 			<Button onClick={onRemove} size="icon-xs" variant="outline">
 				<XIcon />
-				<span className="sr-only">Filter entfernen</span>
+				<span className="sr-only">{t("removeFilter")}</span>
 			</Button>
 		</ButtonGroup>
 	);
@@ -358,6 +377,7 @@ function SelectChipContent<TData, TValue>({
 function MultiSelectMenuContent<TData, TValue>({
 	column,
 }: FilterMenuContentProps<TData, TValue>) {
+	const t = useTranslations("modules.shared.filterRegistry");
 	const meta = column.columnDef.meta;
 	const options = meta?.options ?? [];
 	const filterOption = useOptionFilter();
@@ -395,10 +415,12 @@ function MultiSelectMenuContent<TData, TValue>({
 
 	if (meta?.searchable) {
 		return (
-			<DropdownMenuSubContent className="flex max-h-72 w-64 flex-col overflow-hidden">
-				<ComboboxPrimitive.Root filter={filterOption} inline items={options} open>
-					<DropdownMenuSubSearchInput placeholder="Suchen…" />
-					<DropdownMenuSubSearchEmpty>Keine Treffer</DropdownMenuSubSearchEmpty>
+			<DropdownMenuPortal>
+				<DropdownMenuSubSearch filter={filterOption} inline items={options} open>
+					<DropdownMenuSubSearchInput placeholder={t("search")} />
+					<DropdownMenuSubSearchEmpty>
+						<div>{t("noResults")}</div>
+					</DropdownMenuSubSearchEmpty>
 					<DropdownMenuSubSearchList>
 						{(option: FilterOption) => (
 							<DropdownMenuSubSearchItem
@@ -411,22 +433,24 @@ function MultiSelectMenuContent<TData, TValue>({
 							</DropdownMenuSubSearchItem>
 						)}
 					</DropdownMenuSubSearchList>
-				</ComboboxPrimitive.Root>
-			</DropdownMenuSubContent>
+				</DropdownMenuSubSearch>
+			</DropdownMenuPortal>
 		);
 	}
 
 	return (
 		<DropdownMenuSubContent className="min-w-48">
-			{options.map((option) => (
-				<DropdownMenuCheckboxItem
-					checked={selectedValues.includes(option.value)}
-					key={option.value}
-					onCheckedChange={() => handleToggle(option.value)}
-				>
-					{renderOptionContent(option)}
-				</DropdownMenuCheckboxItem>
-			))}
+			<DropdownMenuGroup>
+				{options.map((option) => (
+					<DropdownMenuCheckboxItem
+						checked={selectedValues.includes(option.value)}
+						key={option.value}
+						onCheckedChange={() => handleToggle(option.value)}
+					>
+						{renderOptionContent(option)}
+					</DropdownMenuCheckboxItem>
+				))}
+			</DropdownMenuGroup>
 		</DropdownMenuSubContent>
 	);
 }
@@ -436,6 +460,7 @@ function MultiSelectChipContent<TData, TValue>({
 	value,
 	onRemove,
 }: FilterChipProps<TData, TValue>) {
+	const t = useTranslations("modules.shared.filterRegistry");
 	const meta = column.columnDef.meta;
 
 	if (!isMultiSelectFilter(value)) return null;
@@ -484,7 +509,7 @@ function MultiSelectChipContent<TData, TValue>({
 	const displayLabel =
 		selectedOptions.length === 1 && firstSelectedOption
 			? firstSelectedOption.label
-			: `${selectedOptions.length} ausgewählt`;
+			: t("selectedCount", { count: selectedOptions.length });
 
 	// Get icon component for single selection
 	const FirstOptionIcon = firstSelectedOption?.icon;
@@ -492,7 +517,7 @@ function MultiSelectChipContent<TData, TValue>({
 	return (
 		<ButtonGroup>
 			<Button
-				className="disabled:opacity-100"
+				className="bg-background disabled:opacity-100 data-disabled:opacity-100"
 				disabled
 				size="xs"
 				variant="outline"
@@ -506,17 +531,19 @@ function MultiSelectChipContent<TData, TValue>({
 				<DropdownMenuTrigger
 					render={
 						<Button disableAnimation size="xs" variant="outline">
-							{value.operator === "in" ? "enthält" : "enthält nicht"}
+							{value.operator === "in" ? t("contains") : t("containsNot")}
 						</Button>
 					}
 				/>
 				<DropdownMenuContent>
-					<DropdownMenuItem onClick={() => handleOperatorChange("in")}>
-						enthält
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => handleOperatorChange("not-in")}>
-						enthält nicht
-					</DropdownMenuItem>
+					<DropdownMenuGroup>
+						<DropdownMenuItem onClick={() => handleOperatorChange("in")}>
+							{t("contains")}
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => handleOperatorChange("not-in")}>
+							{t("containsNot")}
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
@@ -533,21 +560,23 @@ function MultiSelectChipContent<TData, TValue>({
 					}
 				/>
 				<DropdownMenuContent className="min-w-48">
-					{options.map((option) => (
-						<DropdownMenuCheckboxItem
-							checked={value.value.includes(option.value)}
-							key={option.value}
-							onCheckedChange={() => handleValueToggle(option.value)}
-						>
-							{renderOptionContent(option)}
-						</DropdownMenuCheckboxItem>
-					))}
+					<DropdownMenuGroup>
+						{options.map((option) => (
+							<DropdownMenuCheckboxItem
+								checked={value.value.includes(option.value)}
+								key={option.value}
+								onCheckedChange={() => handleValueToggle(option.value)}
+							>
+								{renderOptionContent(option)}
+							</DropdownMenuCheckboxItem>
+						))}
+					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
 			<Button onClick={onRemove} size="icon-xs" variant="outline">
 				<XIcon />
-				<span className="sr-only">Filter entfernen</span>
+				<span className="sr-only">{t("removeFilter")}</span>
 			</Button>
 		</ButtonGroup>
 	);

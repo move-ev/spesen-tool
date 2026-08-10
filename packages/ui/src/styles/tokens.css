@@ -1,0 +1,106 @@
+/*
+ * Design tokens for @zemio/ui.
+ *
+ * This file deliberately does not `@import "tailwindcss"`. It is the
+ * `@zemio/ui/styles.css` export, and every consumer bootstraps Tailwind
+ * itself; importing it here as well emits preflight and the theme layer a
+ * second time. Consumers must import Tailwind *before* this file, because the
+ * `@theme inline` block below resolves against Tailwind's default palette
+ * (`--color-slate-*`, `--color-indigo-*`). Storybook has no host app, so it
+ * bootstraps Tailwind in `.storybook/preview.css` instead.
+ *
+ * These are intentionally namespaced under `ui-` (both the raw custom
+ * properties and the generated Tailwind utilities, e.g. `bg-ui-accent`)
+ * so they never collide with the shadcn/ui tokens still used by apps/web
+ * (`--background`, `--primary`, ...). Only tokens actually consumed by an
+ * existing component are defined here; extend as components are added.
+ */
+:root {
+	--ui-color-canvas: oklch(1 0 0);
+	--ui-color-canvas-foreground: oklch(0.21 0.006 285.885);
+	--ui-color-background: oklch(1 0 0);
+
+	--ui-color-accent: oklch(0.541 0.281 293.009);
+	--ui-color-accent-foreground: oklch(1 0 0);
+
+	--ui-color-muted: oklch(0.967 0.001 286.375);
+	--ui-color-muted-foreground: oklch(0.442 0.017 285.786);
+
+	--ui-color-danger: oklch(0.577 0.245 27.325);
+	--ui-color-danger-foreground: oklch(1 0 0);
+
+	--ui-color-border: oklch(0.92 0.004 286.32);
+	--ui-color-ring: oklch(0.541 0.281 293.009 / 0.5);
+
+	--ui-radius: 0.5rem;
+}
+
+.dark {
+	--ui-color-canvas: oklch(0.21 0.006 285.885);
+	--ui-color-canvas-foreground: oklch(0.985 0 0);
+
+	--ui-color-accent: oklch(0.673 0.238 293.009);
+	--ui-color-accent-foreground: oklch(0.141 0.005 285.823);
+
+	--ui-color-muted: oklch(0.274 0.006 286.033);
+	--ui-color-muted-foreground: oklch(0.705 0.015 286.067);
+
+	--ui-color-danger: oklch(0.704 0.191 22.216);
+	--ui-color-danger-foreground: oklch(0.141 0.005 285.823);
+
+	--ui-color-border: oklch(1 0 0 / 0.1);
+	--ui-color-ring: oklch(0.673 0.238 293.009 / 0.5);
+
+	--ui-color-background: oklch(0.21 0.006 285.885);
+}
+
+@theme inline {
+	--color-ui-canvas: var(--ui-color-canvas);
+	--color-ui-canvas-foreground: var(--ui-color-canvas-foreground);
+	--color-ui-accent: var(--ui-color-accent);
+	--color-ui-accent-foreground: var(--ui-color-accent-foreground);
+	--color-ui-muted: var(--ui-color-muted);
+	--color-ui-muted-foreground: var(--ui-color-muted-foreground);
+	--color-ui-danger: var(--ui-color-danger);
+	--color-ui-danger-foreground: var(--ui-color-danger-foreground);
+	--color-ui-border: var(--ui-color-border);
+	--color-ui-ring: var(--ui-color-ring);
+	--radius-ui-md: var(--ui-radius);
+	--radius-ui-sm: calc(var(--ui-radius) - 0.25rem);
+	--radius-ui-lg: calc(var(--ui-radius) + 0.25rem);
+
+	--color-base-50: var(--color-slate-50);
+	--color-base-100: var(--color-slate-100);
+	--color-base-200: var(--color-slate-200);
+	--color-base-300: var(--color-slate-300);
+	--color-base-400: var(--color-slate-400);
+	--color-base-500: var(--color-slate-500);
+	--color-base-600: var(--color-slate-600);
+	--color-base-700: var(--color-slate-700);
+	--color-base-800: var(--color-slate-800);
+	--color-base-900: var(--color-slate-900);
+	--color-base-950: var(--color-slate-950);
+
+	--color-accent-50: var(--color-indigo-50);
+	--color-accent-100: var(--color-indigo-100);
+	--color-accent-200: var(--color-indigo-200);
+	--color-accent-300: var(--color-indigo-300);
+	--color-accent-400: var(--color-indigo-400);
+	--color-accent-500: var(--color-indigo-500);
+	--color-accent-600: var(--color-indigo-600);
+	--color-accent-700: var(--color-indigo-700);
+	--color-accent-800: var(--color-indigo-800);
+	--color-accent-900: var(--color-indigo-900);
+	--color-accent-950: var(--color-indigo-950);
+
+	--color-background: var(--ui-color-background);
+
+	--color-sidebar: var(--ui-color-canvas);
+	--color-sidebar-foreground: var(--ui-color-canvas-foreground);
+	--color-sidebar-primary: var(--ui-color-accent);
+	--color-sidebar-primary-foreground: var(--ui-color-accent-foreground);
+	--color-sidebar-accent: var(--ui-color-muted);
+	--color-sidebar-accent-foreground: var(--ui-color-muted-foreground);
+	--color-sidebar-border: var(--ui-color-border);
+	--color-sidebar-ring: var(--ui-color-ring);
+}

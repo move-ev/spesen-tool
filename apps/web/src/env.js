@@ -210,6 +210,18 @@ export const env = createEnv({
 		 * Better Stack log ingesting endpoint used by the server-side logger.
 		 */
 		BETTER_STACK_INGESTING_URL: z.url().optional(),
+
+		// =================================================================
+		// Local Development Tuning
+		// =================================================================
+
+		/**
+		 * Opt-in cap on Turbopack's memory use, in megabytes. Build-time only.
+		 * Unset by default so it doesn't affect anyone else's machine; set it in
+		 * your local .env on memory-constrained setups (e.g. a small VPS) to stop
+		 * dev-server RSS from growing unbounded over a long session.
+		 */
+		TURBOPACK_MEMORY_LIMIT_MB: z.coerce.number().int().positive().optional(),
 	},
 
 	/**
@@ -260,6 +272,9 @@ export const env = createEnv({
 		BETTER_STACK_DSN: process.env.BETTER_STACK_DSN,
 		BETTER_STACK_SOURCE_TOKEN: process.env.BETTER_STACK_SOURCE_TOKEN,
 		BETTER_STACK_INGESTING_URL: process.env.BETTER_STACK_INGESTING_URL,
+
+		// Local development tuning
+		TURBOPACK_MEMORY_LIMIT_MB: process.env.TURBOPACK_MEMORY_LIMIT_MB,
 	},
 
 	/**

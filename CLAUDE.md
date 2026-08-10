@@ -89,10 +89,10 @@ Expense-report application for student initiatives.
 
 ### Data model
 
-- Core: `Report → Expense → Attachment`
-- `Report` statuses: `DRAFT` → `PENDING_APPROVAL` → `NEEDS_REVISION` / `ACCEPTED` / `REJECTED`
-- Multi-tenancy: `Organization`, `Member`, `Invitation`; roles: `owner` / `admin` / `member`
-- `BankingDetails` are encrypted field-by-field (AES-256-GCM) in `src/lib/banking/cryptic.ts`
+- Core: `Report → Expense → Attachment`; type-specific expense data lives in 1:1 `TravelExpenseDetail` / `FoodExpenseDetail` tables (`Expense.meta` is deprecated, see `docs/schema-audit.md`)
+- `Report` statuses: `DRAFT` → `PENDING_APPROVAL` → `NEEDS_REVISION` / `ACCEPTED` / `REJECTED` → `PAID`
+- Multi-tenancy: `Organization`, `Member` (unique per `userId + organizationId`), `Invitation`; roles: `owner` / `admin` / `member`
+- `BankingDetails` are encrypted field-by-field (AES-256-GCM) in `src/lib/banking/cryptic.ts`; submitting a report copies them into an immutable `ReportBankingSnapshot`, and `Report.bankingDetailsId` is a nullable live reference (`SET NULL` on delete)
 - `Settings` are org-scoped and upserted on read
 - `CostUnit` unique by `organizationId + tag`; may belong to `CostUnitGroup`
 

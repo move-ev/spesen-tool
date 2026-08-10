@@ -1,5 +1,3 @@
-import { ReportStatus } from "@zemio/db";
-import { z } from "zod";
 import { createReportSchema } from "@/lib/validators";
 import {
 	createTRPCRouter,
@@ -8,11 +6,14 @@ import {
 } from "@/server/api/trpc";
 import {
 	registerReportEmailSubscribers,
+	reportIdInputSchema,
 	reportListInputSchema,
 	reportProcedure,
 	reportService,
 	toReportDetailDTO,
 	toReportServiceContext,
+	transitionReportSchema,
+	updateReportSchema,
 } from "@/server/modules/report";
 
 // Wire the email side-effects to the report event bus when the router loads.
@@ -26,7 +27,7 @@ export const reportRouter = createTRPCRouter({
 		),
 
 	review: orgAdminProcedure
-		.input(z.object({ id: z.string() }))
+		.input(reportIdInputSchema)
 		.query(({ ctx, input }) =>
 			reportService.review(toReportServiceContext(ctx), input),
 		),
@@ -36,7 +37,7 @@ export const reportRouter = createTRPCRouter({
 	),
 
 	financialSummary: orgProcedure
-		.input(z.object({ id: z.string() }))
+		.input(reportIdInputSchema)
 		.query(({ ctx, input }) =>
 			reportService.financialSummary(toReportServiceContext(ctx), input),
 		),
@@ -48,17 +49,9 @@ export const reportRouter = createTRPCRouter({
 		),
 
 	update: reportProcedure("update")
-		.input(
-			z.object({
-				title: z.string().min(1).optional(),
-				description: z.string().optional(),
-			}),
-		)
+		.input(updateReportSchema)
 		.mutation(({ ctx, input }) =>
-			reportService.update(toReportServiceContext(ctx), ctx.report, {
-				title: input.title,
-				description: input.description,
-			}),
+			reportService.update(toReportServiceContext(ctx), ctx.report, input),
 		),
 
 	delete: reportProcedure("delete").mutation(({ ctx }) =>
@@ -70,22 +63,12 @@ export const reportRouter = createTRPCRouter({
 	),
 
 	transition: reportProcedure("transition")
-		.input(
-			z.object({
-				status: z.nativeEnum(ReportStatus),
-				notify: z.boolean().optional(),
-			}),
-		)
+		.input(transitionReportSchema)
 		.mutation(({ ctx, input }) =>
-			reportService.transition(toReportServiceContext(ctx), ctx.report, {
-				status: input.status,
-				notify: input.notify,
-			}),
+			reportService.transition(toReportServiceContext(ctx), ctx.report, input),
 		),
 
-	exportToPdf: orgProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(({ ctx, input }) =>
-			reportService.exportToPdf(toReportServiceContext(ctx), input),
-		),
+	exportToPdf: reportProcedure("read").mutation(({ ctx }) =>
+		reportService.exportToPdf(toReportServiceContext(ctx), ctx.report),
+	),
 });

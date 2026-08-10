@@ -2,17 +2,18 @@
 
 import type { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import type { Column, Table } from "@tanstack/react-table";
-import type React from "react";
-import { memo, useRef } from "react";
-import { Button } from "../ui/button";
 import {
+	Button,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuSub,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@zemio/ui";
+import { useTranslations } from "next-intl";
+import type React from "react";
+import { memo, useRef } from "react";
 import { renderFilterMenuContent } from "./filter-registry";
 import { useFilterableColumns } from "./use-filterable-columns";
 
@@ -89,6 +90,7 @@ export function FilterMenu<TData>({
 	children,
 	...buttonProps
 }: FilterMenuProps<TData>) {
+	const t = useTranslations("modules.shared.filterMenu");
 	const filterableColumns = useFilterableColumns(table);
 	const menuActionsRef = useRef<MenuPrimitive.Root.Actions>(null);
 
@@ -105,7 +107,8 @@ export function FilterMenu<TData>({
 				render={<Button {...buttonProps}>{children}</Button>}
 			/>
 			<DropdownMenuContent
-				aria-label="Filteroptionen"
+				align="end"
+				aria-label={t("ariaLabel")}
 				className="w-full min-w-48 max-w-72"
 			>
 				<DropdownMenuGroup>

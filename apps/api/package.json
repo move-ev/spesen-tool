@@ -1,11 +1,12 @@
 {
 	"name": "@zemio/api",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
 		"start": "bun src/index.ts",
+		"test": "bun test",
 		"typecheck": "tsc --noEmit",
 		"check": "biome check .",
 		"check:unsafe": "biome check --write --unsafe .",
@@ -18,6 +19,7 @@
 		"@prisma/client": "^7.2.0",
 		"@zemio/db": "workspace:*",
 		"@zemio/encryption": "workspace:*",
+		"@zemio/i18n": "workspace:*",
 		"date-fns": "^4.1.0",
 		"heic-convert": "^2.1.0",
 		"hono": "^4",

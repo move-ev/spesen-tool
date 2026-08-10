@@ -1,6 +1,16 @@
 import { ReportStatus } from "@zemio/db";
 import { z } from "zod";
 
+/**
+ * The text of a user-authored comment.
+ *
+ * Enforced at runtime only via {@link addAuditCommentSchema}, the router input.
+ * Its other use — the `report.comment_added` payload — feeds
+ * {@link auditActionSchema}, which is never parsed and exists purely to derive
+ * {@link NewAuditAction}. Shared so the two declarations cannot drift.
+ */
+export const auditCommentTextSchema = z.string().min(1).max(2000);
+
 const reportCreated = z.object({
 	action: z.literal("report.created"),
 	entityType: z.literal("report"),
@@ -49,7 +59,7 @@ const reportCommentAdded = z.object({
 	action: z.literal("report.comment_added"),
 	entityType: z.literal("report"),
 	diff: z.null(),
-	payload: z.object({ text: z.string().min(1).max(2000) }),
+	payload: z.object({ text: auditCommentTextSchema }),
 });
 
 const expenseAdded = z.object({
@@ -124,3 +134,13 @@ export const auditActionSchema = z.discriminatedUnion("action", [
 ]);
 
 export type NewAuditAction = z.infer<typeof auditActionSchema>;
+
+/** Cursor-paginated input shared by `audit.list` and `audit.history`. */
+export const auditListInputSchema = z.object({
+	cursor: z.string().optional(),
+	limit: z.number().int().min(1).max(50).default(20),
+});
+
+export const addAuditCommentSchema = z.object({
+	text: auditCommentTextSchema,
+});

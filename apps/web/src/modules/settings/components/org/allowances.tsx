@@ -2,105 +2,129 @@
 
 import { NumberField } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
-import { toast } from "sonner";
-import type z from "zod";
-import { Button } from "@/components/ui/button";
 import {
 	Field,
+	FieldContent,
 	FieldDescription,
 	FieldError,
-	FieldGroup,
 	FieldLabel,
-} from "@/components/ui/field";
-import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
 	InputGroupText,
-} from "@/components/ui/input-group";
-import { Separator } from "@/components/ui/separator";
+	Skeleton,
+} from "@zemio/ui";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import type z from "zod";
+import { useSaveBar } from "@/components/save-bar";
 import { cn } from "@/lib/utils";
 import {
 	updateMealAllowancesSchema,
 	updateTravelAllowancesSchema,
 } from "@/lib/validators";
 import { api } from "@/trpc/react";
+import {
+	SettingsCard,
+	SettingsCardContent,
+	SettingsCardLabel,
+} from "../settings-card";
+import { SettingsError } from "../settings-error";
+import { SettingsSubtitle, SettingsTitle } from "../settings-typography";
 
-function OrgSettingsAllowances() {
+function OrgSettingsAllowances({
+	className,
+	...props
+}: React.ComponentProps<"main">) {
+	const t = useTranslations("modules.settings.allowances");
+
 	return (
-		<section className="container">
-			<header className="flex flex-wrap items-start justify-between gap-8">
-				<div className="space-y-1">
-					<h1 className="font-bold text-2xl text-zinc-800">Zulagen & Abzüge</h1>
-					<p className="text-sm text-zinc-700">
-						Verwalte die Zulagen und Abzüge für Spesenanträge.
-					</p>
-				</div>
-			</header>
-			<section className="mt-12">
-				<OrgTravelAllowancesContent />
-			</section>
-			<Separator className={"my-12"} />
-			<section>
-				<OrgMealAllowancesContent />
-			</section>
-		</section>
+		<main
+			className={cn("py-16", className)}
+			data-slot="org-settings-allowances"
+			{...props}
+		>
+			<div className="container max-w-4xl space-y-1">
+				<SettingsTitle>{t("title")}</SettingsTitle>
+				<SettingsSubtitle>{t("description")}</SettingsSubtitle>
+			</div>
+			<div className="container mt-12 max-w-4xl">
+				<TravelAllowancesSection />
+			</div>
+			<div className="container mt-12 max-w-4xl">
+				<MealAllowancesSection />
+			</div>
+		</main>
 	);
 }
 
-/* begin OrgTravelAllowancesContent ===============================================================  */
+// ======= TRAVEL ===========================================================================
 
-function OrgTravelAllowancesContent({
+function TravelAllowancesSection({
 	className,
 	...props
 }: React.ComponentProps<"div">) {
-	const orgQuery = api.settings.get.useQuery();
+	const t = useTranslations("modules.settings.allowances");
+	const tShared = useTranslations("modules.settings.shared");
+	const query = api.settings.get.useQuery();
 
-	if (orgQuery.isPending) {
-		return <OrgTravelAllowancesSkeleton className={className} {...props} />;
+	if (query.isPending) {
+		return <Skeleton className={cn("h-64 w-full", className)} {...props} />;
 	}
 
-	if (orgQuery.error) {
-		return <OrgTravelAllowancesError className={className} {...props} />;
+	if (query.error) {
+		const { error } = query;
+
+		return (
+			<SettingsError
+				description={error.data?.code ?? tShared("unknownError")}
+				message={error.message}
+			/>
+		);
 	}
 
-	const { data } = orgQuery;
+	const { data } = query;
 
 	return (
-		<div className={cn("", className)} data-slot="component" {...props}>
-			<OrgTravelAllowancesForm
-				defaultValues={{
-					kilometerRate: data.kilometerRate,
-				}}
-			/>
-		</div>
+		<SettingsCard
+			className={cn(className)}
+			data-slot="org-settings-travel-allowances"
+			{...props}
+		>
+			<SettingsCardLabel>{t("sections.travel")}</SettingsCardLabel>
+			<SettingsCardContent>
+				<TravelAllowancesForm
+					defaultValues={{
+						kilometerRate: data.kilometerRate,
+					}}
+				/>
+			</SettingsCardContent>
+		</SettingsCard>
 	);
 }
 
-type UpdateOrgTravelAllowancesFormValues = z.infer<
-	typeof updateTravelAllowancesSchema
->;
+const TRAVEL_ALLOWANCES_FORM_ID = "org-update-travel-allowances-form";
 
-const UPDATE_TRAVEL_ALLOWANCES_FORM_ID = "org-update-food-allowances-form";
+type TravelAllowancesFormValues = z.infer<typeof updateTravelAllowancesSchema>;
+interface TravelAllowancesFormProps extends React.ComponentProps<"form"> {
+	defaultValues: TravelAllowancesFormValues;
+}
 
-function OrgTravelAllowancesForm({
-	className,
+function TravelAllowancesForm({
 	defaultValues,
 	...props
-}: React.ComponentProps<"form"> & {
-	defaultValues: UpdateOrgTravelAllowancesFormValues;
-}) {
+}: TravelAllowancesFormProps) {
+	const t = useTranslations("modules.settings.allowances");
 	const utils = api.useUtils();
 
 	const updateMutation = api.settings.updateTravelAllowances.useMutation({
-		onSuccess: () => {
-			toast.success("Einstellungen wurden erfolgreich gespeichert");
-			utils.settings.get.invalidate();
-			form.reset();
+		onSuccess: (updated) => {
+			utils.settings.get.setData(undefined, updated);
+			void utils.settings.get.invalidate();
 		},
 		onError: (error) => {
-			toast.error("Einstellungen konnten nicht gespeichert werden", {
-				description: error.message ?? "Ein unbekannter Fehler ist aufgetreten",
+			toast.error(t("saveErrorTitle"), {
+				description: error.message ?? t("saveErrorFallback"),
 			});
 		},
 	});
@@ -110,29 +134,40 @@ function OrgTravelAllowancesForm({
 		validators: {
 			onSubmit: updateTravelAllowancesSchema,
 		},
-		onSubmit: ({ value }) => {
-			updateMutation.mutate(value);
+		onSubmit: async ({ value }) => {
+			try {
+				const updated = await updateMutation.mutateAsync(value);
+				// Re-baseline so the form goes clean and the save bar can complete.
+				form.reset(updated);
+			} catch {
+				// error toast handled by the mutation's onError; form stays dirty
+			}
 		},
 	});
 
+	useSaveBar(TRAVEL_ALLOWANCES_FORM_ID, form);
+
 	return (
 		<form
-			className={cn(className)}
-			id={UPDATE_TRAVEL_ALLOWANCES_FORM_ID}
+			data-slot="travel-allowances-form"
+			id={TRAVEL_ALLOWANCES_FORM_ID}
 			onSubmit={(e) => {
 				e.preventDefault();
 				form.handleSubmit();
 			}}
 			{...props}
 		>
-			<FieldGroup>
-				<form.Field name={"kilometerRate"}>
-					{({ state, ...field }) => {
-						const isInvalid = !state.meta.isValid && state.meta.isTouched;
+			<form.Field name={"kilometerRate"}>
+				{({ state, ...field }) => {
+					const isInvalid = !state.meta.isValid && state.meta.isTouched;
 
-						return (
-							<Field data-invalid={isInvalid}>
-								<FieldLabel htmlFor={field.name}>Kilometerpauschale</FieldLabel>
+					return (
+						<Field data-invalid={isInvalid}>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>{t("kilometerRate.label")}</FieldLabel>
+								<FieldDescription>{t("kilometerRate.description")}</FieldDescription>
+							</FieldContent>
+							<div className="space-y-2">
 								<NumberField.Root
 									format={{
 										style: "decimal",
@@ -160,135 +195,94 @@ function OrgTravelAllowancesForm({
 											/>
 											<InputGroupAddon
 												align={"inline-end"}
-												className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
+												className="flex w-8 items-center justify-center overflow-hidden border-l bg-base-50 p-2"
 											>
 												<span>€</span>
 											</InputGroupAddon>
 										</InputGroup>
 									</NumberField.Group>
 								</NumberField.Root>
-								<FieldDescription>
-									Dieser Betrag wird pro Kilometer für Reise-Ausgaben berechnet.
-								</FieldDescription>
+
 								{isInvalid && <FieldError errors={state.meta.errors} />}
-							</Field>
-						);
-					}}
-				</form.Field>
-				<div className="flex justify-end">
-					<form.Subscribe
-						selector={(s) => ({
-							canSubmit: s.canSubmit,
-							isSubmitting: s.isSubmitting,
-							isDefaultValue: s.isDefaultValue,
-						})}
-					>
-						{({ canSubmit, isSubmitting, isDefaultValue }) => (
-							<Button
-								disabled={
-									!canSubmit ||
-									isSubmitting ||
-									isDefaultValue ||
-									updateMutation.isPending
-								}
-								form={UPDATE_TRAVEL_ALLOWANCES_FORM_ID}
-								size={"sm"}
-								type="submit"
-							>
-								Speichern
-							</Button>
-						)}
-					</form.Subscribe>
-				</div>
-			</FieldGroup>
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
 		</form>
 	);
 }
 
-function OrgTravelAllowancesSkeleton({
+// ======= MEAL ============================================================================
+
+function MealAllowancesSection({
 	className,
 	...props
 }: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("", className)}
-			data-slot="org-travel-allowances-content-skeleton"
-			{...props}
-		/>
-	);
-}
+	const t = useTranslations("modules.settings.allowances");
+	const tShared = useTranslations("modules.settings.shared");
+	const query = api.settings.get.useQuery();
 
-function OrgTravelAllowancesError({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("", className)}
-			data-slot="org-travel-allowances-content-skeleton"
-			{...props}
-		/>
-	);
-}
-
-/* end OrgTravelAllowancesContent =================================================================  */
-
-/* begin OrgMealAllowancesContent =================================================================  */
-
-function OrgMealAllowancesContent({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
-	const orgQuery = api.settings.get.useQuery();
-
-	if (orgQuery.isPending) {
-		return <OrgMealAllowancesSkeleton className={className} {...props} />;
+	if (query.isPending) {
+		return <Skeleton className={cn("h-64 w-full", className)} {...props} />;
 	}
 
-	if (orgQuery.error) {
-		return <OrgMealAllowancesError className={className} {...props} />;
-	}
+	if (query.error) {
+		const { error } = query;
 
-	const { data } = orgQuery;
-
-	return (
-		<div className={cn("", className)} data-slot="component" {...props}>
-			<OrgMealAllowancesForm
-				defaultValues={{
-					breakfastDeduction: data.breakfastDeduction,
-					dailyFoodAllowance: data.dailyFoodAllowance,
-					dinnerDeduction: data.dinnerDeduction,
-					lunchDeduction: data.lunchDeduction,
-				}}
+		return (
+			<SettingsError
+				description={error.data?.code ?? tShared("unknownError")}
+				message={error.message}
 			/>
-		</div>
+		);
+	}
+
+	const { data } = query;
+
+	return (
+		<SettingsCard
+			className={cn(className)}
+			data-slot="org-settings-meal-allowances"
+			{...props}
+		>
+			<SettingsCardLabel>{t("sections.food")}</SettingsCardLabel>
+			<SettingsCardContent>
+				<MealAllowancesForm
+					defaultValues={{
+						breakfastDeduction: data.breakfastDeduction,
+						dailyFoodAllowance: data.dailyFoodAllowance,
+						dinnerDeduction: data.dinnerDeduction,
+						lunchDeduction: data.lunchDeduction,
+					}}
+				/>
+			</SettingsCardContent>
+		</SettingsCard>
 	);
 }
 
-type UpdateOrgMealAllowancesFormValues = z.infer<
-	typeof updateMealAllowancesSchema
->;
+const MEAL_ALLOWANCES_FORM_ID = "org-update-meal-allowances-form";
 
-const UPDATE_MEAL_ALLOWANCES_FORM_ID = "org-update-meal-allowances-form";
+type MealAllowancesFormValues = z.infer<typeof updateMealAllowancesSchema>;
+interface MealAllowancesFormProps extends React.ComponentProps<"form"> {
+	defaultValues: MealAllowancesFormValues;
+}
 
-function OrgMealAllowancesForm({
-	className,
+function MealAllowancesForm({
 	defaultValues,
 	...props
-}: React.ComponentProps<"form"> & {
-	defaultValues: UpdateOrgMealAllowancesFormValues;
-}) {
+}: MealAllowancesFormProps) {
+	const t = useTranslations("modules.settings.allowances");
 	const utils = api.useUtils();
 
 	const updateMutation = api.settings.updateMealAllowances.useMutation({
-		onSuccess: () => {
-			toast.success("Einstellungen wurden erfolgreich gespeichert");
-			utils.settings.get.invalidate();
-			form.reset();
+		onSuccess: (updated) => {
+			utils.settings.get.setData(undefined, updated);
+			void utils.settings.get.invalidate();
 		},
 		onError: (error) => {
-			toast.error("Einstellungen konnten nicht gespeichert werden", {
-				description: error.message ?? "Ein unbekannter Fehler ist aufgetreten",
+			toast.error(t("saveErrorTitle"), {
+				description: error.message ?? t("saveErrorFallback"),
 			});
 		},
 	});
@@ -298,278 +292,248 @@ function OrgMealAllowancesForm({
 		validators: {
 			onSubmit: updateMealAllowancesSchema,
 		},
-		onSubmit: ({ value }) => {
-			updateMutation.mutate(value);
+		onSubmit: async ({ value }) => {
+			try {
+				const updated = await updateMutation.mutateAsync(value);
+				// Re-baseline so the form goes clean and the save bar can complete.
+				form.reset(updated);
+			} catch {
+				// error toast handled by the mutation's onError; form stays dirty
+			}
 		},
 	});
 
+	useSaveBar(MEAL_ALLOWANCES_FORM_ID, form);
+
 	return (
 		<form
-			className={cn(className)}
-			id={UPDATE_MEAL_ALLOWANCES_FORM_ID}
+			data-slot="meal-allowances-form"
+			id={MEAL_ALLOWANCES_FORM_ID}
 			onSubmit={(e) => {
 				e.preventDefault();
 				form.handleSubmit();
 			}}
 			{...props}
 		>
-			<FieldGroup>
-				<FieldGroup className="grid grid-cols-1 gap-8 md:grid-cols-2">
-					<form.Field name="dailyFoodAllowance">
-						{(field) => {
-							const isInvalid =
-								field.state.meta.isTouched && !field.state.meta.isValid;
-							return (
-								<Field className="md:col-span-2" data-invalid={isInvalid}>
-									<FieldLabel htmlFor={field.name}>
-										Tägliche Verpflegungszulage
-									</FieldLabel>
-									<NumberField.Root
-										format={{
-											style: "decimal",
-											minimumFractionDigits: 2,
-											maximumFractionDigits: 2,
-										}}
-										locale={"de-DE"}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => field.handleChange(value ?? 0)}
-										value={field.state.value}
-									>
-										<NumberField.Group>
-											<InputGroup className="overflow-hidden opacity-100!">
-												<NumberField.Input
-													render={
-														<InputGroupInput
-															aria-invalid={isInvalid}
-															autoComplete="off"
-															id={field.name}
-															inputMode="decimal"
-															name={field.name}
-															placeholder="0,00"
-														/>
-													}
-												/>
-												<InputGroupAddon
-													align={"inline-end"}
-													className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
-												>
-													<span>€</span>
-												</InputGroupAddon>
-											</InputGroup>
-										</NumberField.Group>
-									</NumberField.Root>
-									<FieldDescription>
-										Dieser Betrag wird pro Tag für die Verpflegung erhoben.
-									</FieldDescription>
-									{isInvalid && <FieldError errors={field.state.meta.errors} />}
-								</Field>
-							);
-						}}
-					</form.Field>
-					<form.Field name="breakfastDeduction">
-						{(field) => {
-							const isInvalid =
-								field.state.meta.isTouched && !field.state.meta.isValid;
-							return (
-								<Field data-invalid={isInvalid}>
-									<FieldLabel htmlFor={field.name}>Morgenstückabzug</FieldLabel>
-									<NumberField.Root
-										format={{
-											style: "decimal",
-											minimumFractionDigits: 2,
-											maximumFractionDigits: 2,
-										}}
-										locale={"de-DE"}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => field.handleChange(value ?? 0)}
-										value={field.state.value}
-									>
-										<NumberField.Group>
-											<InputGroup className="overflow-hidden">
-												<InputGroupAddon align="inline-start">
-													<InputGroupText>-</InputGroupText>
-												</InputGroupAddon>
-												<NumberField.Input
-													render={
-														<InputGroupInput
-															aria-invalid={isInvalid}
-															autoComplete="off"
-															id={field.name}
-															inputMode="decimal"
-															name={field.name}
-															placeholder="0,00"
-														/>
-													}
-												/>
-												<InputGroupAddon
-													align={"inline-end"}
-													className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
-												>
-													<span>€</span>
-												</InputGroupAddon>
-											</InputGroup>
-										</NumberField.Group>
-									</NumberField.Root>
-									{isInvalid && <FieldError errors={field.state.meta.errors} />}
-								</Field>
-							);
-						}}
-					</form.Field>
-					<form.Field name="lunchDeduction">
-						{(field) => {
-							const isInvalid =
-								field.state.meta.isTouched && !field.state.meta.isValid;
-							return (
-								<Field data-invalid={isInvalid}>
-									<FieldLabel htmlFor={field.name}>Mittagessenabzug</FieldLabel>
-									<NumberField.Root
-										format={{
-											style: "decimal",
-											minimumFractionDigits: 2,
-											maximumFractionDigits: 2,
-										}}
-										locale={"de-DE"}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => field.handleChange(value ?? 0)}
-										value={field.state.value}
-									>
-										<NumberField.Group>
-											<InputGroup className="overflow-hidden">
-												<InputGroupAddon align="inline-start">
-													<InputGroupText>-</InputGroupText>
-												</InputGroupAddon>
-												<NumberField.Input
-													render={
-														<InputGroupInput
-															aria-invalid={isInvalid}
-															autoComplete="off"
-															id={field.name}
-															inputMode="decimal"
-															name={field.name}
-															placeholder="0,00"
-														/>
-													}
-												/>
-												<InputGroupAddon
-													align={"inline-end"}
-													className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
-												>
-													<span>€</span>
-												</InputGroupAddon>
-											</InputGroup>
-										</NumberField.Group>
-									</NumberField.Root>
-									{isInvalid && <FieldError errors={field.state.meta.errors} />}
-								</Field>
-							);
-						}}
-					</form.Field>
-					<form.Field name="dinnerDeduction">
-						{(field) => {
-							const isInvalid =
-								field.state.meta.isTouched && !field.state.meta.isValid;
-							return (
-								<Field data-invalid={isInvalid}>
-									<FieldLabel htmlFor={field.name}>Abendessenabzug</FieldLabel>
-									<NumberField.Root
-										format={{
-											style: "decimal",
-											minimumFractionDigits: 2,
-											maximumFractionDigits: 2,
-										}}
-										locale={"de-DE"}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => field.handleChange(value ?? 0)}
-										value={field.state.value}
-									>
-										<NumberField.Group>
-											<InputGroup className="overflow-hidden">
-												<InputGroupAddon align="inline-start">
-													<InputGroupText>-</InputGroupText>
-												</InputGroupAddon>
-												<NumberField.Input
-													render={
-														<InputGroupInput
-															aria-invalid={isInvalid}
-															autoComplete="off"
-															id={field.name}
-															inputMode="decimal"
-															name={field.name}
-															placeholder="0,00"
-														/>
-													}
-												/>
-												<InputGroupAddon
-													align={"inline-end"}
-													className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
-												>
-													<span>€</span>
-												</InputGroupAddon>
-											</InputGroup>
-										</NumberField.Group>
-									</NumberField.Root>
-									{isInvalid && <FieldError errors={field.state.meta.errors} />}
-								</Field>
-							);
-						}}
-					</form.Field>
-				</FieldGroup>
-				<div className="flex justify-end">
-					<form.Subscribe
-						selector={(s) => ({
-							canSubmit: s.canSubmit,
-							isSubmitting: s.isSubmitting,
-							isDefaultValue: s.isDefaultValue,
-						})}
-					>
-						{({ canSubmit, isSubmitting, isDefaultValue }) => (
-							<Button
-								disabled={
-									!canSubmit ||
-									isSubmitting ||
-									isDefaultValue ||
-									updateMutation.isPending
-								}
-								form={UPDATE_MEAL_ALLOWANCES_FORM_ID}
-								size={"sm"}
-								type="submit"
-							>
-								Speichern
-							</Button>
-						)}
-					</form.Subscribe>
-				</div>
-			</FieldGroup>
+			<form.Field name="dailyFoodAllowance">
+				{(field) => {
+					const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+					return (
+						<Field className="md:col-span-2" data-invalid={isInvalid}>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>
+									{t("dailyFoodAllowance.label")}
+								</FieldLabel>
+								<FieldDescription>
+									{t("dailyFoodAllowance.description")}
+								</FieldDescription>
+							</FieldContent>
+							<div className="space-y-2">
+								<NumberField.Root
+									format={{
+										style: "decimal",
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									}}
+									locale={"de-DE"}
+									onBlur={field.handleBlur}
+									onValueChange={(value) => field.handleChange(value ?? 0)}
+									value={field.state.value}
+								>
+									<NumberField.Group>
+										<InputGroup className="overflow-hidden opacity-100!">
+											<NumberField.Input
+												render={
+													<InputGroupInput
+														aria-invalid={isInvalid}
+														autoComplete="off"
+														id={field.name}
+														inputMode="decimal"
+														name={field.name}
+														placeholder="0,00"
+													/>
+												}
+											/>
+											<InputGroupAddon
+												align={"inline-end"}
+												className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
+											>
+												<span>€</span>
+											</InputGroupAddon>
+										</InputGroup>
+									</NumberField.Group>
+								</NumberField.Root>
+
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
+			<form.Field name="breakfastDeduction">
+				{(field) => {
+					const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+					return (
+						<Field data-invalid={isInvalid}>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>
+									{t("breakfastDeduction.label")}
+								</FieldLabel>
+							</FieldContent>
+							<div className="space-y-2">
+								<NumberField.Root
+									format={{
+										style: "decimal",
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									}}
+									locale={"de-DE"}
+									onBlur={field.handleBlur}
+									onValueChange={(value) => field.handleChange(value ?? 0)}
+									value={field.state.value}
+								>
+									<NumberField.Group>
+										<InputGroup className="overflow-hidden">
+											<InputGroupAddon align="inline-start">
+												<InputGroupText>-</InputGroupText>
+											</InputGroupAddon>
+											<NumberField.Input
+												render={
+													<InputGroupInput
+														aria-invalid={isInvalid}
+														autoComplete="off"
+														id={field.name}
+														inputMode="decimal"
+														name={field.name}
+														placeholder="0,00"
+													/>
+												}
+											/>
+											<InputGroupAddon
+												align={"inline-end"}
+												className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
+											>
+												<span>€</span>
+											</InputGroupAddon>
+										</InputGroup>
+									</NumberField.Group>
+								</NumberField.Root>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
+			<form.Field name="lunchDeduction">
+				{(field) => {
+					const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+					return (
+						<Field data-invalid={isInvalid}>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>
+									{t("lunchDeduction.label")}
+								</FieldLabel>
+							</FieldContent>
+							<div className="space-y-2">
+								<NumberField.Root
+									format={{
+										style: "decimal",
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									}}
+									locale={"de-DE"}
+									onBlur={field.handleBlur}
+									onValueChange={(value) => field.handleChange(value ?? 0)}
+									value={field.state.value}
+								>
+									<NumberField.Group>
+										<InputGroup className="overflow-hidden">
+											<InputGroupAddon align="inline-start">
+												<InputGroupText>-</InputGroupText>
+											</InputGroupAddon>
+											<NumberField.Input
+												render={
+													<InputGroupInput
+														aria-invalid={isInvalid}
+														autoComplete="off"
+														id={field.name}
+														inputMode="decimal"
+														name={field.name}
+														placeholder="0,00"
+													/>
+												}
+											/>
+											<InputGroupAddon
+												align={"inline-end"}
+												className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
+											>
+												<span>€</span>
+											</InputGroupAddon>
+										</InputGroup>
+									</NumberField.Group>
+								</NumberField.Root>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
+			<form.Field name="dinnerDeduction">
+				{(field) => {
+					const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+					return (
+						<Field data-invalid={isInvalid}>
+							<FieldContent>
+								<FieldLabel htmlFor={field.name}>
+									{t("dinnerDeduction.label")}
+								</FieldLabel>
+							</FieldContent>
+							<div className="space-y-2">
+								<NumberField.Root
+									format={{
+										style: "decimal",
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									}}
+									locale={"de-DE"}
+									onBlur={field.handleBlur}
+									onValueChange={(value) => field.handleChange(value ?? 0)}
+									value={field.state.value}
+								>
+									<NumberField.Group>
+										<InputGroup className="overflow-hidden">
+											<InputGroupAddon align="inline-start">
+												<InputGroupText>-</InputGroupText>
+											</InputGroupAddon>
+											<NumberField.Input
+												render={
+													<InputGroupInput
+														aria-invalid={isInvalid}
+														autoComplete="off"
+														id={field.name}
+														inputMode="decimal"
+														name={field.name}
+														placeholder="0,00"
+													/>
+												}
+											/>
+											<InputGroupAddon
+												align={"inline-end"}
+												className="flex w-8 items-center justify-center overflow-hidden border-l bg-muted p-2"
+											>
+												<span>€</span>
+											</InputGroupAddon>
+										</InputGroup>
+									</NumberField.Group>
+								</NumberField.Root>
+								{isInvalid && <FieldError errors={field.state.meta.errors} />}
+							</div>
+						</Field>
+					);
+				}}
+			</form.Field>
 		</form>
 	);
 }
-
-function OrgMealAllowancesSkeleton({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("", className)}
-			data-slot="org-meal-allowances-content-skeleton"
-			{...props}
-		/>
-	);
-}
-
-function OrgMealAllowancesError({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("", className)}
-			data-slot="org-meal-allowances-content-skeleton"
-			{...props}
-		/>
-	);
-}
-
-/* end OrgMealAllowancesContent ===================================================================  */
 
 export { OrgSettingsAllowances };

@@ -1,7 +1,7 @@
 "use client";
 
+import { Input } from "@zemio/ui";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
 
 interface ExamplesInputProps {
 	value: string[];

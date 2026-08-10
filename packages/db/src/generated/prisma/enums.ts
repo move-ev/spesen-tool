@@ -9,12 +9,53 @@
 * 🟢 You can import this file directly.
 */
 
+export const CostUnitStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type CostUnitStatus = (typeof CostUnitStatus)[keyof typeof CostUnitStatus]
+
+
+export const CostUnitColor = {
+  RED: 'RED',
+  ORANGE: 'ORANGE',
+  AMBER: 'AMBER',
+  YELLOW: 'YELLOW',
+  LIME: 'LIME',
+  GREEN: 'GREEN',
+  EMERALD: 'EMERALD',
+  TEAL: 'TEAL',
+  CYAN: 'CYAN',
+  SKY: 'SKY',
+  BLUE: 'BLUE',
+  INDIGO: 'INDIGO',
+  VIOLET: 'VIOLET',
+  PURPLE: 'PURPLE',
+  FUCHSIA: 'FUCHSIA',
+  PINK: 'PINK',
+  ROSE: 'ROSE',
+  BASE: 'BASE'
+} as const
+
+export type CostUnitColor = (typeof CostUnitColor)[keyof typeof CostUnitColor]
+
+
+export const LegalAcceptanceType = {
+  CHECKBOX_AND_BUTTON: 'CHECKBOX_AND_BUTTON',
+  IMPLICIT_ON_SIGNUP: 'IMPLICIT_ON_SIGNUP'
+} as const
+
+export type LegalAcceptanceType = (typeof LegalAcceptanceType)[keyof typeof LegalAcceptanceType]
+
+
 export const ReportStatus = {
   DRAFT: 'DRAFT',
   PENDING_APPROVAL: 'PENDING_APPROVAL',
   NEEDS_REVISION: 'NEEDS_REVISION',
   ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  PAID: 'PAID'
 } as const
 
 export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
@@ -36,19 +77,3 @@ export const NotificationPreference = {
 } as const
 
 export type NotificationPreference = (typeof NotificationPreference)[keyof typeof NotificationPreference]
-
-
-export const LegalAcceptanceType = {
-  CHECKBOX_AND_BUTTON: 'CHECKBOX_AND_BUTTON',
-  IMPLICIT_ON_SIGNUP: 'IMPLICIT_ON_SIGNUP'
-} as const
-
-export type LegalAcceptanceType = (typeof LegalAcceptanceType)[keyof typeof LegalAcceptanceType]
-
-
-export const CostUnitStatus = {
-  ACTIVE: 'ACTIVE',
-  ARCHIVED: 'ARCHIVED'
-} as const
-
-export type CostUnitStatus = (typeof CostUnitStatus)[keyof typeof CostUnitStatus]

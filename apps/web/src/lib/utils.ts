@@ -1,4 +1,3 @@
-import type { ExpenseType, ReportStatus } from "@zemio/db";
 import { type ClassValue, clsx } from "clsx";
 import {
 	differenceInDays,
@@ -12,19 +11,14 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function translateReportStatus(status: ReportStatus) {
-	switch (status) {
-		case "DRAFT":
-			return "Entwurf";
-		case "PENDING_APPROVAL":
-			return "In Bearbeitung";
-		case "NEEDS_REVISION":
-			return "Benötigt Überarbeitung";
-		case "ACCEPTED":
-			return "Akzeptiert";
-		case "REJECTED":
-			return "Abgelehnt";
-	}
+/**
+ * Rounds a computed monetary amount to whole cents. Derived amounts
+ * (distance × rate, allowance × days − deductions) accumulate binary
+ * floating-point noise that would fail the `multipleOf(0.01)` input
+ * validation and exceed the DECIMAL(12,2) column scale.
+ */
+export function roundToCents(amount: number): number {
+	return Math.round(amount * 100) / 100;
 }
 
 export function formatBytes(input: number | bigint, decimals = 2): string {
@@ -77,17 +71,6 @@ export async function renameFileWithHash(
 	);
 	const newFileName = extension ? `${hash}.${extension}` : hash;
 	return new File([file], newFileName, { type: file.type });
-}
-
-export function translateExpenseType(type: ExpenseType) {
-	switch (type) {
-		case "RECEIPT":
-			return "Beleg";
-		case "TRAVEL":
-			return "Reise";
-		case "FOOD":
-			return "Verpflegung";
-	}
 }
 
 /**

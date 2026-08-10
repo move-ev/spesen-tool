@@ -4,9 +4,9 @@ import { z } from "zod";
 import { isOrganizationAdminRole } from "@/lib/organization";
 import { orgProcedure } from "@/server/api/trpc";
 import {
-	authorizeExpense,
 	type ExpenseAction,
 	type ExpensePolicyContext,
+	expensePolicy,
 } from "./expense.policy";
 import { expenseRepository } from "./expense.repository";
 import type { ExpenseServiceContext } from "./expense.service";
@@ -54,7 +54,7 @@ export function expenseProcedure(action: ExpenseAction) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Expense not found" });
 			}
 
-			authorizeExpense(action, toExpensePolicyContext(ctx), {
+			expensePolicy.authorize(action, toExpensePolicyContext(ctx), {
 				report: expense.report,
 			});
 

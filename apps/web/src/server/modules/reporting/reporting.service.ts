@@ -2,21 +2,22 @@ import { TRPCError } from "@trpc/server";
 import type { PrismaClient } from "@zemio/db";
 import { ReportStatus } from "@zemio/db";
 import { env } from "@/env";
-import { translateExpenseType, translateReportStatus } from "@/lib/utils";
+import { expenseTypeLabel, reportStatusLabel } from "@/lib/i18n-labels";
 import {
 	buildPeriodSeries,
 	fillPeriodGaps,
 	startOfPeriod,
 } from "@/server/modules/dashboard";
 import { decimalToNumber } from "@/server/shared/money";
-import type {
-	ReportingBreakdownDTO,
-	ReportingExportDTO,
-	ReportingOverviewDTO,
-	ReportingPdfExportResult,
-	ReportingPdfFilterInput,
-	ReportingTimeSeriesDTO,
-	ReportingTimeSeriesInput,
+import {
+	MAX_BREAKDOWN_ROWS,
+	type ReportingBreakdownDTO,
+	type ReportingExportDTO,
+	type ReportingOverviewDTO,
+	type ReportingPdfExportResult,
+	type ReportingPdfFilterInput,
+	type ReportingTimeSeriesDTO,
+	type ReportingTimeSeriesInput,
 } from "./reporting.dto";
 import { type ReportingFilterInput, reportingWhere } from "./reporting.query";
 import {
@@ -70,6 +71,24 @@ function bucketReportsBy<K extends string>(args: {
 	return buckets;
 }
 
+/**
+ * Ranks bucketed breakdown entries by amount descending and caps them at
+ * `MAX_BREAKDOWN_ROWS` — the buckets are built from an unordered `Map`
+ * (insertion order), so callers must not rely on iteration order. Ties break
+ * on `key` so the ranking is deterministic across requests regardless of the
+ * unordered fetch that populated the buckets.
+ */
+function rankBuckets<K extends string, V extends Bucket>(
+	buckets: Map<K, V>,
+	limit = MAX_BREAKDOWN_ROWS,
+): [K, V][] {
+	return [...buckets.entries()]
+		.sort(
+			([keyA, a], [keyB, b]) => b.amount - a.amount || keyA.localeCompare(keyB),
+		)
+		.slice(0, limit);
+}
+
 async function reportsWithSums(args: {
 	repo: ReportingRepository;
 	db: PrismaClient;
@@ -105,7 +124,7 @@ async function statusBuckets(
 		reports,
 		sums,
 		keyOf: (report) => report.status,
-		labelOf: (report) => translateReportStatus(report.status),
+		labelOf: (report) => reportStatusLabel(report.status),
 	});
 }
 
@@ -134,7 +153,7 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 			const byStatus = await statusBuckets(repo, ctx, input);
 
 			// "Submitted" = claimed across every status (draft included), not money
-			// that actually left the org — that's `totalReimbursed` (ACCEPTED only).
+			// that actually left the org — that's `totalReimbursed` (PAID only).
 			const totalSubmitted = [...byStatus.values()].reduce(
 				(sum, bucket) => sum + bucket.amount,
 				0,
@@ -142,7 +161,7 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 
 			return {
 				totalSubmitted,
-				totalReimbursed: byStatus.get(ReportStatus.ACCEPTED)?.amount ?? 0,
+				totalReimbursed: byStatus.get(ReportStatus.PAID)?.amount ?? 0,
 				totalPending: byStatus.get(ReportStatus.PENDING_APPROVAL)?.amount ?? 0,
 				totalRejected: byStatus.get(ReportStatus.REJECTED)?.amount ?? 0,
 				reportCounts: {
@@ -151,6 +170,7 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 					needsRevision: byStatus.get(ReportStatus.NEEDS_REVISION)?.count ?? 0,
 					accepted: byStatus.get(ReportStatus.ACCEPTED)?.count ?? 0,
 					rejected: byStatus.get(ReportStatus.REJECTED)?.count ?? 0,
+					paid: byStatus.get(ReportStatus.PAID)?.count ?? 0,
 				},
 			};
 		},
@@ -196,11 +216,11 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 		): Promise<ReportingBreakdownDTO> {
 			const buckets = await statusBuckets(repo, ctx, input);
 
-			return Object.values(ReportStatus).map((status) => ({
+			return rankBuckets(buckets).map(([status, bucket]) => ({
 				key: status,
-				label: translateReportStatus(status),
-				amount: buckets.get(status)?.amount ?? 0,
-				count: buckets.get(status)?.count ?? 0,
+				label: reportStatusLabel(status),
+				amount: bucket.amount,
+				count: bucket.count,
 			}));
 		},
 
@@ -221,7 +241,7 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 				labelOf: (report) => `${report.costUnit.tag} · ${report.costUnit.title}`,
 			});
 
-			return [...buckets.entries()].map(([key, bucket]) => ({
+			return rankBuckets(buckets).map(([key, bucket]) => ({
 				key,
 				label: bucket.label,
 				amount: bucket.amount,
@@ -246,7 +266,7 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 				labelOf: (report) => report.owner.name,
 			});
 
-			return [...buckets.entries()].map(([key, bucket]) => ({
+			return rankBuckets(buckets).map(([key, bucket]) => ({
 				key,
 				label: bucket.label,
 				amount: bucket.amount,
@@ -271,7 +291,7 @@ export function createReportingService(deps: { repo: ReportingRepository }) {
 
 			return rows.map((row) => ({
 				key: row.type,
-				label: translateExpenseType(row.type),
+				label: expenseTypeLabel(row.type),
 				amount: row.amount,
 				count: row.count,
 			}));

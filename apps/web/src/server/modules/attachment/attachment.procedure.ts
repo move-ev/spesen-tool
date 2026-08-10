@@ -6,7 +6,7 @@ import { orgProcedure } from "@/server/api/trpc";
 import {
 	type AttachmentAction,
 	type AttachmentPolicyContext,
-	authorizeAttachment,
+	attachmentPolicy,
 } from "./attachment.policy";
 import { attachmentRepository } from "./attachment.repository";
 import type { AttachmentServiceContext } from "./attachment.service";
@@ -60,7 +60,7 @@ export function attachmentProcedure(action: AttachmentAction) {
 				});
 			}
 
-			authorizeAttachment(action, toAttachmentPolicyContext(ctx), {
+			attachmentPolicy.authorize(action, toAttachmentPolicyContext(ctx), {
 				report: attachment.expense.report,
 			});
 

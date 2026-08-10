@@ -1,5 +1,16 @@
 "use client";
 
+import { createAppTranslator } from "@zemio/i18n";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from "@zemio/ui";
 import {
 	ChartPieIcon,
 	FileIcon,
@@ -10,24 +21,16 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type React from "react";
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarGroup,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "@/components/ui/sidebar";
 import { isOrganizationAdminRole } from "@/lib/organization";
 import { ROUTES } from "@/lib/routes";
 import { authClient } from "@/server/better-auth/client";
 import { AppSidebarMenu } from "./app-sidebar-menu";
 
+const t = createAppTranslator({ namespace: "modules.shared.sidebar" });
+
 const sidebarItems = [
 	{
-		label: "Dashboard",
+		label: t("nav.dashboard"),
 		href: ROUTES.USER_DASHBOARD(),
 		icon: HomeIcon,
 		active: (pathname: string) => {
@@ -35,7 +38,7 @@ const sidebarItems = [
 		},
 	},
 	{
-		label: "Meine Anträge",
+		label: t("nav.myReports"),
 		href: ROUTES.USER_REPORTS_LIST(),
 		icon: FileIcon,
 		active: (pathname: string) => {
@@ -43,7 +46,7 @@ const sidebarItems = [
 		},
 	},
 	{
-		label: "Einstellungen",
+		label: t("nav.settings"),
 		href: ROUTES.SETTINGS(),
 		icon: SettingsIcon,
 		active: (pathname: string) => {
@@ -57,7 +60,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<Sidebar {...props}>
-			<SidebarHeader className="h-16 px-4 py-4">
+			<SidebarHeader className="h-16 px-2 py-4">
 				<AppSidebarMenu />
 			</SidebarHeader>
 			<SidebarContent>
@@ -86,7 +89,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 const sidebarAdminItems = [
 	{
-		label: "Reporting",
+		label: t("admin.reporting"),
 		href: ROUTES.ADMIN_REPORTING(),
 		icon: ChartPieIcon,
 		active: (pathname: string) => {
@@ -94,7 +97,7 @@ const sidebarAdminItems = [
 		},
 	},
 	{
-		label: "Anträge",
+		label: t("admin.reports"),
 		href: ROUTES.ADMIN_REVIEW_OVERVIEW(),
 		icon: ListIcon,
 		active: (pathname: string) => {
@@ -117,7 +120,7 @@ function SidebarAdminMenu({ pathname }: { pathname: string }) {
 
 	return (
 		<SidebarGroup>
-			<SidebarGroupLabel>Administration</SidebarGroupLabel>
+			<SidebarGroupLabel>{t("admin.label")}</SidebarGroupLabel>
 			<SidebarMenu>
 				{sidebarAdminItems.map((item) => (
 					<SidebarMenuItem key={item.href}>

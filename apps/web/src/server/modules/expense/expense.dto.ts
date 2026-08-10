@@ -1,6 +1,87 @@
 import type { ExpenseType, Prisma } from "@zemio/db";
 import { decimalToNumber } from "@/server/shared/money";
+import { foodDetailFromMeta, travelDetailFromMeta } from "./expense.meta";
 import type { ExpenseDetail, ExpenseListItem } from "./expense.repository";
+
+export type TravelExpenseDetailDTO = {
+	from: string;
+	to: string;
+	distance: number;
+};
+
+export type FoodExpenseDetailDTO = {
+	days: number;
+	breakfastDeduction: number;
+	lunchDeduction: number;
+	dinnerDeduction: number;
+};
+
+export function toTravelExpenseDetailDTO(
+	detail: { from: string; to: string; distance: Prisma.Decimal } | null,
+): TravelExpenseDetailDTO | null {
+	if (!detail) {
+		return null;
+	}
+	return {
+		from: detail.from,
+		to: detail.to,
+		distance: decimalToNumber(detail.distance),
+	};
+}
+
+export function toFoodExpenseDetailDTO(
+	detail: {
+		days: number;
+		breakfastDeduction: Prisma.Decimal;
+		lunchDeduction: Prisma.Decimal;
+		dinnerDeduction: Prisma.Decimal;
+	} | null,
+): FoodExpenseDetailDTO | null {
+	if (!detail) {
+		return null;
+	}
+	return {
+		days: detail.days,
+		breakfastDeduction: decimalToNumber(detail.breakfastDeduction),
+		lunchDeduction: decimalToNumber(detail.lunchDeduction),
+		dinnerDeduction: decimalToNumber(detail.dinnerDeduction),
+	};
+}
+
+type ExpenseDetailSource = {
+	type: ExpenseType;
+	meta: Prisma.JsonValue | null;
+	travelDetail: Parameters<typeof toTravelExpenseDetailDTO>[0];
+	foodDetail: Parameters<typeof toFoodExpenseDetailDTO>[0];
+};
+
+/**
+ * A TRAVEL/FOOD expense written by the pre-normalization app version during
+ * the migration deploy window has no typed detail row yet; fall back to its
+ * legacy `meta` until the contract-phase backfill re-run covers it.
+ */
+export function resolveTravelDetailDTO(
+	expense: ExpenseDetailSource,
+): TravelExpenseDetailDTO | null {
+	if (expense.type !== "TRAVEL") {
+		return null;
+	}
+	return (
+		toTravelExpenseDetailDTO(expense.travelDetail) ??
+		travelDetailFromMeta(expense.meta)
+	);
+}
+
+export function resolveFoodDetailDTO(
+	expense: ExpenseDetailSource,
+): FoodExpenseDetailDTO | null {
+	if (expense.type !== "FOOD") {
+		return null;
+	}
+	return (
+		toFoodExpenseDetailDTO(expense.foodDetail) ?? foodDetailFromMeta(expense.meta)
+	);
+}
 
 export type ExpenseByIdDTO = {
 	id: string;
@@ -10,7 +91,8 @@ export type ExpenseByIdDTO = {
 	description: string | null;
 	startDate: Date;
 	endDate: Date;
-	meta: Prisma.JsonValue;
+	travelDetail: TravelExpenseDetailDTO | null;
+	foodDetail: FoodExpenseDetailDTO | null;
 };
 
 export function toExpenseByIdDTO(expense: ExpenseDetail): ExpenseByIdDTO {
@@ -22,7 +104,8 @@ export function toExpenseByIdDTO(expense: ExpenseDetail): ExpenseByIdDTO {
 		description: expense.description,
 		startDate: expense.startDate,
 		endDate: expense.endDate,
-		meta: expense.meta,
+		travelDetail: resolveTravelDetailDTO(expense),
+		foodDetail: resolveFoodDetailDTO(expense),
 	};
 }
 
@@ -58,7 +141,8 @@ export type ExpenseListItemDTO = {
 	description: string | null;
 	startDate: Date;
 	endDate: Date;
-	meta: Prisma.JsonValue;
+	travelDetail: TravelExpenseDetailDTO | null;
+	foodDetail: FoodExpenseDetailDTO | null;
 	attachments: AttachmentListItemDTO[];
 };
 
@@ -73,7 +157,8 @@ export function toExpenseListItemDTO(
 		description: expense.description,
 		startDate: expense.startDate,
 		endDate: expense.endDate,
-		meta: expense.meta,
+		travelDetail: resolveTravelDetailDTO(expense),
+		foodDetail: resolveFoodDetailDTO(expense),
 		attachments: expense.attachments.map(toAttachmentListItemDTO),
 	};
 }
