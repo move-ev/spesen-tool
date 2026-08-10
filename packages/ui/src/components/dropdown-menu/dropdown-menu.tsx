@@ -284,16 +284,20 @@ function DropdownMenuCheckboxItem({
 	className,
 	children,
 	checked,
+	variant = "default",
 	...props
-}: MenuPrimitive.CheckboxItem.Props) {
+}: MenuPrimitive.CheckboxItem.Props & {
+	variant?: "default" | "destructive";
+}) {
 	return (
 		<MenuPrimitive.CheckboxItem
 			checked={checked}
 			className={cn(
-				"group/dropdown-menu-item relative flex cursor-default select-none items-center gap-2 whitespace-nowrap rounded-sm px-2 py-1 pr-8 font-medium text-sm outline-hidden data-highlighted:data-[variant=destructive]:bg-red-100 data-highlighted:data-[variant=destructive]:text-red-700 data-disabled:pointer-events-none data-highlighted:bg-base-100 data-inset:pl-8 data-highlighted:text-base-800 data-disabled:opacity-50 not-data-[variant=destructive]:data-highlighted:**:text-base-800 [&_svg:not([class*='size-'])]:size-3.5 [&_svg:not([class*='text-'])]:text-base-500 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:shrink-0 data-[variant=destructive]:[&_svg]:text-red-500 data-[variant=destructive]:*:[svg]:text-red-500",
+				"group/dropdown-menu-item relative flex cursor-default select-none items-center gap-2 whitespace-nowrap rounded-sm px-2 py-1 pr-8 font-medium text-sm outline-hidden data-highlighted:data-[variant=destructive]:bg-red-100 data-highlighted:data-[variant=destructive]:text-red-700 data-disabled:pointer-events-none data-highlighted:bg-base-100 data-inset:pl-8 data-highlighted:text-base-800 data-disabled:opacity-50 not-data-[variant=destructive]:data-highlighted:**:text-base-800 [&_svg:not([class*='size-'])]:size-3.5 [&_svg:not([class*='text-'])]:text-base-500 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:[&_svg]:text-red-500 data-[variant=destructive]:*:[svg]:text-red-500",
 				className,
 			)}
 			data-slot="dropdown-menu-checkbox-item"
+			data-variant={variant}
 			{...props}
 		>
 			<span
