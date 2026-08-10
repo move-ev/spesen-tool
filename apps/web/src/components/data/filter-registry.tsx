@@ -169,7 +169,7 @@ function DateRangeChipContent<TData, TValue>({
 
 			{/* Direction indicator */}
 			<Button
-				className="disabled:opacity-100"
+				className="disabled:opacity-100 data-disabled:opacity-100"
 				disabled
 				size="xs"
 				variant="outline"
