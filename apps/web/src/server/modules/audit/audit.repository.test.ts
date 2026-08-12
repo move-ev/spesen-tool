@@ -41,19 +41,20 @@ describe("auditRepository.append", () => {
 			costUnitId: "cu_1",
 			bankingDetailsId: "bd_1",
 		};
+		const diff = { title: { from: "Trip", to: "Conference" } };
 		await auditRepository.append(db, {
 			organizationId: "org_1",
 			actorId: "user_1",
 			entityId: "report_1",
 			action: "report.created",
 			entityType: "report",
-			diff: null,
+			diff,
 			payload,
 		} as never);
 
 		expect(db.auditEvent.create).toHaveBeenCalledWith(
 			expect.objectContaining({
-				data: expect.objectContaining({ payload }),
+				data: expect.objectContaining({ diff, payload }),
 			}),
 		);
 	});

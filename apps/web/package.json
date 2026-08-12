@@ -13,7 +13,8 @@
 		"dev": "next dev --turbo",
 		"preview": "SKIP_ENV_VALIDATION=1 next build && next start",
 		"start": "next start",
-		"test": "vitest run --coverage",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage",
 		"typecheck": "next typegen && tsc --noEmit",
 		"email:preview": "dotenv -e .env.prod -- email dev --dir ./src/components/emails --port 3030"
 	},

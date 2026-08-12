@@ -1,5 +1,9 @@
 import { ReportStatus } from "@zemio/db";
-import { createMockDb, type MockPrismaClient } from "@zemio/test-utils";
+import {
+	createMockDb,
+	type MockPrismaClient,
+	readRawQueryCall,
+} from "@zemio/test-utils";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 // reportingRepository only calls reportRepository.sumByReportIds; mocking the
@@ -81,12 +85,11 @@ describe("reportingRepository.submittedSeries / reimbursedSeries", () => {
 		});
 
 		expect(db.$queryRaw).toHaveBeenCalledTimes(1);
-		const values =
-			(db.$queryRaw as unknown as { mock: { calls: unknown[][] } }).mock
-				.calls[0] ?? [];
-		expect(values).toContain("org_1");
-		expect(values).toContain(from);
-		expect(values).toContain(to);
+		// values[0] is the DATE_TRUNC granularity fragment (`Prisma.raw`).
+		const call = readRawQueryCall(db);
+		expect(call.values.slice(1)).toEqual(["org_1", from, to]);
+		expect(call.sql).toContain('r."createdAt"');
+		expect(call.sql).not.toContain("PAID");
 	});
 
 	it("reimbursedSeries scopes the raw query to PAID reports in the date range", async () => {
@@ -101,12 +104,13 @@ describe("reportingRepository.submittedSeries / reimbursedSeries", () => {
 			granularity: "day",
 		});
 
-		const values =
-			(db.$queryRaw as unknown as { mock: { calls: unknown[][] } }).mock
-				.calls[0] ?? [];
-		expect(values).toContain("org_1");
-		expect(values).toContain(from);
-		expect(values).toContain(to);
+		const call = readRawQueryCall(db);
+		expect(call.values.slice(1)).toEqual(["org_1", from, to]);
+		// The PAID filter and the paidAt column are literal SQL, not bindings,
+		// so they have to be asserted on the template strings.
+		expect(call.sql).toContain("PAID");
+		expect(call.sql).toContain('r."paidAt"');
+		expect(call.sql).not.toContain('r."createdAt"');
 	});
 });
 

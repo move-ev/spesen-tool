@@ -19,11 +19,21 @@ export async function expectTRPCErrorCode(
 	promise: Promise<unknown>,
 	code: TRPCError["code"],
 ): Promise<void> {
-	try {
-		await promise;
-		throw new Error("expected promise to reject with a TRPCError");
-	} catch (error) {
-		expect(error).toBeInstanceOf(TRPCError);
-		expect((error as TRPCError).code).toBe(code);
+	// Capturing via `.catch` rather than try/catch keeps the "did not reject"
+	// failure distinct from the assertions below, which would otherwise swallow
+	// it and report a generic instanceof mismatch instead.
+	const marker = Symbol("resolved");
+	const outcome = await promise.then(
+		() => marker,
+		(error: unknown) => error,
+	);
+
+	if (outcome === marker) {
+		throw new Error(
+			`expected promise to reject with a TRPCError (${code}), but it resolved`,
+		);
 	}
+
+	expect(outcome).toBeInstanceOf(TRPCError);
+	expect((outcome as TRPCError).code).toBe(code);
 }

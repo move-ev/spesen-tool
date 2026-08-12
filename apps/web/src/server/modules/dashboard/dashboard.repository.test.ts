@@ -1,5 +1,9 @@
 import { ReportStatus } from "@zemio/db";
-import { createMockDb, type MockPrismaClient } from "@zemio/test-utils";
+import {
+	createMockDb,
+	type MockPrismaClient,
+	readRawQueryCall,
+} from "@zemio/test-utils";
 import { beforeEach, describe, expect, it } from "vitest";
 import { dashboardRepository } from "./dashboard.repository";
 
@@ -13,7 +17,11 @@ const from = new Date("2026-01-01T00:00:00.000Z");
 const to = new Date("2026-01-31T00:00:00.000Z");
 
 describe("dashboardRepository.submittedSeries / reimbursedSeries", () => {
-	it("submittedSeries scopes the raw query to the given user and organization", async () => {
+	// The first interpolated value is the DATE_TRUNC granularity fragment
+	// (`Prisma.raw`), not a bind parameter; the tenancy/date bindings follow it.
+	const bindings = (call: { values: unknown[] }) => call.values.slice(1);
+
+	it("submittedSeries binds owner, organization, and createdAt range in order", async () => {
 		db.$queryRaw.mockResolvedValue([]);
 
 		await dashboardRepository.submittedSeries(db, {
@@ -24,14 +32,15 @@ describe("dashboardRepository.submittedSeries / reimbursedSeries", () => {
 			granularity: "month",
 		});
 
-		const values =
-			(db.$queryRaw as unknown as { mock: { calls: unknown[][] } }).mock
-				.calls[0] ?? [];
-		expect(values).toContain("user_1");
-		expect(values).toContain("org_1");
+		const call = readRawQueryCall(db);
+		expect(bindings(call)).toEqual(["user_1", "org_1", from, to]);
+		// Guards the columns those first two bindings land in, so swapping the
+		// column names alone still fails.
+		expect(call.sql).toMatch(/"ownerId" = \?[\s\S]*"organizationId" = \?/);
+		expect(call.sql).toContain('r."createdAt"');
 	});
 
-	it("reimbursedSeries scopes to PAID reports for the given user and organization", async () => {
+	it("reimbursedSeries binds owner, organization, and paidAt range, restricted to PAID", async () => {
 		db.$queryRaw.mockResolvedValue([]);
 
 		await dashboardRepository.reimbursedSeries(db, {
@@ -42,11 +51,13 @@ describe("dashboardRepository.submittedSeries / reimbursedSeries", () => {
 			granularity: "day",
 		});
 
-		const values =
-			(db.$queryRaw as unknown as { mock: { calls: unknown[][] } }).mock
-				.calls[0] ?? [];
-		expect(values).toContain("user_1");
-		expect(values).toContain("org_1");
+		const call = readRawQueryCall(db);
+		expect(bindings(call)).toEqual(["user_1", "org_1", from, to]);
+		// Guards the columns those first two bindings land in, so swapping the
+		// column names alone still fails.
+		expect(call.sql).toMatch(/"ownerId" = \?[\s\S]*"organizationId" = \?/);
+		expect(call.sql).toContain("PAID");
+		expect(call.sql).toContain('r."paidAt"');
 	});
 });
 

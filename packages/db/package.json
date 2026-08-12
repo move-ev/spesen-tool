@@ -26,7 +26,8 @@
 		"postinstall": "prisma generate",
 		"typecheck": "tsc --noEmit",
 		"check": "biome check .",
-		"test": "vitest run --coverage"
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage"
 	},
 	"dependencies": {
 		"@prisma/client": "^7.2.0"
