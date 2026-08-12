@@ -75,6 +75,10 @@ export async function handleStripeEvent(
 	event: Stripe.Event,
 ): Promise<WebhookOutcome> {
 	try {
+		// Every event is claimed, not just the four acted on, so the table grows
+		// with the whole Stripe event volume — one paid checkout leaves around
+		// thirty rows. That is accepted: filtering first would save rows at the
+		// cost of the claim no longer being the very first thing that happens.
 		await billingRepository.recordStripeEvent(deps.db, event.id, event.type);
 	} catch (error) {
 		if (isUniqueConstraintError(error)) return "duplicate";
