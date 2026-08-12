@@ -101,6 +101,16 @@ into the image):
 
   > These were previously named `NEXT_PUBLIC_BETTER_STACK_*` — the
   > `NEXT_PUBLIC_` prefix is no longer used.
+- Billing (optional; leave unset to run without billing):
+  - `BILLING_ENABLED` — `true`/`1` turns billing on for the deployment.
+    Anything else, including unset, leaves it off: no billing interface, and
+    every organization entitled (ADR-0001).
+  - `STRIPE_SECRET_KEY`
+  - `STRIPE_WEBHOOK_SECRET`
+
+  > The two Stripe variables are optional on their own but **required once
+  > `BILLING_ENABLED` is on** — the container fails to start if either is
+  > missing, naming both in the error.
 
 ## Database migrations
 

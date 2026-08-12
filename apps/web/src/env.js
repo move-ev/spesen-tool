@@ -212,6 +212,32 @@ export const env = createEnv({
 		BETTER_STACK_INGESTING_URL: z.url().optional(),
 
 		// =================================================================
+		// Billing (optional — Zemio runs fully without it)
+		// =================================================================
+		// Shape only. Whether these are *required* depends on BILLING_ENABLED,
+		// which no per-key schema can express — that cross-field rule lives in
+		// src/server/modules/billing/billing.config.ts, which also parses the
+		// flag. Left as plain strings here so there is one parser, not two.
+
+		/**
+		 * Turns billing on for this deployment. Off unless explicitly "true" or
+		 * "1", so a self-hosted instance bills nothing and treats every
+		 * organization as entitled (ADR-0001).
+		 */
+		BILLING_ENABLED: z.string().optional(),
+
+		/**
+		 * Stripe secret API key. Required only when BILLING_ENABLED is on.
+		 */
+		STRIPE_SECRET_KEY: z.string().optional(),
+
+		/**
+		 * Signing secret for the Stripe webhook endpoint. Required only when
+		 * BILLING_ENABLED is on.
+		 */
+		STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+		// =================================================================
 		// Local Development Tuning
 		// =================================================================
 
@@ -272,6 +298,11 @@ export const env = createEnv({
 		BETTER_STACK_DSN: process.env.BETTER_STACK_DSN,
 		BETTER_STACK_SOURCE_TOKEN: process.env.BETTER_STACK_SOURCE_TOKEN,
 		BETTER_STACK_INGESTING_URL: process.env.BETTER_STACK_INGESTING_URL,
+
+		// Billing
+		BILLING_ENABLED: process.env.BILLING_ENABLED,
+		STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+		STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
 
 		// Local development tuning
 		TURBOPACK_MEMORY_LIMIT_MB: process.env.TURBOPACK_MEMORY_LIMIT_MB,
