@@ -711,6 +711,10 @@
 					"adminOrgs": {
 						"label": "Organisationen",
 						"description": "Verwalte alle Organisationen auf dieser Plattform"
+					},
+					"orgBilling": {
+						"label": "Billing",
+						"description": "Manage your organization's subscription"
 					}
 				},
 				"sidebarOrgHeading": "Organisation",
@@ -1093,6 +1097,63 @@
 					"adminsSectionTitle": "Admins",
 					"adminsEmptyTitle": "Keine Admins",
 					"adminsEmptyDescription": "In dieser Organisation wurden keine Administratoren gefunden"
+				}
+			},
+			"billing": {
+				"title": "Billing",
+				"description": "Manage what your organization pays for.",
+				"sections": {
+					"subscription": "Current subscription",
+					"tiers": "Available tiers",
+					"custom": "Custom arrangement"
+				},
+				"current": {
+					"tier": "Tier",
+					"tierDescription": "The tier your organization currently pays for.",
+					"seats": "Seats",
+					"seatsDescription": "One member occupies one seat, whatever their role.",
+					"seatsUsed": "{used} of {included}",
+					"seatsUsedOnly": "{used} in use",
+					"overSeatLimit": "Over limit",
+					"renews": "Renews on",
+					"renewsDescription": "The next period is charged at the end of this one.",
+					"ends": "Ends on",
+					"endsDescription": "Cancellation takes effect at the end of the paid period, not immediately.",
+					"cancelling": "Cancelling",
+					"manage": "Manage subscription",
+					"manageDescription": "Change the payment method, download invoices, switch tier or cancel.",
+					"openPortal": "Open portal"
+				},
+				"tier": {
+					"name": "Tier {name}",
+					"includedSeats": "Includes {seats} seats.",
+					"perInterval": "{amount} / {interval}",
+					"choose": "Choose"
+				},
+				"intervals": {
+					"day": "day",
+					"week": "week",
+					"month": "month",
+					"year": "year"
+				},
+				"custom": {
+					"label": "Larger than the available tiers?",
+					"description": "For organizations that outgrow the published tiers, we arrange a tier of their own.",
+					"action": "Get in touch",
+					"contactEmail": "billing@zemio.co"
+				},
+				"noTiers": "No tiers are available right now",
+				"noTiersDescription": "Tiers appear here once they have been set up.",
+				"checkoutErrorTitle": "Checkout could not be started",
+				"portalErrorTitle": "The portal could not be opened",
+				"errorFallback": "Please try again later.",
+				"confirming": {
+					"label": "Confirming your payment",
+					"description": "Your payment went through. The tier appears here as soon as the billing provider confirms it, which usually takes a few seconds."
+				},
+				"cancelled": {
+					"label": "Checkout cancelled",
+					"description": "Nothing was charged and nothing about your organization changed."
 				}
 			}
 		},

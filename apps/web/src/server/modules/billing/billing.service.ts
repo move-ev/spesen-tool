@@ -34,6 +34,10 @@ export type BillingStatus =
 			seatLimit: number | null;
 			seatCount: number;
 			overSeatLimit: boolean;
+			/** When the paid period ends. Null with no subscription. */
+			currentPeriodEnd: Date | null;
+			/** Whether the subscription ends rather than renews at that point. */
+			cancelAtPeriodEnd: boolean;
 	  };
 
 /**
@@ -102,5 +106,7 @@ export async function getBillingStatus(
 		seatLimit: subscription?.seatLimit ?? null,
 		seatCount,
 		overSeatLimit: isOverSeatLimit(seatCount, subscription?.seatLimit ?? null),
+		currentPeriodEnd: subscription?.currentPeriodEnd ?? null,
+		cancelAtPeriodEnd: subscription?.cancelAtPeriodEnd ?? false,
 	};
 }

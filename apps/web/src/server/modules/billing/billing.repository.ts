@@ -11,6 +11,8 @@ const subscriptionSelect = {
 	tier: true,
 	seatLimit: true,
 	status: true,
+	currentPeriodEnd: true,
+	cancelAtPeriodEnd: true,
 } satisfies Prisma.SubscriptionSelect;
 
 const organizationBillingSelect = {

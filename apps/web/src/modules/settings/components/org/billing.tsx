@@ -1,0 +1,450 @@
+"use client";
+
+import {
+	Field,
+	FieldContent,
+	FieldDescription,
+	FieldTitle,
+	Skeleton,
+} from "@zemio/ui";
+import { format } from "date-fns";
+import { useSearchParams } from "next/navigation";
+import { useFormatter, useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CHECKOUT_RESULT, CHECKOUT_RESULT_PARAM } from "@/lib/billing";
+import { cn } from "@/lib/utils";
+import { api } from "@/trpc/react";
+import {
+	SettingsCard,
+	SettingsCardContent,
+	SettingsCardLabel,
+} from "../settings-card";
+import { SettingsError } from "../settings-error";
+import { SettingsSubtitle, SettingsTitle } from "../settings-typography";
+
+function OrgSettingsBilling({
+	className,
+	...props
+}: React.ComponentProps<"main">) {
+	const t = useTranslations("modules.settings.billing");
+
+	return (
+		<main
+			className={cn("py-16", className)}
+			data-slot="org-settings-billing"
+			{...props}
+		>
+			<div className="container max-w-4xl space-y-1">
+				<SettingsTitle>{t("title")}</SettingsTitle>
+				<SettingsSubtitle>{t("description")}</SettingsSubtitle>
+			</div>
+			<div className="container mt-12 max-w-4xl">
+				<SubscriptionSection />
+			</div>
+			<div className="container mt-12 max-w-4xl">
+				<TiersSection />
+			</div>
+			<div className="container mt-12 max-w-4xl">
+				<CustomTierSection />
+			</div>
+		</main>
+	);
+}
+
+/**
+ * Whether the owner has just come back from a completed checkout.
+ *
+ * Stripe appends this on the way back; the parameter and its values belong to
+ * the checkout service, which hands them to Stripe before this page exists.
+ */
+function useCheckoutResult() {
+	const params = useSearchParams();
+	const result = params.get(CHECKOUT_RESULT_PARAM);
+
+	return {
+		completed: result === CHECKOUT_RESULT.complete,
+		cancelled: result === CHECKOUT_RESULT.cancelled,
+	};
+}
+
+/**
+ * The subscription an organization pays for, once it has one.
+ *
+ * While an owner is returning from a completed checkout the subscription may
+ * not have arrived yet — Zemio learns it from the webhook, which races the
+ * browser — so the query is polled for a short while rather than telling
+ * someone who has just paid that they have nothing.
+ */
+function SubscriptionSection({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
+	const t = useTranslations("modules.settings.billing");
+	const tShared = useTranslations("modules.settings.shared");
+	const { completed } = useCheckoutResult();
+	const query = api.billing.status.useQuery(undefined, {
+		refetchInterval: (q) =>
+			completed && !(q.state.data?.enabled && q.state.data.tier) ? 2000 : false,
+	});
+
+	if (query.isPending) {
+		return <Skeleton className={cn("h-64 w-full", className)} {...props} />;
+	}
+
+	if (query.error) {
+		const { error } = query;
+
+		return (
+			<SettingsError
+				description={error.data?.code ?? tShared("unknownError")}
+				message={error.message}
+			/>
+		);
+	}
+
+	const { data } = query;
+
+	// The status is a union on `enabled`, and there is no tier to speak of on
+	// the disabled branch. The page itself is absent on such a deployment.
+	if (!data.enabled) {
+		return null;
+	}
+
+	if (!data.tier) {
+		return completed ? (
+			<SettingsCard
+				className={cn(className)}
+				data-slot="org-settings-billing-confirming"
+				{...props}
+			>
+				<SettingsCardLabel>{t("sections.subscription")}</SettingsCardLabel>
+				<SettingsCardContent>
+					<Field>
+						<FieldContent>
+							<FieldTitle>{t("confirming.label")}</FieldTitle>
+							<FieldDescription>{t("confirming.description")}</FieldDescription>
+						</FieldContent>
+						<div className="flex items-center">
+							<Skeleton className="h-7 w-32" />
+						</div>
+					</Field>
+				</SettingsCardContent>
+			</SettingsCard>
+		) : null;
+	}
+
+	return (
+		<SettingsCard
+			className={cn(className)}
+			data-slot="org-settings-billing-subscription"
+			{...props}
+		>
+			<SettingsCardLabel>{t("sections.subscription")}</SettingsCardLabel>
+			<SettingsCardContent>
+				<CurrentSubscription
+					cancelAtPeriodEnd={data.cancelAtPeriodEnd}
+					currentPeriodEnd={data.currentPeriodEnd}
+					overSeatLimit={data.overSeatLimit}
+					seatCount={data.seatCount}
+					seatLimit={data.seatLimit}
+					tier={data.tier}
+				/>
+			</SettingsCardContent>
+		</SettingsCard>
+	);
+}
+
+type CurrentSubscriptionProps = {
+	tier: string;
+	seatLimit: number | null;
+	seatCount: number;
+	overSeatLimit: boolean;
+	currentPeriodEnd: Date | null;
+	cancelAtPeriodEnd: boolean;
+};
+
+function CurrentSubscription({
+	tier,
+	seatLimit,
+	seatCount,
+	overSeatLimit,
+	currentPeriodEnd,
+	cancelAtPeriodEnd,
+}: CurrentSubscriptionProps) {
+	const t = useTranslations("modules.settings.billing");
+
+	return (
+		<>
+			<Field>
+				<FieldContent>
+					<FieldTitle>{t("current.tier")}</FieldTitle>
+					<FieldDescription>{t("current.tierDescription")}</FieldDescription>
+				</FieldContent>
+				<div className="flex items-center">
+					<span className="font-medium text-base-800 text-sm">{tier}</span>
+				</div>
+			</Field>
+
+			<Field>
+				<FieldContent>
+					<FieldTitle>{t("current.seats")}</FieldTitle>
+					<FieldDescription>{t("current.seatsDescription")}</FieldDescription>
+				</FieldContent>
+				<div className="flex items-center gap-2">
+					<span className="font-medium text-base-800 text-sm">
+						{seatLimit === null
+							? t("current.seatsUsedOnly", { used: seatCount })
+							: t("current.seatsUsed", { used: seatCount, included: seatLimit })}
+					</span>
+					{/* Advisory, never a barrier — so it is noted, not alarming (ADR-0005). */}
+					{overSeatLimit && (
+						<Badge variant="secondary">{t("current.overSeatLimit")}</Badge>
+					)}
+				</div>
+			</Field>
+
+			<Field>
+				<FieldContent>
+					<FieldTitle>
+						{cancelAtPeriodEnd ? t("current.ends") : t("current.renews")}
+					</FieldTitle>
+					<FieldDescription>
+						{cancelAtPeriodEnd
+							? t("current.endsDescription")
+							: t("current.renewsDescription")}
+					</FieldDescription>
+				</FieldContent>
+				<div className="flex items-center gap-2">
+					<span className="font-medium text-base-800 text-sm">
+						{currentPeriodEnd ? format(currentPeriodEnd, "dd.MM.yyyy") : "—"}
+					</span>
+					{cancelAtPeriodEnd && (
+						<Badge variant="secondary">{t("current.cancelling")}</Badge>
+					)}
+				</div>
+			</Field>
+
+			<Field>
+				<FieldContent>
+					<FieldTitle>{t("current.manage")}</FieldTitle>
+					<FieldDescription>{t("current.manageDescription")}</FieldDescription>
+				</FieldContent>
+				<div className="flex items-center">
+					<PortalButton />
+				</div>
+			</Field>
+		</>
+	);
+}
+
+function PortalButton() {
+	const t = useTranslations("modules.settings.billing");
+
+	const openPortal = api.billing.openPortal.useMutation({
+		onSuccess: ({ url }) => {
+			window.location.href = url;
+		},
+		onError: (error) => {
+			toast.error(t("portalErrorTitle"), {
+				description: error.message ?? t("errorFallback"),
+			});
+		},
+	});
+
+	return (
+		<Button
+			disabled={openPortal.isPending}
+			onClick={() => openPortal.mutate()}
+			type="button"
+			variant="outline"
+		>
+			{t("current.openPortal")}
+		</Button>
+	);
+}
+
+// ======= TIERS ===========================================================================
+
+/**
+ * What the organization could pay for. Absent once it pays for something —
+ * changing tier is the portal's job, not a second checkout.
+ */
+function TiersSection({ className, ...props }: React.ComponentProps<"div">) {
+	const t = useTranslations("modules.settings.billing");
+	const tShared = useTranslations("modules.settings.shared");
+	const { cancelled } = useCheckoutResult();
+	const status = api.billing.status.useQuery();
+	const query = api.billing.tiers.useQuery();
+
+	if (status.isPending || query.isPending) {
+		return <Skeleton className={cn("h-64 w-full", className)} {...props} />;
+	}
+
+	if (query.error) {
+		const { error } = query;
+
+		return (
+			<SettingsError
+				description={error.data?.code ?? tShared("unknownError")}
+				message={error.message}
+			/>
+		);
+	}
+
+	// Nothing to offer an organization that already pays for one of these.
+	if (status.data?.enabled && status.data.tier) {
+		return null;
+	}
+
+	return (
+		<SettingsCard
+			className={cn(className)}
+			data-slot="org-settings-billing-tiers"
+			{...props}
+		>
+			<SettingsCardLabel>{t("sections.tiers")}</SettingsCardLabel>
+			<SettingsCardContent>
+				{cancelled && (
+					<Field>
+						<FieldContent>
+							<FieldTitle>{t("cancelled.label")}</FieldTitle>
+							<FieldDescription>{t("cancelled.description")}</FieldDescription>
+						</FieldContent>
+						<div />
+					</Field>
+				)}
+				<TierList tiers={query.data} />
+			</SettingsCardContent>
+		</SettingsCard>
+	);
+}
+
+type Tier = {
+	priceId: string;
+	name: string;
+	seatLimit: number;
+	amount: number;
+	currency: string;
+	interval: string;
+};
+
+const INTERVAL_KEYS = {
+	day: "intervals.day",
+	week: "intervals.week",
+	month: "intervals.month",
+	year: "intervals.year",
+} as const;
+
+function TierList({ tiers }: { tiers: Tier[] }) {
+	const t = useTranslations("modules.settings.billing");
+	const formatter = useFormatter();
+
+	const startCheckout = api.billing.startCheckout.useMutation({
+		onSuccess: ({ url }) => {
+			window.location.href = url;
+		},
+		onError: (error) => {
+			toast.error(t("checkoutErrorTitle"), {
+				description: error.message ?? t("errorFallback"),
+			});
+		},
+	});
+
+	if (tiers.length === 0) {
+		return (
+			<Field>
+				<FieldContent>
+					<FieldTitle>{t("noTiers")}</FieldTitle>
+					<FieldDescription>{t("noTiersDescription")}</FieldDescription>
+				</FieldContent>
+				<div />
+			</Field>
+		);
+	}
+
+	return (
+		<>
+			{tiers.map((tier) => (
+				<Field key={tier.priceId}>
+					<FieldContent>
+						<FieldTitle>{t("tier.name", { name: tier.name })}</FieldTitle>
+						<FieldDescription>
+							{t("tier.includedSeats", { seats: tier.seatLimit })}
+						</FieldDescription>
+					</FieldContent>
+					<div className="flex items-center justify-between gap-4">
+						<span className="font-medium text-base-800 text-sm">
+							{t("tier.perInterval", {
+								// Minor units in the provider's own currency, never a figure
+								// from this codebase (ADR-0003).
+								amount: formatter.number(tier.amount / 100, {
+									style: "currency",
+									currency: tier.currency.toUpperCase(),
+								}),
+								interval: t(
+									INTERVAL_KEYS[tier.interval as keyof typeof INTERVAL_KEYS] ??
+										INTERVAL_KEYS.month,
+								),
+							})}
+						</span>
+						<Button
+							disabled={startCheckout.isPending}
+							onClick={() => startCheckout.mutate({ priceId: tier.priceId })}
+							type="button"
+						>
+							{t("tier.choose")}
+						</Button>
+					</div>
+				</Field>
+			))}
+		</>
+	);
+}
+
+// ======= CUSTOM ARRANGEMENT ==============================================================
+
+/**
+ * The way out of a pricing page for an organization the published tiers do not
+ * fit. A tenant match can put four hundred people in an organization through
+ * nobody's action, and such an organization should be talking to a person
+ * rather than looking at a tier it cannot use (ADR-0005).
+ */
+function CustomTierSection({
+	className,
+	...props
+}: React.ComponentProps<"div">) {
+	const t = useTranslations("modules.settings.billing");
+
+	return (
+		<SettingsCard
+			className={cn(className)}
+			data-slot="org-settings-billing-custom"
+			{...props}
+		>
+			<SettingsCardLabel>{t("sections.custom")}</SettingsCardLabel>
+			<SettingsCardContent>
+				<Field>
+					<FieldContent>
+						<FieldTitle>{t("custom.label")}</FieldTitle>
+						<FieldDescription>{t("custom.description")}</FieldDescription>
+					</FieldContent>
+					<div className="flex items-center">
+						<Button
+							render={
+								<a href={`mailto:${BILLING_CONTACT_EMAIL}`}>{t("custom.action")}</a>
+							}
+							variant="outline"
+						/>
+					</div>
+				</Field>
+			</SettingsCardContent>
+		</SettingsCard>
+	);
+}
+
+/** Where an organization too large for the published tiers writes to. */
+const BILLING_CONTACT_EMAIL = "billing@zemio.co";
+
+export { OrgSettingsBilling };

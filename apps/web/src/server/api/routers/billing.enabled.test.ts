@@ -27,6 +27,8 @@ function caller(ctx: ReturnType<typeof createMockOrgContext>) {
 	return createCaller(asTRPCContext(ctx));
 }
 
+const PERIOD_END = new Date("2027-01-15T00:00:00.000Z");
+
 function orgContext(args: {
 	billingEnforced?: boolean;
 	subscription?: { tier: string; seatLimit: number; status: string } | null;
@@ -35,7 +37,13 @@ function orgContext(args: {
 	const ctx = createMockOrgContext({ organizationId: "org_1" });
 	ctx.db.organization.findUnique.mockResolvedValue({
 		billingEnforced: args.billingEnforced ?? true,
-		subscription: args.subscription ?? null,
+		subscription: args.subscription
+			? {
+					currentPeriodEnd: PERIOD_END,
+					cancelAtPeriodEnd: false,
+					...args.subscription,
+				}
+			: null,
 	} as never);
 	ctx.db.member.count.mockResolvedValue((args.seats ?? 0) as never);
 	return ctx;
@@ -72,6 +80,8 @@ describe("billing.status with billing enabled", () => {
 			seatLimit: 25,
 			seatCount: 4,
 			overSeatLimit: false,
+			currentPeriodEnd: PERIOD_END,
+			cancelAtPeriodEnd: false,
 		});
 	});
 

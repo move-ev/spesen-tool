@@ -8,15 +8,31 @@ const enabledConfig = {
 	webhookSecret: "whsec_1",
 } as const;
 
+const PERIOD_END = new Date("2027-01-15T00:00:00.000Z");
+
+type SubscriptionRow = {
+	tier: string;
+	seatLimit: number;
+	status: string;
+	currentPeriodEnd?: Date;
+	cancelAtPeriodEnd?: boolean;
+};
+
 function dbWith(args: {
 	billingEnforced?: boolean;
-	subscription?: { tier: string; seatLimit: number; status: string } | null;
+	subscription?: SubscriptionRow | null;
 	seats?: number;
 }) {
 	const db = createMockDb();
 	db.organization.findUnique.mockResolvedValue({
 		billingEnforced: args.billingEnforced ?? true,
-		subscription: args.subscription ?? null,
+		subscription: args.subscription
+			? {
+					currentPeriodEnd: PERIOD_END,
+					cancelAtPeriodEnd: false,
+					...args.subscription,
+				}
+			: null,
 	} as never);
 	db.member.count.mockResolvedValue((args.seats ?? 0) as never);
 	return db;
@@ -58,6 +74,8 @@ describe("getBillingStatus with a subscription", () => {
 			seatLimit: 25,
 			seatCount: 12,
 			overSeatLimit: false,
+			currentPeriodEnd: PERIOD_END,
+			cancelAtPeriodEnd: false,
 		});
 	});
 

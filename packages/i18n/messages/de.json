@@ -711,6 +711,10 @@
 					"adminOrgs": {
 						"label": "Organisationen",
 						"description": "Verwalte alle Organisationen auf dieser Plattform"
+					},
+					"orgBilling": {
+						"label": "Abrechnung",
+						"description": "Verwalte den Tarif deiner Organisation"
 					}
 				},
 				"sidebarOrgHeading": "Organisation",
@@ -1093,6 +1097,63 @@
 					"adminsSectionTitle": "Admins",
 					"adminsEmptyTitle": "Keine Admins",
 					"adminsEmptyDescription": "In dieser Organisation wurden keine Administratoren gefunden"
+				}
+			},
+			"billing": {
+				"title": "Abrechnung",
+				"description": "Verwalte das Abonnement deiner Organisation.",
+				"sections": {
+					"subscription": "Aktuelles Abonnement",
+					"tiers": "Verfügbare Tarife",
+					"custom": "Individuelle Vereinbarung"
+				},
+				"current": {
+					"tier": "Tarif",
+					"tierDescription": "Der Tarif, für den deine Organisation derzeit bezahlt.",
+					"seats": "Plätze",
+					"seatsDescription": "Ein Mitglied belegt einen Platz, unabhängig von seiner Rolle.",
+					"seatsUsed": "{used} von {included}",
+					"seatsUsedOnly": "{used} belegt",
+					"overSeatLimit": "Über dem Limit",
+					"renews": "Verlängert sich am",
+					"renewsDescription": "Zum Ende dieses Zeitraums wird die nächste Periode berechnet.",
+					"ends": "Endet am",
+					"endsDescription": "Die Kündigung wird zum Ende des bezahlten Zeitraums wirksam, nicht sofort.",
+					"cancelling": "Gekündigt",
+					"manage": "Abonnement verwalten",
+					"manageDescription": "Zahlungsmittel ändern, Rechnungen herunterladen, Tarif wechseln oder kündigen.",
+					"openPortal": "Portal öffnen"
+				},
+				"tier": {
+					"name": "Tarif {name}",
+					"includedSeats": "Enthält {seats} Plätze.",
+					"perInterval": "{amount} / {interval}",
+					"choose": "Auswählen"
+				},
+				"intervals": {
+					"day": "Tag",
+					"week": "Woche",
+					"month": "Monat",
+					"year": "Jahr"
+				},
+				"custom": {
+					"label": "Größer als die verfügbaren Tarife?",
+					"description": "Für Organisationen, die über die veröffentlichten Tarife hinauswachsen, vereinbaren wir einen eigenen Tarif.",
+					"action": "Kontakt aufnehmen",
+					"contactEmail": "billing@zemio.co"
+				},
+				"noTiers": "Derzeit sind keine Tarife verfügbar",
+				"noTiersDescription": "Sobald Tarife hinterlegt sind, erscheinen sie hier.",
+				"checkoutErrorTitle": "Der Bezahlvorgang konnte nicht gestartet werden",
+				"portalErrorTitle": "Das Portal konnte nicht geöffnet werden",
+				"errorFallback": "Bitte versuche es später erneut.",
+				"confirming": {
+					"label": "Zahlung wird bestätigt",
+					"description": "Deine Zahlung war erfolgreich. Der Tarif erscheint hier, sobald der Zahlungsdienstleister ihn bestätigt hat — das dauert meist nur wenige Sekunden."
+				},
+				"cancelled": {
+					"label": "Bezahlvorgang abgebrochen",
+					"description": "Es wurde nichts berechnet und an deiner Organisation hat sich nichts geändert."
 				}
 			}
 		},
