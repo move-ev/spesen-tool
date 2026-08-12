@@ -31,6 +31,11 @@ vi.mock("@/server/modules/billing/billing.stripe", () => ({
 	getStripe: () => ({ prices: { list: pricesList } }),
 }));
 
+const openBillingPortal = vi.fn();
+vi.mock("@/server/modules/billing/billing.portal", () => ({
+	openBillingPortal,
+}));
+
 const { billingRouter } = await import("@/server/api/routers/billing");
 const { createCallerFactory } = await import("@/server/api/trpc");
 
@@ -128,5 +133,32 @@ describe("billing.startCheckout authorization", () => {
 			"BAD_REQUEST",
 		);
 		expect(startCheckout).not.toHaveBeenCalled();
+	});
+});
+
+describe("billing.openPortal authorization", () => {
+	it("lets an owner open the portal", async () => {
+		openBillingPortal.mockResolvedValue({
+			url: "https://billing.stripe.test/bps_1",
+		});
+
+		await expect(caller("owner").openPortal()).resolves.toEqual({
+			url: "https://billing.stripe.test/bps_1",
+		});
+	});
+
+	it.each(["admin", "member"])("refuses an organization %s", async (role) => {
+		await expectTRPCErrorCode(caller(role).openPortal(), "UNAUTHORIZED");
+		expect(openBillingPortal).not.toHaveBeenCalled();
+	});
+
+	it("opens the portal for the caller's own organization", async () => {
+		openBillingPortal.mockResolvedValue({
+			url: "https://billing.stripe.test/bps_1",
+		});
+
+		await caller("owner").openPortal();
+
+		expect(openBillingPortal).toHaveBeenCalledWith(expect.anything(), "org_1");
 	});
 });

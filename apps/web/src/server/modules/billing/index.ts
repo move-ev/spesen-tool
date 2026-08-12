@@ -3,6 +3,7 @@ export * from "./billing.checkout";
 export * from "./billing.config";
 export * from "./billing.gate";
 export * from "./billing.policy";
+export * from "./billing.portal";
 export * from "./billing.procedure";
 export * from "./billing.repository";
 export * from "./billing.service";

@@ -9,10 +9,11 @@ import {
 	getBillingStatus,
 	getStripe,
 	listTiers,
+	openBillingPortal,
 	startCheckout,
 	type Tier,
+	toBillingDependencies,
 	toBillingServiceContext,
-	toCheckoutDependencies,
 } from "@/server/modules/billing";
 
 export const billingRouter = createTRPCRouter({
@@ -45,9 +46,21 @@ export const billingRouter = createTRPCRouter({
 		.input(z.object({ priceId: z.string().min(1) }))
 		.mutation(({ ctx, input }) =>
 			startCheckout(
-				toCheckoutDependencies(ctx),
+				toBillingDependencies(ctx),
 				{ organizationId: ctx.organizationId, userId: ctx.session.user.id },
 				input.priceId,
 			),
 		),
+
+	/**
+	 * Sends the owner to the hosted portal to change payment method, download
+	 * invoices, switch tier or cancel.
+	 *
+	 * Owner-only for the same reason as checkout, and not audited: what the
+	 * owner then does is Stripe's to record, and Zemio only learns the outcome
+	 * from the webhook (ADR-0007).
+	 */
+	openPortal: orgOwnerProcedure.mutation(({ ctx }) =>
+		openBillingPortal(toBillingDependencies(ctx), ctx.organizationId),
+	),
 });

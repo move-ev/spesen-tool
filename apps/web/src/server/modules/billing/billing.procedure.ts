@@ -3,6 +3,7 @@ import type { PrismaClient } from "@zemio/db";
 import { env } from "@/env";
 import type { CheckoutDependencies } from "./billing.checkout";
 import { billingConfig } from "./billing.config";
+import type { PortalDependencies } from "./billing.portal";
 import type { BillingServiceContext } from "./billing.service";
 import { getStripe } from "./billing.stripe";
 
@@ -23,6 +24,10 @@ export function toBillingServiceContext(
 /**
  * The dependencies a billing mutation needs, assembled at the procedure.
  *
+ * One factory for checkout and the portal both: they want the same three
+ * things, and the guard below is the sort that must not be remembered
+ * separately at each call site.
+ *
  * Constructing the Stripe client here rather than on the context means only
  * the procedures that actually bill ever build one, and a service can be
  * tested by handing it a stub instead.
@@ -32,9 +37,9 @@ export function toBillingServiceContext(
  * reaches it anyway deserves a plain answer rather than the credentials error
  * `getStripe` would raise (ADR-0001).
  */
-export function toCheckoutDependencies(
+export function toBillingDependencies(
 	ctx: BillingRequestContext,
-): CheckoutDependencies {
+): CheckoutDependencies & PortalDependencies {
 	if (!billingConfig.enabled) {
 		throw new TRPCError({
 			code: "PRECONDITION_FAILED",
