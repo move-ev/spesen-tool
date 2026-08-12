@@ -1,6 +1,10 @@
 import { createMockDb, expectTRPCErrorCode } from "@zemio/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { type CheckoutDependencies, startCheckout } from "./billing.checkout";
+import {
+	CHECKOUT_RETURN_PATH,
+	type CheckoutDependencies,
+	startCheckout,
+} from "./billing.checkout";
 
 const TIER_PRICE = "price_m";
 
@@ -159,7 +163,7 @@ describe("startCheckout session", () => {
 		);
 	});
 
-	it("returns the owner to the billing page either way", async () => {
+	it("returns the owner to the billing page, telling it which way it went", async () => {
 		const d = deps({});
 
 		await startCheckout(d, actor, TIER_PRICE);
@@ -168,9 +172,21 @@ describe("startCheckout session", () => {
 			success_url: string;
 			cancel_url: string;
 		};
-		expect(session.success_url).toContain("https://zemio.test");
-		expect(session.cancel_url).toContain("https://zemio.test");
-		expect(session.success_url).not.toEqual(session.cancel_url);
+		expect(session.success_url).toBe(
+			"https://zemio.test/settings/org/billing?checkout=complete",
+		);
+		expect(session.cancel_url).toBe(
+			"https://zemio.test/settings/org/billing?checkout=cancelled",
+		);
+	});
+
+	it("returns to a path shaped like the app's other org settings pages", () => {
+		// Stripe is handed this before the page exists, so nothing else would
+		// catch it drifting. Org settings are served from /settings/org/<page>
+		// — the (groups) folder is a route group and does not appear in the URL
+		// — and a page built anywhere else strands an owner on a 404 straight
+		// after paying.
+		expect(CHECKOUT_RETURN_PATH).toMatch(/^\/settings\/org\/[a-z-]+$/);
 	});
 
 	it("fails rather than returning nowhere to send the owner", async () => {

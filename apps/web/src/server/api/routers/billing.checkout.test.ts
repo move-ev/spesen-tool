@@ -18,7 +18,18 @@ vi.mock("@/server/modules/billing/billing.config", async (importOriginal) => ({
 // A real client would need credentials. The refusal cases never reach it —
 // which is the point: authorization is settled before anything is built.
 const startCheckout = vi.fn();
-vi.mock("@/server/modules/billing/billing.checkout", () => ({ startCheckout }));
+vi.mock(
+	"@/server/modules/billing/billing.checkout",
+	async (importOriginal) => ({
+		...(await importOriginal<object>()),
+		startCheckout,
+	}),
+);
+
+const pricesList = vi.fn();
+vi.mock("@/server/modules/billing/billing.stripe", () => ({
+	getStripe: () => ({ prices: { list: pricesList } }),
+}));
 
 const { billingRouter } = await import("@/server/api/routers/billing");
 const { createCallerFactory } = await import("@/server/api/trpc");
@@ -38,9 +49,45 @@ function caller(role: string) {
 	return createCaller(asTRPCContext(ctx));
 }
 
-beforeEach(() => {
+beforeEach(async () => {
 	vi.clearAllMocks();
 	startCheckout.mockResolvedValue({ url: "https://checkout.stripe.test/cs_1" });
+	pricesList.mockResolvedValue({
+		data: [
+			{
+				id: "price_m",
+				active: true,
+				currency: "eur",
+				unit_amount: 1900,
+				recurring: { interval: "month" },
+				metadata: { zemio_tier: "M", zemio_seats: "25" },
+			},
+		],
+		has_more: false,
+	});
+	const { clearTierCatalogue } = await import(
+		"@/server/modules/billing/billing.catalogue"
+	);
+	clearTierCatalogue();
+});
+
+describe("billing.tiers", () => {
+	it("lists the tiers on offer", async () => {
+		await expect(caller("owner").tiers()).resolves.toEqual([
+			{
+				priceId: "price_m",
+				name: "M",
+				seatLimit: 25,
+				amount: 1900,
+				currency: "eur",
+				interval: "month",
+			},
+		]);
+	});
+
+	it("answers plain members, who see the same public prices", async () => {
+		await expect(caller("member").tiers()).resolves.toHaveLength(1);
+	});
 });
 
 describe("billing.startCheckout authorization", () => {

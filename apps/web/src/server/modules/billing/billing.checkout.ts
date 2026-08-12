@@ -33,8 +33,29 @@ export type CheckoutActor = {
 	userId: string;
 };
 
-/** Where an owner lands coming back from Stripe, either way. */
-const RETURN_PATH = "/settings/billing";
+/**
+ * Where an owner lands coming back from Stripe, and how they are told which
+ * way it went.
+ *
+ * Exported because the billing page has to honour it: Stripe is given these
+ * strings before that page exists, and a page that reads a different query
+ * parameter — or lives at a different path — would leave a paying owner
+ * looking at a 404 with no way to tell whether their payment took. Import
+ * these rather than repeating the literals.
+ */
+export const CHECKOUT_RETURN_PATH = "/settings/org/billing";
+export const CHECKOUT_RESULT_PARAM = "checkout";
+export const CHECKOUT_RESULT = {
+	complete: "complete",
+	cancelled: "cancelled",
+} as const;
+
+function returnUrl(
+	appUrl: string,
+	result: keyof typeof CHECKOUT_RESULT,
+): string {
+	return `${appUrl}${CHECKOUT_RETURN_PATH}?${CHECKOUT_RESULT_PARAM}=${CHECKOUT_RESULT[result]}`;
+}
 
 /**
  * Finds the Stripe customer this organization pays as, creating one if this is
@@ -131,8 +152,8 @@ export async function startCheckout(
 		// Also on the subscription itself, so support can answer "whose is this?"
 		// from the subscription alone rather than following it to its customer.
 		subscription_data: { metadata: { organizationId: actor.organizationId } },
-		success_url: `${deps.appUrl}${RETURN_PATH}?checkout=complete`,
-		cancel_url: `${deps.appUrl}${RETURN_PATH}?checkout=cancelled`,
+		success_url: returnUrl(deps.appUrl, "complete"),
+		cancel_url: returnUrl(deps.appUrl, "cancelled"),
 	});
 
 	if (!session.url) {
