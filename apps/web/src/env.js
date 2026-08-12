@@ -50,14 +50,18 @@ export const env = createEnv({
 		STORAGE_ACCESS_KEY: z.string(),
 
 		/**
-		 * S3-compatible storage secure
+		 * S3-compatible storage secure.
+		 *
+		 * `stringbool` rather than `boolean`: environment variables arrive as
+		 * strings, so a plain boolean schema rejects the `STORAGE_SECURE=true`
+		 * that .env.example itself ships.
 		 */
-		STORAGE_SECURE: z.boolean().default(true),
+		STORAGE_SECURE: z.stringbool().default(true),
 
 		/**
 		 * S3-compatible storage force path style
 		 */
-		STORAGE_FORCE_PATH_STYLE: z.boolean().default(false),
+		STORAGE_FORCE_PATH_STYLE: z.stringbool().default(false),
 
 		/**
 		 * S3-compatible storage force path style
