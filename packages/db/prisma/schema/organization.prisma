@@ -9,6 +9,10 @@ model Organization {
   createdAt         DateTime
   microsoftTenantId String?
 
+  // Last Report.tag issued to this organization. Incremented atomically when
+  // a report is created, which is what makes report numbers per-org.
+  reportCounter Int @default(0)
+
   members     Member[]
   invitations Invitation[]
 
