@@ -35,7 +35,7 @@ describe("billing.status", () => {
 
 		await caller(ctx).status();
 
-		expect(ctx.db.organization.findFirst).not.toHaveBeenCalled();
+		expect(ctx.db.organization.findUnique).not.toHaveBeenCalled();
 		expect(ctx.db.member.count).not.toHaveBeenCalled();
 	});
 

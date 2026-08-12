@@ -58,6 +58,8 @@ export const ModelName = {
   Verification: 'Verification',
   BankingDetails: 'BankingDetails',
   ReportBankingSnapshot: 'ReportBankingSnapshot',
+  Subscription: 'Subscription',
+  ProcessedStripeEvent: 'ProcessedStripeEvent',
   CostUnitGroup: 'CostUnitGroup',
   CostUnit: 'CostUnit',
   LegalAcceptance: 'LegalAcceptance',
@@ -195,6 +197,32 @@ export const ReportBankingSnapshotScalarFieldEnum = {
 export type ReportBankingSnapshotScalarFieldEnum = (typeof ReportBankingSnapshotScalarFieldEnum)[keyof typeof ReportBankingSnapshotScalarFieldEnum]
 
 
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
+  tier: 'tier',
+  seatLimit: 'seatLimit',
+  status: 'status',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const ProcessedStripeEventScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  processedAt: 'processedAt'
+} as const
+
+export type ProcessedStripeEventScalarFieldEnum = (typeof ProcessedStripeEventScalarFieldEnum)[keyof typeof ProcessedStripeEventScalarFieldEnum]
+
+
 export const CostUnitGroupScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -242,7 +270,9 @@ export const OrganizationScalarFieldEnum = {
   metadata: 'metadata',
   createdAt: 'createdAt',
   microsoftTenantId: 'microsoftTenantId',
-  reportCounter: 'reportCounter'
+  reportCounter: 'reportCounter',
+  stripeCustomerId: 'stripeCustomerId',
+  billingEnforced: 'billingEnforced'
 } as const
 
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
