@@ -4,8 +4,11 @@
  *
  * Development only, and test mode only — it refuses to run against a live key.
  * It creates real objects in the sandbox: two tier prices, a customer, and a
- * subscription. It also writes the customer id onto an organization row, which
- * is the job DEV-31's checkout will do once it exists.
+ * subscription.
+ *
+ * `seed` sets a customer up front so the webhook can be exercised without a
+ * hosted checkout. To watch checkout create that customer itself, clear
+ * `organization.stripeCustomerId` first and use `checkout`.
  *
  *   bun run scripts/billing-sandbox.ts seed
  *   bun run scripts/billing-sandbox.ts create S|M
@@ -13,6 +16,12 @@
  *   bun run scripts/billing-sandbox.ts cancel
  *   bun run scripts/billing-sandbox.ts show
  *   bun run scripts/billing-sandbox.ts teardown
+ *
+ * `checkout` calls the real service rather than rebuilding its arguments, so
+ * what Stripe is asked for is what production asks for. That needs the module
+ * graph's `server-only` guard resolved the way Next.js resolves it:
+ *
+ *   bun --conditions=react-server scripts/billing-sandbox.ts checkout S|M
  */
 
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -177,6 +186,51 @@ async function cancel() {
 	console.log(`subscription ${canceled.id}: ${canceled.status}`);
 }
 
+/**
+ * Starts a real checkout through the real service.
+ *
+ * Imported lazily so the other commands do not need the `react-server`
+ * condition just to reach a module they never call.
+ */
+async function checkout(tierName: string) {
+	const { startCheckout } = await import(
+		"../src/server/modules/billing/billing.checkout"
+	);
+
+	const org = await organization();
+	// The audit trail insists on a real actor, so this borrows an owner rather
+	// than inventing one.
+	const owner = await db.member.findFirst({
+		where: { organizationId: org.id, role: "owner" },
+		select: { userId: true },
+	});
+	const member =
+		owner ??
+		(await db.member.findFirst({
+			where: { organizationId: org.id },
+			select: { userId: true },
+		}));
+
+	if (!member) throw new Error("No member of this organization to act as.");
+	if (!owner) console.log("note: no owner on this organization, using a member");
+
+	const { url } = await startCheckout(
+		{
+			db,
+			stripe,
+			appUrl: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+		},
+		{ organizationId: org.id, userId: member.userId },
+		await priceFor(tierName),
+	);
+
+	console.log(`checkout for tier ${tierName}:`);
+	console.log(`  ${url}`);
+	console.log(
+		"Pay with test card 4242 4242 4242 4242, any future expiry, any CVC.",
+	);
+}
+
 /** What Stripe holds beside what Zemio holds. */
 async function show() {
 	const org = await organization();
@@ -239,6 +293,7 @@ const [command, argument] = process.argv.slice(2);
 const commands: Record<string, () => Promise<void>> = {
 	seed,
 	create: () => create(argument ?? "M"),
+	checkout: () => checkout(argument ?? "M"),
 	change: () => change(argument ?? "S"),
 	cancel,
 	show,
