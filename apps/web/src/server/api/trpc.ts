@@ -13,7 +13,10 @@ import { ZodError } from "zod";
 
 import { logger } from "@/lib/logger";
 
-import { isOrganizationAdminRole } from "@/lib/organization";
+import {
+	isOrganizationAdminRole,
+	isOrganizationOwnerRole,
+} from "@/lib/organization";
 import { auth } from "@/server/better-auth";
 import { db } from "@/server/db";
 import { assertEntitled } from "@/server/modules/billing/billing.gate";
@@ -214,6 +217,23 @@ export const orgProcedure = memberResolvedProcedure.use(
 
 export const orgAdminProcedure = orgProcedure.use(({ ctx, next }) => {
 	if (!isOrganizationAdminRole(ctx.orgRole)) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
+
+	return next({ ctx });
+});
+
+/**
+ * Owner-only procedure.
+ *
+ * Narrower than {@link orgAdminProcedure}, and deliberately not built on it:
+ * committing an organization to a recurring financial obligation is an
+ * owner-level act, not an operational one, so an administrator who may
+ * approve every report in the organization still may not commit it to
+ * paying for Zemio.
+ */
+export const orgOwnerProcedure = orgProcedure.use(({ ctx, next }) => {
+	if (!isOrganizationOwnerRole(ctx.orgRole)) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 

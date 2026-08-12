@@ -42,6 +42,43 @@ export const billingRepository = {
 		return db.member.count({ where: { organizationId } });
 	},
 
+	/** The organization's name and the Stripe customer it pays as, if any. */
+	findOrganizationCustomer(
+		db: Db,
+		organizationId: string,
+	): Promise<{
+		id: string;
+		name: string;
+		stripeCustomerId: string | null;
+	} | null> {
+		return db.organization.findUnique({
+			where: { id: organizationId },
+			select: { id: true, name: true, stripeCustomerId: true },
+		});
+	},
+
+	/**
+	 * Records the Stripe customer an organization pays as, but only while it has
+	 * none.
+	 *
+	 * Conditional on purpose: two checkouts started at once would each create a
+	 * customer, and the loser's would be left holding a subscription no
+	 * organization claims — the webhook looks organizations up by customer, so
+	 * that subscription would be invisible to Zemio forever. The winner is
+	 * whichever update matches; the caller reads back who that was.
+	 */
+	async claimStripeCustomer(
+		db: Db,
+		organizationId: string,
+		stripeCustomerId: string,
+	): Promise<boolean> {
+		const { count } = await db.organization.updateMany({
+			where: { id: organizationId, stripeCustomerId: null },
+			data: { stripeCustomerId },
+		});
+		return count > 0;
+	},
+
 	/**
 	 * Claims a Stripe event id. Raises `P2002` if it was already claimed, which
 	 * is how a redelivery is recognised (ADR-0004).

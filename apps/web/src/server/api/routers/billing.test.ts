@@ -45,3 +45,27 @@ describe("billing.status", () => {
 		await expectTRPCErrorCode(caller(ctx).status(), "FORBIDDEN");
 	});
 });
+
+describe("billing with the deployment flag off", () => {
+	it("offers no tiers rather than asking a provider it has no key for", async () => {
+		await expect(caller(createMockOrgContext()).tiers()).resolves.toEqual([]);
+	});
+
+	it("refuses checkout in terms a self-hoster can act on", async () => {
+		const ctx = createMockOrgContext({ member: { role: "owner" } });
+
+		await expectTRPCErrorCode(
+			caller(ctx).startCheckout({ priceId: "price_m" }),
+			"PRECONDITION_FAILED",
+		);
+	});
+
+	it("still refuses a non-owner before considering billing at all", async () => {
+		const ctx = createMockOrgContext({ member: { role: "admin" } });
+
+		await expectTRPCErrorCode(
+			caller(ctx).startCheckout({ priceId: "price_m" }),
+			"UNAUTHORIZED",
+		);
+	});
+});

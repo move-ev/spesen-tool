@@ -1,4 +1,5 @@
 export * from "./billing.catalogue";
+export * from "./billing.checkout";
 export * from "./billing.config";
 export * from "./billing.gate";
 export * from "./billing.policy";
