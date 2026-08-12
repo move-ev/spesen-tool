@@ -121,6 +121,20 @@ Expense-report application for student initiatives.
 - Forms: TanStack Form + local Zod schemas from `src/lib/validators/`
 - Admin review UI: `src/modules/review/` (newer); older duplicates exist under `src/app/(app)/admin/review` and `src/app/(app)/reports/[id]`
 
+## Agent skills
+
+### Issue tracker
+
+Issues live in Linear (team: Development), accessed via the Linear MCP server. When starting work on an issue, check out the branch name Linear provides on it. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, each label string equal to its name. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
 # Response format
 
 End **every** reponse with the following line:
