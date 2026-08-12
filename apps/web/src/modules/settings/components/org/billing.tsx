@@ -10,6 +10,7 @@ import {
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
+import React from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,12 +70,26 @@ function useCheckoutResult() {
 	};
 }
 
+/** How often the subscription is asked for while it is on its way. */
+const CONFIRMATION_POLL_MS = 3_000;
+
+/**
+ * How long it is worth waiting for.
+ *
+ * The webhook normally lands within a second or two. If it has not arrived by
+ * now something is wrong with it — a misconfigured endpoint, a Stripe outage —
+ * and no amount of further asking will fix that. Polling has to stop rather
+ * than leave a paying owner watching a spinner forever while the browser and
+ * the server trade requests all day.
+ */
+const CONFIRMATION_TIMEOUT_MS = 60_000;
+
 /**
  * The subscription an organization pays for, once it has one.
  *
  * While an owner is returning from a completed checkout the subscription may
  * not have arrived yet — Zemio learns it from the webhook, which races the
- * browser — so the query is polled for a short while rather than telling
+ * browser — so the query is polled for a bounded while rather than telling
  * someone who has just paid that they have nothing.
  */
 function SubscriptionSection({
@@ -84,9 +99,27 @@ function SubscriptionSection({
 	const t = useTranslations("modules.settings.billing");
 	const tShared = useTranslations("modules.settings.shared");
 	const { completed } = useCheckoutResult();
+	const [waitedTooLong, setWaitedTooLong] = React.useState(false);
+
+	React.useEffect(() => {
+		if (!completed) return;
+
+		const timer = setTimeout(
+			() => setWaitedTooLong(true),
+			CONFIRMATION_TIMEOUT_MS,
+		);
+
+		return () => clearTimeout(timer);
+	}, [completed]);
+
 	const query = api.billing.status.useQuery(undefined, {
-		refetchInterval: (q) =>
-			completed && !(q.state.data?.enabled && q.state.data.tier) ? 2000 : false,
+		refetchInterval: (q) => {
+			const arrived = q.state.data?.enabled && q.state.data.tier;
+
+			return completed && !arrived && !waitedTooLong
+				? CONFIRMATION_POLL_MS
+				: false;
+		},
 	});
 
 	if (query.isPending) {
@@ -113,7 +146,14 @@ function SubscriptionSection({
 	}
 
 	if (!data.tier) {
-		return completed ? (
+		if (!completed) {
+			return null;
+		}
+
+		// Paid for, but Zemio has not been told yet. Never a spinner without an
+		// end: either it is still arriving, or it should have by now and the
+		// owner is told so plainly rather than left watching.
+		return (
 			<SettingsCard
 				className={cn(className)}
 				data-slot="org-settings-billing-confirming"
@@ -123,16 +163,36 @@ function SubscriptionSection({
 				<SettingsCardContent>
 					<Field>
 						<FieldContent>
-							<FieldTitle>{t("confirming.label")}</FieldTitle>
-							<FieldDescription>{t("confirming.description")}</FieldDescription>
+							<FieldTitle>
+								{waitedTooLong ? t("confirming.slowLabel") : t("confirming.label")}
+							</FieldTitle>
+							<FieldDescription>
+								{waitedTooLong
+									? t("confirming.slowDescription")
+									: t("confirming.description")}
+							</FieldDescription>
 						</FieldContent>
 						<div className="flex items-center">
-							<Skeleton className="h-7 w-32" />
+							{waitedTooLong ? (
+								<Button
+									disabled={query.isFetching}
+									onClick={() => {
+										setWaitedTooLong(false);
+										void query.refetch();
+									}}
+									type="button"
+									variant="outline"
+								>
+									{t("confirming.retry")}
+								</Button>
+							) : (
+								<span className="text-base-500 text-sm">{t("confirming.waiting")}</span>
+							)}
 						</div>
 					</Field>
 				</SettingsCardContent>
 			</SettingsCard>
-		) : null;
+		);
 	}
 
 	return (

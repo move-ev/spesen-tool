@@ -1149,7 +1149,11 @@
 				"errorFallback": "Bitte versuche es später erneut.",
 				"confirming": {
 					"label": "Zahlung wird bestätigt",
-					"description": "Deine Zahlung war erfolgreich. Der Tarif erscheint hier, sobald der Zahlungsdienstleister ihn bestätigt hat — das dauert meist nur wenige Sekunden."
+					"description": "Deine Zahlung war erfolgreich. Der Tarif erscheint hier, sobald der Zahlungsdienstleister ihn bestätigt hat — das dauert meist nur wenige Sekunden.",
+					"slowLabel": "Bestätigung steht noch aus",
+					"slowDescription": "Deine Zahlung war erfolgreich, aber der Tarif ist hier noch nicht angekommen. Das ist selten und liegt nicht an dir — prüfe es gleich noch einmal, und melde dich bei uns, falls es so bleibt.",
+					"retry": "Erneut prüfen",
+					"waiting": "Wird geprüft …"
 				},
 				"cancelled": {
 					"label": "Bezahlvorgang abgebrochen",

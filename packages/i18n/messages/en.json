@@ -1149,7 +1149,11 @@
 				"errorFallback": "Please try again later.",
 				"confirming": {
 					"label": "Confirming your payment",
-					"description": "Your payment went through. The tier appears here as soon as the billing provider confirms it, which usually takes a few seconds."
+					"description": "Your payment went through. The tier appears here as soon as the billing provider confirms it, which usually takes a few seconds.",
+					"slowLabel": "Still waiting for confirmation",
+					"slowDescription": "Your payment went through, but the tier has not reached this page yet. That is rare and is not something you did — check again in a moment, and get in touch if it stays this way.",
+					"retry": "Check again",
+					"waiting": "Checking …"
 				},
 				"cancelled": {
 					"label": "Checkout cancelled",
