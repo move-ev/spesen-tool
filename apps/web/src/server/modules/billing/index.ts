@@ -5,3 +5,4 @@ export * from "./billing.procedure";
 export * from "./billing.repository";
 export * from "./billing.service";
 export * from "./billing.stripe";
+export * from "./billing.webhook";
