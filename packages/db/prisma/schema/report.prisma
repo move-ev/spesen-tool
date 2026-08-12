@@ -2,7 +2,10 @@
 
 model Report {
   id          String       @id @default(cuid())
-  tag         Int          @unique @default(autoincrement())
+  // Human-readable report number, unique and sequential per organization.
+  // Issued by incrementing Organization.reportCounter inside the creating
+  // transaction — never by a global sequence.
+  tag         Int
   title       String
   description String?
   status      ReportStatus @default(DRAFT)
@@ -31,6 +34,7 @@ model Report {
 
   expenses Expense[]
 
+  @@unique([organizationId, tag])
   @@index([ownerId, organizationId])
   @@index([organizationId, status])
   @@index([costUnitId])

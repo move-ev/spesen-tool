@@ -98,6 +98,46 @@ type ListPageArgs = {
 	skip: number;
 };
 
+/**
+ * Issues the next report number for an organization and returns it.
+ *
+ * Raw SQL because the healing `GREATEST` cannot be expressed through Prisma's
+ * fluent API. Correctness rests on `reportCounter` alone: `SET x = GREATEST(x,
+ * …) + 1` re-reads the committed row after waiting for the lock, exactly like a
+ * plain `x + 1`, so two concurrent creates can never receive the same number.
+ *
+ * The `MAX(tag)` floor only raises a counter that has fallen *behind* the rows.
+ * A database whose schema was applied with `prisma db push` never runs the
+ * migration's seeding step, so its counter sits at 0 while reports already
+ * carry tags 1..N; without the healing term the first create would collide on
+ * `report_organizationId_tag_key`, and because that rolls the increment back
+ * with the transaction, every later create would collide identically and report
+ * creation would stay broken. A stale `MAX` can only fail to heal, never issue
+ * a duplicate.
+ */
+async function issueReportTag(db: Db, organizationId: string): Promise<number> {
+	const rows = await db.$queryRaw<Array<{ reportCounter: number }>>`
+		UPDATE "organization" o
+		SET "reportCounter" = GREATEST(
+			o."reportCounter",
+			COALESCE(
+				(SELECT MAX(r."tag") FROM "report" r WHERE r."organizationId" = o."id"),
+				0
+			)
+		) + 1
+		WHERE o."id" = ${organizationId}
+		RETURNING o."reportCounter"
+	`;
+
+	const issued = rows[0]?.reportCounter;
+	if (issued === undefined) {
+		// Unreachable in practice — the organization comes from the session — but
+		// without this the missing row would surface as a null-tag insert.
+		throw new Error(`Organization ${organizationId} not found`);
+	}
+	return issued;
+}
+
 export const reportRepository = {
 	findById(db: Db, args: { id: string; organizationId: string }) {
 		return db.report.findFirst({
@@ -214,8 +254,19 @@ export const reportRepository = {
 		});
 	},
 
-	create(db: Db, data: Prisma.ReportUncheckedCreateInput) {
-		return db.report.create({ data, select: { id: true } });
+	/**
+	 * Issues the report's per-organization `tag` and creates the row.
+	 * The counter update is a single atomic statement, so the organization row
+	 * stays locked until the caller's transaction commits — concurrent creates
+	 * within one organization serialize, and other organizations never contend.
+	 * Must run inside a transaction so a failed create cannot burn a number.
+	 */
+	async create(db: Db, data: Omit<Prisma.ReportUncheckedCreateInput, "tag">) {
+		const tag = await issueReportTag(db, data.organizationId);
+		return db.report.create({
+			data: { ...data, tag },
+			select: { id: true },
+		});
 	},
 
 	update(
