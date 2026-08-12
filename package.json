@@ -15,6 +15,7 @@
 		"check:write": "biome check --write .",
 		"typecheck": "turbo run typecheck",
 		"test": "turbo run test",
+		"test:coverage": "turbo run test:coverage",
 		"prepare": "husky",
 		"changeset": "changeset",
 		"ci:version": "changeset version && bun install",

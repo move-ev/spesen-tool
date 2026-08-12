@@ -20,8 +20,18 @@ export type OrganizationModel = runtime.Types.Result.DefaultSelection<Prisma.$Or
 
 export type AggregateOrganization = {
   _count: OrganizationCountAggregateOutputType | null
+  _avg: OrganizationAvgAggregateOutputType | null
+  _sum: OrganizationSumAggregateOutputType | null
   _min: OrganizationMinAggregateOutputType | null
   _max: OrganizationMaxAggregateOutputType | null
+}
+
+export type OrganizationAvgAggregateOutputType = {
+  reportCounter: number | null
+}
+
+export type OrganizationSumAggregateOutputType = {
+  reportCounter: number | null
 }
 
 export type OrganizationMinAggregateOutputType = {
@@ -32,6 +42,7 @@ export type OrganizationMinAggregateOutputType = {
   metadata: string | null
   createdAt: Date | null
   microsoftTenantId: string | null
+  reportCounter: number | null
 }
 
 export type OrganizationMaxAggregateOutputType = {
@@ -42,6 +53,7 @@ export type OrganizationMaxAggregateOutputType = {
   metadata: string | null
   createdAt: Date | null
   microsoftTenantId: string | null
+  reportCounter: number | null
 }
 
 export type OrganizationCountAggregateOutputType = {
@@ -52,9 +64,18 @@ export type OrganizationCountAggregateOutputType = {
   metadata: number
   createdAt: number
   microsoftTenantId: number
+  reportCounter: number
   _all: number
 }
 
+
+export type OrganizationAvgAggregateInputType = {
+  reportCounter?: true
+}
+
+export type OrganizationSumAggregateInputType = {
+  reportCounter?: true
+}
 
 export type OrganizationMinAggregateInputType = {
   id?: true
@@ -64,6 +85,7 @@ export type OrganizationMinAggregateInputType = {
   metadata?: true
   createdAt?: true
   microsoftTenantId?: true
+  reportCounter?: true
 }
 
 export type OrganizationMaxAggregateInputType = {
@@ -74,6 +96,7 @@ export type OrganizationMaxAggregateInputType = {
   metadata?: true
   createdAt?: true
   microsoftTenantId?: true
+  reportCounter?: true
 }
 
 export type OrganizationCountAggregateInputType = {
@@ -84,6 +107,7 @@ export type OrganizationCountAggregateInputType = {
   metadata?: true
   createdAt?: true
   microsoftTenantId?: true
+  reportCounter?: true
   _all?: true
 }
 
@@ -125,6 +149,18 @@ export type OrganizationAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: OrganizationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: OrganizationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: OrganizationMinAggregateInputType
@@ -155,6 +191,8 @@ export type OrganizationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   _count?: OrganizationCountAggregateInputType | true
+  _avg?: OrganizationAvgAggregateInputType
+  _sum?: OrganizationSumAggregateInputType
   _min?: OrganizationMinAggregateInputType
   _max?: OrganizationMaxAggregateInputType
 }
@@ -167,7 +205,10 @@ export type OrganizationGroupByOutputType = {
   metadata: string | null
   createdAt: Date
   microsoftTenantId: string | null
+  reportCounter: number
   _count: OrganizationCountAggregateOutputType | null
+  _avg: OrganizationAvgAggregateOutputType | null
+  _sum: OrganizationSumAggregateOutputType | null
   _min: OrganizationMinAggregateOutputType | null
   _max: OrganizationMaxAggregateOutputType | null
 }
@@ -198,6 +239,7 @@ export type OrganizationWhereInput = {
   metadata?: Prisma.StringNullableFilter<"Organization"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   microsoftTenantId?: Prisma.StringNullableFilter<"Organization"> | string | null
+  reportCounter?: Prisma.IntFilter<"Organization"> | number
   members?: Prisma.MemberListRelationFilter
   invitations?: Prisma.InvitationListRelationFilter
   reports?: Prisma.ReportListRelationFilter
@@ -215,6 +257,7 @@ export type OrganizationOrderByWithRelationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
   members?: Prisma.MemberOrderByRelationAggregateInput
   invitations?: Prisma.InvitationOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
@@ -235,6 +278,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.StringNullableFilter<"Organization"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   microsoftTenantId?: Prisma.StringNullableFilter<"Organization"> | string | null
+  reportCounter?: Prisma.IntFilter<"Organization"> | number
   members?: Prisma.MemberListRelationFilter
   invitations?: Prisma.InvitationListRelationFilter
   reports?: Prisma.ReportListRelationFilter
@@ -252,9 +296,12 @@ export type OrganizationOrderByWithAggregationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
   _count?: Prisma.OrganizationCountOrderByAggregateInput
+  _avg?: Prisma.OrganizationAvgOrderByAggregateInput
   _max?: Prisma.OrganizationMaxOrderByAggregateInput
   _min?: Prisma.OrganizationMinOrderByAggregateInput
+  _sum?: Prisma.OrganizationSumOrderByAggregateInput
 }
 
 export type OrganizationScalarWhereWithAggregatesInput = {
@@ -268,6 +315,7 @@ export type OrganizationScalarWhereWithAggregatesInput = {
   metadata?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   microsoftTenantId?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
+  reportCounter?: Prisma.IntWithAggregatesFilter<"Organization"> | number
 }
 
 export type OrganizationCreateInput = {
@@ -278,6 +326,7 @@ export type OrganizationCreateInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
@@ -295,6 +344,7 @@ export type OrganizationUncheckedCreateInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
@@ -312,6 +362,7 @@ export type OrganizationUpdateInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
@@ -329,6 +380,7 @@ export type OrganizationUncheckedUpdateInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -346,6 +398,7 @@ export type OrganizationCreateManyInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
 }
 
 export type OrganizationUpdateManyMutationInput = {
@@ -356,6 +409,7 @@ export type OrganizationUpdateManyMutationInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationUncheckedUpdateManyInput = {
@@ -366,6 +420,7 @@ export type OrganizationUncheckedUpdateManyInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationScalarRelationFilter = {
@@ -381,6 +436,11 @@ export type OrganizationCountOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+}
+
+export type OrganizationAvgOrderByAggregateInput = {
+  reportCounter?: Prisma.SortOrder
 }
 
 export type OrganizationMaxOrderByAggregateInput = {
@@ -391,6 +451,7 @@ export type OrganizationMaxOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
 }
 
 export type OrganizationMinOrderByAggregateInput = {
@@ -401,6 +462,11 @@ export type OrganizationMinOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+}
+
+export type OrganizationSumOrderByAggregateInput = {
+  reportCounter?: Prisma.SortOrder
 }
 
 export type OrganizationCreateNestedOneWithoutAuditEventsInput = {
@@ -443,6 +509,14 @@ export type OrganizationUpdateOneRequiredWithoutCostUnitsNestedInput = {
   upsert?: Prisma.OrganizationUpsertWithoutCostUnitsInput
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCostUnitsInput, Prisma.OrganizationUpdateWithoutCostUnitsInput>, Prisma.OrganizationUncheckedUpdateWithoutCostUnitsInput>
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type OrganizationCreateNestedOneWithoutMembersInput = {
@@ -509,6 +583,7 @@ export type OrganizationCreateWithoutAuditEventsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
@@ -525,6 +600,7 @@ export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
@@ -557,6 +633,7 @@ export type OrganizationUpdateWithoutAuditEventsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
@@ -573,6 +650,7 @@ export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -589,6 +667,7 @@ export type OrganizationCreateWithoutCostUnitGroupsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
@@ -605,6 +684,7 @@ export type OrganizationUncheckedCreateWithoutCostUnitGroupsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
@@ -637,6 +717,7 @@ export type OrganizationUpdateWithoutCostUnitGroupsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
@@ -653,6 +734,7 @@ export type OrganizationUncheckedUpdateWithoutCostUnitGroupsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -669,6 +751,7 @@ export type OrganizationCreateWithoutCostUnitsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
@@ -685,6 +768,7 @@ export type OrganizationUncheckedCreateWithoutCostUnitsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
@@ -717,6 +801,7 @@ export type OrganizationUpdateWithoutCostUnitsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
@@ -733,6 +818,7 @@ export type OrganizationUncheckedUpdateWithoutCostUnitsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -749,6 +835,7 @@ export type OrganizationCreateWithoutMembersInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
@@ -765,6 +852,7 @@ export type OrganizationUncheckedCreateWithoutMembersInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
@@ -797,6 +885,7 @@ export type OrganizationUpdateWithoutMembersInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
@@ -813,6 +902,7 @@ export type OrganizationUncheckedUpdateWithoutMembersInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -829,6 +919,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
@@ -845,6 +936,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
@@ -877,6 +969,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
@@ -893,6 +986,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -909,6 +1003,7 @@ export type OrganizationCreateWithoutReportsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
@@ -925,6 +1020,7 @@ export type OrganizationUncheckedCreateWithoutReportsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
@@ -957,6 +1053,7 @@ export type OrganizationUpdateWithoutReportsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
@@ -973,6 +1070,7 @@ export type OrganizationUncheckedUpdateWithoutReportsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -989,6 +1087,7 @@ export type OrganizationCreateWithoutSettingsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
@@ -1005,6 +1104,7 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1037,6 +1137,7 @@ export type OrganizationUpdateWithoutSettingsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
@@ -1053,6 +1154,7 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1145,6 +1247,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
   members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
   invitations?: boolean | Prisma.Organization$invitationsArgs<ExtArgs>
   reports?: boolean | Prisma.Organization$reportsArgs<ExtArgs>
@@ -1163,6 +1266,7 @@ export type OrganizationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1173,6 +1277,7 @@ export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectScalar = {
@@ -1183,9 +1288,10 @@ export type OrganizationSelectScalar = {
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
 }
 
-export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "metadata" | "createdAt" | "microsoftTenantId", ExtArgs["result"]["organization"]>
+export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "metadata" | "createdAt" | "microsoftTenantId" | "reportCounter", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
   invitations?: boolean | Prisma.Organization$invitationsArgs<ExtArgs>
@@ -1218,6 +1324,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     metadata: string | null
     createdAt: Date
     microsoftTenantId: string | null
+    reportCounter: number
   }, ExtArgs["result"]["organization"]>
   composites: {}
 }
@@ -1655,6 +1762,7 @@ export interface OrganizationFieldRefs {
   readonly metadata: Prisma.FieldRef<"Organization", 'String'>
   readonly createdAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly microsoftTenantId: Prisma.FieldRef<"Organization", 'String'>
+  readonly reportCounter: Prisma.FieldRef<"Organization", 'Int'>
 }
     
 
