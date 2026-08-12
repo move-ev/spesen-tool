@@ -6,7 +6,10 @@ import { env } from "@/env";
 import { isOrganizationAdminRole } from "@/lib/organization";
 import type { createReportSchema } from "@/lib/validators";
 import { type AuditRepository, auditRepository } from "@/server/modules/audit";
-import { mapPrismaError } from "@/server/shared/errors";
+import {
+	isTransientContentionError,
+	mapPrismaError,
+} from "@/server/shared/errors";
 import { nullableDecimalToNumber } from "@/server/shared/money";
 import {
 	offsetPageArgs,
@@ -52,22 +55,59 @@ async function runWrite<T>(operation: () => Promise<T>): Promise<T> {
 	}
 }
 
+const maxTransactionAttempts = 3;
+/**
+ * Ceiling on time spent retrying, checked before each further attempt. An
+ * attempt can block for a while before failing — a pool wait runs until the
+ * connection timeout — so the attempt count alone does not bound how long a
+ * mutation takes. Without this, retries stack into a request that outlives the
+ * gateway and reaches the user as an opaque 504.
+ */
+const maxTransactionRetryMs = 5_000;
+
 /**
  * Runs an interactive transaction, passing a typed DB client to the callback.
  * Maps Prisma errors to typed TRPCErrors on failure.
  * The `tx as unknown as PrismaClient` cast is justified: Prisma's transaction
  * client exposes the same model operations as PrismaClient — only lifecycle
- * methods ($connect, $transaction, etc.) are omitted, none of which are used
- * inside repository methods.
+ * methods ($connect, $transaction, etc.) are omitted. Repository methods that
+ * use one (`financialSummary` batches with $transaction) must therefore be
+ * called with the request client, not from inside a body passed here.
+ *
+ * Transactions that provably committed nothing (see
+ * {@link isTransientContentionError}) are retried with a short jittered backoff
+ * instead of surfacing — a burst of creates in one organization queues on the
+ * organization row while each holder issues its report number, and the waiters
+ * that cannot open a transaction in time are exactly the ones worth repeating.
+ * Replaying is safe only because every body passed here is free of external
+ * side effects: notification events are emitted after the transaction returns,
+ * never inside it. Errors that leave the outcome unknown, such as a transaction
+ * expiring around COMMIT, are deliberately *not* retried — repeating one could
+ * duplicate a report and burn a second report number.
  */
 async function transact<T>(
 	db: PrismaClient,
 	fn: (db: PrismaClient) => Promise<T>,
 ): Promise<T> {
-	try {
-		return await db.$transaction((tx) => fn(tx as unknown as PrismaClient));
-	} catch (error) {
-		throw mapPrismaError(error);
+	const deadline = Date.now() + maxTransactionRetryMs;
+	for (let attempt = 1; ; attempt++) {
+		try {
+			return await db.$transaction((tx) => fn(tx as unknown as PrismaClient));
+		} catch (error) {
+			// Jittered so the waiters that just collided don't retry in lockstep.
+			const backoffMs = 25 * 2 ** attempt * (0.5 + Math.random());
+			if (
+				attempt >= maxTransactionAttempts ||
+				!isTransientContentionError(error) ||
+				// The next attempt must start within the budget, so the backoff has
+				// to fit too — checking only the elapsed time would let a retry begin
+				// just before the deadline and then block for a full attempt.
+				Date.now() + backoffMs >= deadline
+			) {
+				throw mapPrismaError(error);
+			}
+			await new Promise((resolve) => setTimeout(resolve, backoffMs));
+		}
 	}
 }
 

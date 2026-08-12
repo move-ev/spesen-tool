@@ -241,7 +241,8 @@ export const OrganizationScalarFieldEnum = {
   logo: 'logo',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  microsoftTenantId: 'microsoftTenantId'
+  microsoftTenantId: 'microsoftTenantId',
+  reportCounter: 'reportCounter'
 } as const
 
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
