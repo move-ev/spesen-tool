@@ -56,6 +56,14 @@ async function runWrite<T>(operation: () => Promise<T>): Promise<T> {
 }
 
 const maxTransactionAttempts = 3;
+/**
+ * Ceiling on time spent retrying, checked before each further attempt. An
+ * attempt can block for a while before failing — a pool wait runs until the
+ * connection timeout — so the attempt count alone does not bound how long a
+ * mutation takes. Without this, retries stack into a request that outlives the
+ * gateway and reaches the user as an opaque 504.
+ */
+const maxTransactionRetryMs = 5_000;
 
 /**
  * Runs an interactive transaction, passing a typed DB client to the callback.
@@ -66,25 +74,29 @@ const maxTransactionAttempts = 3;
  * use one (`financialSummary` batches with $transaction) must therefore be
  * called with the request client, not from inside a body passed here.
  *
- * Database-aborted transactions (see {@link isTransientContentionError}) are
- * retried with a short jittered backoff instead of surfacing. Replaying is safe
- * only because such a transaction provably committed nothing and every body
- * passed here is free of external side effects — notification events are
- * emitted after the transaction returns, never inside it. Errors that leave the
- * outcome unknown, such as an interactive transaction expiring around COMMIT,
- * are deliberately *not* retried: repeating one could duplicate a report and
- * burn a second report number.
+ * Transactions that provably committed nothing (see
+ * {@link isTransientContentionError}) are retried with a short jittered backoff
+ * instead of surfacing — a burst of creates in one organization queues on the
+ * organization row while each holder issues its report number, and the waiters
+ * that cannot open a transaction in time are exactly the ones worth repeating.
+ * Replaying is safe only because every body passed here is free of external
+ * side effects: notification events are emitted after the transaction returns,
+ * never inside it. Errors that leave the outcome unknown, such as a transaction
+ * expiring around COMMIT, are deliberately *not* retried — repeating one could
+ * duplicate a report and burn a second report number.
  */
 async function transact<T>(
 	db: PrismaClient,
 	fn: (db: PrismaClient) => Promise<T>,
 ): Promise<T> {
+	const startedAt = Date.now();
 	for (let attempt = 1; ; attempt++) {
 		try {
 			return await db.$transaction((tx) => fn(tx as unknown as PrismaClient));
 		} catch (error) {
 			if (
 				attempt >= maxTransactionAttempts ||
+				Date.now() - startedAt >= maxTransactionRetryMs ||
 				!isTransientContentionError(error)
 			) {
 				throw mapPrismaError(error);

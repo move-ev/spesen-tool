@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 
 type PrismaKnownError = {
 	code: string;
+	message?: string;
 	meta?: { target?: string[] };
 };
 
@@ -26,20 +27,42 @@ export function isUniqueConstraintError(error: unknown): boolean {
 }
 
 /**
- * True for Prisma `P2034` (write conflict or deadlock): the database aborted
- * the transaction itself, so nothing was committed and a caller whose
- * transaction body has no external side effects may replay it.
+ * Prefix of the `P2028` raised when the transaction never opened, as opposed to
+ * one that expired part-way through. Matched on the message because Prisma
+ * gives both the same code. If the wording ever changes the match simply fails
+ * and the error stops being retried, which is the safe direction.
+ */
+const transactionNeverStarted = "Unable to start a transaction";
+
+/**
+ * True for errors that provably committed nothing, so a caller whose
+ * transaction body has no external side effects may replay it:
  *
- * Deliberately narrow. `P2024` (pool timeout) and `P2028` (interactive
- * transaction expired) also mean "too busy", but neither says whether the
- * transaction committed — `P2028` is raised for a transaction closed *after*
- * COMMIT was issued too, so replaying one can duplicate the write. Both are
- * mapped to retryable {@link TRPCError}s by {@link mapPrismaError} and left for
- * the caller to retry, which is the only layer that knows the write is safe to
- * repeat.
+ * - `P2034` — write conflict or deadlock; the database rolled it back.
+ * - `P2024` — timed out acquiring a pooled connection; no statement was ever
+ *   sent. Unreachable while the app uses the `adapter-pg` driver adapter, whose
+ *   pool waits surface as `P2028` instead, but correct if that changes.
+ * - `P2028` *only* when the transaction failed to open. Prisma reuses this code
+ *   for a transaction that expired mid-flight, which may have expired around
+ *   COMMIT — replaying that one could duplicate the write, so it is excluded.
+ *
+ * Everything else, including the expiring variant of `P2028`, is mapped to a
+ * retryable {@link TRPCError} by {@link mapPrismaError} and left for the client
+ * to repeat, which is the only layer that knows whether the write already took.
  */
 export function isTransientContentionError(error: unknown): boolean {
-	return isPrismaKnownError(error) && error.code === "P2034";
+	if (!isPrismaKnownError(error)) {
+		return false;
+	}
+	switch (error.code) {
+		case "P2034":
+		case "P2024":
+			return true;
+		case "P2028":
+			return error.message?.includes(transactionNeverStarted) ?? false;
+		default:
+			return false;
+	}
 }
 
 /**
