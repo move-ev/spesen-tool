@@ -89,20 +89,23 @@ async function transact<T>(
 	db: PrismaClient,
 	fn: (db: PrismaClient) => Promise<T>,
 ): Promise<T> {
-	const startedAt = Date.now();
+	const deadline = Date.now() + maxTransactionRetryMs;
 	for (let attempt = 1; ; attempt++) {
 		try {
 			return await db.$transaction((tx) => fn(tx as unknown as PrismaClient));
 		} catch (error) {
+			// Jittered so the waiters that just collided don't retry in lockstep.
+			const backoffMs = 25 * 2 ** attempt * (0.5 + Math.random());
 			if (
 				attempt >= maxTransactionAttempts ||
-				Date.now() - startedAt >= maxTransactionRetryMs ||
-				!isTransientContentionError(error)
+				!isTransientContentionError(error) ||
+				// The next attempt must start within the budget, so the backoff has
+				// to fit too — checking only the elapsed time would let a retry begin
+				// just before the deadline and then block for a full attempt.
+				Date.now() + backoffMs >= deadline
 			) {
 				throw mapPrismaError(error);
 			}
-			// Jittered so the waiters that just collided don't retry in lockstep.
-			const backoffMs = 25 * 2 ** attempt * (0.5 + Math.random());
 			await new Promise((resolve) => setTimeout(resolve, backoffMs));
 		}
 	}
