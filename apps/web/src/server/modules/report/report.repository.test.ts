@@ -3,6 +3,7 @@ import {
 	createMockDb,
 	createReportFixture,
 	type MockPrismaClient,
+	readRawQueryCall,
 } from "@zemio/test-utils";
 import { beforeEach, describe, expect, it, type Mock } from "vitest";
 import { reportRepository } from "./report.repository";
@@ -222,21 +223,43 @@ describe("reportRepository.findReviewerEmail", () => {
 });
 
 describe("reportRepository.create / update / setStatus / remove", () => {
-	it("create() passes the data through and selects only the id", async () => {
+	const createData = {
+		title: "Trip",
+		organizationId: "org_1",
+		costUnitId: "cu_1",
+		ownerId: "user_1",
+	};
+
+	it("create() issues a tag from the organization counter and passes the data through", async () => {
+		db.$queryRaw.mockResolvedValue([{ reportCounter: 7 }]);
 		db.report.create.mockResolvedValue({ id: "report_1" } as never);
 
-		const data = {
-			title: "Trip",
-			organizationId: "org_1",
-			costUnitId: "cu_1",
-			ownerId: "user_1",
-		};
-		await reportRepository.create(db, data as never);
+		await reportRepository.create(db, createData as never);
 
 		expect(db.report.create).toHaveBeenCalledWith({
-			data,
+			data: { ...createData, tag: 7 },
 			select: { id: true },
 		});
+	});
+
+	it("create() scopes the counter bump to the report's own organization", async () => {
+		db.$queryRaw.mockResolvedValue([{ reportCounter: 1 }]);
+		db.report.create.mockResolvedValue({ id: "report_1" } as never);
+
+		await reportRepository.create(db, createData as never);
+
+		const call = readRawQueryCall(db);
+		expect(call.values).toEqual(["org_1"]);
+		expect(call.sql).toContain('o."id" = ?');
+	});
+
+	it("create() rejects when the organization row is missing", async () => {
+		db.$queryRaw.mockResolvedValue([]);
+
+		await expect(
+			reportRepository.create(db, createData as never),
+		).rejects.toThrow("Organization org_1 not found");
+		expect(db.report.create).not.toHaveBeenCalled();
 	});
 
 	it("update() updates by id with the given fields", async () => {
