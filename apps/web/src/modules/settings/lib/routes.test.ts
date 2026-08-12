@@ -71,6 +71,34 @@ describe("the billing entry in the settings navigation", () => {
 		await expect(billingItem().isVisible?.(ctx)).resolves.toBe(false);
 	});
 
+	it("is gated by every surface that lists settings entries", async () => {
+		// The sidebar and the overview page both list these groups. The first
+		// item-level gate reached one and not the other, so an administrator saw
+		// a billing entry on the overview that the sidebar had already hidden.
+		// Both resolve visibility through the shared hook; neither may map
+		// `group.items` itself again.
+		const { readFile } = await import("node:fs/promises");
+		const { fileURLToPath } = await import("node:url");
+
+		const surfaces = ["sidebar.tsx", "settings-content.tsx"];
+
+		for (const surface of surfaces) {
+			const source = await readFile(
+				fileURLToPath(new URL(`../components/${surface}`, import.meta.url)),
+				"utf8",
+			);
+
+			expect({
+				surface,
+				usesHook: source.includes("useSettingsGroup(group)"),
+			}).toEqual({ surface, usesHook: true });
+			expect({
+				surface,
+				mapsItemsDirectly: source.includes("group.items.map"),
+			}).toEqual({ surface, mapsItemsDirectly: false });
+		}
+	});
+
 	it("leaves the other organization entries ungated", () => {
 		const group = settingsRoutes.find((candidate) =>
 			candidate.items.some((item) => item.href === "/settings/org/billing"),
