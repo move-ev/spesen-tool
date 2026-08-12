@@ -37,6 +37,34 @@ export type BillingStatus =
 	  };
 
 /**
+ * Whether an organization may currently create new work.
+ *
+ * The same question {@link getBillingStatus} answers, without the seat count:
+ * the gate reads nothing but this, and seats are advisory and never an input
+ * to the decision (ADR-0005). Kept beside the status so the two cannot drift —
+ * both resolve through {@link resolveEntitlement}.
+ */
+export async function isOrganizationEntitled(
+	ctx: BillingServiceContext,
+	organizationId: string,
+): Promise<boolean> {
+	if (!ctx.config.enabled) return true;
+
+	const organization = await billingRepository.findOrganizationBilling(
+		ctx.db,
+		organizationId,
+	);
+
+	return isEntitled(
+		resolveEntitlement({
+			billingEnabled: true,
+			enforcedForOrganization: organization?.billingEnforced ?? true,
+			subscription: organization?.subscription ?? null,
+		}),
+	);
+}
+
+/**
  * Resolves an organization's billing status.
  *
  * With billing switched off this short-circuits before touching the database:

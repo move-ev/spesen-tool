@@ -2,7 +2,7 @@ import type { PrismaClient } from "@zemio/db";
 import { billingConfig } from "./billing.config";
 import type { BillingServiceContext } from "./billing.service";
 
-type BillingRequestContext = {
+export type BillingRequestContext = {
 	db: PrismaClient;
 };
 

@@ -1,6 +1,6 @@
 import { createMockDb } from "@zemio/test-utils";
 import { describe, expect, it } from "vitest";
-import { getBillingStatus } from "./billing.service";
+import { getBillingStatus, isOrganizationEntitled } from "./billing.service";
 
 const enabledConfig = {
 	enabled: true,
@@ -121,6 +121,47 @@ describe("getBillingStatus enforcement override", () => {
 		await expect(
 			getBillingStatus({ db, config: enabledConfig }, "org_1"),
 		).resolves.toMatchObject({ entitled: false, state: "read_only" });
+	});
+});
+
+describe("isOrganizationEntitled", () => {
+	it("agrees with the status surface, so the gate and the banner cannot differ", async () => {
+		for (const status of ["active", "trialing", "past_due", "paused"]) {
+			const db = dbWith({ subscription: { tier: "M", seatLimit: 25, status } });
+
+			await expect(
+				isOrganizationEntitled({ db, config: enabledConfig }, "org_1"),
+			).resolves.toBe(true);
+		}
+
+		for (const status of ["canceled", "unpaid", "incomplete_expired"]) {
+			const db = dbWith({ subscription: { tier: "M", seatLimit: 25, status } });
+
+			await expect(
+				isOrganizationEntitled({ db, config: enabledConfig }, "org_1"),
+			).resolves.toBe(false);
+		}
+	});
+
+	it("counts no seats, since seats never decide entitlement", async () => {
+		const db = dbWith({
+			subscription: { tier: "S", seatLimit: 10, status: "active" },
+			seats: 400,
+		});
+
+		await expect(
+			isOrganizationEntitled({ db, config: enabledConfig }, "org_1"),
+		).resolves.toBe(true);
+		expect(db.member.count).not.toHaveBeenCalled();
+	});
+
+	it("reads nothing at all with billing switched off", async () => {
+		const db = dbWith({});
+
+		await expect(
+			isOrganizationEntitled({ db, config: { enabled: false } }, "org_1"),
+		).resolves.toBe(true);
+		expect(db.organization.findUnique).not.toHaveBeenCalled();
 	});
 });
 
