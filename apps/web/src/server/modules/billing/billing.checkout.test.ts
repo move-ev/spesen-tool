@@ -27,15 +27,20 @@ function deps(
 		prices?: unknown[];
 		sessionUrl?: string | null;
 		claimed?: boolean;
+		subscription?: { status: string; seatLimit: number } | null;
 	} = {},
 ) {
 	const db = createMockDb();
+	// One mock serves both organization reads the checkout makes — the
+	// subscription lookup and the customer lookup.
 	db.organization.findUnique.mockResolvedValue(
 		(args.organization === undefined
 			? {
 					id: "org_1",
 					name: "Robotics Society",
 					stripeCustomerId: args.stripeCustomerId ?? null,
+					billingEnforced: true,
+					subscription: args.subscription ?? null,
 				}
 			: args.organization) as never,
 	);
@@ -119,8 +124,14 @@ describe("startCheckout customer creation", () => {
 
 	it("defers to the customer that won a concurrent first checkout", async () => {
 		const d = deps({ stripeCustomerId: null, claimed: false });
-		// The read-back after losing the claim: someone else got there first.
+		// Three reads in order: the subscription check, the customer lookup that
+		// finds none, and the read-back after losing the claim to someone who got
+		// there first.
 		d.db.organization.findUnique
+			.mockResolvedValueOnce({
+				billingEnforced: true,
+				subscription: null,
+			} as never)
 			.mockResolvedValueOnce({
 				id: "org_1",
 				name: "Robotics Society",
@@ -250,5 +261,38 @@ describe("startCheckout on a vanished organization", () => {
 
 		await expectTRPCErrorCode(startCheckout(d, actor, TIER_PRICE), "NOT_FOUND");
 		expect(d.customersCreate).not.toHaveBeenCalled();
+	});
+});
+
+describe("startCheckout when the organization already subscribes", () => {
+	it.each([
+		"active",
+		"trialing",
+		"past_due",
+		"incomplete",
+	])("refuses a second subscription while Stripe still considers %s live", async (status) => {
+		const d = deps({ subscription: { status, seatLimit: 25 } });
+
+		await expectTRPCErrorCode(
+			startCheckout(d, actor, TIER_PRICE),
+			"PRECONDITION_FAILED",
+		);
+
+		// Nothing may reach Stripe: a session created here is a second
+		// subscription billed against the same customer.
+		expect(d.sessionsCreate).not.toHaveBeenCalled();
+		expect(d.db.auditEvent.create).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		"canceled",
+		"unpaid",
+		"incomplete_expired",
+	])("lets an organization whose subscription is %s buy again", async (status) => {
+		const d = deps({ subscription: { status, seatLimit: 25 } });
+
+		await expect(startCheckout(d, actor, TIER_PRICE)).resolves.toEqual({
+			url: "https://checkout.stripe.test/cs_1",
+		});
 	});
 });

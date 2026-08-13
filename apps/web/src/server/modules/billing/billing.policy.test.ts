@@ -3,6 +3,7 @@ import {
 	entitlementFromStripeStatus,
 	isEntitled,
 	isOverSeatLimit,
+	mayStartCheckout,
 	resolveEntitlement,
 } from "./billing.policy";
 
@@ -129,5 +130,38 @@ describe("isOverSeatLimit", () => {
 				subscription: { status: "active", seatLimit: 25 },
 			}),
 		).toBe("entitled");
+	});
+});
+
+describe("mayStartCheckout", () => {
+	it("lets an organization with no subscription buy one", () => {
+		expect(mayStartCheckout(null)).toBe(true);
+	});
+
+	it.each([
+		"active",
+		"trialing",
+		"past_due",
+		"incomplete",
+		"paused",
+	])("refuses a second subscription while the first is %s", (status) => {
+		expect(mayStartCheckout({ status, seatLimit: 25 })).toBe(false);
+	});
+
+	it.each([
+		"canceled",
+		"unpaid",
+		"incomplete_expired",
+	])("lets an organization whose subscription is %s buy again", (status) => {
+		expect(mayStartCheckout({ status, seatLimit: 25 })).toBe(true);
+	});
+
+	it("refuses on an unrecognised status, which resolves as live", () => {
+		// Fail-open on entitlement means fail-closed on buying again: an unknown
+		// status is treated as a subscription that exists, and a second one would
+		// be billed without being recorded.
+		expect(mayStartCheckout({ status: "something_new", seatLimit: 25 })).toBe(
+			false,
+		);
 	});
 });

@@ -13,6 +13,7 @@ import {
 import { ROUTES } from "@/lib/routes";
 import { auditRepository } from "@/server/modules/audit/audit.repository";
 import { listTiers, type TierPriceSource } from "./billing.catalogue";
+import { mayStartCheckout } from "./billing.policy";
 import { billingRepository } from "./billing.repository";
 
 /**
@@ -136,6 +137,23 @@ export async function startCheckout(
 		throw new TRPCError({
 			code: "BAD_REQUEST",
 			message: "That tier is not available.",
+		});
+	}
+
+	// The interface hides the tier list from an organization that already
+	// subscribes, but hiding is presentation: a stale tab, a double submit or a
+	// direct call would otherwise buy a second Stripe subscription against the
+	// same customer, which Stripe bills and Zemio cannot record.
+	const organization = await billingRepository.findOrganizationBilling(
+		deps.db,
+		actor.organizationId,
+	);
+
+	if (!mayStartCheckout(organization?.subscription ?? null)) {
+		throw new TRPCError({
+			code: "PRECONDITION_FAILED",
+			message:
+				"This organization already has a subscription. Change it in the billing portal.",
 		});
 	}
 

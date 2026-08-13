@@ -96,6 +96,29 @@ export function isEntitled(state: EntitlementState): boolean {
 }
 
 /**
+ * Whether an organization may start a hosted checkout.
+ *
+ * Zemio keeps one subscription row per organization, so a second live
+ * subscription would be billed by Stripe and not recorded here — and cancelling
+ * either one would then write a terminal status over an organization that is
+ * still paying. A subscription Stripe still considers live is therefore changed
+ * in the portal, never bought again.
+ *
+ * Read from the subscription's own status rather than from the resolved
+ * entitlement, which would answer "entitled" for an organization enforcement
+ * does not apply to and refuse it a subscription it is entitled to buy.
+ */
+export function mayStartCheckout(
+	subscription: SubscriptionFacts | null,
+): boolean {
+	if (!subscription) return true;
+
+	// A lapsed organization must keep this route open: billing is deliberately
+	// ungated so the one action that fixes it stays reachable (ADR-0006).
+	return !isEntitled(entitlementFromStripeStatus(subscription.status));
+}
+
+/**
  * Whether an organization has more members than its tier includes.
  *
  * Reported, never enforced: members are created automatically when a Microsoft
