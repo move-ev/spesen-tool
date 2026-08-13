@@ -112,6 +112,11 @@ into the image):
   > `BILLING_ENABLED` is on** — the container fails to start if either is
   > missing, naming both in the error.
 
+  Turning the flag on enforces nothing by itself: enforcement also needs
+  `billingEnforced` on the individual organization, so a rollout can be staged
+  one customer at a time. See [billing-runbook.md](./billing-runbook.md) for
+  that and for verifying billing locally against Stripe test mode.
+
 ## Database migrations
 
 `prisma migrate deploy` runs in the web container's start command (`CMD`), so it
