@@ -79,6 +79,27 @@ Prices are discovered from that metadata alone. A price without `zemio_tier` is
 not a tier and will never appear in the product, which is what the untagged
 fixture demonstrates.
 
+### Negotiated prices
+
+A price may carry a third key, `zemio_org`, naming the single organization it is
+for:
+
+| Metadata | Who sees it, and who can buy it |
+| --- | --- |
+| `zemio_tier` + `zemio_seats` | Every organization. A published tier. |
+| plus `zemio_org=<organizationId>` | Only that organization. |
+
+Use it for every negotiated deal. Without it a bespoke XL rate sits in the
+public catalogue: any member of any organization can read its amount and seat
+allowance, and any owner can subscribe at it — the catalogue is the same list
+checkout validates against, so being listed is being purchasable.
+
+The organization id is the `organization.id` in Zemio's database, not the Stripe
+customer id. A blank or absent value means published, so a typo fails towards
+the safer half of the two only in that a mistyped id hides the price rather than
+exposing it — check the tier appears for the customer before telling them it is
+there.
+
 ## 3. Trigger each handled event
 
 Zemio acts on exactly four event types. Everything else is recorded and ignored.

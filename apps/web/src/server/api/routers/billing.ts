@@ -27,14 +27,15 @@ export const billingRouter = createTRPCRouter({
 	),
 
 	/**
-	 * The tiers on offer, as Stripe defines them.
+	 * The tiers this organization may buy, as Stripe defines them.
 	 *
-	 * Readable by any member — these are the same public prices anyone could
-	 * see — but only an owner can act on them. An instance that does not bill
+	 * Readable by any member — the published prices are the same ones anyone
+	 * could see — but only an owner can act on them, and a price negotiated for
+	 * another organization is not among them. An instance that does not bill
 	 * offers none, rather than failing: there is nothing to sell (ADR-0001).
 	 */
-	tiers: orgProcedure.query((): Promise<Tier[]> | Tier[] =>
-		billingConfig.enabled ? listTiers(getStripe()) : [],
+	tiers: orgProcedure.query(({ ctx }): Promise<Tier[]> | Tier[] =>
+		billingConfig.enabled ? listTiers(getStripe(), ctx.organizationId) : [],
 	),
 
 	/**

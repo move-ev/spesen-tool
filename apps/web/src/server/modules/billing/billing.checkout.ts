@@ -132,7 +132,11 @@ export async function startCheckout(
 	actor: CheckoutActor,
 	priceId: string,
 ): Promise<{ url: string }> {
-	const tier = (await listTiers(deps.stripe)).find(
+	// Scoped to the acting organization, and deliberately the same list the page
+	// offered: a price negotiated for someone else is not a tier this
+	// organization may buy, and checking against the unscoped catalogue would
+	// make the page's discretion cosmetic.
+	const tier = (await listTiers(deps.stripe, actor.organizationId)).find(
 		(candidate) => candidate.priceId === priceId,
 	);
 

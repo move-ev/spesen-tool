@@ -7,6 +7,9 @@ import {
 	tierFromPrice,
 } from "./billing.catalogue";
 
+/** The organization asking, for the tiers it is offered. */
+const ORG = "org_1";
+
 /** A Stripe price as the catalogue reads it, with everything valid by default. */
 function price(overrides: Record<string, unknown> = {}) {
 	return {
@@ -102,7 +105,7 @@ describe("listTiers", () => {
 			price({ id: "price_unrelated", metadata: { some_other_product: "yes" } }),
 		]);
 
-		await expect(listTiers(stripe)).resolves.toEqual([
+		await expect(listTiers(stripe, ORG)).resolves.toEqual([
 			{
 				priceId: "price_s",
 				name: "S",
@@ -133,7 +136,7 @@ describe("listTiers", () => {
 			}),
 		]);
 
-		const tiers = await listTiers(stripe);
+		const tiers = await listTiers(stripe, ORG);
 
 		expect(tiers.map((t) => t.name)).toEqual(["S", "M", "L"]);
 	});
@@ -141,7 +144,7 @@ describe("listTiers", () => {
 	it("requests only active prices", async () => {
 		const stripe = stripeWith([price()]);
 
-		await listTiers(stripe);
+		await listTiers(stripe, ORG);
 
 		expect(stripe.list).toHaveBeenCalledWith(
 			expect.objectContaining({ active: true }),
@@ -160,7 +163,7 @@ describe("listTiers", () => {
 			[price({ id: "price_m" })],
 		);
 
-		const tiers = await listTiers(stripe);
+		const tiers = await listTiers(stripe, ORG);
 
 		expect(tiers.map((t) => t.name)).toEqual(["S", "M"]);
 		expect(stripe.list).toHaveBeenLastCalledWith(
@@ -171,7 +174,7 @@ describe("listTiers", () => {
 	it("returns an empty catalogue rather than throwing when no price is tagged", async () => {
 		const stripe = stripeWith([price({ metadata: {} })]);
 
-		await expect(listTiers(stripe)).resolves.toEqual([]);
+		await expect(listTiers(stripe, ORG)).resolves.toEqual([]);
 	});
 });
 
@@ -179,8 +182,8 @@ describe("listTiers caching", () => {
 	it("reads Stripe once across repeated calls", async () => {
 		const stripe = stripeWith([price()]);
 
-		await listTiers(stripe);
-		await listTiers(stripe);
+		await listTiers(stripe, ORG);
+		await listTiers(stripe, ORG);
 
 		expect(stripe.list).toHaveBeenCalledTimes(1);
 	});
@@ -188,8 +191,8 @@ describe("listTiers caching", () => {
 	it("serves the same catalogue whichever organization asks, since it has none", async () => {
 		const stripe = stripeWith([price()]);
 
-		const first = await listTiers(stripe);
-		const second = await listTiers(stripe);
+		const first = await listTiers(stripe, ORG);
+		const second = await listTiers(stripe, ORG);
 
 		expect(second).toEqual(first);
 	});
@@ -197,19 +200,21 @@ describe("listTiers caching", () => {
 	it("hands out a copy, so one caller cannot corrupt another's catalogue", async () => {
 		const stripe = stripeWith([price()]);
 
-		const first = await listTiers(stripe);
+		const first = await listTiers(stripe, ORG);
 		first.pop();
 
-		await expect(listTiers(stripe)).resolves.toHaveLength(1);
+		await expect(listTiers(stripe, ORG)).resolves.toHaveLength(1);
 	});
 
 	it("hands out copies of the tiers themselves, not the cached ones", async () => {
 		const stripe = stripeWith([price()]);
 
-		const [tier] = await listTiers(stripe);
+		const [tier] = await listTiers(stripe, ORG);
 		if (tier) tier.amount = 1;
 
-		await expect(listTiers(stripe)).resolves.toMatchObject([{ amount: 1900 }]);
+		await expect(listTiers(stripe, ORG)).resolves.toMatchObject([
+			{ amount: 1900 },
+		]);
 	});
 
 	it("reads Stripe again once the cached catalogue has aged out", async () => {
@@ -217,9 +222,9 @@ describe("listTiers caching", () => {
 		try {
 			const stripe = stripeWith([price()]);
 
-			await listTiers(stripe);
+			await listTiers(stripe, ORG);
 			vi.advanceTimersByTime(TIER_CACHE_TTL_MS + 1);
-			await listTiers(stripe);
+			await listTiers(stripe, ORG);
 
 			expect(stripe.list).toHaveBeenCalledTimes(2);
 		} finally {
@@ -234,9 +239,9 @@ describe("listTiers caching", () => {
 			.mockResolvedValueOnce({ data: [price()], has_more: false });
 		const stripe = { prices: { list } } as unknown as TierPriceSource;
 
-		await expect(listTiers(stripe)).rejects.toThrow();
+		await expect(listTiers(stripe, ORG)).rejects.toThrow();
 
-		await expect(listTiers(stripe)).resolves.toHaveLength(1);
+		await expect(listTiers(stripe, ORG)).resolves.toHaveLength(1);
 	});
 
 	it("reports a failed read without repeating what Stripe said", async () => {
@@ -249,7 +254,7 @@ describe("listTiers caching", () => {
 			);
 		const stripe = { prices: { list } } as unknown as TierPriceSource;
 
-		await expect(listTiers(stripe)).rejects.toThrow(
+		await expect(listTiers(stripe, ORG)).rejects.toThrow(
 			"The billing provider could not be reached. Please try again.",
 		);
 	});
@@ -273,5 +278,67 @@ describe("tierFromPrice interval", () => {
 				price({ recurring: { interval: "month", interval_count: 1 } }) as never,
 			),
 		).not.toBeNull();
+	});
+});
+
+describe("listTiers scoping", () => {
+	/** A negotiated price, tagged for the one organization it was agreed with. */
+	function negotiated(organizationId: string) {
+		return price({
+			id: "price_xl_acme",
+			unit_amount: 249_00,
+			metadata: {
+				zemio_tier: "XL Acme",
+				zemio_seats: "400",
+				zemio_org: organizationId,
+			},
+		});
+	}
+
+	it("offers a published tier to every organization", async () => {
+		const stripe = stripeWith([price()]);
+
+		await expect(listTiers(stripe, "org_1")).resolves.toHaveLength(1);
+	});
+
+	it("offers a negotiated tier to the organization it was negotiated for", async () => {
+		const stripe = stripeWith([price(), negotiated("org_1")]);
+
+		const tiers = await listTiers(stripe, "org_1");
+
+		expect(tiers.map((t) => t.name)).toEqual(["M", "XL Acme"]);
+	});
+
+	it("hides a negotiated tier from every other organization", async () => {
+		// Commercially confidential, and the catalogue is also the allowlist
+		// checkout validates against — so being listed is being purchasable.
+		const stripe = stripeWith([price(), negotiated("org_1")]);
+
+		const tiers = await listTiers(stripe, "org_2");
+
+		expect(tiers.map((t) => t.name)).toEqual(["M"]);
+	});
+
+	it("tells no organization who a deal belongs to", async () => {
+		const stripe = stripeWith([negotiated("org_1")]);
+
+		const tiers = await listTiers(stripe, "org_1");
+
+		expect(JSON.stringify(tiers)).not.toContain("org_1");
+	});
+
+	it("reads Stripe once and scopes per caller, so one cache serves both", async () => {
+		const stripe = stripeWith([price(), negotiated("org_1")]);
+
+		await expect(listTiers(stripe, "org_1")).resolves.toHaveLength(2);
+		await expect(listTiers(stripe, "org_2")).resolves.toHaveLength(1);
+
+		expect(stripe.list).toHaveBeenCalledTimes(1);
+	});
+
+	it("treats a blank organization tag as a published tier", async () => {
+		const stripe = stripeWith([negotiated("   ")]);
+
+		await expect(listTiers(stripe, "org_2")).resolves.toHaveLength(1);
 	});
 });

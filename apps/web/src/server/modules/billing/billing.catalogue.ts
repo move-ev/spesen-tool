@@ -15,6 +15,17 @@ import { withStripe } from "./billing.stripe";
 const TIER_KEY = "zemio_tier";
 const SEATS_KEY = "zemio_seats";
 
+/**
+ * Names the one organization a price is for.
+ *
+ * Absent on a published tier, which is what everyone sees. Present on a
+ * negotiated deal, which only the organization it was negotiated for may see or
+ * buy — a price has to carry Zemio's tier metadata for the webhook to record a
+ * tier from it (ADR-0003), so without this a bespoke XL rate would sit in the
+ * public catalogue for every other customer to read and subscribe to.
+ */
+const ORG_KEY = "zemio_org";
+
 /** A tier as the product displays it. Every field comes from Stripe. */
 export type Tier = {
 	priceId: string;
@@ -92,15 +103,25 @@ export function tierFromPrice(price: Stripe.Price): Tier | null {
  */
 export const TIER_CACHE_TTL_MS = 5 * 60 * 1000;
 
-let cached: { tiers: Tier[]; expiresAt: number } | null = null;
+/**
+ * A tier as cached, with the audience it is for.
+ *
+ * `offeredTo` never leaves this module: which organization a negotiated deal
+ * belongs to is nobody else's business, least of all the browser's.
+ */
+type CatalogueEntry = { tier: Tier; offeredTo: string | null };
+
+let cached: { entries: CatalogueEntry[]; expiresAt: number } | null = null;
 
 /** Drops the cached catalogue, so one test's read cannot serve the next. */
 export function clearTierCatalogue(): void {
 	cached = null;
 }
 
-async function fetchTiers(stripe: TierPriceSource): Promise<Tier[]> {
-	const tiers: Tier[] = [];
+async function fetchCatalogue(
+	stripe: TierPriceSource,
+): Promise<CatalogueEntry[]> {
+	const entries: CatalogueEntry[] = [];
 	let startingAfter: string | undefined;
 
 	// Paged rather than capped: every negotiated XL deal adds a price, so the
@@ -117,7 +138,12 @@ async function fetchTiers(stripe: TierPriceSource): Promise<Tier[]> {
 
 		for (const price of page.data) {
 			const tier = tierFromPrice(price);
-			if (tier) tiers.push(tier);
+			if (tier) {
+				entries.push({
+					tier,
+					offeredTo: price.metadata?.[ORG_KEY]?.trim() || null,
+				});
+			}
 		}
 
 		const last = page.data.at(-1);
@@ -127,25 +153,34 @@ async function fetchTiers(stripe: TierPriceSource): Promise<Tier[]> {
 
 	// Cheapest first, so a tier added in the dashboard lands in its place
 	// without anything in Zemio knowing the order tiers are meant to come in.
-	return tiers.sort((a, b) => a.amount - b.amount);
+	return entries.sort((a, b) => a.tier.amount - b.tier.amount);
 }
 
 /**
- * The tiers on offer, cached process-wide.
+ * The tiers an organization may buy, from a catalogue cached process-wide.
  *
- * The catalogue takes no organization: what tiers exist is the same question
- * for everyone, so there is nothing organization-specific to key a cache on
- * and nothing that could be served to the wrong organization. A failed read
- * caches nothing, so a Stripe outage does not turn into an empty pricing page
- * for the length of the window.
+ * The cache holds every tier and the filtering happens per read, because what
+ * Stripe offers is one question and what this organization may see is another —
+ * caching the answer to the second would key the cache by organization for no
+ * gain and risk serving one organization's deal to another.
+ *
+ * A failed read caches nothing, so a Stripe outage does not turn into an empty
+ * pricing page for the length of the window.
  */
-export async function listTiers(stripe: TierPriceSource): Promise<Tier[]> {
+export async function listTiers(
+	stripe: TierPriceSource,
+	organizationId: string,
+): Promise<Tier[]> {
 	if (!cached || cached.expiresAt <= Date.now()) {
-		const tiers = await fetchTiers(stripe);
-		cached = { tiers, expiresAt: Date.now() + TIER_CACHE_TTL_MS };
+		const entries = await fetchCatalogue(stripe);
+		cached = { entries, expiresAt: Date.now() + TIER_CACHE_TTL_MS };
 	}
 
 	// Copied down to the tier, not just the array: a caller adjusting a tier it
 	// was handed must not rewrite the price every later caller reads.
-	return cached.tiers.map((tier) => ({ ...tier }));
+	return cached.entries
+		.filter(
+			(entry) => entry.offeredTo === null || entry.offeredTo === organizationId,
+		)
+		.map((entry) => ({ ...entry.tier }));
 }
