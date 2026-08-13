@@ -159,6 +159,16 @@ async function create(tierName: string) {
 	const org = await organization();
 	if (!org.stripeCustomerId) throw new Error("Run `seed` first.");
 
+	// Zemio keeps one subscription row per organization and teardown cancels
+	// one subscription, so a second live one would bill with nothing on either
+	// side of the integration showing it.
+	const existing = await currentSubscription();
+	if (existing) {
+		throw new Error(
+			`Subscription ${existing.id} is already live (${existing.status}). Use \`change\` to move tier, or \`cancel\` first.`,
+		);
+	}
+
 	const subscription = await stripe.subscriptions.create({
 		customer: org.stripeCustomerId,
 		items: [{ price: await priceFor(tierName) }],
@@ -198,21 +208,19 @@ async function checkout(tierName: string) {
 	);
 
 	const org = await organization();
-	// The audit trail insists on a real actor, so this borrows an owner rather
-	// than inventing one.
+	// Checkout is owner-only in the app (`orgOwnerProcedure`), and the audit
+	// trail insists on a real actor. Borrowing any other member would have this
+	// script verify a call production never makes.
 	const owner = await db.member.findFirst({
 		where: { organizationId: org.id, role: "owner" },
 		select: { userId: true },
 	});
-	const member =
-		owner ??
-		(await db.member.findFirst({
-			where: { organizationId: org.id },
-			select: { userId: true },
-		}));
 
-	if (!member) throw new Error("No member of this organization to act as.");
-	if (!owner) console.log("note: no owner on this organization, using a member");
+	if (!owner) {
+		throw new Error(
+			"No owner on this organization. Checkout is owner-only — make someone an owner rather than running it as a member.",
+		);
+	}
 
 	const { url } = await startCheckout(
 		{
@@ -220,7 +228,7 @@ async function checkout(tierName: string) {
 			stripe,
 			appUrl: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
 		},
-		{ organizationId: org.id, userId: member.userId },
+		{ organizationId: org.id, userId: owner.userId },
 		await priceFor(tierName),
 	);
 
@@ -279,12 +287,19 @@ async function teardown() {
 	if (org.stripeCustomerId) await stripe.customers.del(org.stripeCustomerId);
 
 	await db.subscription.deleteMany({ where: { organizationId: org.id } });
-	await db.processedStripeEvent.deleteMany({});
+	// Processed event ids are left alone. A row names no organization, so there
+	// is no way to delete this sandbox's without deleting everyone else's, and
+	// that table is the only thing that recognises a Stripe redelivery — losing
+	// it means an old event is applied a second time. They cost nothing to
+	// keep, and a later run produces its own ids.
 	await db.organization.update({
 		where: { id: org.id },
 		data: { stripeCustomerId: null, billingEnforced: false },
 	});
 	console.log("sandbox customer and local billing state removed");
+	console.log(
+		"(processed event ids are kept — they are the idempotency record)",
+	);
 	console.log("(the fixture product and its prices are left in the sandbox)");
 }
 

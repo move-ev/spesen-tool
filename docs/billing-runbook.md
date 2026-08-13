@@ -29,7 +29,9 @@ means).
 - The [Stripe CLI](https://docs.stripe.com/stripe-cli), authenticated with
   `stripe login`.
 - A local database with at least one organization and one member in it. The
-  sandbox script bills the oldest organization it finds.
+  sandbox script bills the oldest organization it finds, and its `checkout`
+  command needs that organization to have an **owner**, because checkout is
+  owner-only.
 
 ## 1. Point a local Zemio at Stripe test mode
 
@@ -162,8 +164,14 @@ bun run scripts/billing-sandbox.ts teardown
 ```
 
 Cancels the subscription, deletes the customer, clears the local subscription
-and processed-event rows, and sets `billingEnforced` back to `false`. The
-fixture product and its prices stay in the sandbox for next time.
+row, and sets `billingEnforced` back to `false`. The fixture product and its
+prices stay in the sandbox for next time.
+
+Processed-event rows are deliberately left behind: nothing on a row says which
+organization it came from, so clearing this sandbox's would clear every other
+organization's idempotency record with it, and a Stripe redelivery of an
+already-handled event would then be applied twice. The count `show` prints
+therefore does not return to zero.
 
 ## 4. The production webhook endpoint
 
