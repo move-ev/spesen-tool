@@ -4,6 +4,7 @@ import type Stripe from "stripe";
 import { logger } from "@/lib/logger";
 import { isUniqueConstraintError } from "@/server/shared/errors";
 import { tierFromPrice } from "./billing.catalogue";
+import { entitlementFromStripeStatus, isEntitled } from "./billing.policy";
 import { billingRepository } from "./billing.repository";
 
 /**
@@ -64,67 +65,77 @@ function subscriptionIdFrom(event: Stripe.Event): string | null {
 }
 
 /**
+ * Rolls the claim transaction back when the event id was already recorded.
+ *
+ * A sentinel rather than a `P2002` check around the whole transaction: the
+ * writes inside it raise unique violations of their own, and answering "already
+ * handled" to one of those would drop an event that was never applied.
+ */
+class EventAlreadyProcessed extends Error {}
+
+/**
  * Handles a verified Stripe event.
  *
- * The event id is recorded before the event is acted on, so a redelivery —
- * which Stripe does aggressively on any non-2xx response — is a no-op rather
- * than a second application (ADR-0004).
+ * The event id is claimed in the same transaction as the state the event
+ * describes. Claiming first is what makes a redelivery a no-op rather than a
+ * second application (ADR-0004); claiming *atomically* is what stops a failure
+ * between the two leaving an event marked handled that was never applied —
+ * which no redelivery could then repair, because Stripe reuses the event id and
+ * would be answered `duplicate` forever.
  */
 export async function handleStripeEvent(
 	deps: WebhookDependencies,
 	event: Stripe.Event,
 ): Promise<WebhookOutcome> {
-	try {
-		// Every event is claimed, not just the four acted on, so the table grows
-		// with the whole Stripe event volume — one paid checkout leaves around
-		// thirty rows. That is accepted: filtering first would save rows at the
-		// cost of the claim no longer being the very first thing that happens.
-		await billingRepository.recordStripeEvent(deps.db, event.id, event.type);
-	} catch (error) {
-		if (isUniqueConstraintError(error)) return "duplicate";
-		throw error;
+	// Not the idempotency mechanism, just a shortcut: Stripe redelivers
+	// aggressively on any non-2xx, and a redelivery it has already had an answer
+	// for should cost neither an API call nor a transaction. The claim below is
+	// what actually decides.
+	if (await billingRepository.hasProcessedStripeEvent(deps.db, event.id)) {
+		return "duplicate";
 	}
 
+	// The re-fetch, ahead of the claim because it touches no database. See
+	// ADR-0004 before removing it.
+	const subscriptionId = subscriptionIdFrom(event);
+	const subscription = subscriptionId
+		? await deps.stripe.subscriptions.retrieve(subscriptionId)
+		: null;
+
 	try {
-		return await applyEvent(deps, event);
+		return await deps.db.$transaction(async (tx) => {
+			const db = tx as unknown as PrismaClient;
+
+			// Every event is claimed, not just the four acted on, so the table grows
+			// with the whole Stripe event volume — one paid checkout leaves around
+			// thirty rows. That is accepted: filtering first would save rows at the
+			// cost of the claim no longer covering every event.
+			try {
+				await billingRepository.recordStripeEvent(db, event.id, event.type);
+			} catch (error) {
+				if (isUniqueConstraintError(error)) throw new EventAlreadyProcessed();
+				throw error;
+			}
+
+			if (!subscription) return "ignored";
+
+			return await applyEvent(db, event, subscription);
+		});
 	} catch (error) {
-		// The claim is released before the failure is re-thrown. Recording first
-		// is what makes a redelivery arriving *during* processing a no-op
-		// (ADR-0004); leaving the record behind after processing failed would
-		// make Stripe's redelivery a no-op too, and the change would be lost for
-		// good with nothing left to retry it.
-		await billingRepository
-			.forgetStripeEvent(deps.db, event.id)
-			.catch((cleanupError) => {
-				logger.error("Could not release a failed Stripe event", {
-					eventId: event.id,
-					error:
-						cleanupError instanceof Error
-							? cleanupError.message
-							: String(cleanupError),
-				});
-			});
+		if (error instanceof EventAlreadyProcessed) return "duplicate";
 		throw error;
 	}
 }
 
 /** Everything the event means, once its id is claimed. */
 async function applyEvent(
-	deps: WebhookDependencies,
+	db: PrismaClient,
 	event: Stripe.Event,
+	subscription: Stripe.Subscription,
 ): Promise<WebhookOutcome> {
-	const subscriptionId = subscriptionIdFrom(event);
-	if (!subscriptionId) return "ignored";
-
-	// The re-fetch. See ADR-0004 before removing it.
-	const subscription = await deps.stripe.subscriptions.retrieve(subscriptionId);
-
 	const customerId = idOf(subscription.customer);
 	const organizationId = customerId
-		? await billingRepository.findOrganizationIdByStripeCustomer(
-				deps.db,
-				customerId,
-			)
+		? await billingRepository.findOrganizationIdByStripeCustomer(db, customerId)
 		: null;
 
 	// A customer Zemio does not know is not an error: the same Stripe account
@@ -134,6 +145,28 @@ async function applyEvent(
 		logger.warn("Stripe event for an unrecognised customer", {
 			eventId: event.id,
 			customerId,
+		});
+		return "ignored";
+	}
+
+	// The organization holds one row, keyed by organization rather than by
+	// subscription, so an event about a subscription it has already moved on
+	// from would otherwise overwrite the one it actually pays for. Re-fetching
+	// does not help here: it faithfully returns the dead subscription's dead
+	// state. Only a *demotion* is refused — a foreign subscription that is alive
+	// is the organization's new one, and terminal news about the subscription on
+	// record is exactly what this table exists to hear.
+	const current = await billingRepository.findSubscription(db, organizationId);
+	if (
+		current &&
+		current.stripeSubscriptionId !== subscription.id &&
+		!isEntitled(entitlementFromStripeStatus(subscription.status))
+	) {
+		logger.warn("Ignoring a terminal event for a superseded subscription", {
+			eventId: event.id,
+			organizationId,
+			endedSubscriptionId: subscription.id,
+			currentSubscriptionId: current.stripeSubscriptionId,
 		});
 		return "ignored";
 	}
@@ -148,7 +181,7 @@ async function applyEvent(
 	if (!item) {
 		logger.error("Stripe subscription has no items", {
 			eventId: event.id,
-			subscriptionId,
+			subscriptionId: subscription.id,
 		});
 		return "ignored";
 	}
@@ -170,7 +203,7 @@ async function applyEvent(
 	// (ADR-0003): the status still moves, and whatever tier is on record stays.
 	if (!tier) {
 		const updated = await billingRepository.updateSubscriptionIfPresent(
-			deps.db,
+			db,
 			organizationId,
 			facts,
 		);
@@ -185,7 +218,7 @@ async function applyEvent(
 		return updated > 0 ? "processed" : "ignored";
 	}
 
-	await billingRepository.upsertSubscription(deps.db, organizationId, {
+	await billingRepository.upsertSubscription(db, organizationId, {
 		...facts,
 		tier: tier.name,
 		seatLimit: tier.seatLimit,

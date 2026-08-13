@@ -84,14 +84,46 @@ export const billingRepository = {
 	/**
 	 * Claims a Stripe event id. Raises `P2002` if it was already claimed, which
 	 * is how a redelivery is recognised (ADR-0004).
+	 *
+	 * Called inside the transaction that writes the state the event describes,
+	 * so a failure rolls the claim back with it rather than leaving an event
+	 * marked handled that never was.
 	 */
 	async recordStripeEvent(db: Db, id: string, type: string): Promise<void> {
 		await db.processedStripeEvent.create({ data: { id, type } });
 	},
 
-	/** Releases a claimed event id so Stripe's redelivery can try again. */
-	async forgetStripeEvent(db: Db, id: string): Promise<void> {
-		await db.processedStripeEvent.delete({ where: { id } });
+	/**
+	 * Which Stripe subscription the organization currently has on record, and
+	 * what state it was last seen in.
+	 *
+	 * Read before a webhook writes, so an event about a subscription the
+	 * organization has already moved on from can be recognised as such.
+	 */
+	findSubscription(
+		db: Db,
+		organizationId: string,
+	): Promise<{ stripeSubscriptionId: string; status: string } | null> {
+		return db.subscription.findUnique({
+			where: { organizationId },
+			select: { stripeSubscriptionId: true, status: true },
+		});
+	},
+
+	/**
+	 * Whether an event id has already been claimed.
+	 *
+	 * Not the idempotency mechanism — the unique constraint in
+	 * {@link recordStripeEvent} is, and it is the only one that can decide a
+	 * race. This spares the common redelivery a Stripe call and a transaction
+	 * when the answer is already settled.
+	 */
+	async hasProcessedStripeEvent(db: Db, id: string): Promise<boolean> {
+		const existing = await db.processedStripeEvent.findUnique({
+			where: { id },
+			select: { id: true },
+		});
+		return existing !== null;
 	},
 
 	/** The organization paying as this Stripe customer, if Zemio knows one. */

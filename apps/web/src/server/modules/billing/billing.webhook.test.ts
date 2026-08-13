@@ -54,12 +54,22 @@ function deps(
 		organizationId?: string | null;
 		updatedRows?: number;
 		eventAlreadyProcessed?: boolean;
+		claimLostRace?: boolean;
+		currentSubscription?: { stripeSubscriptionId: string; status: string };
 	} = {},
 ) {
 	const db = createMockDb();
 
+	// The claim and the writes it guards share one transaction, so the mock runs
+	// the callback against the same client the assertions read.
+	db.$transaction.mockImplementation(((fn: (tx: unknown) => unknown) =>
+		fn(db)) as never);
+
+	db.processedStripeEvent.findUnique.mockResolvedValue(
+		(args.eventAlreadyProcessed ? { id: "evt_1" } : null) as never,
+	);
 	db.processedStripeEvent.create.mockImplementation((() => {
-		if (args.eventAlreadyProcessed) {
+		if (args.claimLostRace) {
 			return Promise.reject(
 				Object.assign(new Error("Unique constraint failed"), { code: "P2002" }),
 			);
@@ -72,7 +82,9 @@ function deps(
 			? null
 			: { id: args.organizationId ?? "org_1" }) as never,
 	);
-	db.processedStripeEvent.delete.mockResolvedValue({} as never);
+	db.subscription.findUnique.mockResolvedValue(
+		(args.currentSubscription ?? null) as never,
+	);
 	db.subscription.upsert.mockResolvedValue({} as never);
 	db.subscription.updateMany.mockResolvedValue({
 		count: args.updatedRows ?? 1,
@@ -103,7 +115,7 @@ beforeEach(() => {
 });
 
 describe("handleStripeEvent idempotency", () => {
-	it("records the event before doing anything with it", async () => {
+	it("records the event as part of applying it", async () => {
 		const d = deps();
 
 		await handleStripeEvent(
@@ -114,6 +126,22 @@ describe("handleStripeEvent idempotency", () => {
 		expect(d.db.processedStripeEvent.create).toHaveBeenCalledWith({
 			data: { id: "evt_1", type: "customer.subscription.updated" },
 		});
+	});
+
+	it("claims the event in the same transaction as the state it writes", async () => {
+		const d = deps();
+
+		await handleStripeEvent(
+			d,
+			subscriptionEvent("customer.subscription.updated"),
+		);
+
+		// Both writes must be inside one transaction, so a failure between them
+		// cannot leave an event marked handled that was never applied — Stripe
+		// reuses the event id, so nothing could repair that afterwards.
+		expect(d.db.$transaction).toHaveBeenCalledOnce();
+		expect(d.db.processedStripeEvent.create).toHaveBeenCalled();
+		expect(d.db.subscription.upsert).toHaveBeenCalled();
 	});
 
 	it("treats a redelivered event as already handled and changes nothing", async () => {
@@ -127,7 +155,18 @@ describe("handleStripeEvent idempotency", () => {
 		expect(d.db.subscription.upsert).not.toHaveBeenCalled();
 	});
 
-	it("releases the event when processing fails, so the redelivery retries it", async () => {
+	it("treats a redelivery that races the claim as already handled", async () => {
+		// The pre-check missed it, so the unique constraint is what decides.
+		const d = deps({ claimLostRace: true });
+
+		await expect(
+			handleStripeEvent(d, subscriptionEvent("customer.subscription.updated")),
+		).resolves.toBe("duplicate");
+
+		expect(d.db.subscription.upsert).not.toHaveBeenCalled();
+	});
+
+	it("claims nothing when the re-fetch fails, so the redelivery retries it", async () => {
 		const d = deps();
 		d.retrieve.mockRejectedValue(new Error("stripe is down"));
 
@@ -135,32 +174,80 @@ describe("handleStripeEvent idempotency", () => {
 			handleStripeEvent(d, subscriptionEvent("customer.subscription.updated")),
 		).rejects.toThrow("stripe is down");
 
-		expect(d.db.processedStripeEvent.delete).toHaveBeenCalledWith({
-			where: { id: "evt_1" },
-		});
+		expect(d.db.processedStripeEvent.create).not.toHaveBeenCalled();
 	});
 
-	it("still reports the original failure when the release itself fails", async () => {
+	it("lets a failed write out so the transaction rolls the claim back", async () => {
 		const d = deps();
-		d.retrieve.mockRejectedValue(new Error("stripe is down"));
-		d.db.processedStripeEvent.delete.mockRejectedValue(
+		d.db.subscription.upsert.mockRejectedValue(
 			new Error("database is down") as never,
 		);
 
 		await expect(
 			handleStripeEvent(d, subscriptionEvent("customer.subscription.updated")),
-		).rejects.toThrow("stripe is down");
+		).rejects.toThrow("database is down");
 	});
 
-	it("keeps the event recorded once it has been applied", async () => {
+	it("does not mistake a write conflict for a redelivery", async () => {
+		// A unique violation from the *state* write is a real failure. Reporting
+		// it as a duplicate would answer Stripe 200 and drop the event for good.
 		const d = deps();
-
-		await handleStripeEvent(
-			d,
-			subscriptionEvent("customer.subscription.updated"),
+		d.db.subscription.upsert.mockRejectedValue(
+			Object.assign(new Error("Unique constraint failed"), {
+				code: "P2002",
+			}) as never,
 		);
 
-		expect(d.db.processedStripeEvent.delete).not.toHaveBeenCalled();
+		await expect(
+			handleStripeEvent(d, subscriptionEvent("customer.subscription.updated")),
+		).rejects.toThrow("Unique constraint failed");
+	});
+});
+
+describe("handleStripeEvent when a subscription has been superseded", () => {
+	it("ignores a terminal event for a subscription the organization has replaced", async () => {
+		const d = deps({
+			subscription: { id: "sub_old", status: "incomplete_expired" },
+			currentSubscription: {
+				stripeSubscriptionId: "sub_new",
+				status: "active",
+			},
+		});
+
+		await expect(
+			handleStripeEvent(d, subscriptionEvent("customer.subscription.deleted")),
+		).resolves.toBe("ignored");
+
+		expect(d.db.subscription.upsert).not.toHaveBeenCalled();
+	});
+
+	it("applies a terminal event for the subscription actually on record", async () => {
+		const d = deps({
+			subscription: { id: "sub_1", status: "canceled" },
+			currentSubscription: { stripeSubscriptionId: "sub_1", status: "active" },
+		});
+
+		await expect(
+			handleStripeEvent(d, subscriptionEvent("customer.subscription.deleted")),
+		).resolves.toBe("processed");
+
+		expect(d.db.subscription.upsert).toHaveBeenCalled();
+	});
+
+	it("adopts a live subscription that replaces the one on record", async () => {
+		const d = deps({
+			subscription: { id: "sub_new", status: "active" },
+			currentSubscription: {
+				stripeSubscriptionId: "sub_old",
+				status: "canceled",
+			},
+		});
+
+		await expect(
+			handleStripeEvent(d, subscriptionEvent("customer.subscription.created")),
+		).resolves.toBe("processed");
+
+		expect(d.db.subscription.upsert).toHaveBeenCalled();
 	});
 });
 
