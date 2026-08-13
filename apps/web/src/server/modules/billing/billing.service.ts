@@ -72,7 +72,11 @@ export async function isOrganizationEntitled(
 	return isEntitled(
 		resolveEntitlement({
 			billingEnabled: true,
-			enforcedForOrganization: organization?.billingEnforced ?? true,
+			// A vanished organization is a race, not a state to enforce against.
+			// Defaulting to enforced would refuse it for a billing reason it has
+			// no subscription to fix; the operation it was attempting raises its
+			// own, accurate `NOT_FOUND` a moment later (ADR-0001).
+			enforcedForOrganization: organization?.billingEnforced ?? false,
 			subscription: organization?.subscription ?? null,
 		}),
 	);
@@ -99,10 +103,11 @@ export async function getBillingStatus(
 	]);
 
 	// A caller with a resolved membership whose organization has since vanished
-	// is a race, not a state to serve — treat it as the enforced default rather
-	// than inventing an entitled one.
+	// is a race, not a state to serve. Enforcement does not apply to something
+	// that is not there: the banner stays quiet and whatever the caller does
+	// next reports the real problem, rather than a billing one it cannot fix.
 	const subscription = organization?.subscription ?? null;
-	const enforced = organization?.billingEnforced ?? true;
+	const enforced = organization?.billingEnforced ?? false;
 	const state = resolveEntitlement({
 		billingEnabled: true,
 		enforcedForOrganization: enforced,

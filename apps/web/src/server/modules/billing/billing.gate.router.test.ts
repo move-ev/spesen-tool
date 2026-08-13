@@ -255,3 +255,21 @@ describe("organizations that are not lapsed", () => {
 		expect(ctx.db.organization.findUnique).not.toHaveBeenCalled();
 	});
 });
+
+describe("when billing itself cannot answer", () => {
+	it.each(
+		Object.keys(gatedCalls(caller({}))),
+	)("lets %s through rather than refusing it", async (path) => {
+		// A failure to resolve entitlement is not a refusal. Billing must never
+		// be the reason an organization stops working (ADR-0001), and the
+		// operation's own error is the one worth surfacing.
+		const ctx = context({});
+		ctx.db.organization.findUnique.mockRejectedValue(
+			new Error("the database is unreachable") as never,
+		);
+		const calls = gatedCalls(createCaller(asTRPCContext(ctx)));
+
+		const call = calls[path as keyof typeof calls];
+		expect(await refusedForBilling(call())).toBe(false);
+	});
+});

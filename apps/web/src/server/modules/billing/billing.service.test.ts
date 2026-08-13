@@ -216,13 +216,21 @@ describe("getBillingStatus exposure", () => {
 		expect(JSON.stringify(status)).not.toContain("whsec_1");
 	});
 
-	it("treats a missing organization as unentitled rather than crashing", async () => {
+	it("enforces nothing against a missing organization rather than crashing", async () => {
+		// A membership that resolved against an organization now gone is a race.
+		// Refusing it for a billing reason would be a lockout it has no
+		// subscription to fix; whatever the caller was doing raises its own,
+		// accurate NOT_FOUND instead (ADR-0001).
 		const db = createMockDb();
 		db.organization.findUnique.mockResolvedValue(null as never);
 		db.member.count.mockResolvedValue(0 as never);
 
 		await expect(
 			getBillingStatus({ db, config: enabledConfig }, "org_gone"),
-		).resolves.toMatchObject({ state: "read_only", entitled: false });
+		).resolves.toMatchObject({
+			state: "entitled",
+			entitled: true,
+			enforced: false,
+		});
 	});
 });

@@ -59,11 +59,15 @@ export function entitlementFromStripeStatus(status: string): EntitlementState {
 		case "unpaid":
 			return "read_only";
 
-		// Collection is paused, which is something the operator or the customer
-		// chose. Deliberately entitled: pausing is not the same as lapsing, and
-		// whoever paused it did not intend to take the product away.
+		// Not "pausing collection", which leaves the status untouched. Stripe only
+		// reports `paused` when a trial ended without a payment method: no
+		// invoices are raised and Stripe will not move the subscription on by
+		// itself. Entitled, because nobody should be locked out of a state the
+		// operator arranged — but never silently, or an organization uses Zemio
+		// indefinitely with nothing to pay against and no one told. The banner
+		// asks for the card, which is exactly what resuming needs.
 		case "paused":
-			return "entitled";
+			return "payment_failing";
 
 		default:
 			return "entitled";

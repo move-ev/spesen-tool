@@ -33,9 +33,13 @@ describe("entitlementFromStripeStatus", () => {
 		expect(entitlementFromStripeStatus("incomplete_expired")).toBe("read_only");
 	});
 
-	it("keeps a paused subscription entitled", () => {
-		// Pausing collection is a choice someone made, not a lapse.
-		expect(entitlementFromStripeStatus("paused")).toBe("entitled");
+	it("warns on a paused subscription without locking anyone out", () => {
+		// Stripe reports `paused` only when a trial ended with no payment method,
+		// so no invoice will ever be raised and Stripe will not move it on. Still
+		// entitled, but it has to be said out loud — silence here is a product
+		// given away indefinitely with nothing to pay against.
+		expect(entitlementFromStripeStatus("paused")).toBe("payment_failing");
+		expect(isEntitled(entitlementFromStripeStatus("paused"))).toBe(true);
 	});
 
 	it("falls open on a status Stripe has not told us about", () => {

@@ -1,5 +1,6 @@
 import "server-only";
 import { TRPCError } from "@trpc/server";
+import { logger } from "@/lib/logger";
 import {
 	type BillingRequestContext,
 	toBillingServiceContext,
@@ -71,10 +72,24 @@ export async function assertEntitled(
 ): Promise<void> {
 	if (!isBillingGatedPath(path)) return;
 
-	const entitled = await isOrganizationEntitled(
-		toBillingServiceContext(ctx),
-		ctx.organizationId,
-	);
+	let entitled: boolean;
+	try {
+		entitled = await isOrganizationEntitled(
+			toBillingServiceContext(ctx),
+			ctx.organizationId,
+		);
+	} catch (error) {
+		// Billing could not answer, so it does not get to refuse. Failing open is
+		// the same choice ADR-0001 makes for a deployment that does not bill: a
+		// billing fault must never be what stops an organization working, and the
+		// operation's own error is a better one to surface than ours.
+		logger.error("Could not resolve entitlement; allowing the operation", {
+			organizationId: ctx.organizationId,
+			path,
+			error: error instanceof Error ? error.message : String(error),
+		});
+		return;
+	}
 
 	if (!entitled) {
 		throw new TRPCError({ code: "FORBIDDEN", message: BILLING_NOT_ENTITLED });
