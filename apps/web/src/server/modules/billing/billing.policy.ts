@@ -14,10 +14,17 @@
  */
 export type EntitlementState = "entitled" | "payment_failing" | "read_only";
 
-/** The only subscription facts an entitlement decision reads. */
+/**
+ * The only subscription facts an entitlement decision reads.
+ *
+ * Just the status, and deliberately so: seats are reported, never enforced
+ * (ADR-0005), so {@link isOverSeatLimit} takes its two numbers directly rather
+ * than through here. Naming a field this module does not read would invite the
+ * next person to enforce against it. Callers pass their whole subscription row;
+ * anything wider satisfies this.
+ */
 export type SubscriptionFacts = {
 	status: string;
-	seatLimit: number;
 };
 
 export type EntitlementInput = {

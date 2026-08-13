@@ -7,7 +7,7 @@ import {
 	resolveEntitlement,
 } from "./billing.policy";
 
-const subscription = { status: "active", seatLimit: 10 };
+const subscription = { status: "active" };
 
 describe("entitlementFromStripeStatus", () => {
 	it.each(["active", "trialing"])("treats %s as entitled", (status) => {
@@ -72,7 +72,7 @@ describe("resolveEntitlement enforcement switches", () => {
 	});
 
 	it("entitles an unpaid organization while either switch is off", () => {
-		const unpaid = { status: "unpaid", seatLimit: 10 };
+		const unpaid = { status: "unpaid" };
 
 		expect(
 			resolveEntitlement({
@@ -98,9 +98,28 @@ describe("resolveEntitlement where enforcement applies", () => {
 		expect(
 			resolveEntitlement({
 				...enforced,
-				subscription: { status: "canceled", seatLimit: 10 },
+				subscription: { status: "canceled" },
 			}),
 		).toBe("read_only");
+	});
+
+	it("reads nothing off a subscription but its status", () => {
+		// Callers hand over the whole subscription row they already loaded. Every
+		// other field on it — the seat limit above all — is beside the decision
+		// rather than inside it (ADR-0005), which is why SubscriptionFacts names
+		// only the one field.
+		const row = {
+			status: "canceled",
+			tier: "M",
+			seatLimit: 25,
+			currentPeriodEnd: new Date(),
+			cancelAtPeriodEnd: false,
+		};
+
+		expect(resolveEntitlement({ ...enforced, subscription: row })).toBe(
+			"read_only",
+		);
+		expect(mayStartCheckout(row)).toBe(true);
 	});
 });
 
@@ -131,7 +150,7 @@ describe("isOverSeatLimit", () => {
 			resolveEntitlement({
 				billingEnabled: true,
 				enforcedForOrganization: true,
-				subscription: { status: "active", seatLimit: 25 },
+				subscription: { status: "active" },
 			}),
 		).toBe("entitled");
 	});
@@ -149,7 +168,7 @@ describe("mayStartCheckout", () => {
 		"incomplete",
 		"paused",
 	])("refuses a second subscription while the first is %s", (status) => {
-		expect(mayStartCheckout({ status, seatLimit: 25 })).toBe(false);
+		expect(mayStartCheckout({ status })).toBe(false);
 	});
 
 	it.each([
@@ -157,15 +176,13 @@ describe("mayStartCheckout", () => {
 		"unpaid",
 		"incomplete_expired",
 	])("lets an organization whose subscription is %s buy again", (status) => {
-		expect(mayStartCheckout({ status, seatLimit: 25 })).toBe(true);
+		expect(mayStartCheckout({ status })).toBe(true);
 	});
 
 	it("refuses on an unrecognised status, which resolves as live", () => {
 		// Fail-open on entitlement means fail-closed on buying again: an unknown
 		// status is treated as a subscription that exists, and a second one would
 		// be billed without being recorded.
-		expect(mayStartCheckout({ status: "something_new", seatLimit: 25 })).toBe(
-			false,
-		);
+		expect(mayStartCheckout({ status: "something_new" })).toBe(false);
 	});
 });
