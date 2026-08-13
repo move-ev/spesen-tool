@@ -54,6 +54,24 @@ describe("resolveBillingConfig when billing is on", () => {
 		});
 	});
 
+	it("hands on credentials without the whitespace they were pasted with", () => {
+		// A trailing newline survives a paste into a .env file or a secrets
+		// manager and passes the presence check. Stripe would then reject every
+		// call and every signature verification, blaming the key and the
+		// signature rather than the newline on the end of them.
+		expect(
+			resolveBillingConfig({
+				BILLING_ENABLED: "true",
+				STRIPE_SECRET_KEY: "  sk_test_1\n",
+				STRIPE_WEBHOOK_SECRET: "whsec_1\t",
+			}),
+		).toEqual({
+			enabled: true,
+			secretKey: "sk_test_1",
+			webhookSecret: "whsec_1",
+		});
+	});
+
 	it.each([
 		[
 			"STRIPE_SECRET_KEY",

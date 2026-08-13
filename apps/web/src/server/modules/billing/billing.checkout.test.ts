@@ -53,6 +53,9 @@ function deps(
 		.fn()
 		.mockResolvedValue({ data: args.prices ?? [price()], has_more: false });
 	const customersCreate = vi.fn().mockResolvedValue({ id: "cus_new" });
+	const customersDel = vi
+		.fn()
+		.mockResolvedValue({ id: "cus_new", deleted: true });
 	const sessionsCreate = vi.fn().mockResolvedValue({
 		id: "cs_1",
 		url:
@@ -65,17 +68,46 @@ function deps(
 		db,
 		stripe: {
 			prices: { list },
-			customers: { create: customersCreate },
+			customers: { create: customersCreate, del: customersDel },
 			checkout: { sessions: { create: sessionsCreate } },
 		},
 		appUrl: "https://zemio.test",
 		customersCreate,
+		customersDel,
 		sessionsCreate,
 	} as unknown as CheckoutDependencies & {
 		db: ReturnType<typeof createMockDb>;
 		customersCreate: ReturnType<typeof vi.fn>;
+		customersDel: ReturnType<typeof vi.fn>;
 		sessionsCreate: ReturnType<typeof vi.fn>;
 	};
+}
+
+/**
+ * A first checkout that creates a customer and then loses the claim to another
+ * one running at the same time.
+ */
+function lostRaceDeps() {
+	const d = deps({ stripeCustomerId: null, claimed: false });
+	// Three reads in order: the subscription check, the customer lookup that
+	// finds none, and the read-back after losing the claim to someone who got
+	// there first.
+	d.db.organization.findUnique
+		.mockResolvedValueOnce({
+			billingEnforced: true,
+			subscription: null,
+		} as never)
+		.mockResolvedValueOnce({
+			id: "org_1",
+			name: "Robotics Society",
+			stripeCustomerId: null,
+		} as never)
+		.mockResolvedValueOnce({
+			id: "org_1",
+			name: "Robotics Society",
+			stripeCustomerId: "cus_winner",
+		} as never);
+	return d;
 }
 
 const actor = { organizationId: "org_1", userId: "user_1" };
@@ -123,31 +155,49 @@ describe("startCheckout customer creation", () => {
 	});
 
 	it("defers to the customer that won a concurrent first checkout", async () => {
-		const d = deps({ stripeCustomerId: null, claimed: false });
-		// Three reads in order: the subscription check, the customer lookup that
-		// finds none, and the read-back after losing the claim to someone who got
-		// there first.
-		d.db.organization.findUnique
-			.mockResolvedValueOnce({
-				billingEnforced: true,
-				subscription: null,
-			} as never)
-			.mockResolvedValueOnce({
-				id: "org_1",
-				name: "Robotics Society",
-				stripeCustomerId: null,
-			} as never)
-			.mockResolvedValueOnce({
-				id: "org_1",
-				name: "Robotics Society",
-				stripeCustomerId: "cus_winner",
-			} as never);
+		const d = lostRaceDeps();
 
 		await startCheckout(d, actor, TIER_PRICE);
 
 		expect(d.sessionsCreate).toHaveBeenCalledWith(
 			expect.objectContaining({ customer: "cus_winner" }),
 		);
+	});
+
+	it("deletes the customer it created and could not claim", async () => {
+		// Kept, it would carry the same organizationId metadata as the customer
+		// the organization actually pays as — leaving support's "whose customer
+		// is this?" a choice between two, which is the question that metadata is
+		// there to answer.
+		const d = lostRaceDeps();
+
+		await startCheckout(d, actor, TIER_PRICE);
+
+		expect(d.customersDel).toHaveBeenCalledWith("cus_new");
+	});
+
+	it("starts the checkout even when the loser cannot be deleted", async () => {
+		// Cleanup is best-effort: an owner mid-purchase must not lose it because
+		// Stripe would not take a housekeeping call afterwards.
+		const d = lostRaceDeps();
+		d.customersDel.mockRejectedValue(new Error("stripe is down"));
+
+		await expect(startCheckout(d, actor, TIER_PRICE)).resolves.toEqual({
+			url: "https://checkout.stripe.test/cs_1",
+		});
+		expect(d.sessionsCreate).toHaveBeenCalledWith(
+			expect.objectContaining({ customer: "cus_winner" }),
+		);
+	});
+
+	it("keeps the customer whose claim succeeded", async () => {
+		// The claimed customer is the organization's own. Deleting it would take
+		// the subscription about to be bought against it with it.
+		const d = deps({ stripeCustomerId: null });
+
+		await startCheckout(d, actor, TIER_PRICE);
+
+		expect(d.customersDel).not.toHaveBeenCalled();
 	});
 });
 

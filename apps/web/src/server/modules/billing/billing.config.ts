@@ -69,7 +69,16 @@ export function resolveBillingConfig(source: BillingEnvSource): BillingConfig {
 		);
 	}
 
-	return { enabled: true, secretKey, webhookSecret };
+	// Trimmed, not merely checked for blankness: a credential pasted into a .env
+	// file or a secrets manager routinely arrives with a trailing newline, and
+	// Stripe then rejects every API call and every signature verification made
+	// with it — reporting a bad key and a bad signature, never the whitespace
+	// that caused either.
+	return {
+		enabled: true,
+		secretKey: secretKey.trim(),
+		webhookSecret: webhookSecret.trim(),
+	};
 }
 
 /**
