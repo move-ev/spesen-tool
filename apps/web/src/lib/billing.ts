@@ -11,6 +11,27 @@
  */
 export const CHECKOUT_RESULT_PARAM = "checkout";
 
+/**
+ * The message carried by a refusal that is about billing.
+ *
+ * Lives here rather than beside the gate that raises it because both sides need
+ * it: the gate is `server-only`, and the interface has to recognise this one
+ * `FORBIDDEN` among all the others to explain it. A member who did not cause
+ * the lapse and cannot resolve it should be told what happened and who can
+ * help, not shown a bare permission error — or, worse, this constant.
+ */
+export const BILLING_NOT_ENTITLED = "BILLING_NOT_ENTITLED";
+
+/** Whether a failed call was refused because the organization is not entitled. */
+export function isBillingRefusal(error: unknown): boolean {
+	return (
+		typeof error === "object" &&
+		error !== null &&
+		"message" in error &&
+		(error as { message?: unknown }).message === BILLING_NOT_ENTITLED
+	);
+}
+
 export const CHECKOUT_RESULT = {
 	complete: "complete",
 	cancelled: "cancelled",

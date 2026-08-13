@@ -28,6 +28,7 @@ import { UploadDropzone } from "@/components/ui/upload-dropzone";
 import { usePresignedUpload } from "@/lib/use-presigned-upload";
 import { formatBytes, renameFileWithHash } from "@/lib/utils";
 import { baseCreateExpenseSchema } from "@/lib/validators";
+import { useErrorDescription } from "@/modules/shared";
 import { api } from "@/trpc/react";
 
 export function CreateReceiptExpenseForm({
@@ -41,6 +42,7 @@ export function CreateReceiptExpenseForm({
 	const t = useTranslations("modules.report.receiptExpenseForm");
 	const tCommon = useTranslations("modules.report.common");
 	const router = useRouter();
+	const describeError = useErrorDescription();
 	const utils = api.useUtils();
 	const deletePendingUploads = api.attachment.deletePendingUploads.useMutation();
 	const createReceipt = api.expense.createReceipt.useMutation({
@@ -51,7 +53,7 @@ export function CreateReceiptExpenseForm({
 		},
 		onError: (error) => {
 			toast.error(t("toasts.createErrorTitle"), {
-				description: error.message ?? tCommon("toasts.unexpectedError"),
+				description: describeError(error, tCommon("toasts.unexpectedError")),
 			});
 		},
 	});

@@ -25,6 +25,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { roundToCents } from "@/lib/utils";
 import { createFoodExpenseSchema } from "@/lib/validators";
+import { useErrorDescription } from "@/modules/shared";
 import { api } from "@/trpc/react";
 
 export function CreateFoodExpenseForm({
@@ -38,6 +39,7 @@ export function CreateFoodExpenseForm({
 	const t = useTranslations("modules.report.foodExpenseForm");
 	const tCommon = useTranslations("modules.report.common");
 	const [settings] = api.settings.get.useSuspenseQuery();
+	const describeError = useErrorDescription();
 	const utils = api.useUtils();
 	const createTravel = api.expense.createFood.useMutation({
 		onSuccess: () => {
@@ -47,7 +49,7 @@ export function CreateFoodExpenseForm({
 		},
 		onError: (error) => {
 			toast.error(t("toasts.createErrorTitle"), {
-				description: error.message ?? tCommon("toasts.unexpectedError"),
+				description: describeError(error, tCommon("toasts.unexpectedError")),
 			});
 		},
 	});

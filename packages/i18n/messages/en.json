@@ -1323,17 +1323,21 @@
 				}
 			},
 			"billingBanner": {
-				"readOnly": {
-					"title": "Your organization's subscription has lapsed",
-					"description": "New reports and expenses cannot be created while the subscription is inactive. Everything already submitted stays available to read, export and review."
+				"overSeatLimit": {
+					"title": "Your organization is over its seat limit",
+					"description": "{used} of {included} included seats are in use. Nothing is blocked — a larger tier brings the subscription back in line with the organization."
 				},
 				"paymentFailing": {
 					"title": "A payment for your organization failed",
 					"description": "Zemio keeps working while the payment is retried. Updating the payment method now keeps the subscription from lapsing."
 				},
-				"overSeatLimit": {
-					"title": "Your organization is over its seat limit",
-					"description": "{used} of {included} included seats are in use. Nothing is blocked — a larger tier brings the subscription back in line with the organization."
+				"readOnly": {
+					"title": "Your organization's subscription has lapsed",
+					"description": "While the subscription is inactive, no new reports or expenses can be created and no reports can be submitted. Everything already recorded stays readable, exportable and reviewable."
+				},
+				"refused": {
+					"title": "Your organization's subscription has lapsed",
+					"description": "New reports and expenses can be created and submitted again once the subscription has been renewed."
 				},
 				"action": "Manage billing",
 				"memberHint": "Contact your organization owner to resolve this."

@@ -1,5 +1,6 @@
 import "server-only";
 import { TRPCError } from "@trpc/server";
+import { BILLING_NOT_ENTITLED } from "@/lib/billing";
 import { logger } from "@/lib/logger";
 import {
 	type BillingRequestContext,
@@ -44,15 +45,11 @@ export function isBillingGatedPath(path: string): boolean {
 	return BILLING_GATED_PATHS.has(path);
 }
 
-/**
- * The message carried by a refusal that is about billing.
- *
- * Exported so the interface can recognise this case and explain it — a member
- * who did not cause the lapse and cannot resolve it should be told who can,
- * not shown a bare permission error. `FORBIDDEN` is what tRPC gives us; this
- * is what distinguishes it from every other `FORBIDDEN` the API raises.
- */
-export const BILLING_NOT_ENTITLED = "BILLING_NOT_ENTITLED";
+// The marker a billing refusal carries, so the interface can tell this one
+// `FORBIDDEN` from every other the API raises and explain it. Defined in
+// `@/lib/billing` because this module is server-only and the browser needs the
+// same string; re-exported here because the gate is what raises it.
+export { BILLING_NOT_ENTITLED };
 
 export type EntitlementContext = BillingRequestContext & {
 	organizationId: string;

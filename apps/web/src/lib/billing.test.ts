@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { type BannerStatus, resolveBillingBanner } from "./billing";
+import {
+	type BannerStatus,
+	BILLING_NOT_ENTITLED,
+	isBillingRefusal,
+	resolveBillingBanner,
+} from "./billing";
 
 /** A healthy, enforced organization well inside its tier. */
 const healthy: BannerStatus = {
@@ -77,5 +82,22 @@ describe("resolveBillingBanner precedence", () => {
 				overSeatLimit: true,
 			}),
 		).toBe("payment_failing");
+	});
+});
+
+describe("isBillingRefusal", () => {
+	it("recognises the marker the gate raises", () => {
+		// The gate can only send a marker — it has no locale to write prose in —
+		// so the interface has to be the thing that turns it into words.
+		expect(isBillingRefusal({ message: BILLING_NOT_ENTITLED })).toBe(true);
+	});
+
+	it("leaves every other failure alone", () => {
+		expect(isBillingRefusal({ message: "You may not edit this report." })).toBe(
+			false,
+		);
+		expect(isBillingRefusal(null)).toBe(false);
+		expect(isBillingRefusal(undefined)).toBe(false);
+		expect(isBillingRefusal("BILLING_NOT_ENTITLED")).toBe(false);
 	});
 });

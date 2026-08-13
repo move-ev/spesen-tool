@@ -1323,17 +1323,21 @@
 				}
 			},
 			"billingBanner": {
-				"readOnly": {
-					"title": "Das Abonnement deiner Organisation ist abgelaufen",
-					"description": "Solange das Abonnement inaktiv ist, können keine neuen Berichte und Ausgaben erstellt werden. Alles bereits Eingereichte bleibt lesbar, exportierbar und überprüfbar."
+				"overSeatLimit": {
+					"title": "Deine Organisation überschreitet ihr Platzlimit",
+					"description": "{used} von {included} enthaltenen Plätzen sind belegt. Es wird nichts blockiert — mit einem größeren Tarif passt das Abonnement wieder zur Organisation."
 				},
 				"paymentFailing": {
 					"title": "Eine Zahlung deiner Organisation ist fehlgeschlagen",
 					"description": "Zemio funktioniert weiter, während die Zahlung erneut versucht wird. Wenn die Zahlungsmethode jetzt aktualisiert wird, läuft das Abonnement nicht ab."
 				},
-				"overSeatLimit": {
-					"title": "Deine Organisation überschreitet ihr Sitzplatzlimit",
-					"description": "{used} von {included} enthaltenen Sitzplätzen sind belegt. Es wird nichts blockiert — mit einem größeren Tarif passt das Abonnement wieder zur Organisation."
+				"readOnly": {
+					"title": "Das Abonnement deiner Organisation ist abgelaufen",
+					"description": "Solange das Abonnement inaktiv ist, können keine neuen Berichte und Ausgaben erstellt und keine Berichte eingereicht werden. Alles bereits Erfasste bleibt lesbar, exportierbar und überprüfbar."
+				},
+				"refused": {
+					"title": "Das Abonnement deiner Organisation ist abgelaufen",
+					"description": "Neue Berichte und Ausgaben können erst wieder erstellt und eingereicht werden, wenn das Abonnement erneuert wurde."
 				},
 				"action": "Abrechnung verwalten",
 				"memberHint": "Wende dich an die Inhaberin oder den Inhaber deiner Organisation."
