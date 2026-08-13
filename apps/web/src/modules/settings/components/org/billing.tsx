@@ -552,7 +552,7 @@ function CustomTierSection({
 					<div className="flex items-center">
 						<Button
 							render={
-								<a href={`mailto:${BILLING_CONTACT_EMAIL}`}>{t("custom.action")}</a>
+								<a href={`mailto:${t("custom.contactEmail")}`}>{t("custom.action")}</a>
 							}
 							variant="outline"
 						/>
@@ -562,8 +562,5 @@ function CustomTierSection({
 		</SettingsCard>
 	);
 }
-
-/** Where an organization too large for the published tiers writes to. */
-const BILLING_CONTACT_EMAIL = "billing@zemio.co";
 
 export { OrgSettingsBilling };

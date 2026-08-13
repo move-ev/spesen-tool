@@ -3,7 +3,8 @@
 How to verify billing against Stripe test mode on a local machine, and how to
 turn enforcement on for one organization before turning it on for everyone.
 
-Billing is off by default and stays off unless `BILLING_ENABLED` is set. A
+Billing is off by default and stays off unless `BILLING_ENABLED` is exactly
+`true` or `1` — any other value, including `yes`, leaves it off. A
 self-hoster never needs this document — see
 [deployment.md](./deployment.md#runtime-configuration) for the variables
 themselves. This is for whoever is changing billing or rolling it out.
@@ -114,8 +115,9 @@ count. They should agree on status, price, tier, seats and period end.
 
 ### Idempotency
 
-Every event id is recorded before the event is acted on, so a redelivery is a
-no-op. To see it, take an id from the `stripe listen` output and resend it:
+Every event id is recorded in the same transaction as the state the event
+describes, so a redelivery is a no-op and a failure rolls both back together. To
+see it, take an id from the `stripe listen` output and resend it:
 
 ```sh
 stripe events resend evt_…
@@ -125,6 +127,12 @@ The processed-event count from `show` should not move, and the subscription row
 should be untouched. Note the count grows with your whole event volume, not just
 the four handled types — one paid checkout leaves roughly thirty rows, which is
 expected.
+
+Because the claim and the write share a transaction, an event is never left
+recorded without having been applied: a crash rolls the claim back with it, and
+Stripe's redelivery is processed normally. There is therefore no state in which
+`stripe events resend` is silently a no-op against work that never happened — if
+resending changes nothing, the event genuinely was applied.
 
 ### Teardown
 
@@ -136,7 +144,30 @@ Cancels the subscription, deletes the customer, clears the local subscription
 and processed-event rows, and sets `billingEnforced` back to `false`. The
 fixture product and its prices stay in the sandbox for next time.
 
-## 4. Enabling enforcement for one organization
+## 4. The production webhook endpoint
+
+Everything above uses `stripe listen`, which exists only on your machine. A
+deployed Zemio needs a real endpoint, created once per Stripe account:
+
+1. Dashboard → **Developers → Webhooks → Add endpoint**.
+2. URL: `https://<your-host>/api/billing/webhook`.
+3. Subscribe it to exactly the four events Zemio handles — anything else is
+   recorded and ignored:
+   - `checkout.session.completed`
+   - `customer.subscription.created`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+4. Reveal the endpoint's **signing secret** and set it as
+   `STRIPE_WEBHOOK_SECRET` on the deployment.
+
+This is the secret the earlier warning is about: the Dashboard's endpoint secret
+belongs here, and the `stripe listen` secret belongs in local `.env`. Swapping
+them makes every event fail verification with a 400.
+
+An instance with `BILLING_ENABLED` unset answers this route with a 404, so there
+is no endpoint to configure for a self-hosted deployment.
+
+## 5. Enabling enforcement for one organization
 
 Enforcement has two switches, and **both** must be on before anything is ever
 refused:

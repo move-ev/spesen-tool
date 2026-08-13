@@ -1,4 +1,3 @@
-import { z } from "zod";
 import {
 	createTRPCRouter,
 	orgOwnerProcedure,
@@ -11,6 +10,7 @@ import {
 	listTiers,
 	openBillingPortal,
 	startCheckout,
+	startCheckoutInputSchema,
 	type Tier,
 	toBillingDependencies,
 	toBillingServiceContext,
@@ -43,7 +43,7 @@ export const billingRouter = createTRPCRouter({
 	 * Owner-only: this commits the organization to a recurring payment.
 	 */
 	startCheckout: orgOwnerProcedure
-		.input(z.object({ priceId: z.string().min(1) }))
+		.input(startCheckoutInputSchema)
 		.mutation(({ ctx, input }) =>
 			startCheckout(
 				toBillingDependencies(ctx),

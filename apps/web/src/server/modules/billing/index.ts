@@ -8,4 +8,5 @@ export * from "./billing.procedure";
 export * from "./billing.repository";
 export * from "./billing.service";
 export * from "./billing.stripe";
+export * from "./billing.validators";
 export * from "./billing.webhook";

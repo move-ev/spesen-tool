@@ -1,6 +1,6 @@
 ---
-"@zemio/i18n": patch
-"@zemio/web": patch
+"@zemio/i18n": minor
+"@zemio/web": minor
 ---
 
 implement billing with stripe

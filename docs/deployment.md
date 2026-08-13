@@ -110,7 +110,8 @@ into the image):
 
   > The two Stripe variables are optional on their own but **required once
   > `BILLING_ENABLED` is on** — the container fails to start if either is
-  > missing, naming both in the error.
+  > missing, naming every one that is absent so a second restart is not needed
+  > to discover the second variable.
 
   Turning the flag on enforces nothing by itself: enforcement also needs
   `billingEnforced` on the individual organization, so a rollout can be staged

@@ -79,13 +79,15 @@ Expense-report application for student initiatives.
 - **Frontend state:** TanStack Query, TanStack Table, nuqs (URL state), TanStack Form
 - **Styling:** Tailwind v4
 - **Linting/formatting:** Biome
-- **Validation:** `bun run typecheck` and `bun run check` (no automated test suite)
+- **Validation:** `bun run typecheck`, `bun run check`, and `bun run test` (Vitest)
 
 ### Architecture conventions
 
 - `src/app` pages are thin server components: prefetch via `src/trpc/server`, wrap clients in `HydrateClient`
 - Feature modules under `src/modules/` own UI behavior; they access the API via `src/trpc/react`
-- tRPC procedure hierarchy: `publicProcedure` → `authenticatedProcedure` → `protectedProcedure` (legal gate) → `orgProcedure` → `orgAdminProcedure` → `platformAdminProcedure`
+- tRPC procedure hierarchy: `publicProcedure` → `protectedProcedure` → `orgProcedure` → `orgAdminProcedure` / `orgOwnerProcedure`, with `platformAdminProcedure` branching off `protectedProcedure`
+- `orgProcedure` resolves the active member **and** applies the billing entitlement gate, which refuses an allowlist of five paths when an organization is not entitled (`server/modules/billing/billing.gate.ts`); `orgOwnerProcedure` is owner-only and gates billing mutations
+- Legal acceptance is enforced in a Better Auth hook (`server/better-auth/`), not in the procedure chain
 
 ### Data model
 
