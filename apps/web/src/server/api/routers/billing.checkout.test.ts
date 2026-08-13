@@ -49,11 +49,6 @@ function caller(role: string) {
 		organizationId: "org_1",
 		member: { role },
 	});
-	ctx.db.organization.findUnique.mockResolvedValue({
-		billingEnforced: false,
-		subscription: null,
-	} as never);
-	ctx.db.member.count.mockResolvedValue(1 as never);
 	return createCaller(asTRPCContext(ctx));
 }
 

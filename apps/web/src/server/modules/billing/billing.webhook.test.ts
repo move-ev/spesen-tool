@@ -271,7 +271,25 @@ describe("handleStripeEvent subscription lifecycle", () => {
 			"processed",
 		);
 
+		// The session names its subscription but reports nothing about it, so
+		// everything on the row has to come from the re-fetch. This is the event
+		// that first creates the row for an organization: if it only recorded the
+		// event, the organization would stay unsubscribed after paying.
 		expect(d.retrieve).toHaveBeenCalledWith("sub_1");
+		const written = d.db.subscription.upsert.mock.calls[0]?.[0] as
+			| { where: Record<string, unknown>; create: Record<string, unknown> }
+			| undefined;
+		expect(written?.where).toEqual({ organizationId: "org_1" });
+		expect(written?.create).toEqual({
+			organizationId: "org_1",
+			stripeSubscriptionId: "sub_1",
+			stripePriceId: "price_m",
+			tier: "M",
+			seatLimit: 25,
+			status: "active",
+			currentPeriodEnd: new Date(PERIOD_END * 1000),
+			cancelAtPeriodEnd: false,
+		});
 	});
 
 	it("writes the subscription facts Stripe reported", async () => {

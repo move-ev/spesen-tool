@@ -1,6 +1,29 @@
 import { describe, expect, it, vi } from "vitest";
 import { settingsRoutes } from "./routes";
-import type { SettingsItemContext } from "./types";
+import type { SettingsGroup, SettingsItemContext } from "./types";
+
+/** The group the billing entry sits in, as any surface reads it. */
+function organizationGroup(): SettingsGroup {
+	const group = settingsRoutes.find((candidate) =>
+		candidate.items.some((item) => item.href === "/settings/org/billing"),
+	);
+
+	if (!group) throw new Error("No billing entry in the settings navigation.");
+	return group;
+}
+
+/** What a surface listing a group ends up showing, its item gates resolved. */
+async function visibleHrefs(group: SettingsGroup, ctx: SettingsItemContext) {
+	const decisions = await Promise.all(
+		group.items.map(async (item) =>
+			item.isVisible ? await item.isVisible(ctx) : true,
+		),
+	);
+
+	return group.items
+		.filter((_, index) => decisions[index])
+		.map((item) => item.href);
+}
 
 function billingItem() {
 	const org = settingsRoutes.find((group) =>
@@ -71,32 +94,25 @@ describe("the billing entry in the settings navigation", () => {
 		await expect(billingItem().isVisible?.(ctx)).resolves.toBe(false);
 	});
 
-	it("is gated by every surface that lists settings entries", async () => {
+	it("answers the same for every surface that asks about the same caller", async () => {
 		// The sidebar and the overview page both list these groups. The first
 		// item-level gate reached one and not the other, so an administrator saw
 		// a billing entry on the overview that the sidebar had already hidden.
-		// Both resolve visibility through the shared hook; neither may map
-		// `group.items` itself again.
-		const { readFile } = await import("node:fs/promises");
-		const { fileURLToPath } = await import("node:url");
+		// The gates therefore have to answer from their context alone: one that
+		// remembered its first answer, or that read anything the two surfaces
+		// hold separately, would divide them again even while they share the
+		// decision. Asking as an administrator, then as an owner, then as an
+		// administrator once more is what a second surface mounting after the
+		// first looks like.
+		const group = organizationGroup();
 
-		const surfaces = ["sidebar.tsx", "settings-content.tsx"];
+		const firstSurface = await visibleHrefs(group, context({ isOwner: false }));
+		const asOwner = await visibleHrefs(group, context({ isOwner: true }));
+		const secondSurface = await visibleHrefs(group, context({ isOwner: false }));
 
-		for (const surface of surfaces) {
-			const source = await readFile(
-				fileURLToPath(new URL(`../components/${surface}`, import.meta.url)),
-				"utf8",
-			);
-
-			expect({
-				surface,
-				usesHook: source.includes("useSettingsGroup(group)"),
-			}).toEqual({ surface, usesHook: true });
-			expect({
-				surface,
-				mapsItemsDirectly: source.includes("group.items.map"),
-			}).toEqual({ surface, mapsItemsDirectly: false });
-		}
+		expect(secondSurface).toEqual(firstSurface);
+		expect(firstSurface).not.toContain("/settings/org/billing");
+		expect(asOwner).toContain("/settings/org/billing");
 	});
 
 	it("leaves the other organization entries ungated", () => {
