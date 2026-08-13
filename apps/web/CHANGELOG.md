@@ -1,5 +1,18 @@
 # @zemio/web
 
+## 1.2.0
+
+### Minor Changes
+
+- [#183](https://github.com/zemio-co/zemio/pull/183) [`82bcc3b`](https://github.com/zemio-co/zemio/commit/82bcc3bbee351a9d6a576f814d28a0e82fd41484) Thanks [@chris23lngr](https://github.com/chris23lngr)! - implement billing with stripe
+
+### Patch Changes
+
+- [#179](https://github.com/zemio-co/zemio/pull/179) [`14eafc5`](https://github.com/zemio-co/zemio/commit/14eafc50fe55e61dcd3463ae65b703f73d7c9c4b) Thanks [@chris23lngr](https://github.com/chris23lngr)! - fix: issue report numbers per organization instead of from a global counter
+
+- Updated dependencies [[`82bcc3b`](https://github.com/zemio-co/zemio/commit/82bcc3bbee351a9d6a576f814d28a0e82fd41484)]:
+  - @zemio/i18n@0.2.0
+
 ## 1.1.0
 
 ### Minor Changes
