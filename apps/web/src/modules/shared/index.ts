@@ -4,4 +4,5 @@ export {
 	AppCommandTrigger,
 	AppNavbar,
 	AppSidebar,
+	BillingBanner,
 } from "./components";

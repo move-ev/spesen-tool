@@ -75,6 +75,7 @@ describe("billing.status with billing enabled", () => {
 		await expect(caller(ctx).status()).resolves.toEqual({
 			enabled: true,
 			entitled: true,
+			enforced: true,
 			state: "entitled",
 			tier: "M",
 			seatLimit: 25,

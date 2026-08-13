@@ -69,6 +69,7 @@ describe("getBillingStatus with a subscription", () => {
 		).resolves.toEqual({
 			enabled: true,
 			entitled: true,
+			enforced: true,
 			state: "entitled",
 			tier: "M",
 			seatLimit: 25,
@@ -130,6 +131,26 @@ describe("getBillingStatus enforcement override", () => {
 			tier: null,
 			seatLimit: null,
 			seatCount: 3,
+		});
+	});
+
+	it("reports that enforcement does not apply, so the interface can stay quiet", async () => {
+		// `state` alone cannot carry this: it reads "entitled" both for an
+		// organization nothing is enforced against and for one with a healthy
+		// subscription. The banner has to tell those apart to stay silent during
+		// a staged rollout, even for an organization over its seats.
+		const db = dbWith({
+			billingEnforced: false,
+			subscription: { tier: "S", seatLimit: 10, status: "canceled" },
+			seats: 400,
+		});
+
+		await expect(
+			getBillingStatus({ db, config: enabledConfig }, "org_1"),
+		).resolves.toMatchObject({
+			enforced: false,
+			state: "entitled",
+			overSeatLimit: true,
 		});
 	});
 

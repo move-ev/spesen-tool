@@ -5,3 +5,4 @@ export {
 } from "./app-command";
 export { AppNavbar } from "./app-navbar";
 export { AppSidebar } from "./app-sidebar";
+export { BillingBanner } from "./billing-banner";

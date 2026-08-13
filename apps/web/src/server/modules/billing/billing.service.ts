@@ -29,6 +29,16 @@ export type BillingStatus =
 	| {
 			enabled: true;
 			entitled: boolean;
+			/**
+			 * Whether this organization is one enforcement applies to.
+			 *
+			 * `state` cannot carry this on its own: it reads "entitled" both for an
+			 * organization nothing is enforced against and for one with a healthy
+			 * subscription. The banner has to tell those apart to stay quiet during
+			 * a staged rollout. An organization-level fact, not configuration —
+			 * nothing here says how the deployment bills.
+			 */
+			enforced: boolean;
 			state: EntitlementState;
 			tier: string | null;
 			seatLimit: number | null;
@@ -92,15 +102,17 @@ export async function getBillingStatus(
 	// is a race, not a state to serve — treat it as the enforced default rather
 	// than inventing an entitled one.
 	const subscription = organization?.subscription ?? null;
+	const enforced = organization?.billingEnforced ?? true;
 	const state = resolveEntitlement({
 		billingEnabled: true,
-		enforcedForOrganization: organization?.billingEnforced ?? true,
+		enforcedForOrganization: enforced,
 		subscription,
 	});
 
 	return {
 		enabled: true,
 		entitled: isEntitled(state),
+		enforced,
 		state,
 		tier: subscription?.tier ?? null,
 		seatLimit: subscription?.seatLimit ?? null,
