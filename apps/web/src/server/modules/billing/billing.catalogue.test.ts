@@ -73,6 +73,29 @@ describe("tierFromPrice", () => {
 		}
 	});
 
+	it("ignores a seat count too large for the subscription record to hold", () => {
+		// `Subscription.seatLimit` is a Postgres INTEGER. Accepting more here
+		// would sell the tier and only then fail on the webhook's write, leaving
+		// an organization that has paid with no subscription at all.
+		expect(
+			tierFromPrice(
+				price({
+					metadata: { zemio_tier: "XL", zemio_seats: "9999999999" },
+				}) as never,
+			),
+		).toBeNull();
+	});
+
+	it("keeps the largest seat count that still fits", () => {
+		expect(
+			tierFromPrice(
+				price({
+					metadata: { zemio_tier: "XL", zemio_seats: "2147483647" },
+				}) as never,
+			),
+		).toMatchObject({ seatLimit: 2_147_483_647 });
+	});
+
 	it("ignores a price with no amount, since nothing can be displayed for it", () => {
 		expect(tierFromPrice(price({ unit_amount: null }) as never)).toBeNull();
 	});
@@ -230,6 +253,39 @@ describe("listTiers caching", () => {
 		} finally {
 			vi.useRealTimers();
 		}
+	});
+
+	it("reads Stripe once for a burst of callers, not once per caller", async () => {
+		// A burst is what an expiring window produces: every page load in flight
+		// finds no cache and, unless they share one read, each walks Stripe's
+		// pages itself and overwrites the answer the others just wrote.
+		const stripe = stripeWith([price()]);
+
+		const [first, second, third] = await Promise.all([
+			listTiers(stripe, ORG),
+			listTiers(stripe, ORG),
+			listTiers(stripe, ORG),
+		]);
+
+		expect(stripe.list).toHaveBeenCalledTimes(1);
+		expect(second).toEqual(first);
+		expect(third).toEqual(first);
+	});
+
+	it("lets go of a failed read, so the caller after it is not handed the failure", async () => {
+		const list = vi
+			.fn()
+			.mockRejectedValueOnce(new Error("stripe is down"))
+			.mockResolvedValueOnce({ data: [price()], has_more: false });
+		const stripe = { prices: { list } } as unknown as TierPriceSource;
+
+		// The burst shares the outage, since it is the one read that failed.
+		await expect(
+			Promise.all([listTiers(stripe, ORG), listTiers(stripe, ORG)]),
+		).rejects.toThrow();
+
+		await expect(listTiers(stripe, ORG)).resolves.toHaveLength(1);
+		expect(list).toHaveBeenCalledTimes(2);
 	});
 
 	it("caches nothing when the read fails, so a Stripe outage is not sticky", async () => {

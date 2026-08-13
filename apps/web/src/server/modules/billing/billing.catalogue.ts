@@ -49,11 +49,24 @@ export type TierPriceSource = {
 	prices: Pick<Stripe.PriceResource, "list">;
 };
 
+/**
+ * The largest seat count a subscription can be recorded with.
+ *
+ * `Subscription.seatLimit` is a Postgres `INTEGER`. A price asking for more is
+ * refused here, where it costs nobody anything, rather than at the webhook's
+ * write — a price the catalogue does not carry is one checkout will not sell
+ * (ADR-0003), so the misconfiguration surfaces before an organization has paid
+ * for a subscription Zemio would then fail to store.
+ */
+const MAX_SEAT_LIMIT = 2_147_483_647;
+
 /** Whole, positive seat counts only — anything else is a misconfigured price. */
 function parseSeatLimit(value: string | undefined): number | null {
 	if (value === undefined || value.trim() === "") return null;
 	const seats = Number(value);
-	return Number.isInteger(seats) && seats > 0 ? seats : null;
+	return Number.isInteger(seats) && seats > 0 && seats <= MAX_SEAT_LIMIT
+		? seats
+		: null;
 }
 
 /**
@@ -113,9 +126,21 @@ type CatalogueEntry = { tier: Tier; offeredTo: string | null };
 
 let cached: { entries: CatalogueEntry[]; expiresAt: number } | null = null;
 
+/**
+ * The read already running, if one is.
+ *
+ * Page loads arrive in bursts, so the moment the window expires every caller in
+ * that burst would otherwise start its own walk of Stripe's pages and race the
+ * others to write the same answer. They wait on the first one's read instead.
+ * A read that fails is forgotten rather than kept, so the caller after an
+ * outage retries rather than being handed the rejection the outage produced.
+ */
+let inFlight: Promise<CatalogueEntry[]> | null = null;
+
 /** Drops the cached catalogue, so one test's read cannot serve the next. */
 export function clearTierCatalogue(): void {
 	cached = null;
+	inFlight = null;
 }
 
 async function fetchCatalogue(
@@ -156,6 +181,23 @@ async function fetchCatalogue(
 	return entries.sort((a, b) => a.tier.amount - b.tier.amount);
 }
 
+function readCatalogue(stripe: TierPriceSource): Promise<CatalogueEntry[]> {
+	if (cached && cached.expiresAt > Date.now()) {
+		return Promise.resolve(cached.entries);
+	}
+
+	inFlight ??= fetchCatalogue(stripe)
+		.then((entries) => {
+			cached = { entries, expiresAt: Date.now() + TIER_CACHE_TTL_MS };
+			return entries;
+		})
+		.finally(() => {
+			inFlight = null;
+		});
+
+	return inFlight;
+}
+
 /**
  * The tiers an organization may buy, from a catalogue cached process-wide.
  *
@@ -171,14 +213,11 @@ export async function listTiers(
 	stripe: TierPriceSource,
 	organizationId: string,
 ): Promise<Tier[]> {
-	if (!cached || cached.expiresAt <= Date.now()) {
-		const entries = await fetchCatalogue(stripe);
-		cached = { entries, expiresAt: Date.now() + TIER_CACHE_TTL_MS };
-	}
+	const entries = await readCatalogue(stripe);
 
 	// Copied down to the tier, not just the array: a caller adjusting a tier it
 	// was handed must not rewrite the price every later caller reads.
-	return cached.entries
+	return entries
 		.filter(
 			(entry) => entry.offeredTo === null || entry.offeredTo === organizationId,
 		)
