@@ -10,6 +10,7 @@ export const ROUTES = {
 	SETTINGS_ORG_MEMBERS: () => "/settings/org/members",
 	SETTINGS_ORG_ALLOWANCES: () => "/settings/org/allowances",
 	SETTINGS_ORG_COST_UNITS: () => "/settings/org/cost-units",
+	SETTINGS_ORG_BILLING: () => "/settings/org/billing",
 	// ======= ADMIN SETTINGS =========================================
 	SETTINGS_ADMIN_ORGS: () => "/settings/admin/orgs",
 	SETTINGS_ADMIN_ORG_DETAILS: (id: string) => `/settings/admin/orgs/${id}`,

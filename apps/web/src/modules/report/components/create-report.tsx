@@ -35,6 +35,7 @@ import { toast } from "sonner";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { createReportSchema } from "@/lib/validators";
+import { useErrorDescription } from "@/modules/shared";
 import { api, type RouterOutputs } from "@/trpc/react";
 
 function CreateReport({
@@ -242,6 +243,7 @@ function CreateReportForm({
 
 	const router = useRouter();
 
+	const describeError = useErrorDescription();
 	const createReport = api.report.create.useMutation({
 		onSuccess(data) {
 			toast.success(t("toasts.createSuccess"));
@@ -249,7 +251,7 @@ function CreateReportForm({
 		},
 		onError(error) {
 			toast.error(t("toasts.createErrorTitle"), {
-				description: error.message ?? tCommon("toasts.unexpectedError"),
+				description: describeError(error, tCommon("toasts.unexpectedError")),
 			});
 		},
 	});

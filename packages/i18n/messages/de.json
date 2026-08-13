@@ -711,6 +711,10 @@
 					"adminOrgs": {
 						"label": "Organisationen",
 						"description": "Verwalte alle Organisationen auf dieser Plattform"
+					},
+					"orgBilling": {
+						"label": "Abrechnung",
+						"description": "Verwalte den Tarif deiner Organisation"
 					}
 				},
 				"sidebarOrgHeading": "Organisation",
@@ -1094,6 +1098,70 @@
 					"adminsEmptyTitle": "Keine Admins",
 					"adminsEmptyDescription": "In dieser Organisation wurden keine Administratoren gefunden"
 				}
+			},
+			"billing": {
+				"title": "Abrechnung",
+				"description": "Verwalte das Abonnement deiner Organisation.",
+				"sections": {
+					"subscription": "Aktuelles Abonnement",
+					"tiers": "Verfügbare Tarife",
+					"custom": "Individuelle Vereinbarung"
+				},
+				"current": {
+					"tier": "Tarif",
+					"tierDescription": "Der Tarif, für den deine Organisation derzeit bezahlt.",
+					"seats": "Plätze",
+					"seatsDescription": "Ein Mitglied belegt einen Platz, unabhängig von seiner Rolle.",
+					"seatsUsed": "{used} von {included}",
+					"seatsUsedOnly": "{used} belegt",
+					"overSeatLimit": "Über dem Limit",
+					"renews": "Verlängert sich am",
+					"renewsDescription": "Zum Ende dieses Zeitraums wird die nächste Periode berechnet.",
+					"ends": "Endet am",
+					"endsDescription": "Die Kündigung wird zum Ende des bezahlten Zeitraums wirksam, nicht sofort.",
+					"cancelling": "Gekündigt",
+					"lapsed": "Abgelaufen",
+					"lapsedDescription": "Das Abonnement ist beendet. Der Tarif zeigt, was zuletzt gebucht war — es wird nichts mehr abgerechnet und nichts mehr verlängert.",
+					"tierDescriptionLapsed": "Der Tarif, den deine Organisation zuletzt gebucht hatte.",
+					"manage": "Abonnement verwalten",
+					"manageDescription": "Zahlungsmittel ändern, Rechnungen herunterladen, Tarif wechseln oder kündigen.",
+					"openPortal": "Portal öffnen"
+				},
+				"tier": {
+					"name": "Tarif {name}",
+					"includedSeats": "Enthält {seats} Plätze.",
+					"perInterval": "{amount} / {interval}",
+					"choose": "Auswählen"
+				},
+				"intervals": {
+					"day": "Tag",
+					"week": "Woche",
+					"month": "Monat",
+					"year": "Jahr"
+				},
+				"custom": {
+					"label": "Größer als die verfügbaren Tarife?",
+					"description": "Für Organisationen, die über die veröffentlichten Tarife hinauswachsen, vereinbaren wir einen eigenen Tarif.",
+					"action": "Kontakt aufnehmen",
+					"contactEmail": "billing@zemio.co"
+				},
+				"noTiers": "Derzeit sind keine Tarife verfügbar",
+				"noTiersDescription": "Sobald Tarife hinterlegt sind, erscheinen sie hier.",
+				"checkoutErrorTitle": "Der Bezahlvorgang konnte nicht gestartet werden",
+				"portalErrorTitle": "Das Portal konnte nicht geöffnet werden",
+				"errorFallback": "Bitte versuche es später erneut.",
+				"confirming": {
+					"label": "Zahlung wird bestätigt",
+					"description": "Deine Zahlung war erfolgreich. Der Tarif erscheint hier, sobald der Zahlungsdienstleister ihn bestätigt hat — das dauert meist nur wenige Sekunden.",
+					"slowLabel": "Bestätigung steht noch aus",
+					"slowDescription": "Deine Zahlung war erfolgreich, aber der Tarif ist hier noch nicht angekommen. Das ist selten und liegt nicht an dir — prüfe es gleich noch einmal, und melde dich bei uns, falls es so bleibt.",
+					"retry": "Erneut prüfen",
+					"waiting": "Wird geprüft …"
+				},
+				"cancelled": {
+					"label": "Bezahlvorgang abgebrochen",
+					"description": "Es wurde nichts berechnet und an deiner Organisation hat sich nichts geändert."
+				}
 			}
 		},
 		"auth": {
@@ -1256,6 +1324,26 @@
 					"uploadFailedCleanupDescription": "Teilweise hochgeladene Dateien konnten nicht bereinigt werden",
 					"uploadFailedDescription": "Nicht alle Dateien konnten hochgeladen werden"
 				}
+			},
+			"billingBanner": {
+				"overSeatLimit": {
+					"title": "Deine Organisation überschreitet ihr Platzlimit",
+					"description": "{used} von {included} enthaltenen Plätzen sind belegt. Es wird nichts blockiert — mit einem größeren Tarif passt das Abonnement wieder zur Organisation."
+				},
+				"paymentFailing": {
+					"title": "Eine Zahlung deiner Organisation ist fehlgeschlagen",
+					"description": "Zemio funktioniert weiter, während die Zahlung erneut versucht wird. Wenn die Zahlungsmethode jetzt aktualisiert wird, läuft das Abonnement nicht ab."
+				},
+				"readOnly": {
+					"title": "Das Abonnement deiner Organisation ist abgelaufen",
+					"description": "Solange das Abonnement inaktiv ist, können keine neuen Berichte und Ausgaben erstellt und keine Berichte eingereicht werden. Alles bereits Erfasste bleibt lesbar, exportierbar und überprüfbar."
+				},
+				"refused": {
+					"title": "Das Abonnement deiner Organisation ist abgelaufen",
+					"description": "Neue Berichte und Ausgaben können erst wieder erstellt und eingereicht werden, wenn das Abonnement erneuert wurde."
+				},
+				"action": "Abrechnung verwalten",
+				"memberHint": "Wende dich an die Inhaberin oder den Inhaber deiner Organisation."
 			}
 		},
 		"preferences": {

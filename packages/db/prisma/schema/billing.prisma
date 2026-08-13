@@ -1,0 +1,47 @@
+// Zemio's cached copy of what Stripe knows about an organization's
+// subscription. Stripe owns the history (ADR-0003); these are current-state
+// rows only, overwritten as events arrive.
+
+model Subscription {
+  id String @id @default(cuid())
+
+  // One subscription per organization. An organization changing tier keeps the
+  // same row — Stripe records what it moved from.
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  stripeSubscriptionId String @unique
+  stripePriceId        String
+
+  // Copied from the Stripe price's metadata when an event is processed, so
+  // entitlement checks read local rows rather than calling Stripe per request
+  // (ADR-0003). A tier's allowance changing in Stripe reaches an organization
+  // only with its next subscription event.
+  tier      String
+  seatLimit Int
+
+  // Stripe's own status verbatim, deliberately a String rather than an enum.
+  // The set of statuses is Stripe's to extend, and a value outside a Postgres
+  // enum would make the webhook throw and Stripe retry it forever. The mapping
+  // to entitlement is a pure function instead — see billing.policy.ts.
+  status String
+
+  currentPeriodEnd  DateTime
+  cancelAtPeriodEnd Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscription")
+}
+
+// Stripe event ids that have already been processed. Recorded before handling
+// so a redelivery is a no-op rather than a double application (ADR-0004).
+model ProcessedStripeEvent {
+  // Stripe's event id, not a generated one — that is the whole point.
+  id          String   @id
+  type        String
+  processedAt DateTime @default(now())
+
+  @@map("processed_stripe_event")
+}

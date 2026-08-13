@@ -5,6 +5,7 @@ import {
 	BanknoteIcon,
 	BellIcon,
 	BuildingIcon,
+	CreditCardIcon,
 	EuroIcon,
 	FolderTreeIcon,
 	SettingsIcon,
@@ -79,6 +80,29 @@ const settingsRoutes: SettingsGroup[] = [
 				href: ROUTES.SETTINGS_ORG_COST_UNITS(),
 				icon: FolderTreeIcon,
 				description: t("items.orgCostUnits.description"),
+			},
+			{
+				label: t("items.orgBilling.label"),
+				href: ROUTES.SETTINGS_ORG_BILLING(),
+				icon: CreditCardIcon,
+				description: t("items.orgBilling.description"),
+				// Narrower than the group, which admins also see: committing the
+				// organization to a recurring payment is the owner's alone. Absent
+				// entirely on a deployment that does not bill, since there would be
+				// nothing behind it.
+				isVisible: async ({ authClient, billingEnabled }) => {
+					if (!billingEnabled) {
+						return false;
+					}
+
+					// `organization: ["delete"]` is the owner's to hold; an admin may
+					// update the organization but not dispose of it.
+					const res = await authClient.organization.hasPermission({
+						permissions: { organization: ["delete"] },
+					});
+
+					return Boolean(res.data?.success) && !res.error;
+				},
 			},
 		],
 	},

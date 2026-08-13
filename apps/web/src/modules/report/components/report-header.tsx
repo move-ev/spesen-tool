@@ -53,6 +53,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useReportStatusLabel } from "@/lib/i18n-labels";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
+import { useErrorDescription } from "@/modules/shared";
 import { api } from "@/trpc/react";
 
 function ReportHeader({
@@ -625,6 +626,7 @@ function ReportHeaderSubmitAction({
 		return !(report.status === "DRAFT" || report.status === "NEEDS_REVISION");
 	}, [report.status]);
 
+	const describeError = useErrorDescription();
 	const submitMutation = api.report.submit.useMutation({
 		onSuccess() {
 			toast.success(tToasts("submitSuccess"));
@@ -633,7 +635,7 @@ function ReportHeaderSubmitAction({
 		},
 		onError(error) {
 			toast.error(tToasts("submitErrorTitle"), {
-				description: error.message ?? tToasts("submitErrorDescription"),
+				description: describeError(error, tToasts("submitErrorDescription")),
 			});
 		},
 	});

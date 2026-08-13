@@ -13,6 +13,17 @@ model Organization {
   // a report is created, which is what makes report numbers per-org.
   reportCounter Int @default(0)
 
+  // The Stripe customer this organization pays as. Null until an owner first
+  // reaches checkout — an organization that never subscribes never gets one.
+  // Unique so a Stripe customer can be traced back to exactly one organization.
+  stripeCustomerId String? @unique
+
+  // Whether entitlement is enforced for this organization. Off by default, and
+  // read underneath the deployment-wide flag: turning billing on globally
+  // enforces nothing until an organization is opted in, which is what makes the
+  // first real test of billing one customer rather than all of them (ADR-0001).
+  billingEnforced Boolean @default(false)
+
   members     Member[]
   invitations Invitation[]
 
@@ -21,6 +32,7 @@ model Organization {
   costUnitGroups CostUnitGroup[]
   settings       Settings?
   auditEvents    AuditEvent[]
+  subscription   Subscription?
 
   @@map("organization")
 }

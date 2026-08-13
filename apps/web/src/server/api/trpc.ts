@@ -13,9 +13,13 @@ import { ZodError } from "zod";
 
 import { logger } from "@/lib/logger";
 
-import { isOrganizationAdminRole } from "@/lib/organization";
+import {
+	isOrganizationAdminRole,
+	isOrganizationOwnerRole,
+} from "@/lib/organization";
 import { auth } from "@/server/better-auth";
 import { db } from "@/server/db";
+import { assertEntitled } from "@/server/modules/billing/billing.gate";
 
 /**
  * 1. CONTEXT
@@ -165,36 +169,71 @@ export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
  * touch an org — legal, user, banking, preferences — do not pay for a
  * member.findFirst they will not read.
  */
-export const orgProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-	const organizationId = ctx.session.session.activeOrganizationId;
-	const activeMember = organizationId
-		? await ctx.db.member.findFirst({
-				where: { userId: ctx.session.user.id, organizationId },
-				select: { id: true, role: true, organizationId: true },
-			})
-		: null;
+const memberResolvedProcedure = protectedProcedure.use(
+	async ({ ctx, next }) => {
+		const organizationId = ctx.session.session.activeOrganizationId;
+		const activeMember = organizationId
+			? await ctx.db.member.findFirst({
+					where: { userId: ctx.session.user.id, organizationId },
+					select: { id: true, role: true, organizationId: true },
+				})
+			: null;
 
-	// No selected org and a selected org the caller does not belong to are the
-	// same failure from the client's side, and deliberately indistinguishable.
-	if (!activeMember) {
-		throw new TRPCError({
-			code: "FORBIDDEN",
-			message: "No active organization selected.",
+		// No selected org and a selected org the caller does not belong to are the
+		// same failure from the client's side, and deliberately indistinguishable.
+		if (!activeMember) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "No active organization selected.",
+			});
+		}
+
+		return next({
+			ctx: {
+				...ctx,
+				activeMember,
+				organizationId: activeMember.organizationId,
+				orgRole: activeMember.role,
+			},
 		});
-	}
+	},
+);
 
-	return next({
-		ctx: {
-			...ctx,
-			activeMember,
-			organizationId: activeMember.organizationId,
-			orgRole: activeMember.role,
-		},
-	});
-});
+/**
+ * The org-scoped procedure everything organizational is built on, membership
+ * resolved and billing entitlement enforced.
+ *
+ * The gate sits here rather than at each call site so the set of billing-gated
+ * operations is one list, in the billing module, instead of five decisions
+ * scattered across two routers. It returns immediately for any path not on
+ * that list — which is every path but those five (ADR-0006).
+ */
+export const orgProcedure = memberResolvedProcedure.use(
+	async ({ ctx, path, next }) => {
+		await assertEntitled(ctx, path);
+		return next();
+	},
+);
 
 export const orgAdminProcedure = orgProcedure.use(({ ctx, next }) => {
 	if (!isOrganizationAdminRole(ctx.orgRole)) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
+
+	return next({ ctx });
+});
+
+/**
+ * Owner-only procedure.
+ *
+ * Narrower than {@link orgAdminProcedure}, and deliberately not built on it:
+ * committing an organization to a recurring financial obligation is an
+ * owner-level act, not an operational one, so an administrator who may
+ * approve every report in the organization still may not commit it to
+ * paying for Zemio.
+ */
+export const orgOwnerProcedure = orgProcedure.use(({ ctx, next }) => {
+	if (!isOrganizationOwnerRole(ctx.orgRole)) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 

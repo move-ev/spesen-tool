@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import React from "react";
+import type React from "react";
 import { cn } from "@/lib/utils";
-import { authClient } from "@/server/better-auth/client";
 import { settingsRoutes } from "../lib/routes";
 import type { SettingsGroup as SettingsGroupType } from "../lib/types";
+import { useSettingsGroup } from "../lib/use-settings-group";
 import { SettingsTitle } from "./settings-typography";
 
 function SettingsContent({
@@ -51,23 +51,9 @@ function SettingsGroup({
 }: React.ComponentProps<"div"> & {
 	group: SettingsGroupType;
 }) {
-	const [hasPerm, setHasPerm] = React.useState(false);
+	const { visible, items } = useSettingsGroup(group);
 
-	React.useEffect(() => {
-		let cancelled = false;
-
-		Promise.resolve(group.hasPermission(authClient)).then((result) => {
-			if (!cancelled) {
-				setHasPerm(result);
-			}
-		});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [group]);
-
-	if (!hasPerm) {
+	if (!visible) {
 		return null;
 	}
 
@@ -80,7 +66,7 @@ function SettingsGroup({
 			<SettingsTitle>{group.label}</SettingsTitle>
 
 			<div className="mt-6 grid gap-12 sm:grid-cols-2 xl:grid-cols-3">
-				{group.items.map(({ icon: Icon, ...item }) => (
+				{items.map(({ icon: Icon, ...item }) => (
 					<div
 						className={cn(
 							"group/item relative isolate flex items-start justify-start gap-6",
