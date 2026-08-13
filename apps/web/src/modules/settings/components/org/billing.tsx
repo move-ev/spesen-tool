@@ -101,8 +101,12 @@ function SubscriptionSection({
 	const { completed } = useCheckoutResult();
 	const [waitedTooLong, setWaitedTooLong] = React.useState(false);
 
+	// `waitedTooLong` is a dependency so that retrying arms a fresh timer: it
+	// clears the flag, and without a re-run the poll below would resume with
+	// nothing left to stop it again. The guard is what keeps that from looping
+	// once the timer has fired.
 	React.useEffect(() => {
-		if (!completed) return;
+		if (!completed || waitedTooLong) return;
 
 		const timer = setTimeout(
 			() => setWaitedTooLong(true),
@@ -110,7 +114,7 @@ function SubscriptionSection({
 		);
 
 		return () => clearTimeout(timer);
-	}, [completed]);
+	}, [completed, waitedTooLong]);
 
 	const query = api.billing.status.useQuery(undefined, {
 		refetchInterval: (q) => {
@@ -351,6 +355,15 @@ function TiersSection({ className, ...props }: React.ComponentProps<"div">) {
 				message={error.message}
 			/>
 		);
+	}
+
+	// Whether this organization already pays for something is unknown while the
+	// status query is failing, and the guard below reads a failed query as "no
+	// subscription" — which would offer checkout to an organization that
+	// already has one. Silent rather than a second error card: SubscriptionSection
+	// sits above this one on the same query and has already reported it.
+	if (status.error) {
+		return null;
 	}
 
 	// Nothing to offer an organization that already pays for one of these.
