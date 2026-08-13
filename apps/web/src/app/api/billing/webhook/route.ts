@@ -84,8 +84,12 @@ export async function POST(request: Request): Promise<Response> {
 		);
 	} catch (error) {
 		// Unverified: this did not come from Stripe, or the secret is wrong.
-		// Either way nothing is read or written, and a 400 stops Stripe retrying
-		// something a retry cannot fix.
+		// Either way nothing is read or written. The 400 does not stop redelivery
+		// — Stripe counts every non-2xx as a failed delivery and retries with
+		// backoff for about three days — but it is still the honest answer, and the
+		// one Stripe's own examples give: forged traffic has earned no 2xx, and a
+		// wrong secret is a misconfiguration those retries should keep visible
+		// until someone fixes it.
 		logger.warn("Rejected an unverified Stripe webhook", {
 			error: error instanceof Error ? error.message : String(error),
 		});

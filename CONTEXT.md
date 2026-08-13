@@ -4,9 +4,9 @@ Expense reporting for student initiatives. Organizations collect their members'
 expenses into reports, review them, and pay them out. Organizations subscribe to
 Zemio to use the product.
 
-Zemio does not move money on behalf of its customers. Reimbursements are paid by
-the organization through its own banking arrangements; Zemio only records the
-banking details needed to make that payment.
+Zemio does not move money on behalf of these organizations. Reimbursements are
+paid by the organization through its own banking arrangements; Zemio only
+records the banking details needed to make that payment.
 
 ## Language
 
@@ -34,7 +34,7 @@ review as one unit.
 _Avoid_: claim, submission, expense report
 
 **Expense**:
-A single cost within a report — a receipt, a travel allowance, or a food
+A single amount spent within a report — a receipt, a travel allowance, or a food
 allowance.
 _Avoid_: line item, entry, cost
 
@@ -46,7 +46,7 @@ most one, and it is the organization's — never a person's.
 _Avoid_: plan, contract, licence
 
 **Tier**:
-A named commercial package — S, M, L, or a custom XL. Tiers differ only in how
+A named commercial offering — S, M, L, or a custom XL. Tiers differ only in how
 many members they include; every tier grants identical functionality.
 _Avoid_: plan, package, level, product
 

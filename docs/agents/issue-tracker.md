@@ -55,7 +55,7 @@ A ticket is unblocked when every issue in its `blockedBy` set is Done or Cancele
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: no.** _(Set to `yes` if external GitHub PRs should
+**PRs as a triage surface: no.** _(Set to `yes` if external GitHub PRs should
 enter the triage queue; `/triage` reads this flag.)_
 
 ## When a skill says "publish to the issue tracker"
