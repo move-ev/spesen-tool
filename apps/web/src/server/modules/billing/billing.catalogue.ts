@@ -65,6 +65,14 @@ export function tierFromPrice(price: Stripe.Price): Tier | null {
 	if (price.unit_amount === null) return null;
 	if (!price.recurring) return null;
 
+	// A price charged every three months is not a monthly price, and showing it
+	// as one understates what the customer is about to agree to by a factor of
+	// three. Zemio displays one amount against one interval, so a price whose
+	// interval it cannot state plainly is not offered at all — the dashboard is
+	// the source of truth (ADR-0003), and a tier misconfigured there should be
+	// invisible rather than misleading.
+	if (price.recurring.interval_count !== 1) return null;
+
 	return {
 		priceId: price.id,
 		name,

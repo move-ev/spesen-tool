@@ -1120,6 +1120,9 @@
 					"ends": "Endet am",
 					"endsDescription": "Die Kündigung wird zum Ende des bezahlten Zeitraums wirksam, nicht sofort.",
 					"cancelling": "Gekündigt",
+					"lapsed": "Abgelaufen",
+					"lapsedDescription": "Das Abonnement ist beendet. Der Tarif zeigt, was zuletzt gebucht war — es wird nichts mehr abgerechnet und nichts mehr verlängert.",
+					"tierDescriptionLapsed": "Der Tarif, den deine Organisation zuletzt gebucht hatte.",
 					"manage": "Abonnement verwalten",
 					"manageDescription": "Zahlungsmittel ändern, Rechnungen herunterladen, Tarif wechseln oder kündigen.",
 					"openPortal": "Portal öffnen"

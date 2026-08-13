@@ -67,7 +67,7 @@ beforeEach(async () => {
 				active: true,
 				currency: "eur",
 				unit_amount: 1900,
-				recurring: { interval: "month" },
+				recurring: { interval: "month", interval_count: 1 },
 				metadata: { zemio_tier: "M", zemio_seats: "25" },
 			},
 		],

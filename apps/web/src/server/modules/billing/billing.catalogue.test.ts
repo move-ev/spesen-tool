@@ -14,7 +14,7 @@ function price(overrides: Record<string, unknown> = {}) {
 		active: true,
 		currency: "eur",
 		unit_amount: 1900,
-		recurring: { interval: "month" },
+		recurring: { interval: "month", interval_count: 1 },
 		metadata: { zemio_tier: "M", zemio_seats: "25" },
 		...overrides,
 	};
@@ -252,5 +252,26 @@ describe("listTiers caching", () => {
 		await expect(listTiers(stripe)).rejects.toThrow(
 			"The billing provider could not be reached. Please try again.",
 		);
+	});
+});
+
+describe("tierFromPrice interval", () => {
+	it("skips a price billed over more than one interval", () => {
+		// €60 every three months is not €60 a month. The page shows one amount
+		// against one interval, so a price it cannot state plainly is withheld
+		// rather than advertised at a third of its real cost.
+		expect(
+			tierFromPrice(
+				price({ recurring: { interval: "month", interval_count: 3 } }) as never,
+			),
+		).toBeNull();
+	});
+
+	it("keeps an ordinary monthly price", () => {
+		expect(
+			tierFromPrice(
+				price({ recurring: { interval: "month", interval_count: 1 } }) as never,
+			),
+		).not.toBeNull();
 	});
 });

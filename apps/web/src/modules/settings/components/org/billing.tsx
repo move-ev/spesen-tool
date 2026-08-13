@@ -210,6 +210,12 @@ function SubscriptionSection({
 				<CurrentSubscription
 					cancelAtPeriodEnd={data.cancelAtPeriodEnd}
 					currentPeriodEnd={data.currentPeriodEnd}
+					// The webhook rewrites the whole row on a cancellation and only
+					// `status` moves, so the tier and the period end outlive the
+					// subscription itself. Without this the page tells an owner their
+					// subscription renews on a future date — on the very page the
+					// read-only banner sent them to.
+					lapsed={data.state === "read_only"}
 					overSeatLimit={data.overSeatLimit}
 					seatCount={data.seatCount}
 					seatLimit={data.seatLimit}
@@ -227,6 +233,8 @@ type CurrentSubscriptionProps = {
 	overSeatLimit: boolean;
 	currentPeriodEnd: Date | null;
 	cancelAtPeriodEnd: boolean;
+	/** Whether what is shown is a subscription that has already ended. */
+	lapsed: boolean;
 };
 
 function CurrentSubscription({
@@ -236,6 +244,7 @@ function CurrentSubscription({
 	overSeatLimit,
 	currentPeriodEnd,
 	cancelAtPeriodEnd,
+	lapsed,
 }: CurrentSubscriptionProps) {
 	const t = useTranslations("modules.settings.billing");
 
@@ -244,10 +253,15 @@ function CurrentSubscription({
 			<Field>
 				<FieldContent>
 					<FieldTitle>{t("current.tier")}</FieldTitle>
-					<FieldDescription>{t("current.tierDescription")}</FieldDescription>
+					<FieldDescription>
+						{lapsed
+							? t("current.tierDescriptionLapsed")
+							: t("current.tierDescription")}
+					</FieldDescription>
 				</FieldContent>
-				<div className="flex items-center">
+				<div className="flex items-center gap-2">
 					<span className="font-medium text-base-800 text-sm">{tier}</span>
+					{lapsed && <Badge variant="secondary">{t("current.lapsed")}</Badge>}
 				</div>
 			</Field>
 
@@ -269,26 +283,38 @@ function CurrentSubscription({
 				</div>
 			</Field>
 
-			<Field>
-				<FieldContent>
-					<FieldTitle>
-						{cancelAtPeriodEnd ? t("current.ends") : t("current.renews")}
-					</FieldTitle>
-					<FieldDescription>
-						{cancelAtPeriodEnd
-							? t("current.endsDescription")
-							: t("current.renewsDescription")}
-					</FieldDescription>
-				</FieldContent>
-				<div className="flex items-center gap-2">
-					<span className="font-medium text-base-800 text-sm">
-						{currentPeriodEnd ? format(currentPeriodEnd, "dd.MM.yyyy") : "—"}
-					</span>
-					{cancelAtPeriodEnd && (
-						<Badge variant="secondary">{t("current.cancelling")}</Badge>
-					)}
-				</div>
-			</Field>
+			{/* A lapsed subscription has no next period, and its recorded period end
+			    can sit in the future after an immediate cancellation — so the date
+			    is withheld rather than presented as a renewal that is not coming. */}
+			{lapsed ? (
+				<Field>
+					<FieldContent>
+						<FieldTitle>{t("current.lapsed")}</FieldTitle>
+						<FieldDescription>{t("current.lapsedDescription")}</FieldDescription>
+					</FieldContent>
+				</Field>
+			) : (
+				<Field>
+					<FieldContent>
+						<FieldTitle>
+							{cancelAtPeriodEnd ? t("current.ends") : t("current.renews")}
+						</FieldTitle>
+						<FieldDescription>
+							{cancelAtPeriodEnd
+								? t("current.endsDescription")
+								: t("current.renewsDescription")}
+						</FieldDescription>
+					</FieldContent>
+					<div className="flex items-center gap-2">
+						<span className="font-medium text-base-800 text-sm">
+							{currentPeriodEnd ? format(currentPeriodEnd, "dd.MM.yyyy") : "—"}
+						</span>
+						{cancelAtPeriodEnd && (
+							<Badge variant="secondary">{t("current.cancelling")}</Badge>
+						)}
+					</div>
+				</Field>
+			)}
 
 			<Field>
 				<FieldContent>

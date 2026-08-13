@@ -1120,6 +1120,9 @@
 					"ends": "Ends on",
 					"endsDescription": "Cancellation takes effect at the end of the paid period, not immediately.",
 					"cancelling": "Cancelling",
+					"lapsed": "Lapsed",
+					"lapsedDescription": "The subscription has ended. The tier shows what was last held — nothing is being charged and nothing will renew.",
+					"tierDescriptionLapsed": "The tier your organization last held.",
 					"manage": "Manage subscription",
 					"manageDescription": "Change the payment method, download invoices, switch tier or cancel.",
 					"openPortal": "Open portal"
