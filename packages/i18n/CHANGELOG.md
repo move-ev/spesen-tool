@@ -1,5 +1,11 @@
 # @zemio/i18n
 
+## 0.2.0
+
+### Minor Changes
+
+- [#183](https://github.com/zemio-co/zemio/pull/183) [`82bcc3b`](https://github.com/zemio-co/zemio/commit/82bcc3bbee351a9d6a576f814d28a0e82fd41484) Thanks [@chris23lngr](https://github.com/chris23lngr)! - implement billing with stripe
+
 ## 0.1.0
 
 ### Minor Changes
