@@ -456,6 +456,30 @@ const INTERVAL_KEYS = {
 	year: "intervals.year",
 } as const;
 
+/**
+ * Stripe's minor units as the figure the currency is written in.
+ *
+ * An `amount` of 1900 is €19.00 — but ¥1,900, since JPY has no minor unit at
+ * all, and 1.900 KWD, which has three. Dividing by a hundred would put a price
+ * on the page that Checkout then disagrees with, which is what ADR-0003 exists
+ * to prevent. The exponent is asked of `Intl`, which carries the currency data
+ * already: writing the exponents out here would put commercial fact in Zemio
+ * instead of at the provider, and would be wrong for the first currency nobody
+ * thought to add. It is a property of the currency rather than of the reader,
+ * so the locale plays no part in it.
+ */
+export function toMajorUnits(amount: number, currency: string): number {
+	// Optional in the type rather than in practice: a currency style always
+	// resolves fraction digits, and a currency the runtime holds no data on
+	// resolves to the two this default repeats.
+	const { maximumFractionDigits = 2 } = new Intl.NumberFormat(undefined, {
+		style: "currency",
+		currency,
+	}).resolvedOptions();
+
+	return amount / 10 ** maximumFractionDigits;
+}
+
 function TierList({ tiers }: { tiers: Tier[] }) {
 	const t = useTranslations("modules.settings.billing");
 	const formatter = useFormatter();
@@ -498,7 +522,7 @@ function TierList({ tiers }: { tiers: Tier[] }) {
 							{t("tier.perInterval", {
 								// Minor units in the provider's own currency, never a figure
 								// from this codebase (ADR-0003).
-								amount: formatter.number(tier.amount / 100, {
+								amount: formatter.number(toMajorUnits(tier.amount, tier.currency), {
 									style: "currency",
 									currency: tier.currency.toUpperCase(),
 								}),
