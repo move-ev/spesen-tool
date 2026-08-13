@@ -338,7 +338,7 @@ function PortalButton() {
 function TiersSection({ className, ...props }: React.ComponentProps<"div">) {
 	const t = useTranslations("modules.settings.billing");
 	const tShared = useTranslations("modules.settings.shared");
-	const { cancelled } = useCheckoutResult();
+	const { cancelled, completed } = useCheckoutResult();
 	const status = api.billing.status.useQuery();
 	const query = api.billing.tiers.useQuery();
 
@@ -366,8 +366,28 @@ function TiersSection({ className, ...props }: React.ComponentProps<"div">) {
 		return null;
 	}
 
+	// A checkout Stripe has confirmed but whose webhook has not landed yet leaves
+	// `tier` null, which would otherwise read as "no subscription" and offer the
+	// list again. A second checkout there buys a second Stripe subscription on
+	// the same customer, and since the local row is keyed by organization the
+	// later webhook overwrites the earlier one — two subscriptions billed, one
+	// recorded. SubscriptionSection is already showing the confirmation.
+	if (completed) {
+		return null;
+	}
+
 	// Nothing to offer an organization that already pays for one of these.
-	if (status.data?.enabled && status.data.tier) {
+	//
+	// `tier` alone cannot answer that: a lapsed subscription keeps its tier,
+	// because the webhook rewrites the whole row on `customer.subscription
+	// .deleted` and only `status` moves. Reading tier by itself would hide the
+	// tiers from precisely the organization that has to buy one again — and the
+	// portal has nothing to sell it either, since its subscription is gone.
+	if (
+		status.data?.enabled &&
+		status.data.tier &&
+		status.data.state !== "read_only"
+	) {
 		return null;
 	}
 
