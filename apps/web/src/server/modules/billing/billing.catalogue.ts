@@ -1,5 +1,6 @@
 import "server-only";
 import type Stripe from "stripe";
+import { withStripe } from "./billing.stripe";
 
 /**
  * The catalogue of tiers an organization can buy, read from Stripe.
@@ -98,11 +99,13 @@ async function fetchTiers(stripe: TierPriceSource): Promise<Tier[]> {
 	// number of prices grows with the customer base and a single page would
 	// silently start dropping tiers.
 	while (true) {
-		const page = await stripe.prices.list({
-			active: true,
-			limit: 100,
-			...(startingAfter ? { starting_after: startingAfter } : {}),
-		});
+		const page = await withStripe("prices.list", () =>
+			stripe.prices.list({
+				active: true,
+				limit: 100,
+				...(startingAfter ? { starting_after: startingAfter } : {}),
+			}),
+		);
 
 		for (const price of page.data) {
 			const tier = tierFromPrice(price);

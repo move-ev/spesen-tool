@@ -4,6 +4,7 @@ import type { PrismaClient } from "@zemio/db";
 import type Stripe from "stripe";
 import { CHECKOUT_RETURN_PATH } from "./billing.checkout";
 import { billingRepository } from "./billing.repository";
+import { withStripe } from "./billing.stripe";
 
 /**
  * Managing an existing subscription, which Zemio does not do — Stripe's hosted
@@ -50,17 +51,20 @@ export async function openBillingPortal(
 		});
 	}
 
-	if (!organization.stripeCustomerId) {
+	const customer = organization.stripeCustomerId;
+	if (!customer) {
 		throw new TRPCError({
 			code: "PRECONDITION_FAILED",
 			message: "This organization has no subscription to manage yet.",
 		});
 	}
 
-	const session = await deps.stripe.billingPortal.sessions.create({
-		customer: organization.stripeCustomerId,
-		return_url: `${deps.appUrl}${CHECKOUT_RETURN_PATH}`,
-	});
+	const session = await withStripe("billingPortal.sessions.create", () =>
+		deps.stripe.billingPortal.sessions.create({
+			customer,
+			return_url: `${deps.appUrl}${CHECKOUT_RETURN_PATH}`,
+		}),
+	);
 
 	return { url: session.url };
 }

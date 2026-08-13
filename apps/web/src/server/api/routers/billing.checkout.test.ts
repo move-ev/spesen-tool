@@ -27,7 +27,10 @@ vi.mock(
 );
 
 const pricesList = vi.fn();
-vi.mock("@/server/modules/billing/billing.stripe", () => ({
+vi.mock("@/server/modules/billing/billing.stripe", async (importOriginal) => ({
+	// `withStripe` stays real: it is the boundary that keeps Stripe's own words
+	// out of the browser, and replacing it here would test around it.
+	...(await importOriginal<object>()),
 	getStripe: () => ({ prices: { list: pricesList } }),
 }));
 

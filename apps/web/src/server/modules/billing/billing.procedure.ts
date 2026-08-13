@@ -51,7 +51,9 @@ export function toBillingDependencies(
 		db: ctx.db,
 		stripe: getStripe(),
 		// Better Auth's URL is the deployment's own public origin, which is what
-		// Stripe has to send the owner back to.
-		appUrl: env.BETTER_AUTH_URL,
+		// Stripe has to send the owner back to. The trailing slash `z.url()`
+		// happily accepts is stripped here: every return URL appends a rooted
+		// path, and Stripe would be handed `https://host//settings/...`.
+		appUrl: env.BETTER_AUTH_URL.replace(/\/+$/, ""),
 	};
 }

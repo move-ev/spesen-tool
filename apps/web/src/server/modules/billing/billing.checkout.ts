@@ -15,6 +15,7 @@ import { auditRepository } from "@/server/modules/audit/audit.repository";
 import { listTiers, type TierPriceSource } from "./billing.catalogue";
 import { mayStartCheckout } from "./billing.policy";
 import { billingRepository } from "./billing.repository";
+import { withStripe } from "./billing.stripe";
 
 /**
  * Starting a subscription: the one billing action a person performs rather
@@ -79,12 +80,14 @@ async function resolveCustomerId(
 
 	if (organization.stripeCustomerId) return organization.stripeCustomerId;
 
-	const customer = await deps.stripe.customers.create({
-		name: organization.name,
-		// Written on the customer as well as the session so the link between
-		// organization and customer is recoverable from either side.
-		metadata: { organizationId },
-	});
+	const customer = await withStripe("customers.create", () =>
+		deps.stripe.customers.create({
+			name: organization.name,
+			// Written on the customer as well as the session so the link between
+			// organization and customer is recoverable from either side.
+			metadata: { organizationId },
+		}),
+	);
 
 	const claimed = await billingRepository.claimStripeCustomer(
 		deps.db,
@@ -159,17 +162,22 @@ export async function startCheckout(
 
 	const customerId = await resolveCustomerId(deps, actor.organizationId);
 
-	const session = await deps.stripe.checkout.sessions.create({
-		mode: "subscription",
-		customer: customerId,
-		client_reference_id: actor.organizationId,
-		line_items: [{ price: priceId, quantity: 1 }],
-		// Also on the subscription itself, so support can answer "whose is this?"
-		// from the subscription alone rather than following it to its customer.
-		subscription_data: { metadata: { organizationId: actor.organizationId } },
-		success_url: returnUrl(deps.appUrl, "complete"),
-		cancel_url: returnUrl(deps.appUrl, "cancelled"),
-	});
+	const session = await withStripe("checkout.sessions.create", () =>
+		deps.stripe.checkout.sessions.create({
+			mode: "subscription",
+			customer: customerId,
+			client_reference_id: actor.organizationId,
+			line_items: [{ price: priceId, quantity: 1 }],
+			// Also on the subscription itself, so support can answer "whose is
+			// this?" from the subscription alone rather than following it to its
+			// customer.
+			subscription_data: {
+				metadata: { organizationId: actor.organizationId },
+			},
+			success_url: returnUrl(deps.appUrl, "complete"),
+			cancel_url: returnUrl(deps.appUrl, "cancelled"),
+		}),
+	);
 
 	if (!session.url) {
 		throw new TRPCError({

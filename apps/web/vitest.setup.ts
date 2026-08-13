@@ -15,3 +15,7 @@ process.env.SECRET_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString("base64");
 process.env.BILLING_ENABLED = "false";
 delete process.env.STRIPE_SECRET_KEY;
 delete process.env.STRIPE_WEBHOOK_SECRET;
+
+// Required in production, so nothing that reads it guards against absence. The
+// suite skips env validation, so it has to be supplied here instead.
+process.env.BETTER_AUTH_URL = "https://zemio.test";

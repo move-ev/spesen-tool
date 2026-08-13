@@ -92,3 +92,48 @@ describe("the Stripe webhook route", () => {
 		);
 	});
 });
+
+describe("the Stripe webhook route body limit", () => {
+	function postBody(body: string, headers: Record<string, string> = {}) {
+		return POST(
+			new Request("https://zemio.test/api/billing/webhook", {
+				method: "POST",
+				headers: { "stripe-signature": "t=1,v1=deadbeef", ...headers },
+				body,
+			}),
+		);
+	}
+
+	it("refuses a body too large to be a Stripe event, verifying nothing", async () => {
+		// The endpoint is unauthenticated until the signature is checked, and
+		// checking it needs the whole body in memory. Reading an unbounded one
+		// first would let an anonymous request exhaust the process.
+		const response = await postBody("x".repeat(1_000_001));
+
+		expect(response.status).toBe(413);
+		expect(constructEventAsync).not.toHaveBeenCalled();
+		expect(handleStripeEvent).not.toHaveBeenCalled();
+	});
+
+	it("refuses on a declared length over the limit without reading the body", async () => {
+		const response = await postBody('{"id":"evt_1"}', {
+			"content-length": "50000000",
+		});
+
+		expect(response.status).toBe(413);
+		expect(constructEventAsync).not.toHaveBeenCalled();
+	});
+
+	it("reads an ordinary event through unchanged", async () => {
+		constructEventAsync.mockResolvedValue({ id: "evt_1", type: "x" });
+
+		const response = await postBody('{"id":"evt_1"}');
+
+		expect(response.status).toBe(200);
+		expect(constructEventAsync).toHaveBeenCalledWith(
+			'{"id":"evt_1"}',
+			"t=1,v1=deadbeef",
+			"whsec_1",
+		);
+	});
+});

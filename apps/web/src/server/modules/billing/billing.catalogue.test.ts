@@ -234,8 +234,23 @@ describe("listTiers caching", () => {
 			.mockResolvedValueOnce({ data: [price()], has_more: false });
 		const stripe = { prices: { list } } as unknown as TierPriceSource;
 
-		await expect(listTiers(stripe)).rejects.toThrow("stripe is down");
+		await expect(listTiers(stripe)).rejects.toThrow();
 
 		await expect(listTiers(stripe)).resolves.toHaveLength(1);
+	});
+
+	it("reports a failed read without repeating what Stripe said", async () => {
+		// The message travels to the browser and into a toast, so it says what the
+		// reader can do, not what Stripe told the server.
+		const list = vi
+			.fn()
+			.mockRejectedValue(
+				new Error("Invalid API Key provided: sk_test_51****abcd"),
+			);
+		const stripe = { prices: { list } } as unknown as TierPriceSource;
+
+		await expect(listTiers(stripe)).rejects.toThrow(
+			"The billing provider could not be reached. Please try again.",
+		);
 	});
 });
