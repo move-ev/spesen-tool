@@ -1,6 +1,7 @@
 export * from "./admin-settings-org-details";
 export * from "./admin-settings-orgs";
 export {
+	OrgSettingsBilling,
 	OrgSettingsCostUnits,
 	OrgSettingsGeneral,
 	OrgSettingsMembers,

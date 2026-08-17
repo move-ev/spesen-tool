@@ -303,10 +303,11 @@ export type ReportOrderByWithRelationInput = {
 
 export type ReportWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  tag?: number
+  organizationId_tag?: Prisma.ReportOrganizationIdTagCompoundUniqueInput
   AND?: Prisma.ReportWhereInput | Prisma.ReportWhereInput[]
   OR?: Prisma.ReportWhereInput[]
   NOT?: Prisma.ReportWhereInput | Prisma.ReportWhereInput[]
+  tag?: Prisma.IntFilter<"Report"> | number
   title?: Prisma.StringFilter<"Report"> | string
   description?: Prisma.StringNullableFilter<"Report"> | string | null
   status?: Prisma.EnumReportStatusFilter<"Report"> | $Enums.ReportStatus
@@ -323,7 +324,7 @@ export type ReportWhereUniqueInput = Prisma.AtLeast<{
   bankingDetails?: Prisma.XOR<Prisma.BankingDetailsNullableScalarRelationFilter, Prisma.BankingDetailsWhereInput> | null
   bankingSnapshot?: Prisma.XOR<Prisma.ReportBankingSnapshotNullableScalarRelationFilter, Prisma.ReportBankingSnapshotWhereInput> | null
   expenses?: Prisma.ExpenseListRelationFilter
-}, "id" | "tag">
+}, "id" | "organizationId_tag">
 
 export type ReportOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -365,7 +366,7 @@ export type ReportScalarWhereWithAggregatesInput = {
 
 export type ReportCreateInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -382,7 +383,7 @@ export type ReportCreateInput = {
 
 export type ReportUncheckedCreateInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -399,6 +400,7 @@ export type ReportUncheckedCreateInput = {
 
 export type ReportUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -432,7 +434,7 @@ export type ReportUncheckedUpdateInput = {
 
 export type ReportCreateManyInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -447,6 +449,7 @@ export type ReportCreateManyInput = {
 
 export type ReportUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -483,6 +486,11 @@ export type ReportOrderByRelationAggregateInput = {
 export type ReportScalarRelationFilter = {
   is?: Prisma.ReportWhereInput
   isNot?: Prisma.ReportWhereInput
+}
+
+export type ReportOrganizationIdTagCompoundUniqueInput = {
+  organizationId: string
+  tag: number
 }
 
 export type ReportCountOrderByAggregateInput = {
@@ -724,14 +732,6 @@ export type EnumReportStatusFieldUpdateOperationsInput = {
   set?: $Enums.ReportStatus
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ReportCreateNestedOneWithoutExpensesInput = {
   create?: Prisma.XOR<Prisma.ReportCreateWithoutExpensesInput, Prisma.ReportUncheckedCreateWithoutExpensesInput>
   connectOrCreate?: Prisma.ReportCreateOrConnectWithoutExpensesInput
@@ -748,7 +748,7 @@ export type ReportUpdateOneRequiredWithoutExpensesNestedInput = {
 
 export type ReportCreateWithoutOwnerInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -764,7 +764,7 @@ export type ReportCreateWithoutOwnerInput = {
 
 export type ReportUncheckedCreateWithoutOwnerInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -824,7 +824,7 @@ export type ReportScalarWhereInput = {
 
 export type ReportCreateWithoutBankingDetailsInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -840,7 +840,7 @@ export type ReportCreateWithoutBankingDetailsInput = {
 
 export type ReportUncheckedCreateWithoutBankingDetailsInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -882,7 +882,7 @@ export type ReportUpdateManyWithWhereWithoutBankingDetailsInput = {
 
 export type ReportCreateWithoutBankingSnapshotInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -898,7 +898,7 @@ export type ReportCreateWithoutBankingSnapshotInput = {
 
 export type ReportUncheckedCreateWithoutBankingSnapshotInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -930,6 +930,7 @@ export type ReportUpdateToOneWithWhereWithoutBankingSnapshotInput = {
 
 export type ReportUpdateWithoutBankingSnapshotInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -961,7 +962,7 @@ export type ReportUncheckedUpdateWithoutBankingSnapshotInput = {
 
 export type ReportCreateWithoutCostUnitInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -977,7 +978,7 @@ export type ReportCreateWithoutCostUnitInput = {
 
 export type ReportUncheckedCreateWithoutCostUnitInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1019,7 +1020,7 @@ export type ReportUpdateManyWithWhereWithoutCostUnitInput = {
 
 export type ReportCreateWithoutOrganizationInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1035,7 +1036,7 @@ export type ReportCreateWithoutOrganizationInput = {
 
 export type ReportUncheckedCreateWithoutOrganizationInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1077,7 +1078,7 @@ export type ReportUpdateManyWithWhereWithoutOrganizationInput = {
 
 export type ReportCreateWithoutExpensesInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1093,7 +1094,7 @@ export type ReportCreateWithoutExpensesInput = {
 
 export type ReportUncheckedCreateWithoutExpensesInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1125,6 +1126,7 @@ export type ReportUpdateToOneWithWhereWithoutExpensesInput = {
 
 export type ReportUpdateWithoutExpensesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -1156,7 +1158,7 @@ export type ReportUncheckedUpdateWithoutExpensesInput = {
 
 export type ReportCreateManyOwnerInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1170,6 +1172,7 @@ export type ReportCreateManyOwnerInput = {
 
 export type ReportUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -1215,7 +1218,7 @@ export type ReportUncheckedUpdateManyWithoutOwnerInput = {
 
 export type ReportCreateManyBankingDetailsInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1229,6 +1232,7 @@ export type ReportCreateManyBankingDetailsInput = {
 
 export type ReportUpdateWithoutBankingDetailsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -1274,7 +1278,7 @@ export type ReportUncheckedUpdateManyWithoutBankingDetailsInput = {
 
 export type ReportCreateManyCostUnitInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1288,6 +1292,7 @@ export type ReportCreateManyCostUnitInput = {
 
 export type ReportUpdateWithoutCostUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
@@ -1333,7 +1338,7 @@ export type ReportUncheckedUpdateManyWithoutCostUnitInput = {
 
 export type ReportCreateManyOrganizationInput = {
   id?: string
-  tag?: number
+  tag: number
   title: string
   description?: string | null
   status?: $Enums.ReportStatus
@@ -1347,6 +1352,7 @@ export type ReportCreateManyOrganizationInput = {
 
 export type ReportUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tag?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus

@@ -711,6 +711,10 @@
 					"adminOrgs": {
 						"label": "Organisationen",
 						"description": "Verwalte alle Organisationen auf dieser Plattform"
+					},
+					"orgBilling": {
+						"label": "Billing",
+						"description": "Manage your organization's subscription"
 					}
 				},
 				"sidebarOrgHeading": "Organisation",
@@ -1094,6 +1098,70 @@
 					"adminsEmptyTitle": "Keine Admins",
 					"adminsEmptyDescription": "In dieser Organisation wurden keine Administratoren gefunden"
 				}
+			},
+			"billing": {
+				"title": "Billing",
+				"description": "Manage what your organization pays for.",
+				"sections": {
+					"subscription": "Current subscription",
+					"tiers": "Available tiers",
+					"custom": "Custom arrangement"
+				},
+				"current": {
+					"tier": "Tier",
+					"tierDescription": "The tier your organization currently pays for.",
+					"seats": "Seats",
+					"seatsDescription": "One member occupies one seat, whatever their role.",
+					"seatsUsed": "{used} of {included}",
+					"seatsUsedOnly": "{used} in use",
+					"overSeatLimit": "Over limit",
+					"renews": "Renews on",
+					"renewsDescription": "The next period is charged at the end of this one.",
+					"ends": "Ends on",
+					"endsDescription": "Cancellation takes effect at the end of the paid period, not immediately.",
+					"cancelling": "Cancelling",
+					"lapsed": "Lapsed",
+					"lapsedDescription": "The subscription has ended. The tier shows what was last held — nothing is being charged and nothing will renew.",
+					"tierDescriptionLapsed": "The tier your organization last held.",
+					"manage": "Manage subscription",
+					"manageDescription": "Change the payment method, download invoices, switch tier or cancel.",
+					"openPortal": "Open portal"
+				},
+				"tier": {
+					"name": "Tier {name}",
+					"includedSeats": "Includes {seats} seats.",
+					"perInterval": "{amount} / {interval}",
+					"choose": "Choose"
+				},
+				"intervals": {
+					"day": "day",
+					"week": "week",
+					"month": "month",
+					"year": "year"
+				},
+				"custom": {
+					"label": "Larger than the available tiers?",
+					"description": "For organizations that outgrow the published tiers, we arrange a tier of their own.",
+					"action": "Get in touch",
+					"contactEmail": "billing@zemio.co"
+				},
+				"noTiers": "No tiers are available right now",
+				"noTiersDescription": "Tiers appear here once they have been set up.",
+				"checkoutErrorTitle": "Checkout could not be started",
+				"portalErrorTitle": "The portal could not be opened",
+				"errorFallback": "Please try again later.",
+				"confirming": {
+					"label": "Confirming your payment",
+					"description": "Your payment went through. The tier appears here as soon as the billing provider confirms it, which usually takes a few seconds.",
+					"slowLabel": "Still waiting for confirmation",
+					"slowDescription": "Your payment went through, but the tier has not reached this page yet. That is rare and is not something you did — check again in a moment, and get in touch if it stays this way.",
+					"retry": "Check again",
+					"waiting": "Checking …"
+				},
+				"cancelled": {
+					"label": "Checkout cancelled",
+					"description": "Nothing was charged and nothing about your organization changed."
+				}
 			}
 		},
 		"auth": {
@@ -1256,6 +1324,26 @@
 					"uploadFailedCleanupDescription": "Teilweise hochgeladene Dateien konnten nicht bereinigt werden",
 					"uploadFailedDescription": "Nicht alle Dateien konnten hochgeladen werden"
 				}
+			},
+			"billingBanner": {
+				"overSeatLimit": {
+					"title": "Your organization is over its seat limit",
+					"description": "{used} of {included} included seats are in use. Nothing is blocked — a larger tier brings the subscription back in line with the organization."
+				},
+				"paymentFailing": {
+					"title": "A payment for your organization failed",
+					"description": "Zemio keeps working while the payment is retried. Updating the payment method now keeps the subscription from lapsing."
+				},
+				"readOnly": {
+					"title": "Your organization's subscription has lapsed",
+					"description": "While the subscription is inactive, no new reports or expenses can be created and no reports can be submitted. Everything already recorded stays readable, exportable and reviewable."
+				},
+				"refused": {
+					"title": "Your organization's subscription has lapsed",
+					"description": "New reports and expenses can be created and submitted again once the subscription has been renewed."
+				},
+				"action": "Manage billing",
+				"memberHint": "Contact your organization owner to resolve this."
 			}
 		},
 		"preferences": {

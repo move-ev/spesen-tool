@@ -1,4 +1,5 @@
 import { auditRouter } from "@/server/api/routers/audit";
+import { billingRouter } from "@/server/api/routers/billing";
 import { costUnitRouter } from "@/server/api/routers/cost-unit";
 import { dashboardRouter } from "@/server/api/routers/dashboard";
 import { expenseRouter } from "@/server/api/routers/expense";
@@ -36,6 +37,7 @@ export const appRouter = createTRPCRouter({
 	bankingDetails: bankingDetailsRouter,
 	platformAdmin: platformAdminRouter,
 	attachment: attachmentRouter,
+	billing: billingRouter,
 });
 
 // export type definition of API

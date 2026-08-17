@@ -77,6 +77,16 @@ export type BankingDetails = Prisma.BankingDetailsModel
  */
 export type ReportBankingSnapshot = Prisma.ReportBankingSnapshotModel
 /**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model ProcessedStripeEvent
+ * 
+ */
+export type ProcessedStripeEvent = Prisma.ProcessedStripeEventModel
+/**
  * Model CostUnitGroup
  * 
  */

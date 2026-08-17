@@ -20,8 +20,18 @@ export type OrganizationModel = runtime.Types.Result.DefaultSelection<Prisma.$Or
 
 export type AggregateOrganization = {
   _count: OrganizationCountAggregateOutputType | null
+  _avg: OrganizationAvgAggregateOutputType | null
+  _sum: OrganizationSumAggregateOutputType | null
   _min: OrganizationMinAggregateOutputType | null
   _max: OrganizationMaxAggregateOutputType | null
+}
+
+export type OrganizationAvgAggregateOutputType = {
+  reportCounter: number | null
+}
+
+export type OrganizationSumAggregateOutputType = {
+  reportCounter: number | null
 }
 
 export type OrganizationMinAggregateOutputType = {
@@ -32,6 +42,9 @@ export type OrganizationMinAggregateOutputType = {
   metadata: string | null
   createdAt: Date | null
   microsoftTenantId: string | null
+  reportCounter: number | null
+  stripeCustomerId: string | null
+  billingEnforced: boolean | null
 }
 
 export type OrganizationMaxAggregateOutputType = {
@@ -42,6 +55,9 @@ export type OrganizationMaxAggregateOutputType = {
   metadata: string | null
   createdAt: Date | null
   microsoftTenantId: string | null
+  reportCounter: number | null
+  stripeCustomerId: string | null
+  billingEnforced: boolean | null
 }
 
 export type OrganizationCountAggregateOutputType = {
@@ -52,9 +68,20 @@ export type OrganizationCountAggregateOutputType = {
   metadata: number
   createdAt: number
   microsoftTenantId: number
+  reportCounter: number
+  stripeCustomerId: number
+  billingEnforced: number
   _all: number
 }
 
+
+export type OrganizationAvgAggregateInputType = {
+  reportCounter?: true
+}
+
+export type OrganizationSumAggregateInputType = {
+  reportCounter?: true
+}
 
 export type OrganizationMinAggregateInputType = {
   id?: true
@@ -64,6 +91,9 @@ export type OrganizationMinAggregateInputType = {
   metadata?: true
   createdAt?: true
   microsoftTenantId?: true
+  reportCounter?: true
+  stripeCustomerId?: true
+  billingEnforced?: true
 }
 
 export type OrganizationMaxAggregateInputType = {
@@ -74,6 +104,9 @@ export type OrganizationMaxAggregateInputType = {
   metadata?: true
   createdAt?: true
   microsoftTenantId?: true
+  reportCounter?: true
+  stripeCustomerId?: true
+  billingEnforced?: true
 }
 
 export type OrganizationCountAggregateInputType = {
@@ -84,6 +117,9 @@ export type OrganizationCountAggregateInputType = {
   metadata?: true
   createdAt?: true
   microsoftTenantId?: true
+  reportCounter?: true
+  stripeCustomerId?: true
+  billingEnforced?: true
   _all?: true
 }
 
@@ -125,6 +161,18 @@ export type OrganizationAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: OrganizationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: OrganizationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: OrganizationMinAggregateInputType
@@ -155,6 +203,8 @@ export type OrganizationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   _count?: OrganizationCountAggregateInputType | true
+  _avg?: OrganizationAvgAggregateInputType
+  _sum?: OrganizationSumAggregateInputType
   _min?: OrganizationMinAggregateInputType
   _max?: OrganizationMaxAggregateInputType
 }
@@ -167,7 +217,12 @@ export type OrganizationGroupByOutputType = {
   metadata: string | null
   createdAt: Date
   microsoftTenantId: string | null
+  reportCounter: number
+  stripeCustomerId: string | null
+  billingEnforced: boolean
   _count: OrganizationCountAggregateOutputType | null
+  _avg: OrganizationAvgAggregateOutputType | null
+  _sum: OrganizationSumAggregateOutputType | null
   _min: OrganizationMinAggregateOutputType | null
   _max: OrganizationMaxAggregateOutputType | null
 }
@@ -198,6 +253,9 @@ export type OrganizationWhereInput = {
   metadata?: Prisma.StringNullableFilter<"Organization"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   microsoftTenantId?: Prisma.StringNullableFilter<"Organization"> | string | null
+  reportCounter?: Prisma.IntFilter<"Organization"> | number
+  stripeCustomerId?: Prisma.StringNullableFilter<"Organization"> | string | null
+  billingEnforced?: Prisma.BoolFilter<"Organization"> | boolean
   members?: Prisma.MemberListRelationFilter
   invitations?: Prisma.InvitationListRelationFilter
   reports?: Prisma.ReportListRelationFilter
@@ -205,6 +263,7 @@ export type OrganizationWhereInput = {
   costUnitGroups?: Prisma.CostUnitGroupListRelationFilter
   settings?: Prisma.XOR<Prisma.SettingsNullableScalarRelationFilter, Prisma.SettingsWhereInput> | null
   auditEvents?: Prisma.AuditEventListRelationFilter
+  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -215,6 +274,9 @@ export type OrganizationOrderByWithRelationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingEnforced?: Prisma.SortOrder
   members?: Prisma.MemberOrderByRelationAggregateInput
   invitations?: Prisma.InvitationOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
@@ -222,11 +284,13 @@ export type OrganizationOrderByWithRelationInput = {
   costUnitGroups?: Prisma.CostUnitGroupOrderByRelationAggregateInput
   settings?: Prisma.SettingsOrderByWithRelationInput
   auditEvents?: Prisma.AuditEventOrderByRelationAggregateInput
+  subscription?: Prisma.SubscriptionOrderByWithRelationInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   slug?: string
+  stripeCustomerId?: string
   AND?: Prisma.OrganizationWhereInput | Prisma.OrganizationWhereInput[]
   OR?: Prisma.OrganizationWhereInput[]
   NOT?: Prisma.OrganizationWhereInput | Prisma.OrganizationWhereInput[]
@@ -235,6 +299,8 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.StringNullableFilter<"Organization"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   microsoftTenantId?: Prisma.StringNullableFilter<"Organization"> | string | null
+  reportCounter?: Prisma.IntFilter<"Organization"> | number
+  billingEnforced?: Prisma.BoolFilter<"Organization"> | boolean
   members?: Prisma.MemberListRelationFilter
   invitations?: Prisma.InvitationListRelationFilter
   reports?: Prisma.ReportListRelationFilter
@@ -242,7 +308,8 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   costUnitGroups?: Prisma.CostUnitGroupListRelationFilter
   settings?: Prisma.XOR<Prisma.SettingsNullableScalarRelationFilter, Prisma.SettingsWhereInput> | null
   auditEvents?: Prisma.AuditEventListRelationFilter
-}, "id" | "slug">
+  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
+}, "id" | "slug" | "stripeCustomerId">
 
 export type OrganizationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -252,9 +319,14 @@ export type OrganizationOrderByWithAggregationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingEnforced?: Prisma.SortOrder
   _count?: Prisma.OrganizationCountOrderByAggregateInput
+  _avg?: Prisma.OrganizationAvgOrderByAggregateInput
   _max?: Prisma.OrganizationMaxOrderByAggregateInput
   _min?: Prisma.OrganizationMinOrderByAggregateInput
+  _sum?: Prisma.OrganizationSumOrderByAggregateInput
 }
 
 export type OrganizationScalarWhereWithAggregatesInput = {
@@ -268,6 +340,9 @@ export type OrganizationScalarWhereWithAggregatesInput = {
   metadata?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   microsoftTenantId?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
+  reportCounter?: Prisma.IntWithAggregatesFilter<"Organization"> | number
+  stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
+  billingEnforced?: Prisma.BoolWithAggregatesFilter<"Organization"> | boolean
 }
 
 export type OrganizationCreateInput = {
@@ -278,6 +353,9 @@ export type OrganizationCreateInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
@@ -285,6 +363,7 @@ export type OrganizationCreateInput = {
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -295,6 +374,9 @@ export type OrganizationUncheckedCreateInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
@@ -302,6 +384,7 @@ export type OrganizationUncheckedCreateInput = {
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -312,6 +395,9 @@ export type OrganizationUpdateInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
@@ -319,6 +405,7 @@ export type OrganizationUpdateInput = {
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -329,6 +416,9 @@ export type OrganizationUncheckedUpdateInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -336,6 +426,7 @@ export type OrganizationUncheckedUpdateInput = {
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -346,6 +437,9 @@ export type OrganizationCreateManyInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
 }
 
 export type OrganizationUpdateManyMutationInput = {
@@ -356,6 +450,9 @@ export type OrganizationUpdateManyMutationInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OrganizationUncheckedUpdateManyInput = {
@@ -366,6 +463,9 @@ export type OrganizationUncheckedUpdateManyInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type OrganizationScalarRelationFilter = {
@@ -381,6 +481,13 @@ export type OrganizationCountOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  billingEnforced?: Prisma.SortOrder
+}
+
+export type OrganizationAvgOrderByAggregateInput = {
+  reportCounter?: Prisma.SortOrder
 }
 
 export type OrganizationMaxOrderByAggregateInput = {
@@ -391,6 +498,9 @@ export type OrganizationMaxOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  billingEnforced?: Prisma.SortOrder
 }
 
 export type OrganizationMinOrderByAggregateInput = {
@@ -401,6 +511,13 @@ export type OrganizationMinOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   microsoftTenantId?: Prisma.SortOrder
+  reportCounter?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  billingEnforced?: Prisma.SortOrder
+}
+
+export type OrganizationSumOrderByAggregateInput = {
+  reportCounter?: Prisma.SortOrder
 }
 
 export type OrganizationCreateNestedOneWithoutAuditEventsInput = {
@@ -415,6 +532,20 @@ export type OrganizationUpdateOneRequiredWithoutAuditEventsNestedInput = {
   upsert?: Prisma.OrganizationUpsertWithoutAuditEventsInput
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutAuditEventsInput, Prisma.OrganizationUpdateWithoutAuditEventsInput>, Prisma.OrganizationUncheckedUpdateWithoutAuditEventsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSubscriptionInput, Prisma.OrganizationUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSubscriptionInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSubscriptionInput, Prisma.OrganizationUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSubscriptionInput
+  upsert?: Prisma.OrganizationUpsertWithoutSubscriptionInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.OrganizationUpdateWithoutSubscriptionInput>, Prisma.OrganizationUncheckedUpdateWithoutSubscriptionInput>
 }
 
 export type OrganizationCreateNestedOneWithoutCostUnitGroupsInput = {
@@ -509,12 +640,16 @@ export type OrganizationCreateWithoutAuditEventsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
@@ -525,12 +660,16 @@ export type OrganizationUncheckedCreateWithoutAuditEventsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutAuditEventsInput = {
@@ -557,12 +696,16 @@ export type OrganizationUpdateWithoutAuditEventsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
@@ -573,12 +716,112 @@ export type OrganizationUncheckedUpdateWithoutAuditEventsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutSubscriptionInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
+  members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
+  costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
+  auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+  createdAt: Date | string
+  microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
+  costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutSubscriptionInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutSubscriptionInput, Prisma.OrganizationUncheckedCreateWithoutSubscriptionInput>
+}
+
+export type OrganizationUpsertWithoutSubscriptionInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutSubscriptionInput, Prisma.OrganizationUncheckedUpdateWithoutSubscriptionInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutSubscriptionInput, Prisma.OrganizationUncheckedCreateWithoutSubscriptionInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutSubscriptionInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutSubscriptionInput, Prisma.OrganizationUncheckedUpdateWithoutSubscriptionInput>
+}
+
+export type OrganizationUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
+  costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
+  auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
+  costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutCostUnitGroupsInput = {
@@ -589,12 +832,16 @@ export type OrganizationCreateWithoutCostUnitGroupsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutCostUnitGroupsInput = {
@@ -605,12 +852,16 @@ export type OrganizationUncheckedCreateWithoutCostUnitGroupsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutCostUnitGroupsInput = {
@@ -637,12 +888,16 @@ export type OrganizationUpdateWithoutCostUnitGroupsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutCostUnitGroupsInput = {
@@ -653,12 +908,16 @@ export type OrganizationUncheckedUpdateWithoutCostUnitGroupsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutCostUnitsInput = {
@@ -669,12 +928,16 @@ export type OrganizationCreateWithoutCostUnitsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutCostUnitsInput = {
@@ -685,12 +948,16 @@ export type OrganizationUncheckedCreateWithoutCostUnitsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutCostUnitsInput = {
@@ -717,12 +984,16 @@ export type OrganizationUpdateWithoutCostUnitsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutCostUnitsInput = {
@@ -733,12 +1004,16 @@ export type OrganizationUncheckedUpdateWithoutCostUnitsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutMembersInput = {
@@ -749,12 +1024,16 @@ export type OrganizationCreateWithoutMembersInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutMembersInput = {
@@ -765,12 +1044,16 @@ export type OrganizationUncheckedCreateWithoutMembersInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutMembersInput = {
@@ -797,12 +1080,16 @@ export type OrganizationUpdateWithoutMembersInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutMembersInput = {
@@ -813,12 +1100,16 @@ export type OrganizationUncheckedUpdateWithoutMembersInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutInvitationsInput = {
@@ -829,12 +1120,16 @@ export type OrganizationCreateWithoutInvitationsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutInvitationsInput = {
@@ -845,12 +1140,16 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutInvitationsInput = {
@@ -877,12 +1176,16 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
@@ -893,12 +1196,16 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutReportsInput = {
@@ -909,12 +1216,16 @@ export type OrganizationCreateWithoutReportsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutReportsInput = {
@@ -925,12 +1236,16 @@ export type OrganizationUncheckedCreateWithoutReportsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   settings?: Prisma.SettingsUncheckedCreateNestedOneWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutReportsInput = {
@@ -957,12 +1272,16 @@ export type OrganizationUpdateWithoutReportsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutReportsInput = {
@@ -973,12 +1292,16 @@ export type OrganizationUncheckedUpdateWithoutReportsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   settings?: Prisma.SettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutSettingsInput = {
@@ -989,12 +1312,16 @@ export type OrganizationCreateWithoutSettingsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutSettingsInput = {
@@ -1005,12 +1332,16 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   metadata?: string | null
   createdAt: Date | string
   microsoftTenantId?: string | null
+  reportCounter?: number
+  stripeCustomerId?: string | null
+  billingEnforced?: boolean
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutOrganizationInput
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutOrganizationInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutOrganizationInput
   costUnits?: Prisma.CostUnitUncheckedCreateNestedManyWithoutOrganizationInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedCreateNestedManyWithoutOrganizationInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutSettingsInput = {
@@ -1037,12 +1368,16 @@ export type OrganizationUpdateWithoutSettingsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutSettingsInput = {
@@ -1053,12 +1388,16 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   metadata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   microsoftTenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingEnforced?: Prisma.BoolFieldUpdateOperationsInput | boolean
   members?: Prisma.MemberUncheckedUpdateManyWithoutOrganizationNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnits?: Prisma.CostUnitUncheckedUpdateManyWithoutOrganizationNestedInput
   costUnitGroups?: Prisma.CostUnitGroupUncheckedUpdateManyWithoutOrganizationNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
 }
 
 
@@ -1145,6 +1484,9 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
+  stripeCustomerId?: boolean
+  billingEnforced?: boolean
   members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
   invitations?: boolean | Prisma.Organization$invitationsArgs<ExtArgs>
   reports?: boolean | Prisma.Organization$reportsArgs<ExtArgs>
@@ -1152,6 +1494,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   costUnitGroups?: boolean | Prisma.Organization$costUnitGroupsArgs<ExtArgs>
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   auditEvents?: boolean | Prisma.Organization$auditEventsArgs<ExtArgs>
+  subscription?: boolean | Prisma.Organization$subscriptionArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -1163,6 +1506,9 @@ export type OrganizationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
+  stripeCustomerId?: boolean
+  billingEnforced?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1173,6 +1519,9 @@ export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
+  stripeCustomerId?: boolean
+  billingEnforced?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectScalar = {
@@ -1183,9 +1532,12 @@ export type OrganizationSelectScalar = {
   metadata?: boolean
   createdAt?: boolean
   microsoftTenantId?: boolean
+  reportCounter?: boolean
+  stripeCustomerId?: boolean
+  billingEnforced?: boolean
 }
 
-export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "metadata" | "createdAt" | "microsoftTenantId", ExtArgs["result"]["organization"]>
+export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "metadata" | "createdAt" | "microsoftTenantId" | "reportCounter" | "stripeCustomerId" | "billingEnforced", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
   invitations?: boolean | Prisma.Organization$invitationsArgs<ExtArgs>
@@ -1194,6 +1546,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   costUnitGroups?: boolean | Prisma.Organization$costUnitGroupsArgs<ExtArgs>
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   auditEvents?: boolean | Prisma.Organization$auditEventsArgs<ExtArgs>
+  subscription?: boolean | Prisma.Organization$subscriptionArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1209,6 +1562,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     costUnitGroups: Prisma.$CostUnitGroupPayload<ExtArgs>[]
     settings: Prisma.$SettingsPayload<ExtArgs> | null
     auditEvents: Prisma.$AuditEventPayload<ExtArgs>[]
+    subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1218,6 +1572,9 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     metadata: string | null
     createdAt: Date
     microsoftTenantId: string | null
+    reportCounter: number
+    stripeCustomerId: string | null
+    billingEnforced: boolean
   }, ExtArgs["result"]["organization"]>
   composites: {}
 }
@@ -1619,6 +1976,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   costUnitGroups<T extends Prisma.Organization$costUnitGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$costUnitGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CostUnitGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   settings<T extends Prisma.Organization$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$settingsArgs<ExtArgs>>): Prisma.Prisma__SettingsClient<runtime.Types.Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   auditEvents<T extends Prisma.Organization$auditEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscription<T extends Prisma.Organization$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1655,6 +2013,9 @@ export interface OrganizationFieldRefs {
   readonly metadata: Prisma.FieldRef<"Organization", 'String'>
   readonly createdAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly microsoftTenantId: Prisma.FieldRef<"Organization", 'String'>
+  readonly reportCounter: Prisma.FieldRef<"Organization", 'Int'>
+  readonly stripeCustomerId: Prisma.FieldRef<"Organization", 'String'>
+  readonly billingEnforced: Prisma.FieldRef<"Organization", 'Boolean'>
 }
     
 
@@ -2208,6 +2569,25 @@ export type Organization$auditEventsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.AuditEventScalarFieldEnum | Prisma.AuditEventScalarFieldEnum[]
+}
+
+/**
+ * Organization.subscription
+ */
+export type Organization$subscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
 }
 
 /**

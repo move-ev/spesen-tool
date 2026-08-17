@@ -120,6 +120,25 @@ const attachmentDeleted = z.object({
 	payload: z.null(),
 });
 
+/**
+ * An owner sending themselves to hosted checkout.
+ *
+ * The only billing action with a person behind it. Everything else about a
+ * subscription is Stripe reporting a change nobody at the organization
+ * performed, and stays in Stripe's own event log (ADR-0007). The entity is the
+ * organization, since that is what is being committed.
+ */
+const billingCheckoutStarted = z.object({
+	action: z.literal("billing.checkout_started"),
+	entityType: z.literal("organization"),
+	diff: z.null(),
+	payload: z.object({
+		tier: z.string(),
+		priceId: z.string(),
+		seatLimit: z.number(),
+	}),
+});
+
 export const auditActionSchema = z.discriminatedUnion("action", [
 	reportCreated,
 	reportUpdated,
@@ -131,6 +150,7 @@ export const auditActionSchema = z.discriminatedUnion("action", [
 	expenseDeleted,
 	attachmentAdded,
 	attachmentDeleted,
+	billingCheckoutStarted,
 ]);
 
 export type NewAuditAction = z.infer<typeof auditActionSchema>;

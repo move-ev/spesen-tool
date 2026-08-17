@@ -79,13 +79,15 @@ Expense-report application for student initiatives.
 - **Frontend state:** TanStack Query, TanStack Table, nuqs (URL state), TanStack Form
 - **Styling:** Tailwind v4
 - **Linting/formatting:** Biome
-- **Validation:** `bun run typecheck` and `bun run check` (no automated test suite)
+- **Validation:** `bun run typecheck`, `bun run check`, and `bun run test` (Vitest)
 
 ### Architecture conventions
 
 - `src/app` pages are thin server components: prefetch via `src/trpc/server`, wrap clients in `HydrateClient`
 - Feature modules under `src/modules/` own UI behavior; they access the API via `src/trpc/react`
-- tRPC procedure hierarchy: `publicProcedure` → `authenticatedProcedure` → `protectedProcedure` (legal gate) → `orgProcedure` → `orgAdminProcedure` → `platformAdminProcedure`
+- tRPC procedure hierarchy: `publicProcedure` → `protectedProcedure` → `orgProcedure` → `orgAdminProcedure` / `orgOwnerProcedure`, with `platformAdminProcedure` branching off `protectedProcedure`
+- `orgProcedure` resolves the active member **and** applies the billing entitlement gate, which refuses an allowlist of five paths when an organization is not entitled (`server/modules/billing/billing.gate.ts`); `orgOwnerProcedure` is owner-only and gates billing mutations
+- Legal acceptance is enforced in a Better Auth hook (`server/better-auth/`), not in the procedure chain
 
 ### Data model
 
@@ -120,6 +122,20 @@ Expense-report application for student initiatives.
 - Reports UI: `src/modules/reports/` — TanStack Table, nuqs-backed pagination/sorting/filters, server-validated by `src/server/api/routers/report-list-query.ts`
 - Forms: TanStack Form + local Zod schemas from `src/lib/validators/`
 - Admin review UI: `src/modules/review/` (newer); older duplicates exist under `src/app/(app)/admin/review` and `src/app/(app)/reports/[id]`
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in Linear (team: Development), accessed via the Linear MCP server. When starting work on an issue, check out the branch name Linear provides on it. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, each label string equal to its name. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
 # Response format
 

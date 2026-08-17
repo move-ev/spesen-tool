@@ -3,12 +3,12 @@
 import { ChevronLeftIcon, GridIcon } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import React from "react";
+import type React from "react";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import { authClient } from "@/server/better-auth/client";
 import { settingsRoutes } from "../lib/routes";
 import type { SettingsGroup as SettingsGroupType } from "../lib/types";
+import { useSettingsGroup } from "../lib/use-settings-group";
 
 function SettingsSidebar({
 	className,
@@ -55,23 +55,9 @@ function SettingsGroup({
 }: React.ComponentProps<"div"> & {
 	group: SettingsGroupType;
 }) {
-	const [hasPerm, setHasPerm] = React.useState(false);
+	const { visible, items } = useSettingsGroup(group);
 
-	React.useEffect(() => {
-		let cancelled = false;
-
-		Promise.resolve(group.hasPermission(authClient)).then((result) => {
-			if (!cancelled) {
-				setHasPerm(result);
-			}
-		});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [group]);
-
-	if (!hasPerm) {
+	if (!visible) {
 		return null;
 	}
 
@@ -81,7 +67,7 @@ function SettingsGroup({
 				{group.label}
 			</span>
 			<ul className="mt-2 space-y-0.5">
-				{group.items.map(({ icon: Icon, ...item }) => (
+				{items.map(({ icon: Icon, ...item }) => (
 					<li
 						className="group/item relative flex items-center justify-start gap-2 rounded-sm px-2 py-2 font-medium text-base-700 text-sm leading-none transition-colors hover:bg-base-100"
 						key={item.href}

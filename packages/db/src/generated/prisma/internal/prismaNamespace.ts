@@ -391,6 +391,8 @@ export const ModelName = {
   Verification: 'Verification',
   BankingDetails: 'BankingDetails',
   ReportBankingSnapshot: 'ReportBankingSnapshot',
+  Subscription: 'Subscription',
+  ProcessedStripeEvent: 'ProcessedStripeEvent',
   CostUnitGroup: 'CostUnitGroup',
   CostUnit: 'CostUnit',
   LegalAcceptance: 'LegalAcceptance',
@@ -419,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auditEvent" | "user" | "session" | "account" | "verification" | "bankingDetails" | "reportBankingSnapshot" | "costUnitGroup" | "costUnit" | "legalAcceptance" | "organization" | "member" | "invitation" | "report" | "expense" | "travelExpenseDetail" | "foodExpenseDetail" | "attachment" | "settings" | "preferences"
+    modelProps: "auditEvent" | "user" | "session" | "account" | "verification" | "bankingDetails" | "reportBankingSnapshot" | "subscription" | "processedStripeEvent" | "costUnitGroup" | "costUnit" | "legalAcceptance" | "organization" | "member" | "invitation" | "report" | "expense" | "travelExpenseDetail" | "foodExpenseDetail" | "attachment" | "settings" | "preferences"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -938,6 +940,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ReportBankingSnapshotCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ReportBankingSnapshotCountAggregateOutputType> | number
+        }
+      }
+    }
+    Subscription: {
+      payload: Prisma.$SubscriptionPayload<ExtArgs>
+      fields: Prisma.SubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.SubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.SubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.SubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.SubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.SubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        update: {
+          args: Prisma.SubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.SubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubscription>
+        }
+        groupBy: {
+          args: Prisma.SubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProcessedStripeEvent: {
+      payload: Prisma.$ProcessedStripeEventPayload<ExtArgs>
+      fields: Prisma.ProcessedStripeEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProcessedStripeEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProcessedStripeEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>
+        }
+        findFirst: {
+          args: Prisma.ProcessedStripeEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProcessedStripeEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>
+        }
+        findMany: {
+          args: Prisma.ProcessedStripeEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>[]
+        }
+        create: {
+          args: Prisma.ProcessedStripeEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>
+        }
+        createMany: {
+          args: Prisma.ProcessedStripeEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProcessedStripeEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>[]
+        }
+        delete: {
+          args: Prisma.ProcessedStripeEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>
+        }
+        update: {
+          args: Prisma.ProcessedStripeEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProcessedStripeEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProcessedStripeEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProcessedStripeEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProcessedStripeEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProcessedStripeEventPayload>
+        }
+        aggregate: {
+          args: Prisma.ProcessedStripeEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProcessedStripeEvent>
+        }
+        groupBy: {
+          args: Prisma.ProcessedStripeEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProcessedStripeEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProcessedStripeEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProcessedStripeEventCountAggregateOutputType> | number
         }
       }
     }
@@ -2048,6 +2198,32 @@ export const ReportBankingSnapshotScalarFieldEnum = {
 export type ReportBankingSnapshotScalarFieldEnum = (typeof ReportBankingSnapshotScalarFieldEnum)[keyof typeof ReportBankingSnapshotScalarFieldEnum]
 
 
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
+  tier: 'tier',
+  seatLimit: 'seatLimit',
+  status: 'status',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const ProcessedStripeEventScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  processedAt: 'processedAt'
+} as const
+
+export type ProcessedStripeEventScalarFieldEnum = (typeof ProcessedStripeEventScalarFieldEnum)[keyof typeof ProcessedStripeEventScalarFieldEnum]
+
+
 export const CostUnitGroupScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -2094,7 +2270,10 @@ export const OrganizationScalarFieldEnum = {
   logo: 'logo',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  microsoftTenantId: 'microsoftTenantId'
+  microsoftTenantId: 'microsoftTenantId',
+  reportCounter: 'reportCounter',
+  stripeCustomerId: 'stripeCustomerId',
+  billingEnforced: 'billingEnforced'
 } as const
 
 export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
@@ -2324,6 +2503,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'CostUnitStatus'
  */
 export type EnumCostUnitStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CostUnitStatus'>
@@ -2362,20 +2555,6 @@ export type EnumLegalAcceptanceTypeFieldRefInput<$PrismaModel> = FieldRefInputTy
  * Reference to a field of type 'LegalAcceptanceType[]'
  */
 export type ListEnumLegalAcceptanceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LegalAcceptanceType[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -2579,6 +2758,8 @@ export type GlobalOmitConfig = {
   verification?: Prisma.VerificationOmit
   bankingDetails?: Prisma.BankingDetailsOmit
   reportBankingSnapshot?: Prisma.ReportBankingSnapshotOmit
+  subscription?: Prisma.SubscriptionOmit
+  processedStripeEvent?: Prisma.ProcessedStripeEventOmit
   costUnitGroup?: Prisma.CostUnitGroupOmit
   costUnit?: Prisma.CostUnitOmit
   legalAcceptance?: Prisma.LegalAcceptanceOmit
