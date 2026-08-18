@@ -1,8 +1,14 @@
 # syntax=docker/dockerfile:1
 
 # ── Base: Bun + Node.js for building ─────────────────────────────────────────
-FROM oven/bun:1.3.14-alpine AS base
-RUN apk add --no-cache nodejs
+# Debian (glibc), NOT Alpine (musl), on purpose: @appsignal/nodejs picks its
+# native extension and agent binary at INSTALL time based on the libc it sees.
+# The runner below is node:22-slim (glibc), so installing under musl would
+# produce an image that builds and typechecks cleanly and then fails to load
+# the agent at boot.
+FROM oven/bun:1.3.14-debian AS base
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # ── Pruner: extract the minimal workspace subset for @zemio/web ───────────────
 # turbo prune emits out/json (manifests only, for a cached install layer) and
@@ -36,29 +42,12 @@ COPY --from=pruner /app/out/full/ .
 
 ENV NODE_ENV=production
 
-# Runtime config (Better Stack DSN/logging) is NOT baked at build — it is read
-# from the environment at container start, so no build args are needed for it.
+# Runtime config is NOT baked at build — it is read from the environment at
+# container start, so no build args are needed for it.
 #
-# Source map upload (build-time only): the Sentry webpack plugin needs the
-# project coordinates plus an auth token. The coordinates are not sensitive and
-# are passed as build args; the auth token is passed as a BuildKit secret so it
-# never lands in an image layer or the build history. This image is built in CI
-# (see .github/workflows/build-images.yml), which supports secret mounts —
-# Railway's builder does not, which is why deploys consume the prebuilt image.
-ARG SENTRY_ORG
-ARG SENTRY_PROJECT
-ARG SENTRY_URL
-ENV SENTRY_ORG=$SENTRY_ORG
-ENV SENTRY_PROJECT=$SENTRY_PROJECT
-ENV SENTRY_URL=$SENTRY_URL
-
 # turbo build runs ^build first, so workspace packages (db, encryption, logger)
-# are compiled to dist before next build consumes them. SENTRY_AUTH_TOKEN is
-# sourced from the mounted secret only for this step; when the secret is absent
-# the token is empty and the Sentry plugin skips the source map upload.
-RUN --mount=type=secret,id=sentry_auth_token \
-    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" \
-    SKIP_ENV_VALIDATION=1 bun run turbo build --filter=@zemio/web
+# are compiled to dist before next build consumes them.
+RUN SKIP_ENV_VALIDATION=1 bun run turbo build --filter=@zemio/web
 
 # Next.js standalone does not include static assets; copy them into the
 # standalone directory so the server can serve them correctly.
@@ -67,6 +56,15 @@ RUN --mount=type=secret,id=sentry_auth_token \
 RUN mkdir -p apps/web/.next/standalone/apps/web/.next && \
     cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static && \
     cp -r apps/web/public apps/web/.next/standalone/apps/web/public
+
+# appsignal.cjs is loaded by the instrumentation hook at runtime, and
+# @appsignal/nodejs is declared in serverExternalPackages so Next does not
+# bundle it. Neither is picked up by standalone file tracing, so both are
+# copied in explicitly.
+RUN cp apps/web/appsignal.cjs apps/web/.next/standalone/apps/web/appsignal.cjs && \
+    mkdir -p apps/web/.next/standalone/node_modules/@appsignal && \
+    cp -r node_modules/@appsignal/nodejs \
+          apps/web/.next/standalone/node_modules/@appsignal/nodejs
 
 # ── Runner: slim Node.js image ────────────────────────────────────────────────
 # node:22-slim (Debian) is required because the Prisma migration CLI needs

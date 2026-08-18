@@ -1,8 +1,8 @@
-import * as Sentry from "@sentry/nextjs";
-
 export async function register() {
 	if (process.env.NEXT_RUNTIME === "nodejs") {
-		await import("../sentry.server.config");
+		// Starts the AppSignal agent. First, so that it is running before the
+		// billing bootstrap below can fail.
+		await import("../appsignal.cjs");
 
 		// Resolves the billing configuration while the server is starting, so a
 		// deployment that turns billing on without credentials fails here rather
@@ -18,10 +18,4 @@ export async function register() {
 			process.exit(1);
 		}
 	}
-
-	if (process.env.NEXT_RUNTIME === "edge") {
-		await import("../sentry.edge.config");
-	}
 }
-
-export const onRequestError = Sentry.captureRequestError;

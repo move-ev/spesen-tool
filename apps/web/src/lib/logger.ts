@@ -1,13 +1,58 @@
 import "server-only";
 
-import { createLogger } from "@zemio/logger";
+import { Appsignal } from "@appsignal/nodejs";
+import { createLogger, type LogFields, type Logger } from "@zemio/logger";
+import { toLogAttributes } from "@/lib/log-redaction";
 
-import { getServerRuntimeEnv } from "@/lib/runtime-env/server";
+/** Group all web logs land in on AppSignal. */
+const LOG_GROUP = "web";
 
-const runtimeEnv = getServerRuntimeEnv();
+const consoleLogger = createLogger({ service: "web" });
 
-export const logger = createLogger({
-	token: runtimeEnv.betterStackSourceToken,
-	service: "web",
-	endpoint: runtimeEnv.betterStackIngestingUrl,
-});
+let sink: ReturnType<typeof Appsignal.logger> | undefined;
+
+/**
+ * The AppSignal log sink, or undefined until the agent has started.
+ *
+ * The agent boots from the instrumentation hook (see appsignal.cjs), which may
+ * run after this module is first imported, so the sink is resolved lazily and
+ * cached only once it is real. Before that — and whenever AppSignal is not
+ * configured at all — logging falls back to stdout.
+ */
+function resolveSink() {
+	if (sink) {
+		return sink;
+	}
+	if (!Appsignal.client) {
+		return undefined;
+	}
+	sink = Appsignal.logger(LOG_GROUP);
+	return sink;
+}
+
+function send(
+	level: "debug" | "info" | "warn" | "error",
+	message: string,
+	fields?: LogFields,
+): void {
+	const appsignal = resolveSink();
+	if (!appsignal) {
+		consoleLogger[level](message, fields);
+		return;
+	}
+
+	// User identifiers are stripped here, on the way out to AppSignal. Logs
+	// written to stdout keep their full fields: those stay on the host and
+	// never reach a processor.
+	appsignal[level](message, toLogAttributes(fields));
+}
+
+export const logger: Logger = {
+	debug: (message, fields) => send("debug", message, fields),
+	info: (message, fields) => send("info", message, fields),
+	warn: (message, fields) => send("warn", message, fields),
+	error: (message, fields) => send("error", message, fields),
+	// AppSignal's logger has no flush of its own; the agent batches and ships
+	// in the background. Kept so call sites do not need to change.
+	flush: () => Promise.resolve(),
+};

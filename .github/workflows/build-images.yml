@@ -2,8 +2,8 @@ name: Build and Push Images
 
 # Builds the web and api Docker images in CI and publishes them to the GitHub
 # Container Registry. Railway deploys these prebuilt images instead of building
-# from the Dockerfile, which lets us use BuildKit secrets for the Sentry
-# source-map upload token (Railway's builder does not support secret mounts).
+# from the Dockerfile, giving a single reproducible artifact that is promoted
+# across environments.
 #
 # Pull requests into master/canary build both images without pushing, to catch
 # Docker/build breakage before merge. Pushes to master (production) / canary
@@ -91,15 +91,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
-          # Non-sensitive Sentry coordinates.
-          build-args: |
-            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
-            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
-            SENTRY_URL=${{ secrets.SENTRY_URL }}
-          # Sensitive token passed as a BuildKit secret (never written to an
-          # image layer).
-          secrets: |
-            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
 
   build-api:
     if: github.ref_type != 'tag' || startsWith(github.ref_name, 'api-v')

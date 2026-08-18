@@ -164,56 +164,41 @@ export const env = createEnv({
 		INTERNAL_API_SECRET: z.string().min(32),
 
 		// =================================================================
-		// Better Stack Error Tracking
+		// AppSignal (optional — error tracking & monitoring)
 		// =================================================================
+		// Consumed by appsignal.cjs, which reads process.env directly because it
+		// runs before this module is loaded. Declared here so a typo fails the
+		// build rather than silently disabling monitoring.
 
 		/**
-		 * Telemetry API token used by the Sentry webpack plugin to upload source maps
-		 * to Better Stack Errors.
+		 * AppSignal push API key (server). Absent turns monitoring off.
 		 */
-		// Build-time only — used by the Sentry webpack plugin to upload source maps.
-		// Not required at runtime; the server must start even when these are absent.
-		SENTRY_AUTH_TOKEN: z.string().optional(),
+		APPSIGNAL_PUSH_API_KEY: z.string().min(1).optional(),
 
 		/**
-		 * Better Stack team identifier used for source map uploads.
+		 * AppSignal application name. Name + environment identify the app;
+		 * changing either creates a NEW app on appsignal.com rather than
+		 * renaming the existing one.
 		 */
-		SENTRY_ORG: z.string().optional(),
+		APPSIGNAL_APP_NAME: z.string().min(1).default("Zemio Web"),
 
 		/**
-		 * Better Stack application identifier used for source map uploads.
+		 * AppSignal environment, e.g. "production" or "staging". Falls back to
+		 * NODE_ENV when unset.
 		 */
-		SENTRY_PROJECT: z.string().optional(),
+		APPSIGNAL_APP_ENV: z.string().min(1).optional(),
 
 		/**
-		 * Better Stack source map upload endpoint.
+		 * AppSignal front-end key, used by the browser SDK. Distinct from the
+		 * push API key and exposed to the browser by design; it is injected at
+		 * request time rather than inlined at build (see src/lib/runtime-env).
 		 */
-		SENTRY_URL: z.url().optional(),
-
-		// =================================================================
-		// Better Stack Runtime Error Tracking & Logging
-		// =================================================================
-		// Read at runtime (not inlined at build). The DSN is the only value
-		// exposed to the browser; it is injected into the document at request
-		// time rather than baked into the client bundle, keeping the image
-		// environment-agnostic. The source token and ingesting URL are used by
-		// the server-only logger.
+		APPSIGNAL_FRONTEND_KEY: z.string().min(1).optional(),
 
 		/**
-		 * Better Stack Errors DSN used by the Sentry SDK (server runtimes and,
-		 * via runtime injection, the browser).
+		 * Release identifier for deploy markers. CI supplies the commit SHA.
 		 */
-		BETTER_STACK_DSN: z.url().optional(),
-
-		/**
-		 * Better Stack source token used by the server-side logger.
-		 */
-		BETTER_STACK_SOURCE_TOKEN: z.string().min(1).optional(),
-
-		/**
-		 * Better Stack log ingesting endpoint used by the server-side logger.
-		 */
-		BETTER_STACK_INGESTING_URL: z.url().optional(),
+		APP_REVISION: z.string().min(1).optional(),
 
 		// =================================================================
 		// Billing (optional — Zemio runs fully without it)
@@ -293,15 +278,12 @@ export const env = createEnv({
 		EMAIL_FROM: process.env.EMAIL_FROM,
 		API_URL: process.env.API_URL,
 		INTERNAL_API_SECRET: process.env.INTERNAL_API_SECRET,
-		SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
-		SENTRY_ORG: process.env.SENTRY_ORG,
-		SENTRY_PROJECT: process.env.SENTRY_PROJECT,
-		SENTRY_URL: process.env.SENTRY_URL,
-
-		// Better Stack runtime error tracking & logging
-		BETTER_STACK_DSN: process.env.BETTER_STACK_DSN,
-		BETTER_STACK_SOURCE_TOKEN: process.env.BETTER_STACK_SOURCE_TOKEN,
-		BETTER_STACK_INGESTING_URL: process.env.BETTER_STACK_INGESTING_URL,
+		// AppSignal
+		APPSIGNAL_PUSH_API_KEY: process.env.APPSIGNAL_PUSH_API_KEY,
+		APPSIGNAL_APP_NAME: process.env.APPSIGNAL_APP_NAME,
+		APPSIGNAL_APP_ENV: process.env.APPSIGNAL_APP_ENV,
+		APPSIGNAL_FRONTEND_KEY: process.env.APPSIGNAL_FRONTEND_KEY,
+		APP_REVISION: process.env.APP_REVISION,
 
 		// Billing
 		BILLING_ENABLED: process.env.BILLING_ENABLED,
