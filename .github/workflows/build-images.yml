@@ -79,7 +79,9 @@ jobs:
             type=sha,format=long
             type=ref,event=branch
             type=match,pattern=\w+-v(.*),group=1
-            type=raw,value=latest,enable={{is_default_branch}}
+            # Pinned to master, not {{is_default_branch}}: the production tag must
+            # not follow a change to the repo's default branch setting.
+            type=raw,value=latest,enable=${{ github.ref_name == 'master' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -124,7 +126,9 @@ jobs:
             type=sha,format=long
             type=ref,event=branch
             type=match,pattern=\w+-v(.*),group=1
-            type=raw,value=latest,enable={{is_default_branch}}
+            # Pinned to master, not {{is_default_branch}}: the production tag must
+            # not follow a change to the repo's default branch setting.
+            type=raw,value=latest,enable=${{ github.ref_name == 'master' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
