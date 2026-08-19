@@ -72,8 +72,9 @@ Service IDs are hardcoded in the workflow rather than looked up by name.
 
 ## Runtime configuration
 
-Set these as Railway service variables (injected at container start, never baked
-into the image):
+Set these on the platform hosting each environment — Coolify for staging,
+Railway for production. They are injected at container start, never baked into
+the image, which is what lets one image serve both:
 
 - Core: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, the
   `MICROSOFT_*`, `STORAGE_*`, `RESEND_API_KEY`, `SECRET_ENCRYPTION_KEY`,
@@ -84,8 +85,10 @@ into the image):
   - `APPSIGNAL_FRONTEND_KEY` — browser key, a *different* credential
   - `APPSIGNAL_APP_NAME` — `Zemio Web`
   - `APPSIGNAL_APP_ENV` — `production` or `staging`
-  - `APP_REVISION` — commit SHA, for deploy markers (Railway exposes it as
-    `RAILWAY_GIT_COMMIT_SHA`; nothing in CI sets `APP_REVISION` itself)
+  - `APP_REVISION` — commit SHA, for deploy markers. Nothing sets this
+    automatically: CI does not, and the value differs per platform (Railway
+    exposes `RAILWAY_GIT_COMMIT_SHA`). Leave it unset and deploy markers are
+    simply absent.
 
   > Name + environment identify the app on appsignal.com. Changing either
   > creates a **new** app with empty history rather than renaming the old one.
