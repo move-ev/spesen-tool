@@ -105,8 +105,9 @@ every environment:
   through.
 - Logging: application logs go to AppSignal under the `web` group, with user
   identifiers redacted on the way out (`apps/web/src/lib/log-redaction.ts`).
-  Logs fall back to stdout/stderr when AppSignal is not configured, and stdout
-  keeps its full fields — those stay on the host.
+  Logs fall back to stdout/stderr when AppSignal is not configured, and that
+  fallback is redacted too wherever stdout can leave the host — see
+  [Log drain](#log-drain).
 - Billing (optional; leave unset to run without billing):
   - `BILLING_ENABLED` — `true`/`1` turns billing on for the deployment.
     Anything else, including unset, leaves it off: no billing interface, and
@@ -123,6 +124,84 @@ every environment:
   `billingEnforced` on the individual organization, so a rollout can be staged
   one customer at a time. See [billing-runbook.md](./billing-runbook.md) for
   that and for verifying billing locally against Stripe test mode.
+
+## Log drain
+
+Application logs reach AppSignal through the SDK. Everything else a container
+writes does not: crashes before the agent boots, Next.js framework output, and
+the agent's own complaints. That last one matters more than it sounds — a
+misconfigured agent prints `not starting: …` to stderr and dies while
+`isActive` keeps answering `true`, which is how three separate failures during
+the AppSignal migration stayed invisible.
+
+The drain closes that gap by shipping container stdout and stderr to the same
+place the SDK sends to.
+
+### Why AppSignal and not a log vendor
+
+Coolify offers Axiom, New Relic, or a custom Fluent Bit configuration. Both
+named options are US companies and would become subprocessors needing their own
+DPA — which is the arrangement DEV-43 spent an entire migration leaving behind.
+AppSignal B.V. already has a signed DPA, so the drain goes there and the
+subprocessor list does not change. Use the custom Fluent Bit path.
+
+### What redaction covers, and what it does not
+
+`apps/web` writes to stdout only when the AppSignal sink is unavailable, so the
+drain mostly carries lines our logger never produced. That fallback is exactly
+the situation the drain exists to reveal, so it is redacted whenever stdout can
+leave the host — `NODE_ENV !== "development"`, checked in
+`apps/web/src/lib/logger.ts`, verified in `logger.test.ts`.
+
+Two limits are worth stating plainly rather than discovering later:
+
+- **Third-party lines are not redacted.** Next.js, Prisma, and the agent write
+  straight to stdout without passing through our logger, so nothing filters
+  them. They are the reason the drain is useful and the reason it carries
+  residual risk.
+- **`apps/api` is not drained.** Its logger has no redaction at all and it logs
+  raw `error` objects, which routinely quote email addresses. Draining it needs
+  the redaction module shared through `@zemio/logger` first — tracked
+  separately, because that module is cited by file and line in the legal
+  documents.
+
+### Configuring it
+
+The endpoint wants a **log source API key**, which is a different credential
+from `APPSIGNAL_PUSH_API_KEY` — create the source in AppSignal under Logging
+first, choosing the HTTP endpoint and `JSON` as the message format.
+
+In Coolify, set the server's log drain to custom Fluent Bit:
+
+```ini
+# Docker hands Fluent Bit the raw line in `log`; our logger already writes JSON,
+# so lift it to the top level. Without this the whole record arrives as one
+# opaque message and no field is searchable.
+[FILTER]
+    Name         parser
+    Match        *
+    Key_Name     log
+    Parser       json
+    Reserve_Data On
+
+# `message` is the key AppSignal reads as the log line; every other key becomes
+# a searchable attribute. Our entries already use that name.
+[OUTPUT]
+    Name          http
+    Match         *
+    Host          appsignal-endpoint.net
+    Port          443
+    URI           /logs?api_key=YOUR_LOG_SOURCE_API_KEY&group=web
+    Format        json_lines
+    Json_date_key false
+    tls           On
+```
+
+> **Not yet verified end to end.** This configuration follows AppSignal's HTTP
+> endpoint documentation, but nobody has watched a line travel from a container
+> into AppSignal Logging yet — that needs Coolify dashboard access. Confirm an
+> actual line arrives before treating the drain as working; a drain that is
+> configured and silent looks identical to one that works until you need it.
 
 ## Build revision
 
