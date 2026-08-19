@@ -91,6 +91,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
+          # The commit is baked into the image rather than configured per
+          # environment: it identifies the artifact, and the same image runs on
+          # both. AppSignal opens a deploy marker when it changes and links
+          # backtraces to the repo at this commit, so it must be the real SHA —
+          # and the same one the sourcemap upload uses, or no sourcemap resolves.
+          build-args: |
+            APP_REVISION=${{ github.sha }}
 
   build-api:
     if: github.ref_type != 'tag' || startsWith(github.ref_name, 'api-v')

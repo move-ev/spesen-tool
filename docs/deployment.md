@@ -93,10 +93,11 @@ every environment:
   - `APPSIGNAL_FRONTEND_KEY` — browser key, a *different* credential
   - `APPSIGNAL_APP_NAME` — `Zemio Web`
   - `APPSIGNAL_APP_ENV` — `production` or `staging`
-  - `APP_REVISION` — commit SHA, for deploy markers. Nothing sets this
-    automatically: CI does not, and the value differs per platform (Railway
-    exposes `RAILWAY_GIT_COMMIT_SHA`). Leave it unset and deploy markers are
-    simply absent.
+  - `APP_REVISION` — **do not set this by hand.** CI bakes the commit SHA into
+    the image (`--build-arg APP_REVISION`), because it identifies the artifact
+    rather than the environment: the same image is the same code wherever it
+    runs. Setting it per environment can only make it wrong, and a stale value
+    is worse than none — deploy markers and sourcemaps both key off it.
 
   > Name + environment identify the app on appsignal.com. Changing either
   > creates a **new** app with empty history rather than renaming the old one.
