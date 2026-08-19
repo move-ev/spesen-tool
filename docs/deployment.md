@@ -32,7 +32,8 @@ persisting it in an image layer.
   - the **branch name** — a moving tag per branch (`master`, `canary`), always
     pointing at that branch's latest build.
   - the version, e.g. `1.2.0` — extracted from a `web-v*`/`api-v*` tag push.
-  - `latest` — on the default branch (`master`) only.
+  - `latest` — on `master` only. Pinned to the branch name rather than to the
+    repo's default branch setting, so changing that setting cannot move it.
 
   So production tracks `latest` (or `master`) and staging tracks `canary`, while
   any deploy can still be pinned to an exact `sha-…`.
