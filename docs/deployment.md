@@ -6,14 +6,13 @@ Registry; Railway deploys the prebuilt images rather than building them itself.
 
 ## Why CI builds the images
 
-Railway's builder does not support BuildKit secret mounts
-(`RUN --mount=type=secret`), so a Dockerfile built on Railway can only receive
-secrets as build args, which persist in image layers. Building in GitHub Actions
-lets us pass the Sentry source-map upload token as a real build secret that never
-lands in a layer. It also gives a single, reproducible artifact that is promoted
-across environments — the runtime configuration is injected by Railway at
-container start (see "Runtime configuration"), so the same image is
-environment-agnostic.
+Building in GitHub Actions gives a single, reproducible artifact that is
+promoted across environments — the runtime configuration is injected by Railway
+at container start (see "Runtime configuration"), so the same image is
+environment-agnostic. It also supports BuildKit secret mounts
+(`RUN --mount=type=secret`), which Railway's builder does not; no build
+currently needs one, but a future build-time credential can be passed without
+persisting it in an image layer.
 
 ## Pipeline
 
@@ -38,20 +37,6 @@ environment-agnostic.
   So production tracks `latest` (or `master`) and staging tracks `canary`, while
   any deploy can still be pinned to an exact `sha-…`.
 
-### Required GitHub repository secrets
-
-Used by the web image to upload source maps during the build:
-
-| Secret | Purpose |
-| --- | --- |
-| `SENTRY_AUTH_TOKEN` | Auth token for source-map upload (passed as a BuildKit secret) |
-| `SENTRY_ORG` | Sentry/Better Stack org (build arg) |
-| `SENTRY_PROJECT` | Sentry/Better Stack project (build arg) |
-| `SENTRY_URL` | Source-map upload endpoint (build arg) |
-
-If `SENTRY_AUTH_TOKEN` is absent the build still succeeds; source maps are simply
-not uploaded.
-
 ## Railway configuration
 
 Each service's source is set to a registry image (`ghcr.io/<owner>/zemio-web` or
@@ -60,11 +45,15 @@ build section is unused; only its runtime settings (healthcheck, restart
 policy) apply. Staging services track the `canary` tag; production services
 track `master`.
 
-Neither service has a linked GitHub repo. This is deliberate — a linked repo
-would let Railway build from the Dockerfile itself, which contains a
-`--mount=type=secret` step Railway's builder cannot parse — but it also means
-Railway's auto-deploy-on-new-image can't fire: that feature requires a linked
-repo. **Nothing about pushing a new image to GHCR causes Railway to run it.**
+Neither service has a linked GitHub repo, so Railway's auto-deploy-on-new-image
+cannot fire: that feature requires a linked repo. **Nothing about pushing a new
+image to GHCR causes Railway to run it.**
+
+(This used to be justified by the Dockerfile needing a `--mount=type=secret`
+step that Railway's builder cannot parse. That step went with the Sentry
+source-map upload — the Dockerfile no longer has one — so linking a repo is no
+longer blocked on that account, though CI-built images remain the arrangement
+in use.)
 
 ### Deploying a newly built image
 
@@ -87,20 +76,39 @@ Service IDs are hardcoded in the workflow rather than looked up by name.
 
 ## Runtime configuration
 
-Set these as Railway service variables (injected at container start, never baked
-into the image):
+Set these on whichever platform hosts the environment. They are injected at
+container start, never baked into the image, which is what lets one image serve
+every environment:
+
+> The sections above describe Railway. Staging has since moved to Hetzner +
+> Coolify; rewriting them (and replacing the `railway redeploy` step) is tracked
+> by the Hetzner migration, not here.
 
 - Core: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, the
   `MICROSOFT_*`, `STORAGE_*`, `RESEND_API_KEY`, `SECRET_ENCRYPTION_KEY`,
   `INTERNAL_API_SECRET`, `API_URL`, etc. (see `apps/web/src/env.js`).
-- Error tracking & logging (read at runtime; the DSN is injected into the
-  browser at request time):
-  - `BETTER_STACK_DSN`
-  - `BETTER_STACK_SOURCE_TOKEN`
-  - `BETTER_STACK_INGESTING_URL`
+- Error tracking (AppSignal; read at runtime, the front-end key is injected
+  into the browser at request time):
+  - `APPSIGNAL_PUSH_API_KEY` — server key; absent turns monitoring off
+  - `APPSIGNAL_FRONTEND_KEY` — browser key, a *different* credential
+  - `APPSIGNAL_APP_NAME` — `Zemio Web`
+  - `APPSIGNAL_APP_ENV` — `production` or `staging`
+  - `APP_REVISION` — commit SHA, for deploy markers. Nothing sets this
+    automatically: CI does not, and the value differs per platform (Railway
+    exposes `RAILWAY_GIT_COMMIT_SHA`). Leave it unset and deploy markers are
+    simply absent.
 
-  > These were previously named `NEXT_PUBLIC_BETTER_STACK_*` — the
-  > `NEXT_PUBLIC_` prefix is no longer used.
+  > Name + environment identify the app on appsignal.com. Changing either
+  > creates a **new** app with empty history rather than renaming the old one.
+
+  Browser reports are relayed through `/api/monitoring` on our own origin
+  rather than posted straight to AppSignal, so AppSignal never sees an end
+  user's IP address. Any proxy or CDN in front of the app must let that path
+  through.
+- Logging: application logs go to AppSignal under the `web` group, with user
+  identifiers redacted on the way out (`apps/web/src/lib/log-redaction.ts`).
+  Logs fall back to stdout/stderr when AppSignal is not configured, and stdout
+  keeps its full fields — those stay on the host.
 - Billing (optional; leave unset to run without billing):
   - `BILLING_ENABLED` — `true`/`1` turns billing on for the deployment.
     Anything else, including unset, leaves it off: no billing interface, and
@@ -128,14 +136,9 @@ than conflict.
 ## Building images locally
 
 ```sh
-# web (with source-map upload)
-SENTRY_AUTH_TOKEN=... docker build \
-  --secret id=sentry_auth_token,env=SENTRY_AUTH_TOKEN \
-  --build-arg SENTRY_ORG=... --build-arg SENTRY_PROJECT=... --build-arg SENTRY_URL=... \
-  -f apps/web/Dockerfile -t zemio-web .
+# web
+docker build -f apps/web/Dockerfile -t zemio-web .
 
 # api
 docker build -f apps/api/Dockerfile -t zemio-api .
 ```
-
-The web build works without the secret too (source maps are skipped).

@@ -1,8 +1,21 @@
 # syntax=docker/dockerfile:1
 
 # ── Base: Bun + Node.js for building ─────────────────────────────────────────
-FROM oven/bun:1.3.14-alpine AS base
-RUN apk add --no-cache nodejs
+# Debian (glibc), NOT Alpine (musl), on purpose: @appsignal/nodejs picks its
+# native extension and agent binary at INSTALL time based on the libc it sees.
+# The runner below is Debian/glibc (node:22-trixie-slim), so installing under
+# musl would produce an image that builds and typechecks cleanly and then
+# fails to load the agent at boot.
+#
+# python3/make/g++ are the node-gyp toolchain and ca-certificates lets node-gyp
+# fetch the Node headers over TLS. @appsignal/nodejs compiles its native
+# extension in its install script, and that script exits 0 on failure — without
+# these the image would build clean and then log "AppSignal not starting:
+# extension failed to load" at boot, with no monitoring at all.
+FROM oven/bun:1.3.14-debian AS base
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        nodejs python3 make g++ ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # ── Pruner: extract the minimal workspace subset for @zemio/web ───────────────
 # turbo prune emits out/json (manifests only, for a cached install layer) and
@@ -36,29 +49,12 @@ COPY --from=pruner /app/out/full/ .
 
 ENV NODE_ENV=production
 
-# Runtime config (Better Stack DSN/logging) is NOT baked at build — it is read
-# from the environment at container start, so no build args are needed for it.
+# Runtime config is NOT baked at build — it is read from the environment at
+# container start, so no build args are needed for it.
 #
-# Source map upload (build-time only): the Sentry webpack plugin needs the
-# project coordinates plus an auth token. The coordinates are not sensitive and
-# are passed as build args; the auth token is passed as a BuildKit secret so it
-# never lands in an image layer or the build history. This image is built in CI
-# (see .github/workflows/build-images.yml), which supports secret mounts —
-# Railway's builder does not, which is why deploys consume the prebuilt image.
-ARG SENTRY_ORG
-ARG SENTRY_PROJECT
-ARG SENTRY_URL
-ENV SENTRY_ORG=$SENTRY_ORG
-ENV SENTRY_PROJECT=$SENTRY_PROJECT
-ENV SENTRY_URL=$SENTRY_URL
-
 # turbo build runs ^build first, so workspace packages (db, encryption, logger)
-# are compiled to dist before next build consumes them. SENTRY_AUTH_TOKEN is
-# sourced from the mounted secret only for this step; when the secret is absent
-# the token is empty and the Sentry plugin skips the source map upload.
-RUN --mount=type=secret,id=sentry_auth_token \
-    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" \
-    SKIP_ENV_VALIDATION=1 bun run turbo build --filter=@zemio/web
+# are compiled to dist before next build consumes them.
+RUN SKIP_ENV_VALIDATION=1 bun run turbo build --filter=@zemio/web
 
 # Next.js standalone does not include static assets; copy them into the
 # standalone directory so the server can serve them correctly.
@@ -68,18 +64,33 @@ RUN mkdir -p apps/web/.next/standalone/apps/web/.next && \
     cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static && \
     cp -r apps/web/public apps/web/.next/standalone/apps/web/public
 
+# No AppSignal files are copied by hand: appsignal.cjs is bundled into the
+# instrumentation chunk, and standalone file tracing already carries
+# @appsignal/nodejs — its dependency tree and its ext/ agent plus
+# build/Release/extension.node — into standalone/node_modules.
+
 # ── Runner: slim Node.js image ────────────────────────────────────────────────
-# node:22-slim (Debian) is required because the Prisma migration CLI needs
-# glibc. Alpine (musl) is incompatible with Prisma's default migration engine
-# binary without additional binaryTargets configuration in schema.prisma.
-FROM node:22-slim AS runner
+# Debian, not Alpine: the Prisma migration CLI needs glibc, and musl is
+# incompatible with its default engine binary without extra binaryTargets.
+#
+# Pinned to the SAME Debian release as the builder (trixie). @appsignal/nodejs
+# compiles its native extension in the builder, and trixie's g++ emits a binary
+# requiring GLIBCXX_3.4.32, which bookworm's libstdc++ does not provide. On
+# node:22-slim (bookworm) the image builds, the extension file is present and
+# resolves, and the agent still dies at boot with ERR_DLOPEN_FAILED. Both
+# stages must move Debian releases together.
+FROM node:22-trixie-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 
+# --create-home matters: the AppSignal agent needs a writable working directory
+# and resolves one relative to HOME. Without it the agent refuses to start with
+# "No viable working directory path found" — the app itself serves fine, so the
+# only symptom is that no monitoring data ever arrives.
 RUN groupadd --system --gid 1001 nodejs && \
-    useradd --system --uid 1001 --gid nodejs nextjs
+    useradd --system --uid 1001 --gid nodejs --create-home nextjs
 
 # Install the Prisma CLI so the preDeployCommand can run migrations.
 # Version must stay in sync with the prisma devDependency in packages/db.
