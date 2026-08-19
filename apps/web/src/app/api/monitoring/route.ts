@@ -23,6 +23,15 @@ const APPSIGNAL_COLLECT_URL = "https://appsignal-endpoint.net/collect";
  */
 const MAX_BODY_BYTES = 64 * 1024;
 
+/**
+ * How long to wait on AppSignal before giving up.
+ *
+ * This endpoint is unauthenticated and public, so every caller can open a
+ * connection to the collector. Without a bound, a slow or hung collector holds
+ * each one open and the relay becomes a way to exhaust sockets.
+ */
+const UPSTREAM_TIMEOUT_MS = 5_000;
+
 /** Matches the SDK version string the browser appends to its request. */
 const VERSION_PATTERN = /^[\w.-]{1,32}$/;
 
@@ -54,6 +63,7 @@ export async function POST(request: Request): Promise<Response> {
 		upstream = await fetch(target, {
 			method: "POST",
 			body,
+			signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
 			// An allowlist, not a denylist: forwarding the incoming headers
 			// wholesale would hand AppSignal the `x-forwarded-for` this route
 			// exists to withhold, and any header added later would leak by
@@ -65,8 +75,9 @@ export async function POST(request: Request): Promise<Response> {
 			},
 		});
 	} catch {
-		// A collector that is unreachable must not turn into a failed request in
-		// somebody's browser: the report is lost, the page carries on.
+		// Covers the timeout above as well as an unreachable host. Either way the
+		// report is lost and the page carries on: a monitoring relay must never
+		// surface as a failed request in somebody's browser.
 		return new Response(null, { status: 502 });
 	}
 

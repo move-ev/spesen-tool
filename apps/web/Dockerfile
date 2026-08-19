@@ -3,9 +3,9 @@
 # ── Base: Bun + Node.js for building ─────────────────────────────────────────
 # Debian (glibc), NOT Alpine (musl), on purpose: @appsignal/nodejs picks its
 # native extension and agent binary at INSTALL time based on the libc it sees.
-# The runner below is node:22-slim (glibc), so installing under musl would
-# produce an image that builds and typechecks cleanly and then fails to load
-# the agent at boot.
+# The runner below is Debian/glibc (node:22-trixie-slim), so installing under
+# musl would produce an image that builds and typechecks cleanly and then
+# fails to load the agent at boot.
 #
 # python3/make/g++ are the node-gyp toolchain and ca-certificates lets node-gyp
 # fetch the Node headers over TLS. @appsignal/nodejs compiles its native

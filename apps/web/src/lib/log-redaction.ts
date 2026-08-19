@@ -5,89 +5,157 @@ export type LogAttributes = Record<string, string | number | boolean>;
 
 export const REDACTED = "[REDACTED]";
 
+/** Stands in for a value that refers back to something already being written. */
+const CYCLE = "[Circular]";
+
 /**
- * Field names whose values identify a natural person. Their values are
- * replaced before any log leaves the process for AppSignal.
+ * Anything shaped like an email address, wherever it appears in free text.
+ *
+ * Field names are the primary defence; this is the second one. An error thrown
+ * by the database or the auth provider routinely quotes the offending value
+ * ("no user found for someone@example.com"), and that message is carried by a
+ * field called `error`, which no name-based rule would ever catch.
+ */
+const EMAIL_PATTERN = /[\w.+-]+@[\w-]+\.[\w.-]+/g;
+
+/**
+ * Splits a field name into lowercase words.
+ *
+ * `inviteeEmail` → `["invitee", "email"]`, `user_id` → `["user", "id"]`. Words
+ * matter because a bare substring test cannot tell `requestingIp` from
+ * `zipCode` or `recipient`.
+ */
+function tokenize(key: string): string[] {
+	return key
+		.replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+		.split(/[^a-zA-Z0-9]+/)
+		.filter(Boolean)
+		.map((token) => token.toLowerCase());
+}
+
+/**
+ * Whether a field name identifies a natural person.
+ *
+ * Matched on shape rather than an exact list, because the risk is the call site
+ * nobody has written yet: `inviteeEmail`, `memberEmail` and `authorUserId` all
+ * name a person as surely as `userId` does, and an exact-match list silently
+ * lets each new one through.
  *
  * This is the evidence for the promise that no user identifiers reach the
  * monitoring provider — the counterpart, for logs, of the data-minimisation
- * block in appsignal.cjs. Cited by the legal documents; if you change this
- * list, update them in the same commit.
+ * block in appsignal.cjs. Cited by the legal documents; if you change these
+ * rules, update them in the same commit.
  *
- * `organizationId` is deliberately NOT here: it identifies a customer
+ * `organizationId` is deliberately NOT matched: it identifies a customer
  * organization rather than a person, and keeping it is what makes a log line
  * actionable ("which tenant is broken?").
  */
-const USER_IDENTIFIER_KEYS = new Set([
-	"userid",
-	"email",
-	"emailaddress",
-	"ip",
-	"ipaddress",
-]);
-
 function isUserIdentifier(key: string): boolean {
-	return USER_IDENTIFIER_KEYS.has(key.toLowerCase());
+	const squashed = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+	// Substring is right for these: they are distinctive enough that a false
+	// positive costs a redacted count field, not a leaked address.
+	if (
+		squashed.includes("email") ||
+		squashed.includes("ipaddress") ||
+		squashed.includes("userid") ||
+		squashed.includes("username")
+	) {
+		return true;
+	}
+
+	// "ip" needs word matching — as a substring it also hits `recipient`,
+	// `description` and `zipCode`.
+	return tokenize(key).includes("ip");
 }
 
-const CYCLE = "[Circular]";
+/** Removes personal data that a name-based rule cannot see. */
+function scrubText(value: string): string {
+	return value.replace(EMAIL_PATTERN, REDACTED);
+}
 
 /**
  * Recursively replaces identifier values inside nested structures.
  *
- * `seen` breaks reference cycles: a log field may hold a request, a socket or
- * an error whose `cause` points back at it, and recursing into one would
- * overflow the stack from inside the logging call itself.
+ * `path` holds the ancestors currently being written, not everything ever seen:
+ * an object reached twice as a sibling is written twice, and only a genuine
+ * loop back into an ancestor becomes `[Circular]`. A shared `seen` set would
+ * mislabel `{a: shared, b: shared}` and quietly drop the second copy.
  */
-function redactDeep(
-	value: unknown,
-	seen: WeakSet<object> = new WeakSet(),
-): unknown {
+function redactDeep(value: unknown, path: WeakSet<object>): unknown {
+	if (typeof value === "string") {
+		return scrubText(value);
+	}
+
 	if (value instanceof Error) {
-		return { name: value.name, message: value.message };
+		return { name: value.name, message: scrubText(value.message) };
+	}
+
+	// Dates, Maps and Sets carry nothing in `Object.entries`, so walking them as
+	// plain objects renders every one of them as an empty `{}`.
+	if (value instanceof Date) {
+		return value.toISOString();
 	}
 
 	if (value !== null && typeof value === "object") {
-		if (seen.has(value)) {
+		if (path.has(value)) {
 			return CYCLE;
 		}
-		seen.add(value);
+		path.add(value);
+		try {
+			if (value instanceof Map) {
+				return Object.fromEntries(
+					[...value].map(([key, nested]) => [
+						String(key),
+						isUserIdentifier(String(key)) ? REDACTED : redactDeep(nested, path),
+					]),
+				);
+			}
 
-		if (Array.isArray(value)) {
-			return value.map((entry) => redactDeep(entry, seen));
-		}
+			if (value instanceof Set) {
+				return [...value].map((entry) => redactDeep(entry, path));
+			}
 
-		const result: Record<string, unknown> = {};
-		for (const [key, nested] of Object.entries(value)) {
-			result[key] = isUserIdentifier(key) ? REDACTED : redactDeep(nested, seen);
+			if (Array.isArray(value)) {
+				return value.map((entry) => redactDeep(entry, path));
+			}
+
+			const result: Record<string, unknown> = {};
+			for (const [key, nested] of Object.entries(value)) {
+				result[key] = isUserIdentifier(key) ? REDACTED : redactDeep(nested, path);
+			}
+			return result;
+		} finally {
+			path.delete(value);
 		}
-		return result;
 	}
 
 	return value;
 }
 
 function toPrimitive(value: unknown): string | number | boolean {
-	if (
-		typeof value === "string" ||
-		typeof value === "number" ||
-		typeof value === "boolean"
-	) {
+	if (typeof value === "string") {
+		return scrubText(value);
+	}
+
+	if (typeof value === "number" || typeof value === "boolean") {
 		return value;
 	}
 
 	if (value instanceof Error) {
-		return value.message;
+		return scrubText(value.message);
 	}
 
-	// Never let a log line throw: serialisation runs over caller-supplied
-	// objects, and a value JSON cannot represent (a BigInt, a getter that
-	// raises) must degrade to a description rather than take out the request
-	// the log was reporting on.
+	if (value instanceof Date) {
+		return value.toISOString();
+	}
+
 	try {
-		return JSON.stringify(redactDeep(value)) ?? String(value);
+		return JSON.stringify(redactDeep(value, new WeakSet())) ?? String(value);
 	} catch {
-		return String(value);
+		// A getter that throws, or a BigInt, must not take the logging call with
+		// it — the caller is usually already reporting a failure.
+		return "[Unserializable]";
 	}
 }
 

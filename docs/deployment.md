@@ -45,11 +45,15 @@ build section is unused; only its runtime settings (healthcheck, restart
 policy) apply. Staging services track the `canary` tag; production services
 track `master`.
 
-Neither service has a linked GitHub repo. This is deliberate — a linked repo
-would let Railway build from the Dockerfile itself, which contains a
-`--mount=type=secret` step Railway's builder cannot parse — but it also means
-Railway's auto-deploy-on-new-image can't fire: that feature requires a linked
-repo. **Nothing about pushing a new image to GHCR causes Railway to run it.**
+Neither service has a linked GitHub repo, so Railway's auto-deploy-on-new-image
+cannot fire: that feature requires a linked repo. **Nothing about pushing a new
+image to GHCR causes Railway to run it.**
+
+(This used to be justified by the Dockerfile needing a `--mount=type=secret`
+step that Railway's builder cannot parse. That step went with the Sentry
+source-map upload — the Dockerfile no longer has one — so linking a repo is no
+longer blocked on that account, though CI-built images remain the arrangement
+in use.)
 
 ### Deploying a newly built image
 
@@ -72,9 +76,13 @@ Service IDs are hardcoded in the workflow rather than looked up by name.
 
 ## Runtime configuration
 
-Set these on the platform hosting each environment — Coolify for staging,
-Railway for production. They are injected at container start, never baked into
-the image, which is what lets one image serve both:
+Set these on whichever platform hosts the environment. They are injected at
+container start, never baked into the image, which is what lets one image serve
+every environment:
+
+> The sections above describe Railway. Staging has since moved to Hetzner +
+> Coolify; rewriting them (and replacing the `railway redeploy` step) is tracked
+> by the Hetzner migration, not here.
 
 - Core: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, the
   `MICROSOFT_*`, `STORAGE_*`, `RESEND_API_KEY`, `SECRET_ENCRYPTION_KEY`,

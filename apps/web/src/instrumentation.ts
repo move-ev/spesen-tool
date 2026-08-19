@@ -1,3 +1,5 @@
+import type { Instrumentation } from "next";
+
 export async function register() {
 	if (process.env.NEXT_RUNTIME === "nodejs") {
 		// Starts the AppSignal agent. First, so that it is running before the
@@ -28,11 +30,24 @@ export async function register() {
  * documented way in, and without it only client-side errors would be tracked.
  * `sendError` is a no-op while the agent is inactive.
  */
-export async function onRequestError(error: unknown): Promise<void> {
+export const onRequestError: Instrumentation.onRequestError = async (
+	error,
+	request,
+	context,
+) => {
 	if (process.env.NEXT_RUNTIME !== "nodejs") {
 		return;
 	}
 
-	const { sendError } = await import("@appsignal/nodejs");
-	sendError(error instanceof Error ? error : new Error(String(error)));
-}
+	const { sendError, setRootName } = await import("@appsignal/nodejs");
+	sendError(error instanceof Error ? error : new Error(String(error)), () => {
+		// `sendError` opens a root span named after the error class, so without a
+		// name of our own every server error in the app groups under one action
+		// and per-route triage is lost.
+		//
+		// `context.routePath` is the route pattern (`/reports/[id]`), not the
+		// resolved URL in `request.path`. It groups correctly, and it carries no
+		// record identifiers — the resolved path would.
+		setRootName(`${request.method} ${context.routePath}`);
+	});
+};
