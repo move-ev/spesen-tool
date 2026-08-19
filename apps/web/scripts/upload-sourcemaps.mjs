@@ -36,6 +36,9 @@ const CONCURRENCY = 4;
 
 const MAX_ATTEMPTS = 3;
 
+/** How much of a rejected response to quote. Enough for AppSignal's JSON. */
+const MAX_ERROR_BODY_CHARS = 500;
+
 function required(name) {
 	const value = process.env[name];
 	if (!value) {
@@ -70,6 +73,44 @@ function assetUrlFor(mapPath, root, origin) {
 	return `${origin}/_next/static/${relativePath.replace(/\.map$/, "")}`;
 }
 
+/**
+ * Whether another attempt could plausibly succeed.
+ *
+ * 5xx is AppSignal having a bad moment and 429 is it asking us to slow down.
+ * Every other rejection is a configuration problem — a wrong key, or an app
+ * name and environment that do not exist — which retrying cannot fix.
+ */
+function isRetryable(status) {
+	return status >= 500 || status === 429;
+}
+
+/** Waits before the next attempt; a no-op once they are exhausted. */
+async function backoff(attempt) {
+	if (attempt >= MAX_ATTEMPTS) {
+		return;
+	}
+	await new Promise((resolve) => setTimeout(resolve, 500 * 2 ** attempt));
+}
+
+/**
+ * A rejected response as one line, its body included.
+ *
+ * The body is the only place AppSignal explains a 400, and a 404 does not mean
+ * "endpoint missing" — it means the app name, environment and push key name no
+ * app between them. Neither is guessable from the status alone, and this runs
+ * unattended, so the response is the only evidence anyone will have.
+ */
+async function describeFailure(response) {
+	const body = (await response.text().catch(() => "")).trim();
+	const hint =
+		response.status === 404
+			? ` — no app "${process.env.APPSIGNAL_APP_NAME}" in environment ` +
+				`"${process.env.APPSIGNAL_APP_ENV}" for this push API key`
+			: "";
+	const quoted = body ? `: ${body.slice(0, MAX_ERROR_BODY_CHARS)}` : "";
+	return `${response.status} ${response.statusText}${hint}${quoted}`;
+}
+
 async function upload(mapPath, { root, origin, query, revision }) {
 	const size = (await stat(mapPath)).size;
 	if (size > MAX_FILE_BYTES) {
@@ -88,35 +129,33 @@ async function upload(mapPath, { root, origin, query, revision }) {
 		mapPath.split(sep).pop(),
 	);
 
-	let lastError;
+	let lastFailure = "upload failed";
 	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+		let response;
 		try {
-			const response = await fetch(`${ENDPOINT}?${query}`, {
+			response = await fetch(`${ENDPOINT}?${query}`, {
 				method: "POST",
 				body,
 			});
-			if (response.ok) {
-				return assetUrl;
-			}
-			// 4xx is a configuration problem — a wrong key, or an app name and
-			// environment that do not exist. Retrying cannot fix it.
-			if (response.status < 500) {
-				throw new Error(
-					`${response.status} ${response.statusText} for ${assetUrl}`,
-				);
-			}
-			lastError = new Error(`${response.status} ${response.statusText}`);
 		} catch (error) {
-			if (error instanceof Error && /^4\d\d /.test(error.message)) {
-				throw error;
-			}
-			lastError = error;
+			// No response at all — DNS, TLS, a dropped connection. Always worth
+			// another attempt.
+			lastFailure = error instanceof Error ? error.message : String(error);
+			await backoff(attempt);
+			continue;
 		}
-		if (attempt < MAX_ATTEMPTS) {
-			await new Promise((resolve) => setTimeout(resolve, 500 * 2 ** attempt));
+
+		if (response.ok) {
+			return assetUrl;
 		}
+
+		lastFailure = await describeFailure(response);
+		if (!isRetryable(response.status)) {
+			throw new Error(`${assetUrl}: ${lastFailure}`);
+		}
+		await backoff(attempt);
 	}
-	throw new Error(`${assetUrl}: ${lastError?.message ?? "upload failed"}`);
+	throw new Error(`${assetUrl}: ${lastFailure}`);
 }
 
 async function main() {

@@ -164,11 +164,20 @@ anything left under `.next/static` — would publish the frontend to anyone who
 asked for the URL. The build moves them to `/app/sourcemaps` inside the image
 instead, which is not a route.
 
-Two details are easy to get wrong, and both fail silently:
+Three details are easy to get wrong, and all three fail silently:
 
 - **The maps must come from the build that produced the chunks.** Turbopack
   chunk names are not stable across builds, so maps from a second build upload
-  cleanly and resolve nothing. CI extracts them from the image it just pushed.
+  cleanly and resolve nothing. CI extracts them from the image it just pushed,
+  addressed by **digest** rather than by the `sha-…` tag — a branch push and a
+  tag push of the same commit both write that tag, and the loser's maps would
+  describe chunk names no deployed image contains.
+- **The maps must come from the image that is actually deployed.** Staging
+  tracks `canary` and production tracks `master` (see
+  [Railway configuration](#railway-configuration)), so the upload runs on those
+  two branch pushes. A `web-v*` tag publishes only `sha-…` and the version, so
+  its image is never served; it triggers the production *deploy*, which pulls
+  the `master` image whose maps went up at merge time.
 - **A map's filename does not match its chunk's.** Turbopack names them
   independently — chunk `02mwhpb-9lwfu.js` is described by
   `3-k-qm3o85x8h.js.map`. Only the trailing `sourceMappingURL` comment relates
@@ -176,7 +185,7 @@ Two details are easy to get wrong, and both fail silently:
 
 Uploads are keyed by `revision` (see [Build revision](#build-revision)) and by
 the **full URL** of the minified file, so a build is uploaded once per
-environment — `canary` against `staging.zemio.co`, a version tag against
+environment — `canary` against `staging.zemio.co`, `master` against
 `app.zemio.co`. AppSignal keeps them for 60 days.
 
 `APPSIGNAL_PUSH_API_KEY` must exist as a GitHub Actions secret; it is the same

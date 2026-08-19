@@ -14,7 +14,7 @@
  * Usage: node collect-sourcemaps.mjs <staticDir> <outDir>
  */
 
-import { copyFile, mkdir, readdir, readFile } from "node:fs/promises";
+import { copyFile, mkdir, open, readdir } from "node:fs/promises";
 import { dirname, join, relative, sep } from "node:path";
 
 /** Enough of the tail to hold the comment, without reading megabyte chunks. */
@@ -33,10 +33,25 @@ async function* walk(dir) {
 	}
 }
 
+/**
+ * Reads the `sourceMappingURL` comment from the end of a chunk.
+ *
+ * Only the last {@link TAIL_BYTES} are read: a chunk runs to megabytes and the
+ * comment is always its final line. A multi-byte character split by the read
+ * offset decodes to a replacement character at the *start* of the window,
+ * which the anchored pattern never looks at.
+ */
 async function mappingUrlOf(file) {
-	const contents = await readFile(file, "utf8");
-	const tail = contents.slice(-TAIL_BYTES).trimEnd();
-	return SOURCE_MAPPING_URL.exec(tail)?.[1];
+	const handle = await open(file, "r");
+	try {
+		const { size } = await handle.stat();
+		const length = Math.min(TAIL_BYTES, size);
+		const buffer = Buffer.alloc(length);
+		await handle.read(buffer, 0, length, size - length);
+		return SOURCE_MAPPING_URL.exec(buffer.toString("utf8").trimEnd())?.[1];
+	} finally {
+		await handle.close();
+	}
 }
 
 async function main() {
@@ -55,7 +70,9 @@ async function main() {
 		if (!file.endsWith(".js")) continue;
 
 		const reference = await mappingUrlOf(file);
-		if (!reference) {
+		// An inline `data:` map has no file to copy, and joining one onto a
+		// directory would produce a path that does not exist.
+		if (!reference || reference.startsWith("data:")) {
 			withoutMap += 1;
 			continue;
 		}
