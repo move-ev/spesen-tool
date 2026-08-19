@@ -91,6 +91,12 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
+          # Baked into the image rather than configured per environment — see
+          # docs/deployment.md, "Build revision". Must be the real commit SHA:
+          # AppSignal opens a deploy marker when it changes, and links backtrace
+          # frames to the repo at that commit.
+          build-args: |
+            APP_REVISION=${{ github.sha }}
 
   build-api:
     if: github.ref_type != 'tag' || startsWith(github.ref_name, 'api-v')

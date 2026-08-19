@@ -104,6 +104,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/packages/db/prisma ./packages/db/prisma
 COPY --from=builder --chown=nextjs:nodejs /app/packages/db/prisma.config.js ./packages/db/prisma.config.js
 
+# The commit this image was built from; AppSignal reads it as `revision`.
+# Why it is baked in rather than configured per environment: see
+# docs/deployment.md, "Build revision".
+#
+# Placed after every COPY on purpose. The value changes on every commit, so
+# anything below it rebuilds each time — only USER/EXPOSE/CMD follow, and those
+# are metadata-only layers.
+ARG APP_REVISION=""
+ENV APP_REVISION=$APP_REVISION
+
 USER nextjs
 
 EXPOSE 3000

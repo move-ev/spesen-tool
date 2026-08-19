@@ -196,8 +196,9 @@ export const env = createEnv({
 		APPSIGNAL_FRONTEND_KEY: z.string().min(1).optional(),
 
 		/**
-		 * Release identifier for deploy markers. Set by the deployment platform
-		 * to the commit SHA; unset simply leaves errors ungrouped by release.
+		 * Release identifier for deploy markers. Baked into the image by CI from
+		 * the commit SHA — not set per environment. Unset simply leaves errors
+		 * ungrouped by release.
 		 */
 		APP_REVISION: z.string().min(1).optional(),
 
