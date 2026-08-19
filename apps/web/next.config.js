@@ -16,6 +16,11 @@ const turbopackMemoryLimitMb = env.TURBOPACK_MEMORY_LIMIT_MB;
 /** @type {import("next").NextConfig} */
 const config = {
 	output: "standalone",
+	// Emitted so AppSignal can resolve minified browser backtraces. The maps are
+	// uploaded privately and then stripped from the image — they embed the
+	// original source (sourcesContent), so serving them would publish it.
+	// See apps/web/Dockerfile and scripts/upload-sourcemaps.mjs.
+	productionBrowserSourceMaps: true,
 	// @appsignal/nodejs loads a native agent; it must stay unbundled.
 	serverExternalPackages: ["pdfkit", "@appsignal/nodejs"],
 	// @zemio/ui exports raw .ts/.tsx source rather than a prebuilt dist.
