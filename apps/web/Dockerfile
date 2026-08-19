@@ -70,17 +70,27 @@ RUN mkdir -p apps/web/.next/standalone/apps/web/.next && \
 # build/Release/extension.node — into standalone/node_modules.
 
 # ── Runner: slim Node.js image ────────────────────────────────────────────────
-# node:22-slim (Debian) is required because the Prisma migration CLI needs
-# glibc. Alpine (musl) is incompatible with Prisma's default migration engine
-# binary without additional binaryTargets configuration in schema.prisma.
-FROM node:22-slim AS runner
+# Debian, not Alpine: the Prisma migration CLI needs glibc, and musl is
+# incompatible with its default engine binary without extra binaryTargets.
+#
+# Pinned to the SAME Debian release as the builder (trixie). @appsignal/nodejs
+# compiles its native extension in the builder, and trixie's g++ emits a binary
+# requiring GLIBCXX_3.4.32, which bookworm's libstdc++ does not provide. On
+# node:22-slim (bookworm) the image builds, the extension file is present and
+# resolves, and the agent still dies at boot with ERR_DLOPEN_FAILED. Both
+# stages must move Debian releases together.
+FROM node:22-trixie-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 
+# --create-home matters: the AppSignal agent needs a writable working directory
+# and resolves one relative to HOME. Without it the agent refuses to start with
+# "No viable working directory path found" — the app itself serves fine, so the
+# only symptom is that no monitoring data ever arrives.
 RUN groupadd --system --gid 1001 nodejs && \
-    useradd --system --uid 1001 --gid nodejs nextjs
+    useradd --system --uid 1001 --gid nodejs --create-home nextjs
 
 # Install the Prisma CLI so the preDeployCommand can run migrations.
 # Version must stay in sync with the prisma devDependency in packages/db.
