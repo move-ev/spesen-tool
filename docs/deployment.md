@@ -152,6 +152,36 @@ describe the platform's view of the repo rather than the artifact running.
 > reason (see "Railway configuration"); a platform that built from source would
 > get the empty `ARG` default and no revision at all.
 
+## Source maps
+
+Browser backtraces in AppSignal are resolved against sourcemaps uploaded by CI.
+`productionBrowserSourceMaps` is on, and each build publishes its maps privately
+to AppSignal's sourcemap API.
+
+They are uploaded rather than served. A map embeds the original source
+(`sourcesContent`), so serving it next to the chunk — which is what happens to
+anything left under `.next/static` — would publish the frontend to anyone who
+asked for the URL. The build moves them to `/app/sourcemaps` inside the image
+instead, which is not a route.
+
+Two details are easy to get wrong, and both fail silently:
+
+- **The maps must come from the build that produced the chunks.** Turbopack
+  chunk names are not stable across builds, so maps from a second build upload
+  cleanly and resolve nothing. CI extracts them from the image it just pushed.
+- **A map's filename does not match its chunk's.** Turbopack names them
+  independently — chunk `02mwhpb-9lwfu.js` is described by
+  `3-k-qm3o85x8h.js.map`. Only the trailing `sourceMappingURL` comment relates
+  the two, which is what `scripts/collect-sourcemaps.mjs` reads.
+
+Uploads are keyed by `revision` (see [Build revision](#build-revision)) and by
+the **full URL** of the minified file, so a build is uploaded once per
+environment — `canary` against `staging.zemio.co`, a version tag against
+`app.zemio.co`. AppSignal keeps them for 60 days.
+
+`APPSIGNAL_PUSH_API_KEY` must exist as a GitHub Actions secret; it is the same
+push key the app uses at runtime, not the front-end key.
+
 ## Database migrations
 
 `prisma migrate deploy` runs in the web container's start command (`CMD`), so it
