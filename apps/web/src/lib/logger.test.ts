@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const consoleLogger = {
 	debug: vi.fn(),
@@ -43,6 +43,12 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	vi.unstubAllEnvs();
 	appsignal.client = undefined;
+});
+
+// `process.env` is process-wide and outlives this file, so the last test's
+// stub would otherwise follow whatever runs next in the same worker.
+afterEach(() => {
+	vi.unstubAllEnvs();
 });
 
 describe("stdout fallback", () => {

@@ -137,13 +137,19 @@ the AppSignal migration stayed invisible.
 The drain closes that gap by shipping container stdout and stderr to the same
 place the SDK sends to.
 
+This is a Coolify feature, so it covers the environments running on Coolify.
+Production is still on Railway (see [Railway configuration](#railway-configuration))
+and has no drain — its container output stays where Railway keeps it.
+
 ### Why AppSignal and not a log vendor
 
 Coolify offers Axiom, New Relic, or a custom Fluent Bit configuration. Both
 named options are US companies and would become subprocessors needing their own
 DPA — which is the arrangement DEV-43 spent an entire migration leaving behind.
-AppSignal B.V. already has a signed DPA, so the drain goes there and the
-subprocessor list does not change. Use the custom Fluent Bit path.
+AppSignal B.V. already has a signed DPA, so the drain adds no new subprocessor.
+(`docs/legal/subprocessors.md` still names Better Stack under §6 — that is a
+leftover from DEV-43 and needs the rename regardless of this drain.) Use the
+custom Fluent Bit path.
 
 ### What redaction covers, and what it does not
 
@@ -159,11 +165,13 @@ Two limits are worth stating plainly rather than discovering later:
   straight to stdout without passing through our logger, so nothing filters
   them. They are the reason the drain is useful and the reason it carries
   residual risk.
-- **`apps/api` is not drained.** Its logger has no redaction at all and it logs
-  raw `error` objects, which routinely quote email addresses. Draining it needs
-  the redaction module shared through `@zemio/logger` first — tracked
-  separately, because that module is cited by file and line in the legal
-  documents.
+- **`apps/api` must be kept out of the drain.** Its logger has no redaction at
+  all and it logs raw `error` objects, which routinely quote email addresses.
+  Draining it needs the redaction module shared through `@zemio/logger` first —
+  tracked separately, because that module is cited by file and line in the legal
+  documents. The drain is configured per server, so excluding it is not
+  automatic: leave the api resource's own log-drain switch off, and keep the
+  `grep` filter below as the backstop for when someone flips it on.
 
 ### Configuring it
 
@@ -174,6 +182,16 @@ first, choosing the HTTP endpoint and `JSON` as the message format.
 In Coolify, set the server's log drain to custom Fluent Bit:
 
 ```ini
+# The drain is server-wide, so it also sees containers whose output is not
+# redacted. `apps/api` logs raw error objects that quote email addresses — drop
+# it here rather than relying on its own log-drain switch staying off. Coolify
+# names containers after the resource UUID, so read the real value out of a
+# record before trusting this filter to match anything.
+[FILTER]
+    Name    grep
+    Match   *
+    Exclude container_name <api-container-name>
+
 # Docker hands Fluent Bit the raw line in `log`; our logger already writes JSON,
 # so lift it to the top level. Without this the whole record arrives as one
 # opaque message and no field is searchable.
@@ -183,6 +201,16 @@ In Coolify, set the server's log drain to custom Fluent Bit:
     Key_Name     log
     Parser       json
     Reserve_Data On
+
+# A parsed record has no `log` left; an unparsed one still does. Those are the
+# plain-text lines the drain exists for — the agent's `not starting: …`, a stack
+# trace, Next.js output. Without this rename they carry no `message`, and
+# AppSignal falls back to using the whole record as the line: the text survives
+# but arrives wrapped in JSON, alongside Docker's own metadata keys.
+[FILTER]
+    Name   modify
+    Match  *
+    Rename log message
 
 # `message` is the key AppSignal reads as the log line; every other key becomes
 # a searchable attribute. Our entries already use that name.
