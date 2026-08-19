@@ -7,6 +7,20 @@ import { toLogAttributes } from "@/lib/log-redaction";
 /** Group all web logs land in on AppSignal. */
 const LOG_GROUP = "web";
 
+/**
+ * Whether stdout stays on this machine.
+ *
+ * It does in development. In a deployed container it does not: Coolify drains
+ * stdout and stderr to AppSignal (see docs/deployment.md, "Log drain"), so
+ * every line written there leaves the host for a processor.
+ *
+ * The test is for development rather than against production on purpose.
+ * Anything not demonstrably local is treated as leaving, so a deployment
+ * without a drain redacts for no reason — which costs a debugging field. The
+ * opposite mistake ships user identifiers to a processor.
+ */
+const STDOUT_IS_LOCAL = process.env.NODE_ENV === "development";
+
 const consoleLogger = createLogger({ service: "web" });
 
 let sink: ReturnType<typeof Appsignal.logger> | undefined;
@@ -45,13 +59,18 @@ function send(
 ): void {
 	const appsignal = resolveSink();
 	if (!appsignal) {
-		consoleLogger[level](message, fields);
+		// The fallback runs when AppSignal is unconfigured or its agent never
+		// started — precisely when the drain is the only thing still reporting.
+		// So these lines have to be safe to export too, and full fields survive
+		// only where stdout has nowhere to go.
+		consoleLogger[level](
+			message,
+			STDOUT_IS_LOCAL ? fields : toLogAttributes(fields),
+		);
 		return;
 	}
 
-	// User identifiers are stripped here, on the way out to AppSignal. Logs
-	// written to stdout keep their full fields: those stay on the host and
-	// never reach a processor.
+	// User identifiers are stripped here, on the way out to the processor.
 	appsignal[level](message, toLogAttributes(fields));
 }
 
