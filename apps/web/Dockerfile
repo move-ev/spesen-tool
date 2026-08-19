@@ -6,8 +6,15 @@
 # The runner below is node:22-slim (glibc), so installing under musl would
 # produce an image that builds and typechecks cleanly and then fails to load
 # the agent at boot.
+#
+# python3/make/g++ are the node-gyp toolchain and ca-certificates lets node-gyp
+# fetch the Node headers over TLS. @appsignal/nodejs compiles its native
+# extension in its install script, and that script exits 0 on failure — without
+# these the image would build clean and then log "AppSignal not starting:
+# extension failed to load" at boot, with no monitoring at all.
 FROM oven/bun:1.3.14-debian AS base
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        nodejs python3 make g++ ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Pruner: extract the minimal workspace subset for @zemio/web ───────────────
@@ -57,14 +64,10 @@ RUN mkdir -p apps/web/.next/standalone/apps/web/.next && \
     cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static && \
     cp -r apps/web/public apps/web/.next/standalone/apps/web/public
 
-# appsignal.cjs is loaded by the instrumentation hook at runtime, and
-# @appsignal/nodejs is declared in serverExternalPackages so Next does not
-# bundle it. Neither is picked up by standalone file tracing, so both are
-# copied in explicitly.
-RUN cp apps/web/appsignal.cjs apps/web/.next/standalone/apps/web/appsignal.cjs && \
-    mkdir -p apps/web/.next/standalone/node_modules/@appsignal && \
-    cp -r node_modules/@appsignal/nodejs \
-          apps/web/.next/standalone/node_modules/@appsignal/nodejs
+# No AppSignal files are copied by hand: appsignal.cjs is bundled into the
+# instrumentation chunk, and standalone file tracing already carries
+# @appsignal/nodejs — its dependency tree and its ext/ agent plus
+# build/Release/extension.node — into standalone/node_modules.
 
 # ── Runner: slim Node.js image ────────────────────────────────────────────────
 # node:22-slim (Debian) is required because the Prisma migration CLI needs

@@ -30,20 +30,36 @@ function isUserIdentifier(key: string): boolean {
 	return USER_IDENTIFIER_KEYS.has(key.toLowerCase());
 }
 
-/** Recursively replaces identifier values inside nested structures. */
-function redactDeep(value: unknown): unknown {
-	if (Array.isArray(value)) {
-		return value.map(redactDeep);
-	}
+const CYCLE = "[Circular]";
 
+/**
+ * Recursively replaces identifier values inside nested structures.
+ *
+ * `seen` breaks reference cycles: a log field may hold a request, a socket or
+ * an error whose `cause` points back at it, and recursing into one would
+ * overflow the stack from inside the logging call itself.
+ */
+function redactDeep(
+	value: unknown,
+	seen: WeakSet<object> = new WeakSet(),
+): unknown {
 	if (value instanceof Error) {
 		return { name: value.name, message: value.message };
 	}
 
 	if (value !== null && typeof value === "object") {
+		if (seen.has(value)) {
+			return CYCLE;
+		}
+		seen.add(value);
+
+		if (Array.isArray(value)) {
+			return value.map((entry) => redactDeep(entry, seen));
+		}
+
 		const result: Record<string, unknown> = {};
 		for (const [key, nested] of Object.entries(value)) {
-			result[key] = isUserIdentifier(key) ? REDACTED : redactDeep(nested);
+			result[key] = isUserIdentifier(key) ? REDACTED : redactDeep(nested, seen);
 		}
 		return result;
 	}
@@ -64,7 +80,15 @@ function toPrimitive(value: unknown): string | number | boolean {
 		return value.message;
 	}
 
-	return JSON.stringify(redactDeep(value)) ?? String(value);
+	// Never let a log line throw: serialisation runs over caller-supplied
+	// objects, and a value JSON cannot represent (a BigInt, a getter that
+	// raises) must degrade to a description rather than take out the request
+	// the log was reporting on.
+	try {
+		return JSON.stringify(redactDeep(value)) ?? String(value);
+	} catch {
+		return String(value);
+	}
 }
 
 /**

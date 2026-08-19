@@ -12,21 +12,29 @@ const consoleLogger = createLogger({ service: "web" });
 let sink: ReturnType<typeof Appsignal.logger> | undefined;
 
 /**
- * The AppSignal log sink, or undefined until the agent has started.
+ * The AppSignal log sink, or undefined until the agent is running.
  *
  * The agent boots from the instrumentation hook (see appsignal.cjs), which may
  * run after this module is first imported, so the sink is resolved lazily and
  * cached only once it is real. Before that — and whenever AppSignal is not
  * configured at all — logging falls back to stdout.
+ *
+ * The check is `isActive`, not merely "a client exists": the constructor
+ * registers itself globally before it decides whether it can start, so an
+ * unconfigured (or failed-to-load) agent still answers `Appsignal.client`, and
+ * `Appsignal.logger()` would hand back a no-op that swallows every line
+ * instead of falling through to stdout.
  */
 function resolveSink() {
 	if (sink) {
 		return sink;
 	}
-	if (!Appsignal.client) {
+	if (!Appsignal.client?.isActive) {
 		return undefined;
 	}
-	sink = Appsignal.logger(LOG_GROUP);
+	// "debug" is the floor, not the default "info": the level chosen here is a
+	// threshold, and the default would silently drop every debug line.
+	sink = Appsignal.logger(LOG_GROUP, "debug");
 	return sink;
 }
 

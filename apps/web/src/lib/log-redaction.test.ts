@@ -49,6 +49,19 @@ describe("toLogAttributes", () => {
 		});
 	});
 
+	it("survives a reference cycle instead of overflowing the stack", () => {
+		const node: Record<string, unknown> = { userId: "user_1", ok: true };
+		node.self = node;
+
+		expect(toLogAttributes({ node })).toEqual({
+			node: JSON.stringify({
+				userId: REDACTED,
+				ok: true,
+				self: "[Circular]",
+			}),
+		});
+	});
+
 	it("returns an empty object when there are no fields", () => {
 		expect(toLogAttributes()).toEqual({});
 	});

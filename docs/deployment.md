@@ -84,7 +84,8 @@ into the image):
   - `APPSIGNAL_FRONTEND_KEY` — browser key, a *different* credential
   - `APPSIGNAL_APP_NAME` — `Zemio Web`
   - `APPSIGNAL_APP_ENV` — `production` or `staging`
-  - `APP_REVISION` — commit SHA, for deploy markers
+  - `APP_REVISION` — commit SHA, for deploy markers (Railway exposes it as
+    `RAILWAY_GIT_COMMIT_SHA`; nothing in CI sets `APP_REVISION` itself)
 
   > Name + environment identify the app on appsignal.com. Changing either
   > creates a **new** app with empty history rather than renaming the old one.

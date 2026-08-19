@@ -19,3 +19,20 @@ export async function register() {
 		}
 	}
 }
+
+/**
+ * Reports server-side exceptions — Server Component renders, route handlers,
+ * server actions — to AppSignal.
+ *
+ * Next.js does not surface these to the tracer on its own; this hook is the
+ * documented way in, and without it only client-side errors would be tracked.
+ * `sendError` is a no-op while the agent is inactive.
+ */
+export async function onRequestError(error: unknown): Promise<void> {
+	if (process.env.NEXT_RUNTIME !== "nodejs") {
+		return;
+	}
+
+	const { sendError } = await import("@appsignal/nodejs");
+	sendError(error instanceof Error ? error : new Error(String(error)));
+}

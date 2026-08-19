@@ -84,7 +84,11 @@ export function usePresignedUpload() {
 					uploadedFiles.push({ objectInfo: { key: result.value }, name: file.name });
 				} else {
 					failedFiles.push(file);
-					captureError(result.reason, { feature: "attachment-upload" });
+					captureError(result.reason, {
+						feature: "attachment-upload",
+						fileName: file.name,
+						fileSize: file.size,
+					});
 				}
 			}
 
@@ -97,7 +101,10 @@ export function usePresignedUpload() {
 			return { files: uploadedFiles, failedFiles };
 		} catch (error) {
 			const err = error instanceof Error ? error : new Error("Upload failed");
-			captureError(err, { feature: "attachment-upload" });
+			captureError(err, {
+				feature: "attachment-upload",
+				fileCount: files.length,
+			});
 			setState({ status: "error", error: err });
 			return { files: [], failedFiles: files };
 		}

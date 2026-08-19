@@ -12,16 +12,26 @@ new Appsignal({
 	// Off when no key is configured, so a local or self-hosted instance runs
 	// without AppSignal instead of failing to boot.
 	active: Boolean(process.env.APPSIGNAL_PUSH_API_KEY),
-	name: process.env.APPSIGNAL_APP_NAME ?? "Zemio Web",
-	environment: process.env.APPSIGNAL_APP_ENV ?? process.env.NODE_ENV,
+	// `||`, not `??`: an unset variable and one set to the empty string are the
+	// same thing here, and src/env.js already treats them alike
+	// (emptyStringAsUndefined). With `??` an empty APPSIGNAL_APP_NAME would
+	// name the app "" — and name + environment are what identify it.
+	name: process.env.APPSIGNAL_APP_NAME || "Zemio Web",
+	environment: process.env.APPSIGNAL_APP_ENV || process.env.NODE_ENV,
 	pushApiKey: process.env.APPSIGNAL_PUSH_API_KEY,
-	// Ties errors to a release; CI supplies the commit SHA.
-	revision: process.env.APP_REVISION,
+	// Ties errors to a release; the deployment platform supplies the commit SHA.
+	revision: process.env.APP_REVISION || undefined,
 
 	// ── Data minimisation ─────────────────────────────────────────────────
-	// These four lines are the evidence for the promise that no IP addresses
-	// and no user identifiers reach the error tracker. They replace Sentry's
-	// single `sendDefaultPii: false`, which AppSignal has no equivalent of.
+	// These four lines are the evidence for the promise that no request
+	// parameters, session data, environment metadata or request headers reach
+	// the error tracker from the server. They replace Sentry's single
+	// `sendDefaultPii: false`, which AppSignal has no equivalent of.
+	//
+	// They do NOT cover the browser: @appsignal/javascript posts reports from
+	// the user's browser straight to AppSignal, so AppSignal observes the
+	// end user's IP address on every client-side report. (The Sentry setup
+	// this replaces proxied those reports through /monitoring.)
 	//
 	// Cited by the legal documents — if you move or change them, update
 	// docs/legal/toms-annex.md and the privacy policy in the same commit.
