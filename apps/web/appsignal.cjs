@@ -19,7 +19,7 @@ new Appsignal({
 	name: process.env.APPSIGNAL_APP_NAME || "Zemio Web",
 	environment: process.env.APPSIGNAL_APP_ENV || process.env.NODE_ENV,
 	pushApiKey: process.env.APPSIGNAL_PUSH_API_KEY,
-	// Ties errors to a release; the deployment platform supplies the commit SHA.
+	// Ties errors to a release; CI bakes the commit SHA into the image.
 	revision: process.env.APP_REVISION || undefined,
 
 	// ── Data minimisation ─────────────────────────────────────────────────

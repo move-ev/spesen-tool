@@ -93,11 +93,8 @@ every environment:
   - `APPSIGNAL_FRONTEND_KEY` — browser key, a *different* credential
   - `APPSIGNAL_APP_NAME` — `Zemio Web`
   - `APPSIGNAL_APP_ENV` — `production` or `staging`
-  - `APP_REVISION` — **do not set this by hand.** CI bakes the commit SHA into
-    the image (`--build-arg APP_REVISION`), because it identifies the artifact
-    rather than the environment: the same image is the same code wherever it
-    runs. Setting it per environment can only make it wrong, and a stale value
-    is worse than none — deploy markers and sourcemaps both key off it.
+  > `APP_REVISION` is **not** set here — it is baked into the image at build
+  > time. See [Build revision](#build-revision) below.
 
   > Name + environment identify the app on appsignal.com. Changing either
   > creates a **new** app with empty history rather than renaming the old one.
@@ -126,6 +123,34 @@ every environment:
   `billingEnforced` on the individual organization, so a rollout can be staged
   one customer at a time. See [billing-runbook.md](./billing-runbook.md) for
   that and for verifying billing locally against Stripe test mode.
+
+## Build revision
+
+`APP_REVISION` carries the commit an image was built from. CI passes it as a
+Docker build arg (`--build-arg APP_REVISION=${{ github.sha }}`) and the runner
+stage bakes it into the image. **Do not set it on Coolify or Railway** — a value
+set there shadows the correct one, and a stale revision is worse than none.
+
+It is deliberately not per-environment configuration. The revision identifies
+the *artifact*: the same image is the same code wherever it runs, so a setting
+that could differ between staging and production would be wrong by
+construction. This does not weaken "build once, deploy anywhere" — one image
+reporting one revision everywhere is the point.
+
+AppSignal opens a deploy marker whenever the value changes, and links backtrace
+frames to the repo at that commit, so it must be the real SHA rather than a
+version string.
+
+The platform-provided variables do not work for this pipeline. Coolify's
+`SOURCE_COMMIT` is excluded from Docker builds by default and applies to
+git-based resources, while staging deploys a prebuilt image from GHCR; Railway's
+`RAILWAY_GIT_COMMIT_SHA` needs a linked repo, which neither service has. Both
+describe the platform's view of the repo rather than the artifact running.
+
+> This relies on both platforms deploying the **prebuilt GHCR image**. The
+> `builder = "DOCKERFILE"` line in `apps/web/railway.toml` is unused for that
+> reason (see "Railway configuration"); a platform that built from source would
+> get the empty `ARG` default and no revision at all.
 
 ## Database migrations
 
