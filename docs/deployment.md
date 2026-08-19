@@ -89,6 +89,11 @@ into the image):
 
   > Name + environment identify the app on appsignal.com. Changing either
   > creates a **new** app with empty history rather than renaming the old one.
+
+  Browser reports are relayed through `/api/monitoring` on our own origin
+  rather than posted straight to AppSignal, so AppSignal never sees an end
+  user's IP address. Any proxy or CDN in front of the app must let that path
+  through.
 - Logging: application logs go to AppSignal under the `web` group, with user
   identifiers redacted on the way out (`apps/web/src/lib/log-redaction.ts`).
   Logs fall back to stdout/stderr when AppSignal is not configured, and stdout

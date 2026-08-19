@@ -28,10 +28,10 @@ new Appsignal({
 	// the error tracker from the server. They replace Sentry's single
 	// `sendDefaultPii: false`, which AppSignal has no equivalent of.
 	//
-	// They do NOT cover the browser: @appsignal/javascript posts reports from
-	// the user's browser straight to AppSignal, so AppSignal observes the
-	// end user's IP address on every client-side report. (The Sentry setup
-	// this replaces proxied those reports through /monitoring.)
+	// The browser half is covered separately, not here: reports from
+	// @appsignal/javascript are relayed through our own origin
+	// (src/app/api/monitoring/route.ts) so AppSignal sees this server's
+	// address rather than the end user's.
 	//
 	// Cited by the legal documents — if you move or change them, update
 	// docs/legal/toms-annex.md and the privacy policy in the same commit.
