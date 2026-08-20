@@ -17,7 +17,7 @@
  * exported maps, without installing the monorepo.
  *
  * Usage:
- *   APPSIGNAL_PUSH_API_KEY=... APPSIGNAL_APP_NAME="Zemio Web" \
+ *   APPSIGNAL_PUSH_API_KEY=... APPSIGNAL_APP_NAME="zemio-web" \
  *   APPSIGNAL_APP_ENV=staging APP_REVISION=<sha> \
  *   ASSET_ORIGIN=https://staging.zemio.co \
  *   node apps/web/scripts/upload-sourcemaps.mjs [sourcemapDir]

@@ -92,7 +92,7 @@ every environment:
   into the browser at request time):
   - `APPSIGNAL_PUSH_API_KEY` — server key; absent turns monitoring off
   - `APPSIGNAL_FRONTEND_KEY` — browser key, a *different* credential
-  - `APPSIGNAL_APP_NAME` — `Zemio Web`
+  - `APPSIGNAL_APP_NAME` — `zemio-web`
   - `APPSIGNAL_APP_ENV` — `production` or `staging`
   > `APP_REVISION` is **not** set here — it is baked into the image at build
   > time. See [Build revision](#build-revision) below.
