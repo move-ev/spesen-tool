@@ -136,7 +136,7 @@ jobs:
         if: github.event_name != 'pull_request' && (github.ref_name == 'canary' || github.ref_name == 'master')
         env:
           APPSIGNAL_PUSH_API_KEY: ${{ secrets.APPSIGNAL_PUSH_API_KEY }}
-          APPSIGNAL_APP_NAME: Zemio Web
+          APPSIGNAL_APP_NAME: zemio-web
           APPSIGNAL_APP_ENV: ${{ github.ref_name == 'canary' && 'staging' || 'production' }}
           ASSET_ORIGIN: ${{ github.ref_name == 'canary' && 'https://staging.zemio.co' || 'https://app.zemio.co' }}
           APP_REVISION: ${{ github.sha }}

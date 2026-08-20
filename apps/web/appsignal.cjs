@@ -16,7 +16,7 @@ new Appsignal({
 	// same thing here, and src/env.js already treats them alike
 	// (emptyStringAsUndefined). With `??` an empty APPSIGNAL_APP_NAME would
 	// name the app "" — and name + environment are what identify it.
-	name: process.env.APPSIGNAL_APP_NAME || "Zemio Web",
+	name: process.env.APPSIGNAL_APP_NAME || "zemio-web",
 	environment: process.env.APPSIGNAL_APP_ENV || process.env.NODE_ENV,
 	pushApiKey: process.env.APPSIGNAL_PUSH_API_KEY,
 	// Ties errors to a release; CI bakes the commit SHA into the image.

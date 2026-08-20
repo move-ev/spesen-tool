@@ -180,7 +180,7 @@ export const env = createEnv({
 		 * changing either creates a NEW app on appsignal.com rather than
 		 * renaming the existing one.
 		 */
-		APPSIGNAL_APP_NAME: z.string().min(1).default("Zemio Web"),
+		APPSIGNAL_APP_NAME: z.string().min(1).default("zemio-web"),
 
 		/**
 		 * AppSignal environment, e.g. "production" or "staging". Falls back to
