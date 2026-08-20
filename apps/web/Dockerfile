@@ -64,10 +64,24 @@ RUN mkdir -p apps/web/.next/standalone/apps/web/.next && \
     cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static && \
     cp -r apps/web/public apps/web/.next/standalone/apps/web/public
 
-# No AppSignal files are copied by hand: appsignal.cjs is bundled into the
-# instrumentation chunk, and standalone file tracing already carries
-# @appsignal/nodejs — its dependency tree and its ext/ agent plus
-# build/Release/extension.node — into standalone/node_modules.
+# Collect the sourcemaps for upload, then remove them from what ships.
+#
+# Removed from .next/static because everything under it is served at
+# /_next/static, and these maps embed the original source (sourcesContent) —
+# an image that carried them there would publish the frontend to anyone who
+# asked for the URL. /app/sourcemaps is not a route, so it is carried but never
+# served.
+#
+# Collected here, inside the build that produced the chunks, rather than by a
+# second build invocation: Turbopack chunk names are not stable across builds,
+# so a separate build yields a different set of names and every upload then
+# resolves nothing. The collector also pairs each map to its chunk through the
+# sourceMappingURL comment — Turbopack names the two independently, so the
+# names cannot be derived from one another.
+RUN node apps/web/scripts/collect-sourcemaps.mjs \
+      apps/web/.next/standalone/apps/web/.next/static \
+      apps/web/.next/standalone/sourcemaps && \
+    find apps/web/.next/standalone/apps/web/.next/static -name '*.map' -delete
 
 # ── Runner: slim Node.js image ────────────────────────────────────────────────
 # Debian, not Alpine: the Prisma migration CLI needs glibc, and musl is

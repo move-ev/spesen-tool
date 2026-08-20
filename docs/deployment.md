@@ -32,7 +32,8 @@ persisting it in an image layer.
   - the **branch name** — a moving tag per branch (`master`, `canary`), always
     pointing at that branch's latest build.
   - the version, e.g. `1.2.0` — extracted from a `web-v*`/`api-v*` tag push.
-  - `latest` — on the default branch (`master`) only.
+  - `latest` — on `master` only. Pinned to the branch name rather than to the
+    repo's default branch setting, so changing that setting cannot move it.
 
   So production tracks `latest` (or `master`) and staging tracks `canary`, while
   any deploy can still be pinned to an exact `sha-…`.
@@ -258,6 +259,45 @@ describe the platform's view of the repo rather than the artifact running.
 > `builder = "DOCKERFILE"` line in `apps/web/railway.toml` is unused for that
 > reason (see "Railway configuration"); a platform that built from source would
 > get the empty `ARG` default and no revision at all.
+
+## Source maps
+
+Browser backtraces in AppSignal are resolved against sourcemaps uploaded by CI.
+`productionBrowserSourceMaps` is on, and each build publishes its maps privately
+to AppSignal's sourcemap API.
+
+They are uploaded rather than served. A map embeds the original source
+(`sourcesContent`), so serving it next to the chunk — which is what happens to
+anything left under `.next/static` — would publish the frontend to anyone who
+asked for the URL. The build moves them to `/app/sourcemaps` inside the image
+instead, which is not a route.
+
+Three details are easy to get wrong, and all three fail silently:
+
+- **The maps must come from the build that produced the chunks.** Turbopack
+  chunk names are not stable across builds, so maps from a second build upload
+  cleanly and resolve nothing. CI extracts them from the image it just pushed,
+  addressed by **digest** rather than by the `sha-…` tag — a branch push and a
+  tag push of the same commit both write that tag, and the loser's maps would
+  describe chunk names no deployed image contains.
+- **The maps must come from the image that is actually deployed.** Staging
+  tracks `canary` and production tracks `master` (see
+  [Railway configuration](#railway-configuration)), so the upload runs on those
+  two branch pushes. A `web-v*` tag publishes only `sha-…` and the version, so
+  its image is never served; it triggers the production *deploy*, which pulls
+  the `master` image whose maps went up at merge time.
+- **A map's filename does not match its chunk's.** Turbopack names them
+  independently — chunk `02mwhpb-9lwfu.js` is described by
+  `3-k-qm3o85x8h.js.map`. Only the trailing `sourceMappingURL` comment relates
+  the two, which is what `scripts/collect-sourcemaps.mjs` reads.
+
+Uploads are keyed by `revision` (see [Build revision](#build-revision)) and by
+the **full URL** of the minified file, so a build is uploaded once per
+environment — `canary` against `staging.zemio.co`, `master` against
+`app.zemio.co`. AppSignal keeps them for 60 days.
+
+`APPSIGNAL_PUSH_API_KEY` must exist as a GitHub Actions secret; it is the same
+push key the app uses at runtime, not the front-end key.
 
 ## Database migrations
 
