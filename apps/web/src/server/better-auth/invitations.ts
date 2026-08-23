@@ -1,5 +1,6 @@
-import { DEFAULT_EMAIL_FROM, ROUTES } from "@/lib/consts";
-import { getResend } from "@/server/resend";
+import { env } from "@/env";
+import { ROUTES } from "@/lib/consts";
+import { getEmailer, logSend } from "@/server/email";
 
 type OrganizationInvitationEmailData = {
 	email: string;
@@ -20,17 +21,16 @@ export async function sendOrgInvitationEmail(
 	const inviterName = data.inviter.user.name ?? "Ein Teammitglied";
 	const acceptUrl = new URL(
 		ROUTES.ACCEPT_INVITATION(data.id),
-		process.env.BETTER_AUTH_URL,
+		env.BETTER_AUTH_URL,
 	).toString();
 
-	await getResend().emails.send({
-		from: DEFAULT_EMAIL_FROM,
+	// Best-effort: the invitation row exists either way and the link can be
+	// resent, so a failed send is logged rather than failing the mutation.
+	const result = await getEmailer().sendOrgInvitation({
 		to: data.email,
-		subject: `Einladung zu ${data.organization.name}`,
-		html: `
-      <p>${inviterName} hat dich zu <strong>${data.organization.name}</strong> eingeladen.</p>
-      <p><a href="${acceptUrl}">Einladung annehmen</a></p>
-      <p>Dieser Link verfällt in 48 Stunden.</p>
-    `,
+		organizationName: data.organization.name,
+		inviterName,
+		acceptUrl,
 	});
+	logSend("email.org_invitation", result, { invitationId: data.id });
 }

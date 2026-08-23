@@ -86,7 +86,8 @@ every environment:
 > by the Hetzner migration, not here.
 
 - Core: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, the
-  `MICROSOFT_*`, `STORAGE_*`, `RESEND_API_KEY`, `SECRET_ENCRYPTION_KEY`,
+  `MICROSOFT_*`, `STORAGE_*`, `SCALEWAY_TEM_SECRET_KEY`,
+  `SCALEWAY_TEM_PROJECT_ID`, `EMAIL_FROM`, `SECRET_ENCRYPTION_KEY`,
   `INTERNAL_API_SECRET`, `API_URL`, etc. (see `apps/web/src/env.js`).
 - Error tracking (AppSignal; read at runtime, the front-end key is injected
   into the browser at request time):

@@ -12,8 +12,6 @@ export const ROUTES = {
 	PLATFORM_ADMIN_ORGANIZATIONS: "/platform-admin/organizations",
 };
 
-export const DEFAULT_EMAIL_FROM = "zemio <noreply@mail.zemio.co>";
-
 export const ADMIN_SETTINGS_MENU = {
 	GENERAL: "/admin/settings",
 	USERS: "/admin/settings/users",

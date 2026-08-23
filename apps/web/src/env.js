@@ -2,6 +2,18 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 /**
+ * `Name <address>` as written in `EMAIL_FROM`. Matched here so a malformed value
+ * fails at boot rather than at the first send, and exported so the one place
+ * that splits it into Scaleway's `{name, email}` uses the same rule.
+ *
+ * The split deliberately does not happen in the schema below: `skipValidation`
+ * hands back `process.env` untouched, so a `.transform()` would be skipped along
+ * with the validation and leave a bare string behind a parsed-object type.
+ */
+export const EMAIL_FROM_PATTERN =
+	/^\s*(.+?)\s*<\s*([^\s<>@]+@[^\s<>@]+)\s*>\s*$/;
+
+/**
  * Environment Variables
  *
  * Validates the environment variables consumed by the web app. Secrets and
@@ -71,10 +83,15 @@ export const env = createEnv({
 		// =================================================================
 
 		/**
-		 * Resend API key for sending emails
-		 * Get this from https://resend.com/api-keys
+		 * Scaleway IAM secret key used as `X-Auth-Token` against the
+		 * Transactional Email API
 		 */
-		RESEND_API_KEY: z.string(),
+		SCALEWAY_TEM_SECRET_KEY: z.string(),
+
+		/**
+		 * Scaleway project the verified sending domain belongs to
+		 */
+		SCALEWAY_TEM_PROJECT_ID: z.string(),
 
 		// =================================================================
 		// Runtime Environment
@@ -141,10 +158,16 @@ export const env = createEnv({
 		STORAGE_BUCKET: z.string(),
 
 		/**
-		 * Email from address override
-		 * When set, takes precedence over config.ts email.from
+		 * Sender of every outgoing email, as `Name <address>`. The address has to
+		 * sit on a domain verified in Scaleway, so moving to another sending
+		 * domain is a change to this value rather than to the code.
 		 */
-		EMAIL_FROM: z.string().email().optional(),
+		EMAIL_FROM: z
+			.string()
+			.regex(
+				EMAIL_FROM_PATTERN,
+				'EMAIL_FROM must look like "zemio <noreply@send.zemio.co>"',
+			),
 
 		/**
 		 * Secret key for signing banking details
@@ -262,7 +285,8 @@ export const env = createEnv({
 		STORAGE_ACCESS_KEY: process.env.STORAGE_ACCESS_KEY,
 		STORAGE_SECURE: process.env.STORAGE_SECURE,
 		STORAGE_FORCE_PATH_STYLE: process.env.STORAGE_FORCE_PATH_STYLE,
-		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		SCALEWAY_TEM_SECRET_KEY: process.env.SCALEWAY_TEM_SECRET_KEY,
+		SCALEWAY_TEM_PROJECT_ID: process.env.SCALEWAY_TEM_PROJECT_ID,
 		SECRET_ENCRYPTION_KEY: process.env.SECRET_ENCRYPTION_KEY,
 
 		// Runtime
