@@ -158,11 +158,56 @@ describe("createScalewayClient", () => {
 	});
 
 	it("abandons an attempt that never answers", async () => {
-		fetchMock.mockImplementation(() => accepted());
+		// A request that stays pending until the deadline fires, the way an
+		// unresponsive endpoint behaves.
+		fetchMock.mockImplementation(
+			(_url: string, init: RequestInit) =>
+				new Promise((_resolve, reject) => {
+					init.signal?.addEventListener("abort", () =>
+						reject(new Error("The operation was aborted due to timeout")),
+					);
+				}),
+		);
 
-		await send();
+		const result = await createScalewayClient({
+			apiKey: "test-secret-key",
+			projectId: "test-project-id",
+			retryDelayMs: 0,
+			timeoutMs: 25,
+		}).send({
+			from: FROM,
+			to: ["empfaenger@example.de"],
+			subject: "Ein Betreff mit Laenge",
+			react: createElement("p", null, "Hallo Welt"),
+		});
 
-		const [, init] = fetchMock.mock.calls[0] ?? [];
-		expect(init.signal).toBeInstanceOf(AbortSignal);
+		expect(result).toEqual({
+			ok: false,
+			status: 0,
+			error: "The operation was aborted due to timeout",
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("does not let the backoff outlive the deadline", async () => {
+		// A retryable status with a backoff far longer than the deadline: the wait
+		// has to end when the deadline does, not when the timer does.
+		fetchMock.mockImplementation(() => new Response("boom", { status: 503 }));
+
+		const started = Date.now();
+		const result = await createScalewayClient({
+			apiKey: "test-secret-key",
+			projectId: "test-project-id",
+			retryDelayMs: 30_000,
+			timeoutMs: 25,
+		}).send({
+			from: FROM,
+			to: ["empfaenger@example.de"],
+			subject: "Ein Betreff mit Laenge",
+			react: createElement("p", null, "Hallo Welt"),
+		});
+
+		expect(result.ok).toBe(false);
+		expect(Date.now() - started).toBeLessThan(5_000);
 	});
 });

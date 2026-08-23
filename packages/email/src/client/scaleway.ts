@@ -46,6 +46,8 @@ export interface ScalewayClientConfig {
 	projectId: string;
 	/** Base delay between retries, multiplied by the attempt number. */
 	retryDelayMs?: number;
+	/** Deadline for the whole send, retries included. */
+	timeoutMs?: number;
 }
 
 export interface ScalewayClient {
@@ -61,8 +63,24 @@ function isRetryable(status: number): boolean {
 	return status === 429 || status >= 500;
 }
 
-function sleep(ms: number): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, ms));
+/**
+ * Resolves after `ms`, or as soon as `signal` aborts — whichever comes first.
+ * A plain timer would let the backoff run past the send's deadline, which is
+ * the one thing the deadline is supposed to prevent.
+ */
+function sleep(ms: number, signal: AbortSignal): Promise<void> {
+	if (signal.aborted) {
+		return Promise.resolve();
+	}
+	return new Promise((resolve) => {
+		const done = () => {
+			clearTimeout(timer);
+			signal.removeEventListener("abort", done);
+			resolve();
+		};
+		const timer = setTimeout(done, ms);
+		signal.addEventListener("abort", done, { once: true });
+	});
 }
 
 /**
@@ -114,6 +132,7 @@ export function createScalewayClient({
 	apiKey,
 	projectId,
 	retryDelayMs = 250,
+	timeoutMs = SEND_TIMEOUT_MS,
 }: ScalewayClientConfig): ScalewayClient {
 	async function attempt(
 		body: string,
@@ -182,14 +201,14 @@ export function createScalewayClient({
 				text,
 			});
 
-			const signal = AbortSignal.timeout(SEND_TIMEOUT_MS);
+			const signal = AbortSignal.timeout(timeoutMs);
 
 			let result = await attempt(body, signal);
 			for (let n = 2; n <= MAX_ATTEMPTS && !result.ok; n++) {
 				if (!isRetryable(result.status)) {
 					return result;
 				}
-				await sleep(retryDelayMs * (n - 1));
+				await sleep(retryDelayMs * (n - 1), signal);
 				result = await attempt(body, signal);
 			}
 			return result;

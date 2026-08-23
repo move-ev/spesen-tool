@@ -34,7 +34,7 @@ export default function ReportSubmittedEmail({
 				<Body className="bg-zinc-50 font-sans">
 					<Preview>{t("preview")}</Preview>
 					<Container className="bg-white px-6 py-8">
-						<Img className="h-5 w-fit" src={logoUrl} />
+						<Img alt="zemio" className="h-5 w-fit" src={logoUrl} />
 						<Text className="mt-16 font-medium text-2xl">{title}</Text>
 						<Section>
 							<Text>{t("greeting", { name })}</Text>

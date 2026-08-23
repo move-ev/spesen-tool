@@ -6,6 +6,10 @@ import { z } from "zod";
  * fails at boot rather than at the first send, and exported so the one place
  * that splits it into Scaleway's `{name, email}` uses the same rule.
  *
+ * This only describes the shape — the captured address is checked separately
+ * below, because `a@b` and `a@-b` satisfy any pattern loose enough to accept
+ * every legal local part, and Scaleway would reject them one send at a time.
+ *
  * The split deliberately does not happen in the schema below: `skipValidation`
  * hands back `process.env` untouched, so a `.transform()` would be skipped along
  * with the validation and leave a bare string behind a parsed-object type.
@@ -166,7 +170,13 @@ export const env = createEnv({
 		 * sit on a domain verified in Scaleway, so moving to another sending
 		 * domain is a change to this value rather than to the code.
 		 */
-		EMAIL_FROM: z.string().regex(EMAIL_FROM_PATTERN, EMAIL_FROM_HINT),
+		EMAIL_FROM: z
+			.string()
+			.regex(EMAIL_FROM_PATTERN, EMAIL_FROM_HINT)
+			.refine(
+				(value) => z.email().safeParse(EMAIL_FROM_PATTERN.exec(value)?.[2]).success,
+				"EMAIL_FROM must carry a valid address on a domain verified in Scaleway",
+			),
 
 		/**
 		 * Secret key for signing banking details

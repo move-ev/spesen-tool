@@ -38,7 +38,7 @@ export default function OrgInvitationEmail({
 						{t("preview", { inviter: inviterName, organization: organizationName })}
 					</Preview>
 					<Container className="bg-white px-6 py-8">
-						<Img className="h-5 w-fit" src={logoUrl} />
+						<Img alt="zemio" className="h-5 w-fit" src={logoUrl} />
 						<Text className="mt-16 font-medium text-2xl">
 							{t("heading", { organization: organizationName })}
 						</Text>
