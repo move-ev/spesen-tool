@@ -1,17 +1,12 @@
 import { NotificationPreference } from "@zemio/db";
-import { env } from "@/env";
 import { reportStatusLabel } from "@/lib/i18n-labels";
 import { ROUTES } from "@/lib/routes";
-import { getEmailer, logSend } from "@/server/email";
+import { absoluteUrl, getEmailer, logSend } from "@/server/email";
 import {
 	type ReportStatusChangedEvent,
 	type ReportSubmittedEvent,
 	reportEventBus,
 } from "./report.events";
-
-function absoluteUrl(path: string): string {
-	return new URL(path, env.BETTER_AUTH_URL).toString();
-}
 
 async function onReportSubmitted(event: ReportSubmittedEvent): Promise<void> {
 	const emailer = getEmailer();

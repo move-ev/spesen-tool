@@ -13,6 +13,10 @@ import { z } from "zod";
 export const EMAIL_FROM_PATTERN =
 	/^\s*(.+?)\s*<\s*([^\s<>@]+@[^\s<>@]+)\s*>\s*$/;
 
+/** Stated once so the schema and the split that follows it agree. */
+export const EMAIL_FROM_HINT =
+	'EMAIL_FROM must look like "zemio <noreply@send.zemio.co>"';
+
 /**
  * Environment Variables
  *
@@ -162,12 +166,7 @@ export const env = createEnv({
 		 * sit on a domain verified in Scaleway, so moving to another sending
 		 * domain is a change to this value rather than to the code.
 		 */
-		EMAIL_FROM: z
-			.string()
-			.regex(
-				EMAIL_FROM_PATTERN,
-				'EMAIL_FROM must look like "zemio <noreply@send.zemio.co>"',
-			),
+		EMAIL_FROM: z.string().regex(EMAIL_FROM_PATTERN, EMAIL_FROM_HINT),
 
 		/**
 		 * Secret key for signing banking details

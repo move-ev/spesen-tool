@@ -145,6 +145,18 @@ describe("createScalewayClient", () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
+	it("holds every attempt to a single deadline", async () => {
+		// One signal across all attempts: a per-attempt timeout would let the
+		// retry count multiply the wait the timeout exists to bound.
+		fetchMock.mockImplementation(() => new Response("boom", { status: 503 }));
+
+		await send();
+
+		const signals = fetchMock.mock.calls.map(([, init]) => init.signal);
+		expect(signals).toHaveLength(3);
+		expect(new Set(signals).size).toBe(1);
+	});
+
 	it("abandons an attempt that never answers", async () => {
 		fetchMock.mockImplementation(() => accepted());
 

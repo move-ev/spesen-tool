@@ -6,5 +6,7 @@ export default defineConfig({
 	test: {
 		environment: "node",
 		globals: true,
+		// The suites stub `fetch`; restore it so a stub cannot outlive its test.
+		unstubGlobals: true,
 	},
 });

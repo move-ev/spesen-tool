@@ -2,7 +2,7 @@
 // Scaleway Transactional Email client
 // ================================================
 
-import { render } from "@react-email/render";
+import { render, toPlainText } from "@react-email/render";
 import type { ReactElement } from "react";
 
 /**
@@ -18,8 +18,12 @@ const MAX_ATTEMPTS = 3;
  * A send sits on the request path for invitations, so an unresponsive endpoint
  * has to fail rather than hold the caller open. Node applies no request timeout
  * of its own.
+ *
+ * One deadline covers the whole send, retries included: a per-attempt timeout
+ * would let `MAX_ATTEMPTS` multiply it, and a caller held for three timeouts
+ * plus the backoff is exactly what this is meant to prevent.
  */
-const REQUEST_TIMEOUT_MS = 10_000;
+const SEND_TIMEOUT_MS = 15_000;
 
 export interface EmailAddress {
 	name: string;
@@ -111,7 +115,10 @@ export function createScalewayClient({
 	projectId,
 	retryDelayMs = 250,
 }: ScalewayClientConfig): ScalewayClient {
-	async function attempt(body: string): Promise<SendResult> {
+	async function attempt(
+		body: string,
+		signal: AbortSignal,
+	): Promise<SendResult> {
 		let response: Response;
 		try {
 			response = await fetch(ENDPOINT, {
@@ -121,7 +128,7 @@ export function createScalewayClient({
 					"Content-Type": "application/json",
 				},
 				body,
-				signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+				signal,
 			});
 		} catch (cause) {
 			// A thrown fetch never reached Scaleway, so there is no status to report.
@@ -132,28 +139,39 @@ export function createScalewayClient({
 			};
 		}
 
+		// Reading the body can fail on its own — a connection reset mid-stream, or
+		// the deadline expiring between the headers and the last chunk. Callers
+		// treat sending as best-effort, so that must not escape as a thrown send;
+		// the status is already known and is what decides a retry.
+		let payload: string;
+		try {
+			payload = await response.text();
+		} catch {
+			payload = "";
+		}
+
 		if (!response.ok) {
 			return {
 				ok: false,
 				status: response.status,
-				error: errorFrom(await response.text()),
+				error: errorFrom(payload),
 			};
 		}
 
 		return {
 			ok: true,
-			messageIds: messageIdsFrom(parseJson(await response.text())),
+			messageIds: messageIdsFrom(parseJson(payload)),
 		};
 	}
 
 	return {
 		async send({ from, to, subject, react }) {
 			// Scaleway takes html and text; a plaintext part is not optional the way
-			// it was with a provider that rendered React itself.
-			const [html, text] = await Promise.all([
-				render(react),
-				render(react, { plainText: true }),
-			]);
+			// it was with a provider that rendered React itself. Converted from the
+			// html rather than rendered a second time — `render(…, { plainText })`
+			// is that same conversion applied to its own render of the tree.
+			const html = await render(react);
+			const text = toPlainText(html);
 
 			const body = JSON.stringify({
 				project_id: projectId,
@@ -164,13 +182,15 @@ export function createScalewayClient({
 				text,
 			});
 
-			let result = await attempt(body);
+			const signal = AbortSignal.timeout(SEND_TIMEOUT_MS);
+
+			let result = await attempt(body, signal);
 			for (let n = 2; n <= MAX_ATTEMPTS && !result.ok; n++) {
 				if (!isRetryable(result.status)) {
 					return result;
 				}
 				await sleep(retryDelayMs * (n - 1));
-				result = await attempt(body);
+				result = await attempt(body, signal);
 			}
 			return result;
 		},

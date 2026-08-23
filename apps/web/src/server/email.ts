@@ -7,7 +7,7 @@ import {
 	type SendResult,
 } from "@zemio/email";
 import type { LogFields } from "@zemio/logger";
-import { EMAIL_FROM_PATTERN, env } from "@/env";
+import { EMAIL_FROM_HINT, EMAIL_FROM_PATTERN, env } from "@/env";
 import { logger } from "@/lib/logger";
 
 /**
@@ -19,11 +19,19 @@ import { logger } from "@/lib/logger";
 function parseSender(value: string): EmailAddress {
 	const match = EMAIL_FROM_PATTERN.exec(value);
 	if (!match?.[2]) {
-		throw new Error(
-			`EMAIL_FROM must look like "zemio <noreply@send.zemio.co>", got: ${value}`,
-		);
+		throw new Error(`${EMAIL_FROM_HINT}, got: ${value}`);
 	}
 	return { name: match[1] ?? "", email: match[2] };
+}
+
+/**
+ * Resolves an app-relative path against `BETTER_AUTH_URL`. Every link in an
+ * email has to be absolute, and the base belongs to the deployment rather than
+ * to the template — guessing it from `NODE_ENV` is what sent staging mail to
+ * production.
+ */
+export function absoluteUrl(path: string): string {
+	return new URL(path, env.BETTER_AUTH_URL).toString();
 }
 
 /**
