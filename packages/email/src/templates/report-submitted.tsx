@@ -6,32 +6,25 @@ import {
 	Hr,
 	Html,
 	Img,
-	Link,
 	Preview,
 	Section,
 	Tailwind,
 	Text,
 } from "@react-email/components";
 import { createAppTranslator } from "@zemio/i18n";
-import { ROUTES } from "@/lib/routes";
 
-const baseUrl =
-	process.env.NODE_ENV === "production"
-		? "https://app.zemio.co"
-		: "http://localhost:3000";
-
-interface ReportReceivedEmailProps {
+interface ReportSubmittedEmailProps {
 	title: string;
-	from: string;
-	reportId: string;
+	name: string;
+	logoUrl: string;
 }
 
-export default function ReportReceivedEmail({
+export default function ReportSubmittedEmail({
 	title,
-	from,
-	reportId,
-}: ReportReceivedEmailProps) {
-	const t = createAppTranslator({ namespace: "emails.reportReceived" });
+	name,
+	logoUrl,
+}: ReportSubmittedEmailProps) {
+	const t = createAppTranslator({ namespace: "emails.reportSubmitted" });
 	const tShared = createAppTranslator({ namespace: "emails.shared" });
 
 	return (
@@ -39,26 +32,13 @@ export default function ReportReceivedEmail({
 			<Head />
 			<Tailwind config={{}}>
 				<Body className="bg-zinc-50 font-sans">
-					<Preview>{t("preview", { title, from })}</Preview>
+					<Preview>{t("preview")}</Preview>
 					<Container className="bg-white px-6 py-8">
-						<Img
-							className="h-5 w-fit"
-							src={`${baseUrl}/assets/zemio-logo-woodmark.png`}
-						/>
+						<Img alt="zemio" className="h-5 w-fit" src={logoUrl} />
 						<Text className="mt-16 font-medium text-2xl">{title}</Text>
 						<Section>
-							<Text>{t("greeting")}</Text>
-							<Text>
-								{t.rich("body", {
-									from,
-									strong: (chunks) => <strong>{chunks}</strong>,
-									link: (chunks) => (
-										<Link href={`${baseUrl}${ROUTES.ADMIN_REVIEW_REPORT(reportId)}`}>
-											{chunks}
-										</Link>
-									),
-								})}
-							</Text>
+							<Text>{t("greeting", { name })}</Text>
+							<Text>{t("body", { title })}</Text>
 							<Text>
 								{tShared.rich("supportPrompt", {
 									email: (chunks) => (
@@ -81,8 +61,8 @@ export default function ReportReceivedEmail({
 	);
 }
 
-ReportReceivedEmail.PreviewProps = {
-	from: "Markus Müller",
+ReportSubmittedEmail.PreviewProps = {
+	name: "John Doe",
 	title: "Report 1",
-	reportId: "abcdegf",
+	logoUrl: "http://localhost:3000/assets/zemio-logo-woodmark.png",
 };

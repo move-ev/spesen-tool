@@ -1452,6 +1452,16 @@
 			"greeting": "Hallo {name},",
 			"body": "Der Status deines Spesenberichts <strong>\"{title}\"</strong> wurde zu <strong>{status}</strong> geändert. Du kannst den Bericht <link>hier</link> ansehen.",
 			"footer": "Du erhältst diese E-Mail, da du einen Spesenbericht eingereicht hast. Solltest du keinen Spesenbericht eingereicht haben, kannst du diese E-Mail ignorieren."
+		},
+		"orgInvitation": {
+			"subject": "Einladung zu {organization}",
+			"preview": "{inviter} hat dich zu {organization} eingeladen",
+			"heading": "Einladung zu {organization}",
+			"greeting": "Hallo,",
+			"body": "<strong>{inviter}</strong> hat dich zu <strong>{organization}</strong> bei zemio eingeladen.",
+			"cta": "Einladung annehmen",
+			"expiry": "Dieser Link verfällt in 48 Stunden.",
+			"footer": "Du erhältst diese E-Mail, da du zu einer Organisation in zemio eingeladen wurdest. Solltest du diese Einladung nicht erwarten, kannst du diese E-Mail ignorieren."
 		}
 	}
 }
