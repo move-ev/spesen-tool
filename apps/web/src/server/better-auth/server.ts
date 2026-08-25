@@ -5,8 +5,13 @@ import { admin as adminPlugin, organization } from "better-auth/plugins";
 import { env } from "@/env";
 import { logger } from "@/lib/logger";
 import { sendOrgInvitationEmail } from "@/server/better-auth/invitations";
+import { sendEmailVerification } from "@/server/better-auth/verification";
 import { db } from "@/server/db";
 import { CURRENT_LEGAL_RELEASE } from "@/server/legal";
+import {
+	applyAutoJoins,
+	resolveSessionOrganization,
+} from "@/server/modules/joining";
 import * as adminAc from "./ac/admin";
 import * as organizationAc from "./ac/organization";
 
@@ -34,6 +39,45 @@ function extractMicrosoftTenantId(idToken: string): string | null {
 	}
 }
 
+/** The tenant recorded on a user by a previous login, if any. */
+async function tenantIdOf(userId: string): Promise<string | null> {
+	const user = await db.user.findUnique({
+		where: { id: userId },
+		select: { microsoftTenantId: true },
+	});
+
+	return user?.microsoftTenantId ?? null;
+}
+
+/**
+ * Opens a freshly joined organization in the sessions already running.
+ *
+ * The session hook that chooses an active organization runs when a session is
+ * *created*, and verification happens inside one that already exists. Without
+ * this, someone who verifies and is auto-joined is redirected out of `/no-org`
+ * into an application whose every organization-scoped call refuses them for
+ * having no active organization — until they log out and back in.
+ *
+ * Only sessions with no organization are touched, so this never moves someone
+ * who is already working somewhere. The user record is updated on the same
+ * terms, so the next login lands in the same place.
+ */
+async function openJoinedOrganization(userId: string): Promise<void> {
+	const organizationId = await resolveSessionOrganization(db, userId);
+	if (!organizationId) return;
+
+	await db.$transaction([
+		db.session.updateMany({
+			where: { userId, activeOrganizationId: null },
+			data: { activeOrganizationId: organizationId },
+		}),
+		db.user.updateMany({
+			where: { id: userId, lastActiveOrganizationId: null },
+			data: { lastActiveOrganizationId: organizationId },
+		}),
+	]);
+}
+
 export const auth = betterAuth({
 	// Explicit secret with a build-time fallback so Docker builds (which run without
 	// secrets) don't throw during Next.js module evaluation. At runtime the real
@@ -53,6 +97,50 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: false,
 	},
+
+	/**
+	 * An address is verified by Zemio or not at all (ADR-0008).
+	 *
+	 * Asked for lazily rather than at every first login: most people arrive
+	 * through a tenant joining rule, which reads `tid` and needs no verified
+	 * address, so making everyone verify on day one would tax the common path
+	 * to protect the rare one.
+	 */
+	emailVerification: {
+		sendVerificationEmail: async ({ user, url }) => {
+			await sendEmailVerification({ to: user.email, verifyUrl: url });
+		},
+		expiresIn: 60 * 60 * 24,
+
+		/**
+		 * Verifying an address can open an organization to this person, and the
+		 * session hook that would notice only runs when a session is created.
+		 * Without this, an `EMAIL_DOMAIN` rule takes effect at their next login
+		 * rather than the moment they proved the address.
+		 *
+		 * Best-effort: the address is verified either way, and the next login
+		 * resolves the same rules. Failing here would report verification as
+		 * failed for something that succeeded.
+		 */
+		afterEmailVerification: async (user) => {
+			try {
+				const joined = await applyAutoJoins(db, user.id, {
+					email: user.email,
+					emailVerified: true,
+					microsoftTenantId: await tenantIdOf(user.id),
+				});
+
+				if (joined.length === 0) return;
+
+				await openJoinedOrganization(user.id);
+			} catch (error) {
+				logger.error("Could not resolve joining rules after verification", {
+					userId: user.id,
+					error,
+				});
+			}
+		},
+	},
 	socialProviders: {
 		microsoft: {
 			clientId: microsoftClientId,
@@ -65,6 +153,25 @@ export const auth = betterAuth({
 	databaseHooks: {
 		user: {
 			create: {
+				/**
+				 * An address is verified by Zemio or not at all (ADR-0008).
+				 *
+				 * Better Auth's Entra provider will happily set `emailVerified`
+				 * from the provider's own claims — `email_verified`, or the
+				 * address appearing in `verified_primary_email` /
+				 * `verified_secondary_email`, which a personal Microsoft account
+				 * does return. Left alone, such an account would arrive already
+				 * verified and pass both the invitation gate and organization
+				 * creation without Zemio ever sending a mail.
+				 *
+				 * Microsoft's own documentation says the email claim "isn't
+				 * guaranteed to be correct" and must never be used for
+				 * authorization, so this is not distrust of one provider: no
+				 * assertion verifies an address, whoever makes it.
+				 */
+				before: async (user) => ({
+					data: { ...user, emailVerified: false },
+				}),
 				after: async (user) => {
 					await Promise.all([
 						db.preferences.create({
@@ -97,13 +204,20 @@ export const auth = betterAuth({
 					// idToken. The idToken is written to the account record by
 					// better-auth during the OAuth callback, so it is always present
 					// by the time this session hook runs.
-					const msAccount = await db.account.findFirst({
-						where: {
-							userId: session.userId,
-							providerId: "microsoft",
-						},
-						select: { idToken: true },
-					});
+					const [msAccount, user] = await Promise.all([
+						db.account.findFirst({
+							where: { userId: session.userId, providerId: "microsoft" },
+							select: { idToken: true },
+						}),
+						db.user.findUnique({
+							where: { id: session.userId },
+							select: {
+								email: true,
+								emailVerified: true,
+								microsoftTenantId: true,
+							},
+						}),
+					]);
 
 					const tenantIdFromToken = msAccount?.idToken
 						? extractMicrosoftTenantId(msAccount.idToken)
@@ -111,66 +225,35 @@ export const auth = betterAuth({
 
 					// Fall back to the value stored on the user record from a
 					// previous login (covers sessions where the idToken is unavailable).
-					let resolvedTenantId: string | null = tenantIdFromToken;
+					const resolvedTenantId =
+						tenantIdFromToken ?? user?.microsoftTenantId ?? null;
 
-					if (!resolvedTenantId) {
-						const user = await db.user.findFirst({
-							where: { id: session.userId },
-							select: { microsoftTenantId: true },
-						});
-						resolvedTenantId = user?.microsoftTenantId ?? null;
-					} else {
+					if (tenantIdFromToken) {
 						// Persist the tenant ID on the user for future sessions.
 						await db.user.update({
 							where: { id: session.userId },
-							data: { microsoftTenantId: resolvedTenantId },
+							data: { microsoftTenantId: tenantIdFromToken },
 						});
 					}
 
-					if (resolvedTenantId) {
-						// Find all organizations configured for this tenant.
-						const matchingOrgs = await db.organization.findMany({
-							where: { microsoftTenantId: resolvedTenantId },
-							select: { id: true },
+					if (user) {
+						// Joining rules decide who is admitted, not this hook. A `tid`
+						// needs no verified address and an email domain does, and that
+						// asymmetry belongs in one place (ADR-0008).
+						await applyAutoJoins(db, session.userId, {
+							email: user.email,
+							emailVerified: user.emailVerified,
+							microsoftTenantId: resolvedTenantId,
 						});
-
-						// Auto-add the user as a member of every matching organization
-						// they have not yet joined. Handles both the initial login and
-						// the case where a new organization is created for an existing
-						// tenant after users have already logged in.
-						for (const org of matchingOrgs) {
-							const existingMember = await db.member.findFirst({
-								where: {
-									userId: session.userId,
-									organizationId: org.id,
-								},
-							});
-
-							if (!existingMember) {
-								await db.member.create({
-									data: {
-										id: crypto.randomUUID(),
-										userId: session.userId,
-										organizationId: org.id,
-										role: "member",
-										createdAt: new Date(),
-									},
-								});
-							}
-						}
 					}
-
-					// Set the active organization to the user's earliest membership
-					// so they land in an org context immediately after login.
-					const firstMember = await db.member.findFirst({
-						where: { userId: session.userId },
-						orderBy: { createdAt: "asc" },
-					});
 
 					return {
 						data: {
 							...session,
-							activeOrganizationId: firstMember?.organizationId ?? null,
+							activeOrganizationId: await resolveSessionOrganization(
+								db,
+								session.userId,
+							),
 						},
 					};
 				},
@@ -187,9 +270,16 @@ export const auth = betterAuth({
 			},
 		}),
 		organization({
-			// Only platform admins (user.role === "admin") may create organizations
-			// via the server-side platform admin API. Regular users cannot.
+			// The public create endpoint is closed to everyone. Organizations are
+			// created either by a platform admin or through `organization.
+			// createSelfServe`, both of which reach Better Auth as system actions
+			// — so the eligibility rules cannot be stepped around by posting here
+			// directly.
 			allowUserToCreateOrganization: false,
+
+			// An invitation is a grant addressed to an email, so accepting one
+			// requires that Zemio has proved the address (ADR-0008).
+			requireEmailVerificationOnInvitation: true,
 			sendInvitationEmail: async (data) => {
 				await sendOrgInvitationEmail(data);
 			},
